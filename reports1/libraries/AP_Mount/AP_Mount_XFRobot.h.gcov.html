@@ -1,0 +1,363 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_Mount/AP_Mount_XFRobot.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_Mount</a> - AP_Mount_XFRobot.h<span style="font-size: 80%;"> (source / <a href="AP_Mount_XFRobot.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :   XFRobot camera gimbal using serial protocol backend class</a>
+<a name="3"><span class="lineNum">       3 </span>            :  */</a>
+<a name="4"><span class="lineNum">       4 </span>            : #pragma once</a>
+<a name="5"><span class="lineNum">       5 </span>            : </a>
+<a name="6"><span class="lineNum">       6 </span>            : #include &quot;AP_Mount_config.h&quot;</a>
+<a name="7"><span class="lineNum">       7 </span>            : </a>
+<a name="8"><span class="lineNum">       8 </span>            : #if HAL_MOUNT_XFROBOT_ENABLED</a>
+<a name="9"><span class="lineNum">       9 </span>            : </a>
+<a name="10"><span class="lineNum">      10 </span>            : #include &quot;AP_Mount_Backend_Serial.h&quot;</a>
+<a name="11"><span class="lineNum">      11 </span>            : #include &lt;AP_Math/quaternion.h&gt;</a>
+<a name="12"><span class="lineNum">      12 </span>            : </a>
+<a name="13"><span class="lineNum">      13 </span>            : #define AP_MOUNT_XFROBOT_RECV_LENGTH_MAX    80  // maximum number of bytes that will be received from the gimbal</a>
+<a name="14"><span class="lineNum">      14 </span>            : </a>
+<a name="15"><span class="lineNum">      15 </span>            : class AP_Mount_XFRobot : public AP_Mount_Backend_Serial</a>
+<a name="16"><span class="lineNum">      16 </span>            : {</a>
+<a name="17"><span class="lineNum">      17 </span>            : </a>
+<a name="18"><span class="lineNum">      18 </span>            : public:</a>
+<a name="19"><span class="lineNum">      19 </span>            :     // Constructor</a>
+<a name="20"><span class="lineNum">      20 </span>            :     using AP_Mount_Backend_Serial::AP_Mount_Backend_Serial;</a>
+<a name="21"><span class="lineNum">      21 </span>            : </a>
+<a name="22"><span class="lineNum">      22 </span>            :     // update mount position - should be called periodically</a>
+<a name="23"><span class="lineNum">      23 </span>            :     void update() override;</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            :     // return true if healthy</a>
+<a name="26"><span class="lineNum">      26 </span>            :     bool healthy() const override;</a>
+<a name="27"><span class="lineNum">      27 </span>            : </a>
+<a name="28"><span class="lineNum">      28 </span>            :     // has_pan_control - returns true if this mount can control its pan (required for multicopters)</a>
+<a name="29"><span class="lineNum">      29 </span><span class="lineNoCov">          0 :     bool has_pan_control() const override { return yaw_range_valid(); };</span></a>
+<a name="30"><span class="lineNum">      30 </span>            : </a>
+<a name="31"><span class="lineNum">      31 </span>            :     // has_roll_control - returns true if this mount can control its roll</a>
+<a name="32"><span class="lineNum">      32 </span><span class="lineNoCov">          0 :     bool has_roll_control() const override { return roll_range_valid(); };</span></a>
+<a name="33"><span class="lineNum">      33 </span>            : </a>
+<a name="34"><span class="lineNum">      34 </span>            :     // has_pitch_control - returns true if this mount can control its tilt</a>
+<a name="35"><span class="lineNum">      35 </span><span class="lineNoCov">          0 :     bool has_pitch_control() const override { return pitch_range_valid(); };</span></a>
+<a name="36"><span class="lineNum">      36 </span>            : </a>
+<a name="37"><span class="lineNum">      37 </span>            :     //</a>
+<a name="38"><span class="lineNum">      38 </span>            :     // camera controls for gimbals that include a camera</a>
+<a name="39"><span class="lineNum">      39 </span>            :     //</a>
+<a name="40"><span class="lineNum">      40 </span>            : </a>
+<a name="41"><span class="lineNum">      41 </span>            :     // take a picture.  returns true on success</a>
+<a name="42"><span class="lineNum">      42 </span>            :     bool take_picture() override;</a>
+<a name="43"><span class="lineNum">      43 </span>            : </a>
+<a name="44"><span class="lineNum">      44 </span>            :     // start or stop video recording.  returns true on success</a>
+<a name="45"><span class="lineNum">      45 </span>            :     // set start_recording = true to start record, false to stop recording</a>
+<a name="46"><span class="lineNum">      46 </span>            :     bool record_video(bool start_recording) override;</a>
+<a name="47"><span class="lineNum">      47 </span>            : </a>
+<a name="48"><span class="lineNum">      48 </span>            :     // set zoom specified as a rate or percentage</a>
+<a name="49"><span class="lineNum">      49 </span>            :     bool set_zoom(ZoomType zoom_type, float zoom_value) override;</a>
+<a name="50"><span class="lineNum">      50 </span>            : </a>
+<a name="51"><span class="lineNum">      51 </span>            :     // set camera lens to cycle through pic-in-pic modes</a>
+<a name="52"><span class="lineNum">      52 </span>            :     bool set_lens(uint8_t lens) override;</a>
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<a name="54"><span class="lineNum">      54 </span>            :     // set focus specified as rate, percentage or auto</a>
+<a name="55"><span class="lineNum">      55 </span>            :     // focus in = -1, focus hold = 0, focus out = 1</a>
+<a name="56"><span class="lineNum">      56 </span>            :     SetFocusResult set_focus(FocusType focus_type, float focus_value) override;</a>
+<a name="57"><span class="lineNum">      57 </span>            : </a>
+<a name="58"><span class="lineNum">      58 </span>            : protected:</a>
+<a name="59"><span class="lineNum">      59 </span>            : </a>
+<a name="60"><span class="lineNum">      60 </span>            :     // get attitude as a quaternion.  returns true on success</a>
+<a name="61"><span class="lineNum">      61 </span>            :     bool get_attitude_quaternion(Quaternion&amp; att_quat) override;</a>
+<a name="62"><span class="lineNum">      62 </span>            : </a>
+<a name="63"><span class="lineNum">      63 </span>            : private:</a>
+<a name="64"><span class="lineNum">      64 </span>            : </a>
+<a name="65"><span class="lineNum">      65 </span>            :     // send text prefix string to reduce flash cost</a>
+<a name="66"><span class="lineNum">      66 </span>            :     static const char* send_text_prefix;</a>
+<a name="67"><span class="lineNum">      67 </span>            : </a>
+<a name="68"><span class="lineNum">      68 </span>            :     // camera and gimbal functions (aka order)</a>
+<a name="69"><span class="lineNum">      69 </span>            :     enum class FunctionOrder : uint8_t {</a>
+<a name="70"><span class="lineNum">      70 </span>            :         NONE = 0x00,                // null command</a>
+<a name="71"><span class="lineNum">      71 </span>            :         CALIBRATION = 0x01,         // calibration</a>
+<a name="72"><span class="lineNum">      72 </span>            :         ISOTHERM = 0x02,            // isotherm mode</a>
+<a name="73"><span class="lineNum">      73 </span>            :         NEUTRAL = 0x03,             // neutral mode</a>
+<a name="74"><span class="lineNum">      74 </span>            :         OSD_COORDINATE = 0x06,      // OSD coordinate control (vehicle or target)</a>
+<a name="75"><span class="lineNum">      75 </span>            :         IMAGE_AUTO_REVERSE = 0x07,  // auto reverse on/off</a>
+<a name="76"><span class="lineNum">      76 </span>            :         TIME_ZONE = 0x08,           // set timezone</a>
+<a name="77"><span class="lineNum">      77 </span>            :         ANGLE_CONTROL = 0x10,       // angle control</a>
+<a name="78"><span class="lineNum">      78 </span>            :         HEAD_LOCK = 0x11,           // head lock mode</a>
+<a name="79"><span class="lineNum">      79 </span>            :         HEAD_FOLLOW = 0x12,         // head follow mode</a>
+<a name="80"><span class="lineNum">      80 </span>            :         ORTHOVIEW = 0x13,           // orthoview mode</a>
+<a name="81"><span class="lineNum">      81 </span>            :         EULER_ANGLE_CONTROL = 0x14, // euler angle control</a>
+<a name="82"><span class="lineNum">      82 </span>            :         GAZE_GEO_COORDINATES = 0x15,// gaze mode with geo coordinates</a>
+<a name="83"><span class="lineNum">      83 </span>            :         GAZE_GEO_TARGET_LOCK = 0x16,// gaze mode with geo target lock</a>
+<a name="84"><span class="lineNum">      84 </span>            :         TRACK = 0x17,               // track mode</a>
+<a name="85"><span class="lineNum">      85 </span>            :         CLICK_TO_AIM = 0x1A,        // click to aim</a>
+<a name="86"><span class="lineNum">      86 </span>            :         FPV = 0x1C,                 // first person view</a>
+<a name="87"><span class="lineNum">      87 </span>            :         SHUTTER = 0x20,             // take picture</a>
+<a name="88"><span class="lineNum">      88 </span>            :         RECORD_VIDEO = 0x21,        // record video</a>
+<a name="89"><span class="lineNum">      89 </span>            :         ZOOM_IN = 0x22,             // zoom in continuously</a>
+<a name="90"><span class="lineNum">      90 </span>            :         ZOOM_OUT = 0x23,            // zoom ou continuously</a>
+<a name="91"><span class="lineNum">      91 </span>            :         ZOOM_STOP = 0x24,           // stop zooming</a>
+<a name="92"><span class="lineNum">      92 </span>            :         ZOOM_RATE = 0x25,           // zoom at specfiied rate</a>
+<a name="93"><span class="lineNum">      93 </span>            :         FOCUS = 0x26,               // auto focus</a>
+<a name="94"><span class="lineNum">      94 </span>            :         PALETTE = 0x2A,             // set palette</a>
+<a name="95"><span class="lineNum">      95 </span>            :         NIGHT_VISION = 0x2B,        // set night vision on/off</a>
+<a name="96"><span class="lineNum">      96 </span>            :         AREA_TEMP_MEASURE = 0x30,   // set area temperature measurement on/off</a>
+<a name="97"><span class="lineNum">      97 </span>            :         AREA_TEMP_ALERT = 0x31,     // set area temperature alert on/off</a>
+<a name="98"><span class="lineNum">      98 </span>            :         SPOT_TEMP_MEASURE = 0x33,   // set spot temperature measurement on/off</a>
+<a name="99"><span class="lineNum">      99 </span>            :         OSD = 0x73,                 // show/hide osd</a>
+<a name="100"><span class="lineNum">     100 </span>            :         PIC_IN_PIC = 0x74,          // show/hide picture in picture</a>
+<a name="101"><span class="lineNum">     101 </span>            :         TARGET_DETECTION = 0x75,    // set target detection on/off</a>
+<a name="102"><span class="lineNum">     102 </span>            :         DIGITAL_ZOOM = 0x76,        // set digital zoom on/off</a>
+<a name="103"><span class="lineNum">     103 </span>            :         LIGHTING = 0x80,            // set lighting intensity (0~255)</a>
+<a name="104"><span class="lineNum">     104 </span>            :         RANGING = 0x81,             // set ranging on/off</a>
+<a name="105"><span class="lineNum">     105 </span>            :     };</a>
+<a name="106"><span class="lineNum">     106 </span>            : </a>
+<a name="107"><span class="lineNum">     107 </span>            :     // parsing state</a>
+<a name="108"><span class="lineNum">     108 </span>            :     enum class ParseState : uint8_t {</a>
+<a name="109"><span class="lineNum">     109 </span>            :         WAITING_FOR_HEADER1,</a>
+<a name="110"><span class="lineNum">     110 </span>            :         WAITING_FOR_HEADER2,</a>
+<a name="111"><span class="lineNum">     111 </span>            :         WAITING_FOR_LENGTH_LOW,</a>
+<a name="112"><span class="lineNum">     112 </span>            :         WAITING_FOR_LENGTH_HIGH,</a>
+<a name="113"><span class="lineNum">     113 </span>            :         WAITING_FOR_DATA,</a>
+<a name="114"><span class="lineNum">     114 </span>            :         WAITING_FOR_CRC_HIGH,</a>
+<a name="115"><span class="lineNum">     115 </span>            :         WAITING_FOR_CRC_LOW</a>
+<a name="116"><span class="lineNum">     116 </span>            :     };</a>
+<a name="117"><span class="lineNum">     117 </span>            : </a>
+<a name="118"><span class="lineNum">     118 </span>            :     // camera image types</a>
+<a name="119"><span class="lineNum">     119 </span>            :     enum class CameraType : uint8_t {</a>
+<a name="120"><span class="lineNum">     120 </span>            :         MAIN_PIP_ZOOM_SUB_THERMAL = 1,</a>
+<a name="121"><span class="lineNum">     121 </span>            :         MAIN_THERMAL_SUB_ZOOM = 2,</a>
+<a name="122"><span class="lineNum">     122 </span>            :         MAIN_PIP_THERMAL_SUB_ZOOM = 3,</a>
+<a name="123"><span class="lineNum">     123 </span>            :         MAIN_ZOOM_SUB_THERMAL = 4</a>
+<a name="124"><span class="lineNum">     124 </span>            :        };</a>
+<a name="125"><span class="lineNum">     125 </span>            : </a>
+<a name="126"><span class="lineNum">     126 </span>            :     // reading incoming packets from gimbal</a>
+<a name="127"><span class="lineNum">     127 </span>            :     void read_incoming_packets();</a>
+<a name="128"><span class="lineNum">     128 </span>            : </a>
+<a name="129"><span class="lineNum">     129 </span>            :     // process successfully decoded packets held in the _msg_buff structure</a>
+<a name="130"><span class="lineNum">     130 </span>            :     void process_packet();</a>
+<a name="131"><span class="lineNum">     131 </span>            : </a>
+<a name="132"><span class="lineNum">     132 </span>            :     // send_target_angles</a>
+<a name="133"><span class="lineNum">     133 </span>            :     void send_target_angles(const MountTarget&amp; angle_target_rad);</a>
+<a name="134"><span class="lineNum">     134 </span>            : </a>
+<a name="135"><span class="lineNum">     135 </span>            :     // send simple (1byte) command to gimbal (e.g. take pic, start recording)</a>
+<a name="136"><span class="lineNum">     136 </span>            :     // returns true on success, false on failure to send</a>
+<a name="137"><span class="lineNum">     137 </span>            :     bool send_simple_command(FunctionOrder order, uint8_t param);</a>
+<a name="138"><span class="lineNum">     138 </span>            : </a>
+<a name="139"><span class="lineNum">     139 </span>            :     // check for recording timeout</a>
+<a name="140"><span class="lineNum">     140 </span>            :     void check_recording_timeout();</a>
+<a name="141"><span class="lineNum">     141 </span>            : </a>
+<a name="142"><span class="lineNum">     142 </span>            :     // internal variables</a>
+<a name="143"><span class="lineNum">     143 </span>            :     uint32_t last_send_ms;     // system time of last do_mount_control sent to gimbal</a>
+<a name="144"><span class="lineNum">     144 </span>            : </a>
+<a name="145"><span class="lineNum">     145 </span>            :     //</a>
+<a name="146"><span class="lineNum">     146 </span>            :     // packet structures</a>
+<a name="147"><span class="lineNum">     147 </span>            :     //</a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span>            :     // SendPacket main and sub frames for sending to the camera gimbal</a>
+<a name="150"><span class="lineNum">     150 </span>            :     struct PACKED SendPacketMainAndSubFrame {</a>
+<a name="151"><span class="lineNum">     151 </span>            :         uint8_t header1;        // byte0, header1 (0x8A)</a>
+<a name="152"><span class="lineNum">     152 </span>            :         uint8_t header2;        // byte1, header2 (0x5E)</a>
+<a name="153"><span class="lineNum">     153 </span>            :         uint16_t length;        // byte2~3, length</a>
+<a name="154"><span class="lineNum">     154 </span>            :         uint8_t version;        // byte 4: version (always 0x02)</a>
+<a name="155"><span class="lineNum">     155 </span>            :         int16_t roll_control;   // byte 5~6: roll control value (int16, -18000 ~ +18000)</a>
+<a name="156"><span class="lineNum">     156 </span>            :         int16_t pitch_control;  // byte 7~8: pitch control value (int16, -18000 ~ +18000)</a>
+<a name="157"><span class="lineNum">     157 </span>            :         int16_t yaw_control;    // byte 9~10: yaw control value (int16, -18000 ~ +18000)</a>
+<a name="158"><span class="lineNum">     158 </span>            :         uint8_t status;         // byte 11: status, Bit0:INS valid, Bit2:control values valid</a>
+<a name="159"><span class="lineNum">     159 </span>            :         int16_t roll_abs;       // byte 12~13: absolute roll angle of vehicle (int16, -18000 ~ +18000)</a>
+<a name="160"><span class="lineNum">     160 </span>            :         int16_t pitch_abs;      // byte 14~15: absolute pitch angle of vehicle (int16, -9000 ~ +9000)</a>
+<a name="161"><span class="lineNum">     161 </span>            :         int16_t yaw_abs;        // byte 16~17: absolute yaw angle of vehicle (uint16, 0 ~ 36000)    </a>
+<a name="162"><span class="lineNum">     162 </span>            :         int16_t accel_north;    // byte 18~19: North acceleration of vehicle (int16, cm/s/s)</a>
+<a name="163"><span class="lineNum">     163 </span>            :         int16_t accel_east;     // byte 20~21: East acceleration of vehicle (int16, cm/s/s)</a>
+<a name="164"><span class="lineNum">     164 </span>            :         int16_t accel_up;       // byte 22~23: Upward acceleration of vehicle (int16, cm/s/s)</a>
+<a name="165"><span class="lineNum">     165 </span>            :         int16_t vel_north;      // byte 24~25: North speed of vehicle (int16, decimeter/s)</a>
+<a name="166"><span class="lineNum">     166 </span>            :         int16_t vel_east;       // byte 26~27: East speed of vehicle (int16, decimeter/s)</a>
+<a name="167"><span class="lineNum">     167 </span>            :         int16_t vel_up;         // byte 28~29: Upward speed of vehicle (int16, decimeter/s)</a>
+<a name="168"><span class="lineNum">     168 </span>            :         uint8_t request_code;   // byte 30: request code of sub frame, header of requested sub data frame from GCU (aka camera)</a>
+<a name="169"><span class="lineNum">     169 </span>            :         uint8_t reserved[6];    // byte 31~36: reserved/unused</a>
+<a name="170"><span class="lineNum">     170 </span>            :         uint8_t sub_header;     // byte 37: header (always 0x01)</a>
+<a name="171"><span class="lineNum">     171 </span>            :         int32_t longitude;      // byte 38~41: longitude of vehicle (int32, 1E7)</a>
+<a name="172"><span class="lineNum">     172 </span>            :         int32_t latitude;       // byte 42~45: latitude of vehicle (int32, 1E7)</a>
+<a name="173"><span class="lineNum">     173 </span>            :         int32_t alt_amsl;       // byte 46~49: altitude of vehicle (int32, mm)</a>
+<a name="174"><span class="lineNum">     174 </span>            :         uint8_t gps_num_sats;   // byte 50: number of satellites</a>
+<a name="175"><span class="lineNum">     175 </span>            :         uint32_t gps_week_ms;   // byte 51~54: GNSS milliseconds (uint32)</a>
+<a name="176"><span class="lineNum">     176 </span>            :         uint16_t gps_week;      // byte 55~56: GNSS week number (uint16)</a>
+<a name="177"><span class="lineNum">     177 </span>            :         int32_t alt_rel;        // byte 57~60: relative altitude (int32, mm, can be zero if unavailable)</a>
+<a name="178"><span class="lineNum">     178 </span>            :         uint8_t reserved2[8];   // byte 61~68: reserved/unused</a>
+<a name="179"><span class="lineNum">     179 </span>            :         FunctionOrder order;    // byte 69: order</a>
+<a name="180"><span class="lineNum">     180 </span>            :     };</a>
+<a name="181"><span class="lineNum">     181 </span>            : </a>
+<a name="182"><span class="lineNum">     182 </span>            :     // ReplyPacket main and sub frames for receiving data from camera gimbal</a>
+<a name="183"><span class="lineNum">     183 </span>            :     struct PACKED ReplyPacketMainAndSubFrame {</a>
+<a name="184"><span class="lineNum">     184 </span>            :         uint8_t header1;        // byte0, header1 (0x8A)</a>
+<a name="185"><span class="lineNum">     185 </span>            :         uint8_t header2;        // byte1, header2 (0x5E)</a>
+<a name="186"><span class="lineNum">     186 </span>            :         uint16_t length;        // byte2~3, length</a>
+<a name="187"><span class="lineNum">     187 </span>            :         uint8_t version;        // byte 4: version</a>
+<a name="188"><span class="lineNum">     188 </span>            :         uint8_t mode;           // byte 5: mode: 0x10:angle control, 0x11:head lock, 0x12: head follow, 0x13:orthoview, 0x14:euler angle control, 0x16:gaze, 0x17:track,0x1C:FPV</a>
+<a name="189"><span class="lineNum">     189 </span>            :         uint16_t status;        // byte 6~7: status, Bit0:tracking success, Bit7:range and target coordinate valid, Bit8:ranging on, Bit9:night vision on, Bit10:lighting on, Bit12:Upward powered on</a>
+<a name="190"><span class="lineNum">     190 </span>            :         int16_t horizontal_target; // byte 8~9: horizontal target (int16, -1000 ~ +1000, rightward is positive)</a>
+<a name="191"><span class="lineNum">     191 </span>            :         int16_t vertical_target;   // byte 10~11: vertical target (int16, -1000 ~ +1000, downward is positive)</a>
+<a name="192"><span class="lineNum">     192 </span>            :         int16_t angle_x;        // byte 12~13: x-axis angle (camera-frame pitch) of camera relative to vehicle (int16, -18000 ~ +18000)</a>
+<a name="193"><span class="lineNum">     193 </span>            :         int16_t angle_y;        // byte 14~15: y-axis angle (camera-frame roll) of camera relative to vehicle (int16, -18000 ~ +18000)</a>
+<a name="194"><span class="lineNum">     194 </span>            :         int16_t angle_z;        // byte 16~17: z-axis angle (camera-frame yaw) of camera relative to vehicle (int16, -18000 ~ +18000)</a>
+<a name="195"><span class="lineNum">     195 </span>            :         int16_t roll_abs_cd;    // byte 18~19: roll angle of camera (absolute) (int16, -9000 ~ +9000)</a>
+<a name="196"><span class="lineNum">     196 </span>            :         int16_t pitch_abs_cd;   // byte 20~21: pitch angle of camera (absolute) (int16, -18000 ~ +18000)</a>
+<a name="197"><span class="lineNum">     197 </span>            :         uint16_t yaw_abs_cd;    // byte 22~23: yaw angle of camera (absolute) (uint16, 0 ~ +36000)</a>
+<a name="198"><span class="lineNum">     198 </span>            :         int16_t angvel_x;       // byte 24~25: X-axis absolute angular velocity of camera (int16, centi-degrees/s)</a>
+<a name="199"><span class="lineNum">     199 </span>            :         int16_t angvel_y;       // byte 26~27: Y-axis absolute angular velocity of camera (int16, centi-degrees/s)</a>
+<a name="200"><span class="lineNum">     200 </span>            :         int16_t angvel_z;       // byte 28~29: Z-axis absolute angular velocity of camera (int16, centi-degrees/s)</a>
+<a name="201"><span class="lineNum">     201 </span>            :         uint8_t reserved[7];    // byte 30~36: reserved/unused</a>
+<a name="202"><span class="lineNum">     202 </span>            :         uint8_t sub_header;     // byte 37: header (0x01)</a>
+<a name="203"><span class="lineNum">     203 </span>            :         uint8_t hardware_version; // byte 38: hardware version (uint8)</a>
+<a name="204"><span class="lineNum">     204 </span>            :         uint8_t firmware_version; // byte 39: firmware version (uint8)</a>
+<a name="205"><span class="lineNum">     205 </span>            :         uint8_t pod_code;       // byte 40: pod code</a>
+<a name="206"><span class="lineNum">     206 </span>            :         uint16_t error_code;    // byte 41~42: error code, Bit7:hardware error, Bit13: mavlink communication freq anomaly, Bit14:BNSS unpositioned, Bit15:GCU hardware error</a>
+<a name="207"><span class="lineNum">     207 </span>            :         int32_t target_dist_dm; // byte 43~46: distance from target (int32, decimeters, -1m or 0m is invalid measurement)</a>
+<a name="208"><span class="lineNum">     208 </span>            :         int32_t target_lng;     // byte 47~50: longitude of target (int32, 1E7)</a>
+<a name="209"><span class="lineNum">     209 </span>            :         int32_t target_lat;     // byte 51~54: latitude of target (int32, 1E7)</a>
+<a name="210"><span class="lineNum">     210 </span>            :         int32_t target_alt;     // byte 55~58: altitude of target (int32, mm)</a>
+<a name="211"><span class="lineNum">     211 </span>            :         uint16_t zoom_rate_rgb; // byte 59~60: zoom rate of RGB camera (uint16, resolution 0.1x)</a>
+<a name="212"><span class="lineNum">     212 </span>            :         uint16_t zoom_rate_thermal; // byte 61~62: zoom rate of thermal camera (uint16, resolution 0.1x)</a>
+<a name="213"><span class="lineNum">     213 </span>            :         uint8_t thermal_status; // byte 63: thermal camera status, Bit0:low temp alert, Bit1:high temp alert, Bit3:spot temp measurement on, Bit4:Isotherm on, Bit5:temp alert on, Bit6:area temp on, Bit7:temp available</a>
+<a name="214"><span class="lineNum">     214 </span>            :         uint16_t camera_status; // byte 64~65: camera status, Bit0~Bit2:pic-in-pic mode, Bit4:recording, Bit11:image auto reverse off, Bit12:OSD displays target coordinate, Bit13:OSD on, Bit14:digital zoom on, Bit15:target detection on</a>
+<a name="215"><span class="lineNum">     215 </span>            :         int8_t timezone;        // byte 66: timezone (int8, -12 ~ +12)</a>
+<a name="216"><span class="lineNum">     216 </span>            :         uint8_t reserved2[2];   // byte 67~68: reserved/unused</a>
+<a name="217"><span class="lineNum">     217 </span>            :         FunctionOrder order;   // byte 69: order</a>
+<a name="218"><span class="lineNum">     218 </span>            :     };</a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span>            :     // 1byte Reply Packet.  Used for most replies from GCU</a>
+<a name="221"><span class="lineNum">     221 </span>            :     struct PACKED PacketReply1Byte {</a>
+<a name="222"><span class="lineNum">     222 </span>            :         uint8_t execution_state;    // byte 70, Success:0x00, Fail:0x01, Operating:0x02</a>
+<a name="223"><span class="lineNum">     223 </span>            :     };</a>
+<a name="224"><span class="lineNum">     224 </span>            : </a>
+<a name="225"><span class="lineNum">     225 </span>            :     // Packet CRC</a>
+<a name="226"><span class="lineNum">     226 </span>            :     struct PACKED PacketCRC {</a>
+<a name="227"><span class="lineNum">     227 </span>            :         uint8_t crc_high;    // byte 70: CRC high byte</a>
+<a name="228"><span class="lineNum">     228 </span>            :         uint8_t crc_low;     // byte 71: CRC low byte</a>
+<a name="229"><span class="lineNum">     229 </span>            :     };</a>
+<a name="230"><span class="lineNum">     230 </span>            : </a>
+<a name="231"><span class="lineNum">     231 </span>            :     // structure to send set-atitude command to gimbal</a>
+<a name="232"><span class="lineNum">     232 </span>            :     union SetAttitudePacket {</a>
+<a name="233"><span class="lineNum">     233 </span>            :         struct PACKED {</a>
+<a name="234"><span class="lineNum">     234 </span>            :             SendPacketMainAndSubFrame main;</a>
+<a name="235"><span class="lineNum">     235 </span>            :             PacketCRC crc;</a>
+<a name="236"><span class="lineNum">     236 </span>            :         } content;</a>
+<a name="237"><span class="lineNum">     237 </span>            :         uint8_t bytes[sizeof(content)];</a>
+<a name="238"><span class="lineNum">     238 </span>            :     };</a>
+<a name="239"><span class="lineNum">     239 </span>            : </a>
+<a name="240"><span class="lineNum">     240 </span>            :     // structure to send a simple, 1byte command</a>
+<a name="241"><span class="lineNum">     241 </span>            :     union SimpleCommand {</a>
+<a name="242"><span class="lineNum">     242 </span>            :         struct PACKED {</a>
+<a name="243"><span class="lineNum">     243 </span>            :             SendPacketMainAndSubFrame main;</a>
+<a name="244"><span class="lineNum">     244 </span>            :             uint8_t param_1byte;</a>
+<a name="245"><span class="lineNum">     245 </span>            :             PacketCRC crc;</a>
+<a name="246"><span class="lineNum">     246 </span>            :         } content;</a>
+<a name="247"><span class="lineNum">     247 </span>            :         uint8_t bytes[sizeof(content)];</a>
+<a name="248"><span class="lineNum">     248 </span>            :     };</a>
+<a name="249"><span class="lineNum">     249 </span>            : </a>
+<a name="250"><span class="lineNum">     250 </span>            :     // structure to decode incoming packets</a>
+<a name="251"><span class="lineNum">     251 </span>            :     struct PACKED GCUSimpleReply {</a>
+<a name="252"><span class="lineNum">     252 </span>            :         ReplyPacketMainAndSubFrame main;</a>
+<a name="253"><span class="lineNum">     253 </span>            :         PacketReply1Byte param;</a>
+<a name="254"><span class="lineNum">     254 </span>            :         PacketCRC crc;</a>
+<a name="255"><span class="lineNum">     255 </span>            :     };</a>
+<a name="256"><span class="lineNum">     256 </span>            : </a>
+<a name="257"><span class="lineNum">     257 </span>            :     // parser related variables</a>
+<a name="258"><span class="lineNum">     258 </span>            :     union {</a>
+<a name="259"><span class="lineNum">     259 </span>            :         GCUSimpleReply simple_reply;                        // simple reply</a>
+<a name="260"><span class="lineNum">     260 </span>            :         uint8_t bytes[AP_MOUNT_XFROBOT_RECV_LENGTH_MAX];    // raw bytes</a>
+<a name="261"><span class="lineNum">     261 </span>            :     } msg_buff;</a>
+<a name="262"><span class="lineNum">     262 </span>            :     uint8_t msg_buff_len;                                   // number of bytes held in msg_buff.bytes</a>
+<a name="263"><span class="lineNum">     263 </span>            : </a>
+<a name="264"><span class="lineNum">     264 </span>            :     struct {</a>
+<a name="265"><span class="lineNum">     265 </span>            :         ParseState state;           // state of incoming message processing</a>
+<a name="266"><span class="lineNum">     266 </span>            :         uint8_t len_expected;       // expected number of data bytes we expect to receive</a>
+<a name="267"><span class="lineNum">     267 </span>            :         uint16_t crc;               // latest message's crc</a>
+<a name="268"><span class="lineNum">     268 </span>            :         uint32_t last_received_ms;  // system time of last message received and successfully parsed</a>
+<a name="269"><span class="lineNum">     269 </span>            :     } parser;</a>
+<a name="270"><span class="lineNum">     270 </span>            : </a>
+<a name="271"><span class="lineNum">     271 </span>            :     // latest attitude</a>
+<a name="272"><span class="lineNum">     272 </span>            :     struct {</a>
+<a name="273"><span class="lineNum">     273 </span>            :         float roll_ef_deg;      // earth-frame roll angle in degrees</a>
+<a name="274"><span class="lineNum">     274 </span>            :         float pitch_ef_deg;     // earth-frame pitch angle in degrees</a>
+<a name="275"><span class="lineNum">     275 </span>            :         float yaw_bf_deg;       // body-frame yaw angle in degrees</a>
+<a name="276"><span class="lineNum">     276 </span>            :         uint32_t update_ms;     // system time of last update</a>
+<a name="277"><span class="lineNum">     277 </span>            :     } attitude_latest;</a>
+<a name="278"><span class="lineNum">     278 </span>            : </a>
+<a name="279"><span class="lineNum">     279 </span>            :     // local variables</a>
+<a name="280"><span class="lineNum">     280 </span>            :     bool got_firmware_version = false;  // true once hardware and firmware version has been received</a>
+<a name="281"><span class="lineNum">     281 </span>            :     struct {</a>
+<a name="282"><span class="lineNum">     282 </span>            :         bool recording;         // true if currently recording video</a>
+<a name="283"><span class="lineNum">     283 </span>            :         bool request_start;     // true if requested start recording and request_ms &gt; 0, false if requested stop recording</a>
+<a name="284"><span class="lineNum">     284 </span>            :         uint32_t request_ms;    // system time of request to start recording, 0 if not requested</a>
+<a name="285"><span class="lineNum">     285 </span>            :     } recording;</a>
+<a name="286"><span class="lineNum">     286 </span>            : };</a>
+<a name="287"><span class="lineNum">     287 </span>            : #endif // HAL_MOUNT_XFROBOT_ENABLED</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

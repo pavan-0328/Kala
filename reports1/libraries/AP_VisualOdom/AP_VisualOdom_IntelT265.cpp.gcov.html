@@ -1,0 +1,398 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_VisualOdom/AP_VisualOdom_IntelT265.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_VisualOdom</a> - AP_VisualOdom_IntelT265.cpp<span style="font-size: 80%;"> (source / <a href="AP_VisualOdom_IntelT265.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">100</td>
+            <td class="headerCovTableEntry">126</td>
+            <td class="headerCovTableEntryMed">79.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : </a>
+<a name="16"><span class="lineNum">      16 </span>            : #include &quot;AP_VisualOdom_config.h&quot;</a>
+<a name="17"><span class="lineNum">      17 </span>            : </a>
+<a name="18"><span class="lineNum">      18 </span>            : #if AP_VISUALODOM_INTELT265_ENABLED</a>
+<a name="19"><span class="lineNum">      19 </span>            : </a>
+<a name="20"><span class="lineNum">      20 </span>            : #include &quot;AP_VisualOdom_IntelT265.h&quot;</a>
+<a name="21"><span class="lineNum">      21 </span>            : </a>
+<a name="22"><span class="lineNum">      22 </span>            : #include &lt;AP_HAL/AP_HAL.h&gt;</a>
+<a name="23"><span class="lineNum">      23 </span>            : #include &lt;AP_AHRS/AP_AHRS.h&gt;</a>
+<a name="24"><span class="lineNum">      24 </span>            : #include &lt;GCS_MAVLink/GCS.h&gt;</a>
+<a name="25"><span class="lineNum">      25 </span>            : </a>
+<a name="26"><span class="lineNum">      26 </span>            : #define VISUALODOM_RESET_IGNORE_DURATION_MS 1000    // sensor data is ignored for 1sec after a position reset</a>
+<a name="27"><span class="lineNum">      27 </span>            : </a>
+<a name="28"><span class="lineNum">      28 </span>            : extern const AP_HAL::HAL&amp; hal;</a>
+<a name="29"><span class="lineNum">      29 </span>            : </a>
+<a name="30"><span class="lineNum">      30 </span>            : // consume vision pose estimate data and send to EKF. distances in meters</a>
+<a name="31"><span class="lineNum">      31 </span>            : // quality of -1 means failed, 0 means unknown, 1 is worst, 100 is best</a>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">       6769 : void AP_VisualOdom_IntelT265::handle_pose_estimate(uint64_t remote_time_us, uint32_t time_ms, float x, float y, float z, const Quaternion &amp;attitude, float posErr, float angErr, uint8_t reset_counter, int8_t quality)</span></a>
+<a name="33"><span class="lineNum">      33 </span>            : {</a>
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">       6769 :     const float scale_factor = _frontend.get_pos_scale();</span></a>
+<a name="35"><span class="lineNum">      35 </span><span class="lineCov">       6769 :     Vector3f pos{x * scale_factor, y * scale_factor, z * scale_factor};</span></a>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">       6769 :     Quaternion att = attitude;</span></a>
+<a name="37"><span class="lineNum">      37 </span>            : </a>
+<a name="38"><span class="lineNum">      38 </span>            :     // handle voxl camera reset jumps in attitude and position</a>
+<a name="39"><span class="lineNum">      39 </span><span class="lineCov">       6769 :     handle_voxl_camera_reset_jump(pos, att, reset_counter);</span></a>
+<a name="40"><span class="lineNum">      40 </span>            : </a>
+<a name="41"><span class="lineNum">      41 </span>            :     // handle request to align sensor's yaw with vehicle's AHRS/EKF attitude</a>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">       6769 :     if (_align_yaw) {</span></a>
+<a name="43"><span class="lineNum">      43 </span><span class="lineCov">       1220 :         if (align_yaw_to_ahrs(pos, attitude)) {</span></a>
+<a name="44"><span class="lineNum">      44 </span><span class="lineCov">          3 :             _align_yaw = false;</span></a>
+<a name="45"><span class="lineNum">      45 </span>            :         }</a>
+<a name="46"><span class="lineNum">      46 </span>            :     }</a>
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">       6769 :     if (_align_posxy || _align_posz) {</span></a>
+<a name="48"><span class="lineNum">      48 </span><span class="lineNoCov">          0 :         if (align_position_to_ahrs(pos, _align_posxy, _align_posz)) {</span></a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineNoCov">          0 :             _align_posxy = _align_posz = false;</span></a>
+<a name="50"><span class="lineNum">      50 </span>            :         }</a>
+<a name="51"><span class="lineNum">      51 </span>            :     }</a>
+<a name="52"><span class="lineNum">      52 </span>            : </a>
+<a name="53"><span class="lineNum">      53 </span>            :     // rotate position and attitude to align with vehicle</a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">       6769 :     rotate_and_correct_position(pos);</span></a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">       6769 :     rotate_attitude(att);</span></a>
+<a name="56"><span class="lineNum">      56 </span>            : </a>
+<a name="57"><span class="lineNum">      57 </span>            :     // record position for voxl reset jump handling</a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">       6769 :     record_voxl_position_and_reset_count(pos, reset_counter);</span></a>
+<a name="59"><span class="lineNum">      59 </span>            : </a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineCov">       6769 :     posErr = constrain_float(posErr, _frontend.get_pos_noise(), 100.0f);</span></a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">       6769 :     angErr = constrain_float(angErr, _frontend.get_yaw_noise(), 1.5f);</span></a>
+<a name="62"><span class="lineNum">      62 </span>            : </a>
+<a name="63"><span class="lineNum">      63 </span>            :     // record quality</a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineCov">       6769 :     _quality = quality;</span></a>
+<a name="65"><span class="lineNum">      65 </span>            : </a>
+<a name="66"><span class="lineNum">      66 </span>            :     // check for recent position reset</a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">       6769 :     bool consume = should_consume_sensor_data(true, reset_counter) &amp;&amp; (_quality &gt;= _frontend.get_quality_min());</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">       6769 :     if (consume) {</span></a>
+<a name="69"><span class="lineNum">      69 </span>            :         // send attitude and position to EKF</a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineCov">       6769 :         AP::ahrs().writeExtNavData(pos, att, posErr, angErr, time_ms, _frontend.get_delay_ms(), get_reset_timestamp_ms(reset_counter));</span></a>
+<a name="71"><span class="lineNum">      71 </span>            :     }</a>
+<a name="72"><span class="lineNum">      72 </span>            : </a>
+<a name="73"><span class="lineNum">      73 </span>            :     // calculate euler orientation for logging</a>
+<a name="74"><span class="lineNum">      74 </span>            :     float roll;</a>
+<a name="75"><span class="lineNum">      75 </span>            :     float pitch;</a>
+<a name="76"><span class="lineNum">      76 </span>            :     float yaw;</a>
+<a name="77"><span class="lineNum">      77 </span><span class="lineCov">       6769 :     att.to_euler(roll, pitch, yaw);</span></a>
+<a name="78"><span class="lineNum">      78 </span>            : </a>
+<a name="79"><span class="lineNum">      79 </span>            : #if HAL_LOGGING_ENABLED</a>
+<a name="80"><span class="lineNum">      80 </span>            :     // log sensor data</a>
+<a name="81"><span class="lineNum">      81 </span><span class="lineCov">       6769 :     Write_VisualPosition(remote_time_us, time_ms, pos.x, pos.y, pos.z, degrees(roll), degrees(pitch), wrap_360(degrees(yaw)), posErr, angErr, reset_counter, !consume, _quality);</span></a>
+<a name="82"><span class="lineNum">      82 </span>            : #endif</a>
+<a name="83"><span class="lineNum">      83 </span>            : </a>
+<a name="84"><span class="lineNum">      84 </span>            :     // store corrected attitude for use in pre-arm checks</a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineCov">       6769 :     _attitude_last = att;</span></a>
+<a name="86"><span class="lineNum">      86 </span>            : </a>
+<a name="87"><span class="lineNum">      87 </span>            :     // record time for health monitoring</a>
+<a name="88"><span class="lineNum">      88 </span><span class="lineCov">       6769 :     _last_update_ms = AP_HAL::millis();</span></a>
+<a name="89"><span class="lineNum">      89 </span><span class="lineCov">       6769 : }</span></a>
+<a name="90"><span class="lineNum">      90 </span>            : </a>
+<a name="91"><span class="lineNum">      91 </span>            : // consume vision velocity estimate data and send to EKF, velocity in NED meters per second</a>
+<a name="92"><span class="lineNum">      92 </span>            : // quality of -1 means failed, 0 means unknown, 1 is worst, 100 is best</a>
+<a name="93"><span class="lineNum">      93 </span><span class="lineCov">       2899 : void AP_VisualOdom_IntelT265::handle_vision_speed_estimate(uint64_t remote_time_us, uint32_t time_ms, const Vector3f &amp;vel, uint8_t reset_counter, int8_t quality)</span></a>
+<a name="94"><span class="lineNum">      94 </span>            : {</a>
+<a name="95"><span class="lineNum">      95 </span>            :     // rotate velocity to align with vehicle</a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineCov">       2899 :     Vector3f vel_corrected = vel;</span></a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineCov">       2899 :     rotate_velocity(vel_corrected);</span></a>
+<a name="98"><span class="lineNum">      98 </span>            : </a>
+<a name="99"><span class="lineNum">      99 </span>            :     // record quality</a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineCov">       2899 :     _quality = quality;</span></a>
+<a name="101"><span class="lineNum">     101 </span>            : </a>
+<a name="102"><span class="lineNum">     102 </span>            :     // check for recent position reset</a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineCov">       2899 :     bool consume = should_consume_sensor_data(false, reset_counter) &amp;&amp; (_quality &gt;= _frontend.get_quality_min());</span></a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineCov">       2899 :     if (consume) {</span></a>
+<a name="105"><span class="lineNum">     105 </span>            :         // send velocity to EKF</a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineCov">       2899 :         AP::ahrs().writeExtNavVelData(vel_corrected, _frontend.get_vel_noise(), time_ms, _frontend.get_delay_ms());</span></a>
+<a name="107"><span class="lineNum">     107 </span>            :     }</a>
+<a name="108"><span class="lineNum">     108 </span>            : </a>
+<a name="109"><span class="lineNum">     109 </span>            :     // record time for health monitoring</a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineCov">       2899 :     _last_update_ms = AP_HAL::millis();</span></a>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<a name="112"><span class="lineNum">     112 </span>            : #if HAL_LOGGING_ENABLED</a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineCov">       2899 :     Write_VisualVelocity(remote_time_us, time_ms, vel_corrected, reset_counter, !consume, _quality);</span></a>
+<a name="114"><span class="lineNum">     114 </span>            : #endif</a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineCov">       2899 : }</span></a>
+<a name="116"><span class="lineNum">     116 </span>            : </a>
+<a name="117"><span class="lineNum">     117 </span>            : // apply rotation to velocity</a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineCov">       2899 : void AP_VisualOdom_IntelT265::rotate_velocity(Vector3f &amp;velocity) const</span></a>
+<a name="119"><span class="lineNum">     119 </span>            : {</a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineCov">       2899 :     if (_use_posvel_rotation) {</span></a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineCov">       2387 :         velocity = _posvel_rotation * velocity;</span></a>
+<a name="122"><span class="lineNum">     122 </span>            :     }</a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineCov">       2899 : }</span></a>
+<a name="124"><span class="lineNum">     124 </span>            : </a>
+<a name="125"><span class="lineNum">     125 </span>            : // rotate attitude using _yaw_trim</a>
+<a name="126"><span class="lineNum">     126 </span><span class="lineCov">       6769 : void AP_VisualOdom_IntelT265::rotate_attitude(Quaternion &amp;attitude) const</span></a>
+<a name="127"><span class="lineNum">     127 </span>            : {</a>
+<a name="128"><span class="lineNum">     128 </span>            :     // apply orientation rotation</a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineCov">       6769 :     if (_use_att_rotation) {</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :         attitude *= _att_rotation;</span></a>
+<a name="131"><span class="lineNum">     131 </span>            :     }</a>
+<a name="132"><span class="lineNum">     132 </span>            : </a>
+<a name="133"><span class="lineNum">     133 </span>            :     // apply earth-frame yaw rotation</a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineCov">       6769 :     if (!is_zero(_yaw_trim)) {</span></a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineCov">       5552 :         attitude = _yaw_rotation * attitude;</span></a>
+<a name="136"><span class="lineNum">     136 </span>            :     }</a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineCov">       6769 :     return;</span></a>
+<a name="138"><span class="lineNum">     138 </span>            : }</a>
+<a name="139"><span class="lineNum">     139 </span>            : </a>
+<a name="140"><span class="lineNum">     140 </span>            : // use sensor provided attitude to calculate rotation to align sensor with AHRS/EKF attitude</a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineCov">       1220 : bool AP_VisualOdom_IntelT265::align_yaw_to_ahrs(const Vector3f &amp;position, const Quaternion &amp;attitude)</span></a>
+<a name="142"><span class="lineNum">     142 </span>            : {</a>
+<a name="143"><span class="lineNum">     143 </span>            :     // do not align to ahrs if we are its yaw source</a>
+<a name="144"><span class="lineNum">     144 </span><span class="lineCov">       1220 :     if (AP::ahrs().using_extnav_for_yaw()) {</span></a>
+<a name="145"><span class="lineNum">     145 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="146"><span class="lineNum">     146 </span>            :     }</a>
+<a name="147"><span class="lineNum">     147 </span>            : </a>
+<a name="148"><span class="lineNum">     148 </span>            :     // do not align until ahrs yaw initialised</a>
+<a name="149"><span class="lineNum">     149 </span><span class="lineCov">       1220 :     if (!AP::ahrs().initialised()</span></a>
+<a name="150"><span class="lineNum">     150 </span>            : #if AP_AHRS_DCM_ENABLED</a>
+<a name="151"><span class="lineNum">     151 </span><span class="lineCov">       1220 :         || !AP::ahrs().dcm_yaw_initialised()</span></a>
+<a name="152"><span class="lineNum">     152 </span>            : #endif</a>
+<a name="153"><span class="lineNum">     153 </span>            :         ) {</a>
+<a name="154"><span class="lineNum">     154 </span><span class="lineCov">       1217 :         return false;</span></a>
+<a name="155"><span class="lineNum">     155 </span>            :     }</a>
+<a name="156"><span class="lineNum">     156 </span>            : </a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineCov">          3 :     align_yaw(position, attitude, AP::ahrs().get_yaw_rad());</span></a>
+<a name="158"><span class="lineNum">     158 </span><span class="lineCov">          3 :     return true;</span></a>
+<a name="159"><span class="lineNum">     159 </span>            : }</a>
+<a name="160"><span class="lineNum">     160 </span>            : </a>
+<a name="161"><span class="lineNum">     161 </span>            : // align sensor yaw with any new yaw (in radians)</a>
+<a name="162"><span class="lineNum">     162 </span><span class="lineCov">          3 : void AP_VisualOdom_IntelT265::align_yaw(const Vector3f &amp;position, const Quaternion &amp;attitude, float yaw_rad)</span></a>
+<a name="163"><span class="lineNum">     163 </span>            : {</a>
+<a name="164"><span class="lineNum">     164 </span>            :     // clear any existing errors</a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineCov">          3 :     _error_orientation = false;</span></a>
+<a name="166"><span class="lineNum">     166 </span>            : </a>
+<a name="167"><span class="lineNum">     167 </span>            :     // create rotation quaternion to correct for orientation</a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineCov">          3 :     const Rotation rot = _frontend.get_orientation();</span></a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineCov">          3 :     _att_rotation.initialise();</span></a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineCov">          3 :     _use_att_rotation = false;</span></a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineCov">          3 :     if (rot != Rotation::ROTATION_NONE) {</span></a>
+<a name="172"><span class="lineNum">     172 </span><span class="lineNoCov">          0 :         _att_rotation.rotate(rot);</span></a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :         _att_rotation.invert();</span></a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineNoCov">          0 :         _use_att_rotation = true;</span></a>
+<a name="175"><span class="lineNum">     175 </span>            :     }</a>
+<a name="176"><span class="lineNum">     176 </span>            : </a>
+<a name="177"><span class="lineNum">     177 </span><span class="lineCov">          3 :     Quaternion att_corrected = attitude;</span></a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineCov">          3 :     att_corrected *= _att_rotation;</span></a>
+<a name="179"><span class="lineNum">     179 </span>            : </a>
+<a name="180"><span class="lineNum">     180 </span>            :     // extract sensor's corrected yaw</a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineCov">          3 :     const float sens_yaw = att_corrected.get_euler_yaw();</span></a>
+<a name="182"><span class="lineNum">     182 </span>            : </a>
+<a name="183"><span class="lineNum">     183 </span>            :     // trim yaw by difference between ahrs and sensor yaw</a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineCov">          3 :     const float yaw_trim_orig = _yaw_trim;</span></a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineCov">          3 :     _yaw_trim = wrap_2PI(yaw_rad - sens_yaw);</span></a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineCov">          3 :     GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;VisOdom: yaw shifted %d to %d deg&quot;,</span></a>
+<a name="187"><span class="lineNum">     187 </span>            :                     (int)degrees(_yaw_trim - yaw_trim_orig),</a>
+<a name="188"><span class="lineNum">     188 </span>            :                     (int)wrap_360(degrees(sens_yaw + _yaw_trim)));</a>
+<a name="189"><span class="lineNum">     189 </span>            : </a>
+<a name="190"><span class="lineNum">     190 </span>            :     // convert _yaw_trim to _yaw_rotation to speed up processing later</a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineCov">          3 :     _yaw_rotation.from_euler(0.0f, 0.0f, _yaw_trim);</span></a>
+<a name="192"><span class="lineNum">     192 </span>            : </a>
+<a name="193"><span class="lineNum">     193 </span>            :     // calculate position with current rotation and correction</a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineCov">          3 :     Vector3f pos_orig = position;</span></a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineCov">          3 :     rotate_and_correct_position(pos_orig);</span></a>
+<a name="196"><span class="lineNum">     196 </span>            : </a>
+<a name="197"><span class="lineNum">     197 </span>            :     // create position and velocity rotation from yaw trim</a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineCov">          3 :     _use_posvel_rotation = false;</span></a>
+<a name="199"><span class="lineNum">     199 </span><span class="lineCov">          3 :     if (!is_zero(_yaw_trim)) {</span></a>
+<a name="200"><span class="lineNum">     200 </span><span class="lineCov">          3 :         _posvel_rotation.from_euler(0.0f, 0.0f, _yaw_trim);</span></a>
+<a name="201"><span class="lineNum">     201 </span><span class="lineCov">          3 :         _use_posvel_rotation = true;</span></a>
+<a name="202"><span class="lineNum">     202 </span>            :     }</a>
+<a name="203"><span class="lineNum">     203 </span>            : </a>
+<a name="204"><span class="lineNum">     204 </span>            :     // recalculate position with new rotation</a>
+<a name="205"><span class="lineNum">     205 </span><span class="lineCov">          3 :     Vector3f pos_new = position;</span></a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineCov">          3 :     rotate_and_correct_position(pos_new);</span></a>
+<a name="207"><span class="lineNum">     207 </span>            : </a>
+<a name="208"><span class="lineNum">     208 </span>            :     // update position correction to remove change due to rotation</a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineCov">          3 :     _pos_correction += (pos_orig - pos_new);</span></a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineCov">          3 : }</span></a>
+<a name="211"><span class="lineNum">     211 </span>            : </a>
+<a name="212"><span class="lineNum">     212 </span>            : // returns false if we fail arming checks, in which case the buffer will be populated with a failure message</a>
+<a name="213"><span class="lineNum">     213 </span><span class="lineCov">        117 : bool AP_VisualOdom_IntelT265::pre_arm_check(char *failure_msg, uint8_t failure_msg_len) const</span></a>
+<a name="214"><span class="lineNum">     214 </span>            : {</a>
+<a name="215"><span class="lineNum">     215 </span>            :     // exit immediately if not healthy</a>
+<a name="216"><span class="lineNum">     216 </span><span class="lineCov">        117 :     if (!healthy()) {</span></a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 :         hal.util-&gt;snprintf(failure_msg, failure_msg_len, &quot;not healthy&quot;);</span></a>
+<a name="218"><span class="lineNum">     218 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="219"><span class="lineNum">     219 </span>            :     }</a>
+<a name="220"><span class="lineNum">     220 </span>            : </a>
+<a name="221"><span class="lineNum">     221 </span>            :     // check for unsupported orientation</a>
+<a name="222"><span class="lineNum">     222 </span><span class="lineCov">        117 :     if (_error_orientation) {</span></a>
+<a name="223"><span class="lineNum">     223 </span><span class="lineNoCov">          0 :         hal.util-&gt;snprintf(failure_msg, failure_msg_len, &quot;check VISO_ORIENT parameter&quot;);</span></a>
+<a name="224"><span class="lineNum">     224 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="225"><span class="lineNum">     225 </span>            :     }</a>
+<a name="226"><span class="lineNum">     226 </span>            : </a>
+<a name="227"><span class="lineNum">     227 </span>            :     // get ahrs attitude</a>
+<a name="228"><span class="lineNum">     228 </span><span class="lineCov">        117 :     Quaternion ahrs_quat;</span></a>
+<a name="229"><span class="lineNum">     229 </span><span class="lineCov">        117 :     if (!AP::ahrs().get_quaternion(ahrs_quat)) {</span></a>
+<a name="230"><span class="lineNum">     230 </span><span class="lineNoCov">          0 :         hal.util-&gt;snprintf(failure_msg, failure_msg_len, &quot;waiting for AHRS attitude&quot;);</span></a>
+<a name="231"><span class="lineNum">     231 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="232"><span class="lineNum">     232 </span>            :     }</a>
+<a name="233"><span class="lineNum">     233 </span>            : </a>
+<a name="234"><span class="lineNum">     234 </span>            :     // check if roll and pitch is different by &gt; 10deg (using NED so cannot determine whether roll or pitch specifically)</a>
+<a name="235"><span class="lineNum">     235 </span><span class="lineCov">        117 :     const float rp_diff_deg = degrees(ahrs_quat.roll_pitch_difference(_attitude_last));</span></a>
+<a name="236"><span class="lineNum">     236 </span><span class="lineCov">        117 :     if (rp_diff_deg &gt; 10.0f) {</span></a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 :         hal.util-&gt;snprintf(failure_msg, failure_msg_len, &quot;roll/pitch diff %4.1f deg (&gt;10)&quot;,(double)rp_diff_deg);</span></a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="239"><span class="lineNum">     239 </span>            :     }</a>
+<a name="240"><span class="lineNum">     240 </span>            : </a>
+<a name="241"><span class="lineNum">     241 </span>            :     // check if yaw is different by &gt; 10deg</a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineCov">        117 :     Vector3f angle_diff;</span></a>
+<a name="243"><span class="lineNum">     243 </span><span class="lineCov">        117 :     ahrs_quat.angular_difference(_attitude_last).to_axis_angle(angle_diff);</span></a>
+<a name="244"><span class="lineNum">     244 </span><span class="lineCov">        117 :     const float yaw_diff_deg = degrees(fabsf(angle_diff.z));</span></a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineCov">        117 :     if (yaw_diff_deg &gt; 10.0f) {</span></a>
+<a name="246"><span class="lineNum">     246 </span><span class="lineCov">         25 :         hal.util-&gt;snprintf(failure_msg, failure_msg_len, &quot;yaw diff %4.1f deg (&gt;10)&quot;,(double)yaw_diff_deg);</span></a>
+<a name="247"><span class="lineNum">     247 </span><span class="lineCov">         25 :         return false;</span></a>
+<a name="248"><span class="lineNum">     248 </span>            :     }</a>
+<a name="249"><span class="lineNum">     249 </span>            : </a>
+<a name="250"><span class="lineNum">     250 </span><span class="lineCov">         92 :     return true;</span></a>
+<a name="251"><span class="lineNum">     251 </span>            : }</a>
+<a name="252"><span class="lineNum">     252 </span>            : </a>
+<a name="253"><span class="lineNum">     253 </span>            : // returns true if sensor data should be consumed, false if it should be ignored</a>
+<a name="254"><span class="lineNum">     254 </span>            : // set vision_position_estimate to true if reset_counter is from the VISION_POSITION_ESTIMATE source, false otherwise</a>
+<a name="255"><span class="lineNum">     255 </span>            : // only the VISION_POSITION_ESTIMATE message's reset_counter is used to determine if sensor data should be ignored</a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineCov">       9668 : bool AP_VisualOdom_IntelT265::should_consume_sensor_data(bool vision_position_estimate, uint8_t reset_counter)</span></a>
+<a name="257"><span class="lineNum">     257 </span>            : {</a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineCov">       9668 :     if (get_type() == AP_VisualOdom::VisualOdom_Type::VOXL) {</span></a>
+<a name="259"><span class="lineNum">     259 </span>            :         // we don't discard data after a reset for VOXL</a>
+<a name="260"><span class="lineNum">     260 </span><span class="lineNoCov">          0 :         return true;</span></a>
+<a name="261"><span class="lineNum">     261 </span>            :     }</a>
+<a name="262"><span class="lineNum">     262 </span>            : </a>
+<a name="263"><span class="lineNum">     263 </span><span class="lineCov">       9668 :     uint32_t now_ms = AP_HAL::millis();</span></a>
+<a name="264"><span class="lineNum">     264 </span>            : </a>
+<a name="265"><span class="lineNum">     265 </span>            :     // set ignore start time if reset counter has changed</a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineCov">       9668 :     if (vision_position_estimate) {</span></a>
+<a name="267"><span class="lineNum">     267 </span><span class="lineCov">       6769 :         if (reset_counter != _pos_reset_counter_last) {</span></a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineNoCov">          0 :             _pos_reset_counter_last = reset_counter;</span></a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineNoCov">          0 :             _pos_reset_ignore_start_ms = now_ms;</span></a>
+<a name="270"><span class="lineNum">     270 </span>            :         }</a>
+<a name="271"><span class="lineNum">     271 </span>            :     }</a>
+<a name="272"><span class="lineNum">     272 </span>            : </a>
+<a name="273"><span class="lineNum">     273 </span>            :     // check if 1 second has passed since the last reset</a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineCov">       9668 :     if ((now_ms - _pos_reset_ignore_start_ms) &gt; VISUALODOM_RESET_IGNORE_DURATION_MS) {</span></a>
+<a name="275"><span class="lineNum">     275 </span><span class="lineCov">       9668 :         _pos_reset_ignore_start_ms = 0;</span></a>
+<a name="276"><span class="lineNum">     276 </span>            :     }</a>
+<a name="277"><span class="lineNum">     277 </span>            : </a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineCov">       9668 :     return (_pos_reset_ignore_start_ms == 0);</span></a>
+<a name="279"><span class="lineNum">     279 </span>            : }</a>
+<a name="280"><span class="lineNum">     280 </span>            : </a>
+<a name="281"><span class="lineNum">     281 </span>            : // record voxl camera's position and reset counter for reset jump handling</a>
+<a name="282"><span class="lineNum">     282 </span>            : // position is post scaling, offset and orientation corrections</a>
+<a name="283"><span class="lineNum">     283 </span><span class="lineCov">       6769 : void AP_VisualOdom_IntelT265::record_voxl_position_and_reset_count(const Vector3f &amp;position, uint8_t reset_counter)</span></a>
+<a name="284"><span class="lineNum">     284 </span>            : {</a>
+<a name="285"><span class="lineNum">     285 </span>            :     // return immediately if not using VOXL camera</a>
+<a name="286"><span class="lineNum">     286 </span><span class="lineCov">       6769 :     if (get_type() != AP_VisualOdom::VisualOdom_Type::VOXL) {</span></a>
+<a name="287"><span class="lineNum">     287 </span><span class="lineCov">       6769 :         return;</span></a>
+<a name="288"><span class="lineNum">     288 </span>            :     }</a>
+<a name="289"><span class="lineNum">     289 </span>            : </a>
+<a name="290"><span class="lineNum">     290 </span><span class="lineNoCov">          0 :     _voxl_position_last = position;</span></a>
+<a name="291"><span class="lineNum">     291 </span><span class="lineNoCov">          0 :     _voxl_reset_counter_last = reset_counter;</span></a>
+<a name="292"><span class="lineNum">     292 </span>            : }</a>
+<a name="293"><span class="lineNum">     293 </span>            : </a>
+<a name="294"><span class="lineNum">     294 </span>            : // handle voxl camera reset jumps in attitude and position</a>
+<a name="295"><span class="lineNum">     295 </span>            : // sensor_pos should be the position directly from the sensor with only scaling applied (i.e. no yaw or position corrections)</a>
+<a name="296"><span class="lineNum">     296 </span>            : // sensor_att is similarly the attitude directly from the sensor</a>
+<a name="297"><span class="lineNum">     297 </span><span class="lineCov">       6769 : void AP_VisualOdom_IntelT265::handle_voxl_camera_reset_jump(const Vector3f &amp;sensor_pos, const Quaternion &amp;sensor_att, uint8_t reset_counter)</span></a>
+<a name="298"><span class="lineNum">     298 </span>            : {</a>
+<a name="299"><span class="lineNum">     299 </span>            :     // return immediately if not using VOXL camera</a>
+<a name="300"><span class="lineNum">     300 </span><span class="lineCov">       6769 :     if (get_type() != AP_VisualOdom::VisualOdom_Type::VOXL) {</span></a>
+<a name="301"><span class="lineNum">     301 </span><span class="lineCov">       6769 :         return;</span></a>
+<a name="302"><span class="lineNum">     302 </span>            :     }</a>
+<a name="303"><span class="lineNum">     303 </span>            : </a>
+<a name="304"><span class="lineNum">     304 </span>            :     // return immediately if no change in reset counter</a>
+<a name="305"><span class="lineNum">     305 </span><span class="lineNoCov">          0 :     if (reset_counter == _voxl_reset_counter_last) {</span></a>
+<a name="306"><span class="lineNum">     306 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="307"><span class="lineNum">     307 </span>            :     }</a>
+<a name="308"><span class="lineNum">     308 </span>            : </a>
+<a name="309"><span class="lineNum">     309 </span>            :     // warng user of reset</a>
+<a name="310"><span class="lineNum">     310 </span><span class="lineNoCov">          0 :     GCS_SEND_TEXT(MAV_SEVERITY_WARNING, &quot;VisOdom: reset&quot;);</span></a>
+<a name="311"><span class="lineNum">     311 </span>            : </a>
+<a name="312"><span class="lineNum">     312 </span>            :     // align sensor yaw to match current yaw estimate</a>
+<a name="313"><span class="lineNum">     313 </span><span class="lineNoCov">          0 :     align_yaw_to_ahrs(sensor_pos, sensor_att);</span></a>
+<a name="314"><span class="lineNum">     314 </span>            : </a>
+<a name="315"><span class="lineNum">     315 </span>            :     // align psoition to match last recorded position</a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineNoCov">          0 :     align_position(sensor_pos, _voxl_position_last, true, true);</span></a>
+<a name="317"><span class="lineNum">     317 </span>            : </a>
+<a name="318"><span class="lineNum">     318 </span>            :     // record change in reset counter</a>
+<a name="319"><span class="lineNum">     319 </span><span class="lineNoCov">          0 :     _voxl_reset_counter_last = reset_counter;</span></a>
+<a name="320"><span class="lineNum">     320 </span>            : }</a>
+<a name="321"><span class="lineNum">     321 </span>            : </a>
+<a name="322"><span class="lineNum">     322 </span>            : #endif  // AP_VISUALODOM_INTELT265_ENABLED</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

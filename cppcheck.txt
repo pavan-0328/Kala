@@ -1,0 +1,1619 @@
+[1mmodules/DroneCAN/libcanard/canard.c:182:67: [31m[35mstyle: inconclusive:[39m Function 'canardBroadcastObj' argument 2 names different: declaration 'transfer' definition 'transfer_object'. [funcArgNamesDifferent][0m
+int16_t canardBroadcastObj(CanardInstance* ins, CanardTxTransfer* transfer_object)
+                                                                  ^
+[1mmodules/DroneCAN/libcanard/canard.h:521:46: [2mnote:[0m Function 'canardBroadcastObj' argument 2 names different: declaration 'transfer' definition 'transfer_object'.
+                           CanardTxTransfer* transfer      ///< Transfer object
+                                             ^
+[1mmodules/DroneCAN/libcanard/canard.c:182:67: [2mnote:[0m Function 'canardBroadcastObj' argument 2 names different: declaration 'transfer' definition 'transfer_object'.
+int16_t canardBroadcastObj(CanardInstance* ins, CanardTxTransfer* transfer_object)
+                                                                  ^
+[1mmodules/DroneCAN/libcanard/canard.c:355:103: [31m[35mstyle: inconclusive:[39m Function 'canardRequestOrRespondObj' argument 3 names different: declaration 'transfer' definition 'transfer_object'. [funcArgNamesDifferent][0m
+int16_t canardRequestOrRespondObj(CanardInstance* ins, uint8_t destination_node_id, CanardTxTransfer* transfer_object)
+                                                                                                      ^
+[1mmodules/DroneCAN/libcanard/canard.h:562:53: [2mnote:[0m Function 'canardRequestOrRespondObj' argument 3 names different: declaration 'transfer' definition 'transfer_object'.
+                                  CanardTxTransfer* transfer       ///< Transfer object
+                                                    ^
+[1mmodules/DroneCAN/libcanard/canard.c:355:103: [2mnote:[0m Function 'canardRequestOrRespondObj' argument 3 names different: declaration 'transfer' definition 'transfer_object'.
+int16_t canardRequestOrRespondObj(CanardInstance* ins, uint8_t destination_node_id, CanardTxTransfer* transfer_object)
+                                                                                                      ^
+[1mmodules/DroneCAN/libcanard/canard.c:1352:48: [31mwarning:[39m Function 'isPriorityHigher' argument order different: declaration 'id, rhs' definition 'rhs, id' [funcArgOrderDifferent][0m
+CANARD_INTERNAL bool isPriorityHigher(uint32_t rhs, uint32_t id)
+                                               ^
+[1mmodules/DroneCAN/libcanard/canard_internals.h:110:48: [2mnote:[0m Function 'isPriorityHigher' argument order different: declaration 'id, rhs' definition 'rhs, id'
+CANARD_INTERNAL bool isPriorityHigher(uint32_t id,
+                                               ^
+[1mmodules/DroneCAN/libcanard/canard.c:1352:48: [2mnote:[0m Function 'isPriorityHigher' argument order different: declaration 'id, rhs' definition 'rhs, id'
+CANARD_INTERNAL bool isPriorityHigher(uint32_t rhs, uint32_t id)
+                                               ^
+[1mmodules/DroneCAN/libcanard/canard.c:1811:0: [31minformation:[39m Skipping configuration 'ARDUPILOT_BUILD=1;CANARD_64_BIT=1;AP_BARO_PROBE_EXTERNAL_I2C_BUSES=1;AP_CUSTOMCONTROL_ENABLED=1;AP_DDS_ENABLED=0;AP_SCRIPTING_CHECKS=1;CANARD_ALLOCATE_SEM=1;CANARD_ENABLE_ASSERTS=1;CANARD_ENABLE_CANFD=1;CANARD_ENABLE_DEADLINE=1;CANARD_IFACE_ALL=3;CANARD_MULTI_IFACE=1;CONFIG_HAL_BOARD=HAL_BOARD_SITL;CONFIG_HAL_BOARD_SUBTYPE=HAL_BOARD_SUBTYPE_NONE;DRONECAN_CXX_WRAPPERS=1;ENABLE_ONVIF=0;LUA_32BITS=1;USE_USER_HELPERS=1;BIG_ENDIAN;BYTE_ORDER' since the value of 'BIG_ENDIAN' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked][0m
+    return BYTE_ORDER == BIG_ENDIAN;                // Some compilers offer this neat shortcut
+^
+[1mmodules/DroneCAN/libcanard/canard.c:1811:0: [31minformation:[39m Skipping configuration 'ARDUPILOT_BUILD=1;CANARD_64_BIT=1;AP_BARO_PROBE_EXTERNAL_I2C_BUSES=1;AP_CUSTOMCONTROL_ENABLED=1;AP_DDS_ENABLED=0;AP_SCRIPTING_CHECKS=1;CANARD_ALLOCATE_SEM=1;CANARD_ENABLE_ASSERTS=1;CANARD_ENABLE_CANFD=1;CANARD_ENABLE_DEADLINE=1;CANARD_IFACE_ALL=3;CANARD_MULTI_IFACE=1;CONFIG_HAL_BOARD=HAL_BOARD_SITL;CONFIG_HAL_BOARD_SUBTYPE=HAL_BOARD_SUBTYPE_NONE;DRONECAN_CXX_WRAPPERS=1;ENABLE_ONVIF=0;LUA_32BITS=1;USE_USER_HELPERS=1;BIG_ENDIAN;BYTE_ORDER' since the value of 'BYTE_ORDER' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked][0m
+    return BYTE_ORDER == BIG_ENDIAN;                // Some compilers offer this neat shortcut
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_req.c:16:5: [31mwarning:[39m memset() called to fill 0 bytes. [memsetZeroBytes][0m
+    memset(buffer, 0, UAVCAN_PROTOCOL_GETNODEINFO_REQUEST_MAX_SIZE);
+    ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_req.c:62:12: [31merror:[39m Uninitialized variable: msg [uninitvar][0m
+    return msg;
+           ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_res.c:15:5: [31mwarning:[39m memset() called to fill 0 bytes. [memsetZeroBytes][0m
+    memset(buffer, 0, COM_HOBBYWING_ESC_SETBAUD_RESPONSE_MAX_SIZE);
+    ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_res.c:61:12: [31merror:[39m Uninitialized variable: msg [uninitvar][0m
+    return msg;
+           ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_req.c:16:5: [31mwarning:[39m memset() called to fill 0 bytes. [memsetZeroBytes][0m
+    memset(buffer, 0, COM_HOBBYWING_ESC_SELFTEST_REQUEST_MAX_SIZE);
+    ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_req.c:62:12: [31merror:[39m Uninitialized variable: msg [uninitvar][0m
+    return msg;
+           ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_req.c:16:5: [31mwarning:[39m memset() called to fill 0 bytes. [memsetZeroBytes][0m
+    memset(buffer, 0, UAVCAN_PROTOCOL_GETTRANSPORTSTATS_REQUEST_MAX_SIZE);
+    ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_req.c:62:12: [31merror:[39m Uninitialized variable: msg [uninitvar][0m
+    return msg;
+           ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Empty.c:15:5: [31mwarning:[39m memset() called to fill 0 bytes. [memsetZeroBytes][0m
+    memset(buffer, 0, UAVCAN_PROTOCOL_PARAM_EMPTY_MAX_SIZE);
+    ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Empty.c:61:12: [31merror:[39m Uninitialized variable: msg [uninitvar][0m
+    return msg;
+           ^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryCells.c:29:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryCells_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryCells.c:9:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryCells_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryContinuous.c:29:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryContinuous_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryContinuous.c:9:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryContinuous_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryInfoAux.c:29:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryInfoAux_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryInfoAux.c:9:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryInfoAux_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryPeriodic.c:29:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryPeriodic_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryPeriodic.c:9:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryPeriodic_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryTag.c:29:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryTag_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryTag.c:9:0: [31mstyle:[39m The function 'ardupilot_equipment_power_BatteryTag_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.proximity_sensor.Proximity.c:29:0: [31mstyle:[39m The function 'ardupilot_equipment_proximity_sensor_Proximity_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.proximity_sensor.Proximity.c:9:0: [31mstyle:[39m The function 'ardupilot_equipment_proximity_sensor_Proximity_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.trafficmonitor.TrafficReport.c:29:0: [31mstyle:[39m The function 'ardupilot_equipment_trafficmonitor_TrafficReport_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.trafficmonitor.TrafficReport.c:9:0: [31mstyle:[39m The function 'ardupilot_equipment_trafficmonitor_TrafficReport_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.Heading.c:29:0: [31mstyle:[39m The function 'ardupilot_gnss_Heading_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.Heading.c:9:0: [31mstyle:[39m The function 'ardupilot_gnss_Heading_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.MovingBaselineData.c:29:0: [31mstyle:[39m The function 'ardupilot_gnss_MovingBaselineData_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.MovingBaselineData.c:9:0: [31mstyle:[39m The function 'ardupilot_gnss_MovingBaselineData_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.RelPosHeading.c:29:0: [31mstyle:[39m The function 'ardupilot_gnss_RelPosHeading_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.RelPosHeading.c:9:0: [31mstyle:[39m The function 'ardupilot_gnss_RelPosHeading_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.Status.c:29:0: [31mstyle:[39m The function 'ardupilot_gnss_Status_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.Status.c:9:0: [31mstyle:[39m The function 'ardupilot_gnss_Status_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.indication.Button.c:29:0: [31mstyle:[39m The function 'ardupilot_indication_Button_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.indication.Button.c:9:0: [31mstyle:[39m The function 'ardupilot_indication_Button_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.indication.NotifyState.c:29:0: [31mstyle:[39m The function 'ardupilot_indication_NotifyState_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.indication.NotifyState.c:9:0: [31mstyle:[39m The function 'ardupilot_indication_NotifyState_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.indication.SafetyState.c:29:0: [31mstyle:[39m The function 'ardupilot_indication_SafetyState_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.indication.SafetyState.c:9:0: [31mstyle:[39m The function 'ardupilot_indication_SafetyState_encode' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:142:0: [31mstyle:[39m The function 'canardBroadcast' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:671:0: [31mstyle:[39m The function 'canardCleanupStaleTransfers' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:131:0: [31mstyle:[39m The function 'canardForgetLocalNodeID' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:1020:0: [31mstyle:[39m The function 'canardGetPoolAllocatorStatistics' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:104:0: [31mstyle:[39m The function 'canardGetUserReference' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:403:0: [31mstyle:[39m The function 'canardHandleRxFrame' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:67:0: [31mstyle:[39m The function 'canardInit' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:135:0: [31mstyle:[39m The function 'canardInitTxTransfer' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:387:0: [31mstyle:[39m The function 'canardPeekTxQueue' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:396:0: [31mstyle:[39m The function 'canardPopTxQueue' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:314:0: [31mstyle:[39m The function 'canardRequestOrRespond' is never used. [unusedFunction][0m
+
+^
+[1mmodules/DroneCAN/libcanard/canard.c:110:0: [31mstyle:[39m The function 'canardSetLocalNodeID' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hex.equipment.flow.Measurement.c:29:0: [31mstyle:[39m The function 'com_hex_equipment_flow_Measurement_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hex.equipment.flow.Measurement.c:9:0: [31mstyle:[39m The function 'com_hex_equipment_flow_Measurement_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.himark.servo.ServoCmd.c:29:0: [31mstyle:[39m The function 'com_himark_servo_ServoCmd_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.himark.servo.ServoCmd.c:9:0: [31mstyle:[39m The function 'com_himark_servo_ServoCmd_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.himark.servo.ServoInfo.c:29:0: [31mstyle:[39m The function 'com_himark_servo_ServoInfo_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.himark.servo.ServoInfo.c:9:0: [31mstyle:[39m The function 'com_himark_servo_ServoInfo_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetEscID.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetEscID_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetEscID.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetEscID_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMaintenanceInformation_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetMaintenanceInformationRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMaintenanceInformation_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetMaintenanceInformationRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMaintenanceInformation_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetMaintenanceInformationResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMaintenanceInformation_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetMaintenanceInformationResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMajorConfig_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetMajorConfigRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMajorConfig_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetMajorConfigRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMajorConfig_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetMajorConfigResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMajorConfig_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_GetMajorConfigResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.RawCommand.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_RawCommand_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.RawCommand.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_RawCommand_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_SelfTestRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_SelfTestRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_SelfTestResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_SelfTestResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetAngle_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetAngleRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetAngle_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetAngleRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetAngle_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetAngleResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetAngle_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetAngleResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetBaudRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetBaudRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetBaudResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetBaudResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetDirection_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetDirectionRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetDirection_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetDirectionRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetDirection_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetDirectionResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetDirection_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetDirectionResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetID_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetIDRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetID_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetIDRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetID_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetIDResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetID_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetIDResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetLED_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetLEDRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetLED_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetLEDRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetLED_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetLEDResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetLED_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetLEDResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetReportingFrequency_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetReportingFrequencyRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetReportingFrequency_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetReportingFrequencyRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetReportingFrequency_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetReportingFrequencyResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetReportingFrequency_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetReportingFrequencyResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetThrottleSource_req.c:30:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetThrottleSourceRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetThrottleSource_req.c:10:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetThrottleSourceRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetThrottleSource_res.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetThrottleSourceResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetThrottleSource_res.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_SetThrottleSourceResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.StatusMsg1.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_StatusMsg1_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.StatusMsg1.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_StatusMsg1_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.StatusMsg2.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_StatusMsg2_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.StatusMsg2.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_StatusMsg2_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.StatusMsg3.c:29:0: [31mstyle:[39m The function 'com_hobbywing_esc_StatusMsg3_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.StatusMsg3.c:9:0: [31mstyle:[39m The function 'com_hobbywing_esc_StatusMsg3_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.FocCtrl.c:29:0: [31mstyle:[39m The function 'com_tmotor_esc_FocCtrl_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.FocCtrl.c:9:0: [31mstyle:[39m The function 'com_tmotor_esc_FocCtrl_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.PUSHCAN.c:29:0: [31mstyle:[39m The function 'com_tmotor_esc_PUSHCAN_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.PUSHCAN.c:9:0: [31mstyle:[39m The function 'com_tmotor_esc_PUSHCAN_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.PUSHSCI.c:29:0: [31mstyle:[39m The function 'com_tmotor_esc_PUSHSCI_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.PUSHSCI.c:9:0: [31mstyle:[39m The function 'com_tmotor_esc_PUSHSCI_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.ParamCfg.c:29:0: [31mstyle:[39m The function 'com_tmotor_esc_ParamCfg_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.ParamCfg.c:9:0: [31mstyle:[39m The function 'com_tmotor_esc_ParamCfg_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.ParamGet.c:29:0: [31mstyle:[39m The function 'com_tmotor_esc_ParamGet_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.ParamGet.c:9:0: [31mstyle:[39m The function 'com_tmotor_esc_ParamGet_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.volz.servo.ActuatorStatus.c:29:0: [31mstyle:[39m The function 'com_volz_servo_ActuatorStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.volz.servo.ActuatorStatus.c:9:0: [31mstyle:[39m The function 'com_volz_servo_ActuatorStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.CopterAttStatus.c:29:0: [31mstyle:[39m The function 'com_xacti_CopterAttStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.CopterAttStatus.c:9:0: [31mstyle:[39m The function 'com_xacti_CopterAttStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GimbalAttitudeStatus.c:29:0: [31mstyle:[39m The function 'com_xacti_GimbalAttitudeStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GimbalAttitudeStatus.c:9:0: [31mstyle:[39m The function 'com_xacti_GimbalAttitudeStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GimbalControlData.c:29:0: [31mstyle:[39m The function 'com_xacti_GimbalControlData_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GimbalControlData.c:9:0: [31mstyle:[39m The function 'com_xacti_GimbalControlData_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GnssStatusReq.c:29:0: [31mstyle:[39m The function 'com_xacti_GnssStatusReq_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GnssStatusReq.c:9:0: [31mstyle:[39m The function 'com_xacti_GnssStatusReq_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GnssStatus.c:29:0: [31mstyle:[39m The function 'com_xacti_GnssStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GnssStatus.c:9:0: [31mstyle:[39m The function 'com_xacti_GnssStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/cuav.equipment.power.CBAT.c:29:0: [31mstyle:[39m The function 'cuav_equipment_power_CBAT_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/cuav.equipment.power.CBAT.c:9:0: [31mstyle:[39m The function 'cuav_equipment_power_CBAT_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.CanStats.c:29:0: [31mstyle:[39m The function 'dronecan_protocol_CanStats_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.CanStats.c:9:0: [31mstyle:[39m The function 'dronecan_protocol_CanStats_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.FlexDebug.c:29:0: [31mstyle:[39m The function 'dronecan_protocol_FlexDebug_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.FlexDebug.c:9:0: [31mstyle:[39m The function 'dronecan_protocol_FlexDebug_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.GlobalTime.c:29:0: [31mstyle:[39m The function 'dronecan_protocol_GlobalTime_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.GlobalTime.c:9:0: [31mstyle:[39m The function 'dronecan_protocol_GlobalTime_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.Stats.c:29:0: [31mstyle:[39m The function 'dronecan_protocol_Stats_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.Stats.c:9:0: [31mstyle:[39m The function 'dronecan_protocol_Stats_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.ArmStatus.c:29:0: [31mstyle:[39m The function 'dronecan_remoteid_ArmStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.ArmStatus.c:9:0: [31mstyle:[39m The function 'dronecan_remoteid_ArmStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.BasicID.c:29:0: [31mstyle:[39m The function 'dronecan_remoteid_BasicID_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.BasicID.c:9:0: [31mstyle:[39m The function 'dronecan_remoteid_BasicID_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.Location.c:29:0: [31mstyle:[39m The function 'dronecan_remoteid_Location_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.Location.c:9:0: [31mstyle:[39m The function 'dronecan_remoteid_Location_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.OperatorID.c:29:0: [31mstyle:[39m The function 'dronecan_remoteid_OperatorID_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.OperatorID.c:9:0: [31mstyle:[39m The function 'dronecan_remoteid_OperatorID_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.SecureCommand_req.c:30:0: [31mstyle:[39m The function 'dronecan_remoteid_SecureCommandRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.SecureCommand_req.c:10:0: [31mstyle:[39m The function 'dronecan_remoteid_SecureCommandRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.SecureCommand_res.c:29:0: [31mstyle:[39m The function 'dronecan_remoteid_SecureCommandResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.SecureCommand_res.c:9:0: [31mstyle:[39m The function 'dronecan_remoteid_SecureCommandResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.SelfID.c:29:0: [31mstyle:[39m The function 'dronecan_remoteid_SelfID_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.SelfID.c:9:0: [31mstyle:[39m The function 'dronecan_remoteid_SelfID_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.System.c:29:0: [31mstyle:[39m The function 'dronecan_remoteid_System_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.System.c:9:0: [31mstyle:[39m The function 'dronecan_remoteid_System_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.hygrometer.Hygrometer.c:29:0: [31mstyle:[39m The function 'dronecan_sensors_hygrometer_Hygrometer_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.hygrometer.Hygrometer.c:9:0: [31mstyle:[39m The function 'dronecan_sensors_hygrometer_Hygrometer_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.magnetometer.MagneticFieldStrengthHiRes.c:29:0: [31mstyle:[39m The function 'dronecan_sensors_magnetometer_MagneticFieldStrengthHiRes_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.magnetometer.MagneticFieldStrengthHiRes.c:9:0: [31mstyle:[39m The function 'dronecan_sensors_magnetometer_MagneticFieldStrengthHiRes_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.rc.RCInput.c:29:0: [31mstyle:[39m The function 'dronecan_sensors_rc_RCInput_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.rc.RCInput.c:9:0: [31mstyle:[39m The function 'dronecan_sensors_rc_RCInput_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.rpm.RPM.c:29:0: [31mstyle:[39m The function 'dronecan_sensors_rpm_RPM_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.rpm.RPM.c:9:0: [31mstyle:[39m The function 'dronecan_sensors_rpm_RPM_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/mppt.OutputEnable_req.c:30:0: [31mstyle:[39m The function 'mppt_OutputEnableRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/mppt.OutputEnable_req.c:10:0: [31mstyle:[39m The function 'mppt_OutputEnableRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/mppt.OutputEnable_res.c:29:0: [31mstyle:[39m The function 'mppt_OutputEnableResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/mppt.OutputEnable_res.c:9:0: [31mstyle:[39m The function 'mppt_OutputEnableResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/mppt.Stream.c:29:0: [31mstyle:[39m The function 'mppt_Stream_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/mppt.Stream.c:9:0: [31mstyle:[39m The function 'mppt_Stream_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryCells.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_equipment_power_BatteryCells_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryContinuous.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_equipment_power_BatteryContinuous_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryInfoAux.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_equipment_power_BatteryInfoAux_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryPeriodic.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_equipment_power_BatteryPeriodic_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.power.BatteryTag.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_equipment_power_BatteryTag_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.proximity_sensor.Proximity.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_equipment_proximity_sensor_Proximity_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.equipment.trafficmonitor.TrafficReport.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_equipment_trafficmonitor_TrafficReport_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.Heading.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_gnss_Heading_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.MovingBaselineData.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_gnss_MovingBaselineData_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.RelPosHeading.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_gnss_RelPosHeading_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.gnss.Status.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_gnss_Status_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.indication.Button.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_indication_Button_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.indication.NotifyState.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_indication_NotifyState_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/ardupilot.indication.SafetyState.c:58:0: [31mstyle:[39m The function 'sample_ardupilot_indication_SafetyState_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hex.equipment.flow.Measurement.c:58:0: [31mstyle:[39m The function 'sample_com_hex_equipment_flow_Measurement_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.himark.servo.ServoCmd.c:58:0: [31mstyle:[39m The function 'sample_com_himark_servo_ServoCmd_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.himark.servo.ServoInfo.c:58:0: [31mstyle:[39m The function 'sample_com_himark_servo_ServoInfo_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetEscID.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_GetEscID_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMaintenanceInformation_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_GetMaintenanceInformationRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMaintenanceInformation_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_GetMaintenanceInformationResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMajorConfig_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_GetMajorConfigRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.GetMajorConfig_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_GetMajorConfigResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.RawCommand.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_RawCommand_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SelfTestRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SelfTestResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetAngle_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetAngleRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetAngle_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetAngleResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetBaudRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetBaudResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetDirection_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetDirectionRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetDirection_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetDirectionResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetID_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetIDRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetID_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetIDResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetLED_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetLEDRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetLED_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetLEDResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetReportingFrequency_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetReportingFrequencyRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetReportingFrequency_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetReportingFrequencyResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetThrottleSource_req.c:59:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetThrottleSourceRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetThrottleSource_res.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_SetThrottleSourceResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.StatusMsg1.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_StatusMsg1_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.StatusMsg2.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_StatusMsg2_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.StatusMsg3.c:58:0: [31mstyle:[39m The function 'sample_com_hobbywing_esc_StatusMsg3_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.FocCtrl.c:58:0: [31mstyle:[39m The function 'sample_com_tmotor_esc_FocCtrl_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.PUSHCAN.c:58:0: [31mstyle:[39m The function 'sample_com_tmotor_esc_PUSHCAN_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.PUSHSCI.c:58:0: [31mstyle:[39m The function 'sample_com_tmotor_esc_PUSHSCI_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.ParamCfg.c:58:0: [31mstyle:[39m The function 'sample_com_tmotor_esc_ParamCfg_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.tmotor.esc.ParamGet.c:58:0: [31mstyle:[39m The function 'sample_com_tmotor_esc_ParamGet_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.volz.servo.ActuatorStatus.c:58:0: [31mstyle:[39m The function 'sample_com_volz_servo_ActuatorStatus_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.CopterAttStatus.c:58:0: [31mstyle:[39m The function 'sample_com_xacti_CopterAttStatus_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GimbalAttitudeStatus.c:58:0: [31mstyle:[39m The function 'sample_com_xacti_GimbalAttitudeStatus_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GimbalControlData.c:58:0: [31mstyle:[39m The function 'sample_com_xacti_GimbalControlData_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GnssStatusReq.c:58:0: [31mstyle:[39m The function 'sample_com_xacti_GnssStatusReq_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.xacti.GnssStatus.c:58:0: [31mstyle:[39m The function 'sample_com_xacti_GnssStatus_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/cuav.equipment.power.CBAT.c:58:0: [31mstyle:[39m The function 'sample_cuav_equipment_power_CBAT_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.CanStats.c:58:0: [31mstyle:[39m The function 'sample_dronecan_protocol_CanStats_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.FlexDebug.c:58:0: [31mstyle:[39m The function 'sample_dronecan_protocol_FlexDebug_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.GlobalTime.c:58:0: [31mstyle:[39m The function 'sample_dronecan_protocol_GlobalTime_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.protocol.Stats.c:58:0: [31mstyle:[39m The function 'sample_dronecan_protocol_Stats_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.ArmStatus.c:58:0: [31mstyle:[39m The function 'sample_dronecan_remoteid_ArmStatus_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.BasicID.c:58:0: [31mstyle:[39m The function 'sample_dronecan_remoteid_BasicID_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.Location.c:58:0: [31mstyle:[39m The function 'sample_dronecan_remoteid_Location_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.OperatorID.c:58:0: [31mstyle:[39m The function 'sample_dronecan_remoteid_OperatorID_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.SecureCommand_req.c:59:0: [31mstyle:[39m The function 'sample_dronecan_remoteid_SecureCommandRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.SecureCommand_res.c:58:0: [31mstyle:[39m The function 'sample_dronecan_remoteid_SecureCommandResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.SelfID.c:58:0: [31mstyle:[39m The function 'sample_dronecan_remoteid_SelfID_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.remoteid.System.c:58:0: [31mstyle:[39m The function 'sample_dronecan_remoteid_System_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.hygrometer.Hygrometer.c:58:0: [31mstyle:[39m The function 'sample_dronecan_sensors_hygrometer_Hygrometer_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.magnetometer.MagneticFieldStrengthHiRes.c:58:0: [31mstyle:[39m The function 'sample_dronecan_sensors_magnetometer_MagneticFieldStrengthHiRes_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.rc.RCInput.c:58:0: [31mstyle:[39m The function 'sample_dronecan_sensors_rc_RCInput_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/dronecan.sensors.rpm.RPM.c:58:0: [31mstyle:[39m The function 'sample_dronecan_sensors_rpm_RPM_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/mppt.OutputEnable_req.c:59:0: [31mstyle:[39m The function 'sample_mppt_OutputEnableRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/mppt.OutputEnable_res.c:58:0: [31mstyle:[39m The function 'sample_mppt_OutputEnableResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/mppt.Stream.c:58:0: [31mstyle:[39m The function 'sample_mppt_Stream_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.actuator.ArrayCommand.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_actuator_ArrayCommand_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.actuator.Status.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_actuator_Status_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.MagneticFieldStrength2.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_ahrs_MagneticFieldStrength2_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.MagneticFieldStrength.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_ahrs_MagneticFieldStrength_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.RawIMU.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_ahrs_RawIMU_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.Solution.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_ahrs_Solution_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.AngleOfAttack.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_air_data_AngleOfAttack_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.IndicatedAirspeed.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_air_data_IndicatedAirspeed_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.RawAirData.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_air_data_RawAirData_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.Sideslip.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_air_data_Sideslip_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.StaticPressure.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_air_data_StaticPressure_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.StaticTemperature.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_air_data_StaticTemperature_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.TrueAirspeed.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_air_data_TrueAirspeed_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.AngularCommand.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_camera_gimbal_AngularCommand_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.GEOPOICommand.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_camera_gimbal_GEOPOICommand_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.Status.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_camera_gimbal_Status_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.device.Temperature.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_device_Temperature_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.RPMCommand.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_esc_RPMCommand_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.RawCommand.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_esc_RawCommand_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.StatusExtended.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_esc_StatusExtended_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.Status.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_esc_Status_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.Auxiliary.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_gnss_Auxiliary_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.Fix2.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_gnss_Fix2_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.Fix.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_gnss_Fix_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.RTCMStream.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_gnss_RTCMStream_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.hardpoint.Command.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_hardpoint_Command_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.hardpoint.Status.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_hardpoint_Status_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ice.FuelTankStatus.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_ice_FuelTankStatus_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ice.reciprocating.Status.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_ice_reciprocating_Status_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.BeepCommand.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_indication_BeepCommand_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.LightsCommand.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_indication_LightsCommand_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.power.BatteryInfo.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_power_BatteryInfo_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.power.CircuitStatus.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_power_CircuitStatus_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.power.PrimaryPowerSupplyStatus.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_power_PrimaryPowerSupplyStatus_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.range_sensor.Measurement.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_range_sensor_Measurement_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.safety.ArmingStatus.c:58:0: [31mstyle:[39m The function 'sample_uavcan_equipment_safety_ArmingStatus_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.navigation.GlobalNavigationSolution.c:58:0: [31mstyle:[39m The function 'sample_uavcan_navigation_GlobalNavigationSolution_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.AccessCommandShell_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_AccessCommandShellRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.AccessCommandShell_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_AccessCommandShellResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetDataTypeInfo_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_GetDataTypeInfoRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetDataTypeInfo_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_GetDataTypeInfoResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_GetNodeInfoRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_GetNodeInfoResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_GetTransportStatsRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_GetTransportStatsResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GlobalTimeSync.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_GlobalTimeSync_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.Panic.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_Panic_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.RestartNode_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_RestartNodeRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.RestartNode_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_RestartNodeResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.debug.KeyValue.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_debug_KeyValue_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.debug.LogMessage.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_debug_LogMessage_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.Allocation.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_dynamic_node_id_Allocation_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.AppendEntries_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_dynamic_node_id_server_AppendEntriesRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.AppendEntries_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_dynamic_node_id_server_AppendEntriesResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.Discovery.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_dynamic_node_id_server_Discovery_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.RequestVote_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_dynamic_node_id_server_RequestVoteRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.RequestVote_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_dynamic_node_id_server_RequestVoteResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.enumeration.Begin_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_enumeration_BeginRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.enumeration.Begin_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_enumeration_BeginResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.enumeration.Indication.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_enumeration_Indication_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.BeginFirmwareUpdate_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_BeginFirmwareUpdateRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.BeginFirmwareUpdate_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_BeginFirmwareUpdateResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Delete_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_DeleteRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Delete_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_DeleteResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetDirectoryEntryInfo_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_GetDirectoryEntryInfoRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetDirectoryEntryInfo_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_GetDirectoryEntryInfoResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetInfo_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_GetInfoRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetInfo_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_GetInfoResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Read_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_ReadRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Read_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_ReadResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Write_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_WriteRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Write_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_file_WriteResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.ExecuteOpcode_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_param_ExecuteOpcodeRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.ExecuteOpcode_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_param_ExecuteOpcodeResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.GetSet_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_protocol_param_GetSetRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.GetSet_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_protocol_param_GetSetResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Broadcast.c:58:0: [31mstyle:[39m The function 'sample_uavcan_tunnel_Broadcast_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Call_req.c:59:0: [31mstyle:[39m The function 'sample_uavcan_tunnel_CallRequest_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Call_res.c:58:0: [31mstyle:[39m The function 'sample_uavcan_tunnel_CallResponse_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.SerialConfig.c:58:0: [31mstyle:[39m The function 'sample_uavcan_tunnel_SerialConfig_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Targetted.c:58:0: [31mstyle:[39m The function 'sample_uavcan_tunnel_Targetted_msg' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.CoarseOrientation.c:29:0: [31mstyle:[39m The function 'uavcan_CoarseOrientation_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.CoarseOrientation.c:9:0: [31mstyle:[39m The function 'uavcan_CoarseOrientation_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.Timestamp.c:29:0: [31mstyle:[39m The function 'uavcan_Timestamp_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.Timestamp.c:9:0: [31mstyle:[39m The function 'uavcan_Timestamp_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.actuator.ArrayCommand.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_actuator_ArrayCommand_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.actuator.ArrayCommand.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_actuator_ArrayCommand_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.actuator.Command.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_actuator_Command_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.actuator.Command.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_actuator_Command_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.actuator.Status.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_actuator_Status_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.actuator.Status.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_actuator_Status_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.MagneticFieldStrength2.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_ahrs_MagneticFieldStrength2_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.MagneticFieldStrength2.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_ahrs_MagneticFieldStrength2_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.MagneticFieldStrength.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_ahrs_MagneticFieldStrength_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.MagneticFieldStrength.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_ahrs_MagneticFieldStrength_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.RawIMU.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_ahrs_RawIMU_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.RawIMU.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_ahrs_RawIMU_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.Solution.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_ahrs_Solution_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ahrs.Solution.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_ahrs_Solution_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.AngleOfAttack.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_AngleOfAttack_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.AngleOfAttack.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_AngleOfAttack_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.IndicatedAirspeed.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_IndicatedAirspeed_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.IndicatedAirspeed.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_IndicatedAirspeed_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.RawAirData.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_RawAirData_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.RawAirData.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_RawAirData_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.Sideslip.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_Sideslip_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.Sideslip.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_Sideslip_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.StaticPressure.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_StaticPressure_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.StaticPressure.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_StaticPressure_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.StaticTemperature.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_StaticTemperature_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.StaticTemperature.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_StaticTemperature_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.TrueAirspeed.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_TrueAirspeed_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.air_data.TrueAirspeed.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_air_data_TrueAirspeed_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.AngularCommand.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_camera_gimbal_AngularCommand_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.AngularCommand.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_camera_gimbal_AngularCommand_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.GEOPOICommand.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_camera_gimbal_GEOPOICommand_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.GEOPOICommand.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_camera_gimbal_GEOPOICommand_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.Mode.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_camera_gimbal_Mode_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.Mode.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_camera_gimbal_Mode_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.Status.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_camera_gimbal_Status_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.camera_gimbal.Status.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_camera_gimbal_Status_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.device.Temperature.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_device_Temperature_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.device.Temperature.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_device_Temperature_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.RPMCommand.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_esc_RPMCommand_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.RPMCommand.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_esc_RPMCommand_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.RawCommand.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_esc_RawCommand_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.RawCommand.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_esc_RawCommand_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.StatusExtended.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_esc_StatusExtended_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.StatusExtended.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_esc_StatusExtended_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.Status.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_esc_Status_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.esc.Status.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_esc_Status_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.Auxiliary.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_Auxiliary_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.Auxiliary.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_Auxiliary_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.ECEFPositionVelocity.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_ECEFPositionVelocity_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.ECEFPositionVelocity.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_ECEFPositionVelocity_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.Fix2.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_Fix2_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.Fix2.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_Fix2_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.Fix.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_Fix_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.Fix.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_Fix_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.RTCMStream.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_RTCMStream_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.gnss.RTCMStream.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_gnss_RTCMStream_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.hardpoint.Command.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_hardpoint_Command_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.hardpoint.Command.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_hardpoint_Command_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.hardpoint.Status.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_hardpoint_Status_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.hardpoint.Status.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_hardpoint_Status_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ice.FuelTankStatus.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_ice_FuelTankStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ice.FuelTankStatus.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_ice_FuelTankStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ice.reciprocating.CylinderStatus.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_ice_reciprocating_CylinderStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ice.reciprocating.CylinderStatus.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_ice_reciprocating_CylinderStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ice.reciprocating.Status.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_ice_reciprocating_Status_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.ice.reciprocating.Status.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_ice_reciprocating_Status_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.BeepCommand.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_indication_BeepCommand_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.BeepCommand.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_indication_BeepCommand_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.LightsCommand.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_indication_LightsCommand_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.LightsCommand.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_indication_LightsCommand_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.RGB565.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_indication_RGB565_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.RGB565.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_indication_RGB565_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.SingleLightCommand.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_indication_SingleLightCommand_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.indication.SingleLightCommand.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_indication_SingleLightCommand_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.power.BatteryInfo.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_power_BatteryInfo_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.power.BatteryInfo.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_power_BatteryInfo_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.power.CircuitStatus.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_power_CircuitStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.power.CircuitStatus.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_power_CircuitStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.power.PrimaryPowerSupplyStatus.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_power_PrimaryPowerSupplyStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.power.PrimaryPowerSupplyStatus.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_power_PrimaryPowerSupplyStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.range_sensor.Measurement.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_range_sensor_Measurement_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.range_sensor.Measurement.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_range_sensor_Measurement_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.safety.ArmingStatus.c:29:0: [31mstyle:[39m The function 'uavcan_equipment_safety_ArmingStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.equipment.safety.ArmingStatus.c:9:0: [31mstyle:[39m The function 'uavcan_equipment_safety_ArmingStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.navigation.GlobalNavigationSolution.c:29:0: [31mstyle:[39m The function 'uavcan_navigation_GlobalNavigationSolution_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.navigation.GlobalNavigationSolution.c:9:0: [31mstyle:[39m The function 'uavcan_navigation_GlobalNavigationSolution_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.AccessCommandShell_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_AccessCommandShellRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.AccessCommandShell_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_AccessCommandShellRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.AccessCommandShell_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_AccessCommandShellResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.AccessCommandShell_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_AccessCommandShellResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.CANIfaceStats.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_CANIfaceStats_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.CANIfaceStats.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_CANIfaceStats_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.DataTypeKind.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_DataTypeKind_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.DataTypeKind.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_DataTypeKind_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetDataTypeInfo_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_GetDataTypeInfoRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetDataTypeInfo_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_GetDataTypeInfoRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetDataTypeInfo_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_GetDataTypeInfoResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetDataTypeInfo_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_GetDataTypeInfoResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_GetNodeInfoRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_GetNodeInfoRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_GetNodeInfoResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_GetNodeInfoResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_GetTransportStatsRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_GetTransportStatsRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_GetTransportStatsResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_GetTransportStatsResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GlobalTimeSync.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_GlobalTimeSync_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GlobalTimeSync.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_GlobalTimeSync_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.HardwareVersion.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_HardwareVersion_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.HardwareVersion.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_HardwareVersion_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.NodeStatus.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_NodeStatus_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.NodeStatus.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_NodeStatus_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.Panic.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_Panic_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.Panic.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_Panic_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.RestartNode_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_RestartNodeRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.RestartNode_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_RestartNodeRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.RestartNode_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_RestartNodeResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.RestartNode_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_RestartNodeResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.SoftwareVersion.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_SoftwareVersion_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.SoftwareVersion.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_SoftwareVersion_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.debug.KeyValue.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_debug_KeyValue_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.debug.KeyValue.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_debug_KeyValue_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.debug.LogLevel.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_debug_LogLevel_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.debug.LogLevel.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_debug_LogLevel_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.debug.LogMessage.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_debug_LogMessage_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.debug.LogMessage.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_debug_LogMessage_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.Allocation.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_Allocation_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.Allocation.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_Allocation_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.AppendEntries_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_AppendEntriesRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.AppendEntries_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_AppendEntriesRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.AppendEntries_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_AppendEntriesResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.AppendEntries_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_AppendEntriesResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.Discovery.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_Discovery_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.Discovery.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_Discovery_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.Entry.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_Entry_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.Entry.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_Entry_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.RequestVote_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_RequestVoteRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.RequestVote_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_RequestVoteRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.RequestVote_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_RequestVoteResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.dynamic_node_id.server.RequestVote_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_dynamic_node_id_server_RequestVoteResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.enumeration.Begin_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_enumeration_BeginRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.enumeration.Begin_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_enumeration_BeginRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.enumeration.Begin_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_enumeration_BeginResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.enumeration.Begin_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_enumeration_BeginResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.enumeration.Indication.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_enumeration_Indication_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.enumeration.Indication.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_enumeration_Indication_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.BeginFirmwareUpdate_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_file_BeginFirmwareUpdateRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.BeginFirmwareUpdate_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_file_BeginFirmwareUpdateRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.BeginFirmwareUpdate_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_file_BeginFirmwareUpdateResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.BeginFirmwareUpdate_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_file_BeginFirmwareUpdateResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Delete_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_file_DeleteRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Delete_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_file_DeleteRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Delete_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_file_DeleteResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Delete_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_file_DeleteResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.EntryType.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_file_EntryType_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.EntryType.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_file_EntryType_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Error.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_file_Error_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Error.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_file_Error_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetDirectoryEntryInfo_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_file_GetDirectoryEntryInfoRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetDirectoryEntryInfo_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_file_GetDirectoryEntryInfoRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetDirectoryEntryInfo_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_file_GetDirectoryEntryInfoResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetDirectoryEntryInfo_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_file_GetDirectoryEntryInfoResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetInfo_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_file_GetInfoRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetInfo_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_file_GetInfoRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetInfo_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_file_GetInfoResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.GetInfo_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_file_GetInfoResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Path.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_file_Path_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Path.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_file_Path_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Read_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_file_ReadRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Read_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_file_ReadRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Read_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_file_ReadResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Read_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_file_ReadResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Write_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_file_WriteRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Write_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_file_WriteRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Write_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_file_WriteResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.file.Write_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_file_WriteResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Empty.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_param_Empty_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Empty.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_param_Empty_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.ExecuteOpcode_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_param_ExecuteOpcodeRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.ExecuteOpcode_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_param_ExecuteOpcodeRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.ExecuteOpcode_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_param_ExecuteOpcodeResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.ExecuteOpcode_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_param_ExecuteOpcodeResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.GetSet_req.c:30:0: [31mstyle:[39m The function 'uavcan_protocol_param_GetSetRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.GetSet_req.c:10:0: [31mstyle:[39m The function 'uavcan_protocol_param_GetSetRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.GetSet_res.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_param_GetSetResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.GetSet_res.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_param_GetSetResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.NumericValue.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_param_NumericValue_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.NumericValue.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_param_NumericValue_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Value.c:29:0: [31mstyle:[39m The function 'uavcan_protocol_param_Value_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Value.c:9:0: [31mstyle:[39m The function 'uavcan_protocol_param_Value_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Broadcast.c:29:0: [31mstyle:[39m The function 'uavcan_tunnel_Broadcast_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Broadcast.c:9:0: [31mstyle:[39m The function 'uavcan_tunnel_Broadcast_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Call_req.c:30:0: [31mstyle:[39m The function 'uavcan_tunnel_CallRequest_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Call_req.c:10:0: [31mstyle:[39m The function 'uavcan_tunnel_CallRequest_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Call_res.c:29:0: [31mstyle:[39m The function 'uavcan_tunnel_CallResponse_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Call_res.c:9:0: [31mstyle:[39m The function 'uavcan_tunnel_CallResponse_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Protocol.c:29:0: [31mstyle:[39m The function 'uavcan_tunnel_Protocol_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Protocol.c:9:0: [31mstyle:[39m The function 'uavcan_tunnel_Protocol_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.SerialConfig.c:29:0: [31mstyle:[39m The function 'uavcan_tunnel_SerialConfig_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.SerialConfig.c:9:0: [31mstyle:[39m The function 'uavcan_tunnel_SerialConfig_encode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Targetted.c:29:0: [31mstyle:[39m The function 'uavcan_tunnel_Targetted_decode' is never used. [unusedFunction][0m
+
+^
+[1mbuild/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.tunnel.Targetted.c:9:0: [31mstyle:[39m The function 'uavcan_tunnel_Targetted_encode' is never used. [unusedFunction][0m
+
+^
+[1mnofile:0:0: [31minformation:[39m Cppcheck cannot find all the include files (use --check-config for details) [missingInclude][0m
+

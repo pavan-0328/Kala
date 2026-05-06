@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AC_PID/AC_PID.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AC_PID</a> - AC_PID.h<span style="font-size: 80%;"> (source / <a href="AC_PID.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">33</td>
+            <td class="headerCovTableEntry">35</td>
+            <td class="headerCovTableEntryHi">94.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntryHi">90.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<a name="2"><span class="lineNum">       2 </span>            : </a>
+<a name="3"><span class="lineNum">       3 </span>            : /// @file       AC_PID.h</a>
+<a name="4"><span class="lineNum">       4 </span>            : /// @brief      General-purpose PID controller with input, error, and derivative filtering, plus slew rate limiting and EEPROM gain storage.</a>
+<a name="5"><span class="lineNum">       5 </span>            : </a>
+<a name="6"><span class="lineNum">       6 </span>            : #include &lt;AP_Common/AP_Common.h&gt;</a>
+<a name="7"><span class="lineNum">       7 </span>            : #include &lt;AP_Param/AP_Param.h&gt;</a>
+<a name="8"><span class="lineNum">       8 </span>            : #include &lt;stdlib.h&gt;</a>
+<a name="9"><span class="lineNum">       9 </span>            : #include &lt;cmath&gt;</a>
+<a name="10"><span class="lineNum">      10 </span>            : #include &lt;Filter/SlewLimiter.h&gt;</a>
+<a name="11"><span class="lineNum">      11 </span>            : #include &lt;Filter/NotchFilter.h&gt;</a>
+<a name="12"><span class="lineNum">      12 </span>            : #include &lt;Filter/AP_Filter.h&gt;</a>
+<a name="13"><span class="lineNum">      13 </span>            : </a>
+<a name="14"><span class="lineNum">      14 </span>            : #define AC_PID_TFILT_HZ_DEFAULT  0.0f   // default input filter frequency</a>
+<a name="15"><span class="lineNum">      15 </span>            : #define AC_PID_EFILT_HZ_DEFAULT  0.0f   // default input filter frequency</a>
+<a name="16"><span class="lineNum">      16 </span>            : #define AC_PID_DFILT_HZ_DEFAULT  20.0f  // default input filter frequency</a>
+<a name="17"><span class="lineNum">      17 </span>            : #define AC_PID_RESET_TC          0.16f  // Time constant for integrator reset decay to zero</a>
+<a name="18"><span class="lineNum">      18 </span>            : </a>
+<a name="19"><span class="lineNum">      19 </span>            : #include &quot;AP_PIDInfo.h&quot;</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : /// @class      AC_PID</a>
+<a name="22"><span class="lineNum">      22 </span>            : /// @brief      Copter PID control class</a>
+<a name="23"><span class="lineNum">      23 </span>            : class AC_PID {</a>
+<a name="24"><span class="lineNum">      24 </span>            : public:</a>
+<a name="25"><span class="lineNum">      25 </span>            : </a>
+<a name="26"><span class="lineNum">      26 </span>            :     struct Defaults {</a>
+<a name="27"><span class="lineNum">      27 </span>            :         float p;</a>
+<a name="28"><span class="lineNum">      28 </span>            :         float i;</a>
+<a name="29"><span class="lineNum">      29 </span>            :         float d;</a>
+<a name="30"><span class="lineNum">      30 </span>            :         float ff;</a>
+<a name="31"><span class="lineNum">      31 </span>            :         float imax;</a>
+<a name="32"><span class="lineNum">      32 </span>            :         float filt_T_hz;</a>
+<a name="33"><span class="lineNum">      33 </span>            :         float filt_E_hz;</a>
+<a name="34"><span class="lineNum">      34 </span>            :         float filt_D_hz;</a>
+<a name="35"><span class="lineNum">      35 </span>            :         float srmax;</a>
+<a name="36"><span class="lineNum">      36 </span>            :         float srtau;</a>
+<a name="37"><span class="lineNum">      37 </span>            :         float dff;</a>
+<a name="38"><span class="lineNum">      38 </span>            :     };</a>
+<a name="39"><span class="lineNum">      39 </span>            : </a>
+<a name="40"><span class="lineNum">      40 </span>            :     /// Constructor for PID controller with EEPROM-backed gain.</a>
+<a name="41"><span class="lineNum">      41 </span>            :     /// Parameters are initialized from defaults or EEPROM at runtime.</a>
+<a name="42"><span class="lineNum">      42 </span>            :     AC_PID(float initial_p, float initial_i, float initial_d, float initial_ff, float initial_imax, float initial_filt_T_hz, float initial_filt_E_hz, float initial_filt_D_hz,</a>
+<a name="43"><span class="lineNum">      43 </span>            :            float initial_srmax=0, float initial_srtau=1.0, float initial_dff=0);</a>
+<a name="44"><span class="lineNum">      44 </span><span class="lineCov">       2544 :     AC_PID(const AC_PID::Defaults &amp;defaults) :</span></a>
+<a name="45"><span class="lineNum">      45 </span>            :         AC_PID(</a>
+<a name="46"><span class="lineNum">      46 </span><span class="lineCov">       2544 :             defaults.p,</span></a>
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">       2544 :             defaults.i,</span></a>
+<a name="48"><span class="lineNum">      48 </span><span class="lineCov">       2544 :             defaults.d,</span></a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineCov">       2544 :             defaults.ff,</span></a>
+<a name="50"><span class="lineNum">      50 </span><span class="lineCov">       2544 :             defaults.imax,</span></a>
+<a name="51"><span class="lineNum">      51 </span><span class="lineCov">       2544 :             defaults.filt_T_hz,</span></a>
+<a name="52"><span class="lineNum">      52 </span><span class="lineCov">       2544 :             defaults.filt_E_hz,</span></a>
+<a name="53"><span class="lineNum">      53 </span><span class="lineCov">       2544 :             defaults.filt_D_hz,</span></a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">       2544 :             defaults.srmax,</span></a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">       2544 :             defaults.srtau,</span></a>
+<a name="56"><span class="lineNum">      56 </span><span class="lineCov">       2544 :             defaults.dff</span></a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineCov">       2544 :             )</span></a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">       2544 :         { }</span></a>
+<a name="59"><span class="lineNum">      59 </span>            : </a>
+<a name="60"><span class="lineNum">      60 </span>            :     CLASS_NO_COPY(AC_PID);</a>
+<a name="61"><span class="lineNum">      61 </span>            : </a>
+<a name="62"><span class="lineNum">      62 </span>            :     // Computes the PID output using a target and measurement input.</a>
+<a name="63"><span class="lineNum">      63 </span>            :     // Applies filters to the target and error, calculates the derivative and updates the integrator.</a>
+<a name="64"><span class="lineNum">      64 </span>            :     // If `limit` is true, the integrator is allowed to shrink but not grow.</a>
+<a name="65"><span class="lineNum">      65 </span>            :     float update_all(float target, float measurement, float dt, bool limit = false, float pd_scale = 1.0f);</a>
+<a name="66"><span class="lineNum">      66 </span>            : </a>
+<a name="67"><span class="lineNum">      67 </span>            :     // Computes the PID output from an error input only (target assumed to be zero).</a>
+<a name="68"><span class="lineNum">      68 </span>            :     // Applies error filtering and updates the derivative and integrator.</a>
+<a name="69"><span class="lineNum">      69 </span>            :     // Target and measurement must be set separately for logging.</a>
+<a name="70"><span class="lineNum">      70 </span>            :     // todo: remove function when it is no longer used.</a>
+<a name="71"><span class="lineNum">      71 </span>            :     float update_error(float error, float dt, bool limit = false);</a>
+<a name="72"><span class="lineNum">      72 </span>            : </a>
+<a name="73"><span class="lineNum">      73 </span>            :     // get_pid - get results from pid controller</a>
+<a name="74"><span class="lineNum">      74 </span>            :     float get_p() const;</a>
+<a name="75"><span class="lineNum">      75 </span>            :     float get_i() const;</a>
+<a name="76"><span class="lineNum">      76 </span>            :     float get_d() const;</a>
+<a name="77"><span class="lineNum">      77 </span>            :     float get_ff() const;</a>
+<a name="78"><span class="lineNum">      78 </span>            :     float get_ff_component() const;</a>
+<a name="79"><span class="lineNum">      79 </span>            :     float get_dff_component() const;</a>
+<a name="80"><span class="lineNum">      80 </span>            : </a>
+<a name="81"><span class="lineNum">      81 </span>            :     // Used to fully zero the I term between mode changes or initialization</a>
+<a name="82"><span class="lineNum">      82 </span>            :     void reset_I();</a>
+<a name="83"><span class="lineNum">      83 </span>            : </a>
+<a name="84"><span class="lineNum">      84 </span>            :     // Flags the input filter for reset. The next call to `update_all()` will reinitialize the filter using the next input.</a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineCov">    3401280 :     void reset_filter() {</span></a>
+<a name="86"><span class="lineNum">      86 </span><span class="lineCov">    3401280 :         _flags._reset_filter = true;</span></a>
+<a name="87"><span class="lineNum">      87 </span><span class="lineCov">    3401280 :     }</span></a>
+<a name="88"><span class="lineNum">      88 </span>            : </a>
+<a name="89"><span class="lineNum">      89 </span>            :     // Loads controller configuration from EEPROM, including gains and filter frequencies. (not used)</a>
+<a name="90"><span class="lineNum">      90 </span>            :     void load_gains();</a>
+<a name="91"><span class="lineNum">      91 </span>            : </a>
+<a name="92"><span class="lineNum">      92 </span>            :     // Saves controller configuration from EEPROM, including gains and filter frequencies. Used by autotune to save gains before tuning.</a>
+<a name="93"><span class="lineNum">      93 </span>            :     void save_gains();</a>
+<a name="94"><span class="lineNum">      94 </span>            : </a>
+<a name="95"><span class="lineNum">      95 </span>            :     // get accessors</a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineCov">   54475400 :     const AP_Float &amp;kP() const { return _kp; }</span></a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineCov">    3474020 :     AP_Float &amp;kP() { return _kp; }</span></a>
+<a name="98"><span class="lineNum">      98 </span><span class="lineCov">   27782400 :     AP_Float &amp;kI() { return _ki; }</span></a>
+<a name="99"><span class="lineNum">      99 </span><span class="lineCov">      54564 :     AP_Float &amp;kD() { return _kd; }</span></a>
+<a name="100"><span class="lineNum">     100 </span>            :     AP_Float &amp;kIMAX() { return _kimax; }</a>
+<a name="101"><span class="lineNum">     101 </span>            :     AP_Float &amp;kPDMAX() { return _kpdmax; }</a>
+<a name="102"><span class="lineNum">     102 </span><span class="lineCov">    3455840 :     AP_Float &amp;ff() { return _kff;}</span></a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineCov">    8769400 :     AP_Float &amp;filt_T_hz() { return _filt_T_hz; }</span></a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineCov">   17386100 :     AP_Float &amp;filt_E_hz() { return _filt_E_hz; }</span></a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineNoCov">          0 :     AP_Float &amp;filt_D_hz() { return _filt_D_hz; }</span></a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineCov">          6 :     AP_Float &amp;slew_limit() { return _slew_rate_max; }</span></a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineCov">          6 :     AP_Float &amp;kDff() { return _kdff; }</span></a>
+<a name="108"><span class="lineNum">     108 </span>            : </a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineCov">   31294900 :     float imax() const { return _kimax.get(); }</span></a>
+<a name="110"><span class="lineNum">     110 </span>            :     float pdmax() const { return _kpdmax.get(); }</a>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<a name="112"><span class="lineNum">     112 </span>            :     // Returns alpha value for the target low-pass filter (based on filter frequency and dt)</a>
+<a name="113"><span class="lineNum">     113 </span>            :     float get_filt_T_alpha(float dt) const;</a>
+<a name="114"><span class="lineNum">     114 </span>            :     // Returns alpha value for the error low-pass filter (based on filter frequency and dt)</a>
+<a name="115"><span class="lineNum">     115 </span>            :     float get_filt_E_alpha(float dt) const;</a>
+<a name="116"><span class="lineNum">     116 </span>            :     // Returns alpha value for the derivative low-pass filter (based on filter frequency and dt)</a>
+<a name="117"><span class="lineNum">     117 </span>            :     float get_filt_D_alpha(float dt) const;</a>
+<a name="118"><span class="lineNum">     118 </span>            : </a>
+<a name="119"><span class="lineNum">     119 </span>            :     // set accessors</a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineCov">         12 :     void set_kP(const float v) { _kp.set(v); }</span></a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineCov">         12 :     void set_kI(const float v) { _ki.set(v); }</span></a>
+<a name="122"><span class="lineNum">     122 </span><span class="lineCov">         12 :     void set_kD(const float v) { _kd.set(v); }</span></a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineCov">         12 :     void set_ff(const float v) { _kff.set(v); }</span></a>
+<a name="124"><span class="lineNum">     124 </span><span class="lineNoCov">          0 :     void set_imax(const float v) { _kimax.set(fabsf(v)); }</span></a>
+<a name="125"><span class="lineNum">     125 </span>            :     void set_pdmax(const float v) { _kpdmax.set(fabsf(v)); }</a>
+<a name="126"><span class="lineNum">     126 </span>            :     void set_filt_T_hz(const float v);</a>
+<a name="127"><span class="lineNum">     127 </span>            :     void set_filt_E_hz(const float v);</a>
+<a name="128"><span class="lineNum">     128 </span>            :     void set_filt_D_hz(const float v);</a>
+<a name="129"><span class="lineNum">     129 </span>            :     void set_slew_limit(const float v);</a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineCov">         12 :     void set_kDff(const float v) { _kdff.set(v); }</span></a>
+<a name="131"><span class="lineNum">     131 </span>            : </a>
+<a name="132"><span class="lineNum">     132 </span>            :     // Sets target and actual rate values for external logging (optional).</a>
+<a name="133"><span class="lineNum">     133 </span>            :     void set_target_rate(float target) { _pid_info.target = target; }</a>
+<a name="134"><span class="lineNum">     134 </span>            :     void set_actual_rate(float actual) { _pid_info.actual = actual; }</a>
+<a name="135"><span class="lineNum">     135 </span>            : </a>
+<a name="136"><span class="lineNum">     136 </span>            :     // Sets the integrator directly, clamped to the IMAX bounds. Also flags I-term as externally set.</a>
+<a name="137"><span class="lineNum">     137 </span>            :     void set_integrator(float i);</a>
+<a name="138"><span class="lineNum">     138 </span>            : </a>
+<a name="139"><span class="lineNum">     139 </span>            :     // Gradually adjust the integrator toward a desired value using a time constant.</a>
+<a name="140"><span class="lineNum">     140 </span>            :     // Typically used to &quot;relax&quot; the I-term in dynamic conditions.</a>
+<a name="141"><span class="lineNum">     141 </span>            :     void relax_integrator(float integrator, float dt, float time_constant);</a>
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<a name="143"><span class="lineNum">     143 </span>            :     // set slew limiter scale factor</a>
+<a name="144"><span class="lineNum">     144 </span>            :     void set_slew_limit_scale(int8_t scale) { _slew_limit_scale = scale; }</a>
+<a name="145"><span class="lineNum">     145 </span>            : </a>
+<a name="146"><span class="lineNum">     146 </span>            :     // Returns current slew rate from the limiter. Returns 0 if SMAX is zero (disabled).</a>
+<a name="147"><span class="lineNum">     147 </span>            :     float get_slew_rate(void) const { return _slew_limiter.get_slew_rate(); }</a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span><span class="lineCov">   30834100 :     const AP_PIDInfo&amp; get_pid_info(void) const { return _pid_info; }</span></a>
+<a name="150"><span class="lineNum">     150 </span>            : </a>
+<a name="151"><span class="lineNum">     151 </span>            :     // Configures optional notch filters for target and error signals using the given sample rate.</a>
+<a name="152"><span class="lineNum">     152 </span>            :     // Filters are dynamically allocated and validated via the AP_Filter API.</a>
+<a name="153"><span class="lineNum">     153 </span>            :     void set_notch_sample_rate(float);</a>
+<a name="154"><span class="lineNum">     154 </span>            : </a>
+<a name="155"><span class="lineNum">     155 </span>            :     // parameter var table</a>
+<a name="156"><span class="lineNum">     156 </span>            :     static const struct AP_Param::GroupInfo var_info[];</a>
+<a name="157"><span class="lineNum">     157 </span>            : </a>
+<a name="158"><span class="lineNum">     158 </span>            : protected:</a>
+<a name="159"><span class="lineNum">     159 </span>            : </a>
+<a name="160"><span class="lineNum">     160 </span>            :     // Updates the integrator based on current error and dt.</a>
+<a name="161"><span class="lineNum">     161 </span>            :     // If `limit` is true, the integrator is only allowed to shrink to avoid wind-up.</a>
+<a name="162"><span class="lineNum">     162 </span>            :     void update_i(float dt, bool limit);</a>
+<a name="163"><span class="lineNum">     163 </span>            : </a>
+<a name="164"><span class="lineNum">     164 </span>            :     // parameters</a>
+<a name="165"><span class="lineNum">     165 </span>            :     AP_Float _kp;</a>
+<a name="166"><span class="lineNum">     166 </span>            :     AP_Float _ki;</a>
+<a name="167"><span class="lineNum">     167 </span>            :     AP_Float _kd;</a>
+<a name="168"><span class="lineNum">     168 </span>            :     AP_Float _kff;</a>
+<a name="169"><span class="lineNum">     169 </span>            :     AP_Float _kimax;</a>
+<a name="170"><span class="lineNum">     170 </span>            :     AP_Float _kpdmax;</a>
+<a name="171"><span class="lineNum">     171 </span>            :     AP_Float _filt_T_hz;         // PID target filter frequency in Hz</a>
+<a name="172"><span class="lineNum">     172 </span>            :     AP_Float _filt_E_hz;         // PID error filter frequency in Hz</a>
+<a name="173"><span class="lineNum">     173 </span>            :     AP_Float _filt_D_hz;         // PID derivative filter frequency in Hz</a>
+<a name="174"><span class="lineNum">     174 </span>            :     AP_Float _slew_rate_max;</a>
+<a name="175"><span class="lineNum">     175 </span>            :     AP_Float _kdff;</a>
+<a name="176"><span class="lineNum">     176 </span>            : #if AP_FILTER_ENABLED</a>
+<a name="177"><span class="lineNum">     177 </span>            :     AP_Int8 _notch_T_filter;</a>
+<a name="178"><span class="lineNum">     178 </span>            :     AP_Int8 _notch_E_filter;</a>
+<a name="179"><span class="lineNum">     179 </span>            : #endif</a>
+<a name="180"><span class="lineNum">     180 </span>            : </a>
+<a name="181"><span class="lineNum">     181 </span>            :     // Slew rate time constant (tau). Not exposed in this class by default, but defined as an AP_Float so parent classes can make it configurable via param table.</a>
+<a name="182"><span class="lineNum">     182 </span>            :     AP_Float _slew_rate_tau;</a>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<a name="184"><span class="lineNum">     184 </span>            :     SlewLimiter _slew_limiter{_slew_rate_max, _slew_rate_tau};</a>
+<a name="185"><span class="lineNum">     185 </span>            : </a>
+<a name="186"><span class="lineNum">     186 </span>            :     // flags</a>
+<a name="187"><span class="lineNum">     187 </span>            :     struct ac_pid_flags {</a>
+<a name="188"><span class="lineNum">     188 </span>            :         bool _reset_filter :1;  // true if the input filter should be reset on the next call to update_all()</a>
+<a name="189"><span class="lineNum">     189 </span>            :         bool _I_set :1;         // true if the I term has been set externally, including zeroing</a>
+<a name="190"><span class="lineNum">     190 </span>            :     } _flags;</a>
+<a name="191"><span class="lineNum">     191 </span>            : </a>
+<a name="192"><span class="lineNum">     192 </span>            :     // internal variables</a>
+<a name="193"><span class="lineNum">     193 </span>            :     float _integrator;        // integrator value</a>
+<a name="194"><span class="lineNum">     194 </span>            :     float _target;            // target value to enable filtering</a>
+<a name="195"><span class="lineNum">     195 </span>            :     float _error;             // error value to enable filtering</a>
+<a name="196"><span class="lineNum">     196 </span>            :     float _derivative;        // derivative value to enable filtering</a>
+<a name="197"><span class="lineNum">     197 </span>            :     int8_t _slew_limit_scale;</a>
+<a name="198"><span class="lineNum">     198 </span>            :     float _target_derivative; // target derivative value to enable dff</a>
+<a name="199"><span class="lineNum">     199 </span>            : #if AP_FILTER_ENABLED</a>
+<a name="200"><span class="lineNum">     200 </span>            :     NotchFilterFloat* _target_notch;</a>
+<a name="201"><span class="lineNum">     201 </span>            :     NotchFilterFloat* _error_notch;</a>
+<a name="202"><span class="lineNum">     202 </span>            : #endif</a>
+<a name="203"><span class="lineNum">     203 </span>            : </a>
+<a name="204"><span class="lineNum">     204 </span>            :     AP_PIDInfo _pid_info;</a>
+<a name="205"><span class="lineNum">     205 </span>            : </a>
+<a name="206"><span class="lineNum">     206 </span>            : private:</a>
+<a name="207"><span class="lineNum">     207 </span>            :     const float default_kp;</a>
+<a name="208"><span class="lineNum">     208 </span>            :     const float default_ki;</a>
+<a name="209"><span class="lineNum">     209 </span>            :     const float default_kd;</a>
+<a name="210"><span class="lineNum">     210 </span>            :     const float default_kff;</a>
+<a name="211"><span class="lineNum">     211 </span>            :     const float default_kdff;</a>
+<a name="212"><span class="lineNum">     212 </span>            :     const float default_kimax;</a>
+<a name="213"><span class="lineNum">     213 </span>            :     const float default_filt_T_hz;</a>
+<a name="214"><span class="lineNum">     214 </span>            :     const float default_filt_E_hz;</a>
+<a name="215"><span class="lineNum">     215 </span>            :     const float default_filt_D_hz;</a>
+<a name="216"><span class="lineNum">     216 </span>            :     const float default_slew_rate_max;</a>
+<a name="217"><span class="lineNum">     217 </span>            : };</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

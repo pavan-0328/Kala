@@ -1,0 +1,677 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/SRV_Channel/SRV_Channels.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/SRV_Channel</a> - SRV_Channels.cpp<span style="font-size: 80%;"> (source / <a href="SRV_Channels.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">52</td>
+            <td class="headerCovTableEntry">109</td>
+            <td class="headerCovTableEntryLo">47.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : /*</a>
+<a name="16"><span class="lineNum">      16 </span>            :   SRV_Channel.cpp - object to separate input and output channel</a>
+<a name="17"><span class="lineNum">      17 </span>            :   ranges, trim and reversal</a>
+<a name="18"><span class="lineNum">      18 </span>            :  */</a>
+<a name="19"><span class="lineNum">      19 </span>            : </a>
+<a name="20"><span class="lineNum">      20 </span>            : #include &lt;AP_HAL/AP_HAL.h&gt;</a>
+<a name="21"><span class="lineNum">      21 </span>            : #include &lt;AP_Math/AP_Math.h&gt;</a>
+<a name="22"><span class="lineNum">      22 </span>            : #include &lt;AP_Scheduler/AP_Scheduler.h&gt;</a>
+<a name="23"><span class="lineNum">      23 </span>            : #include &lt;AP_Vehicle/AP_Vehicle_Type.h&gt;</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            : #include &quot;SRV_Channel.h&quot;</a>
+<a name="26"><span class="lineNum">      26 </span>            : #include &lt;AP_Logger/AP_Logger.h&gt;</a>
+<a name="27"><span class="lineNum">      27 </span>            : #include &lt;AP_KDECAN/AP_KDECAN.h&gt;</a>
+<a name="28"><span class="lineNum">      28 </span>            : </a>
+<a name="29"><span class="lineNum">      29 </span>            : #if HAL_MAX_CAN_PROTOCOL_DRIVERS</a>
+<a name="30"><span class="lineNum">      30 </span>            :   #include &lt;AP_CANManager/AP_CANManager.h&gt;</a>
+<a name="31"><span class="lineNum">      31 </span>            :   #include &lt;AP_DroneCAN/AP_DroneCAN.h&gt;</a>
+<a name="32"><span class="lineNum">      32 </span>            :   #include &lt;AP_PiccoloCAN/AP_PiccoloCAN.h&gt;</a>
+<a name="33"><span class="lineNum">      33 </span>            : #endif</a>
+<a name="34"><span class="lineNum">      34 </span>            : </a>
+<a name="35"><span class="lineNum">      35 </span>            : #if NUM_SERVO_CHANNELS == 0</a>
+<a name="36"><span class="lineNum">      36 </span>            : #pragma GCC diagnostic ignored &quot;-Wtype-limits&quot;</a>
+<a name="37"><span class="lineNum">      37 </span>            : #endif</a>
+<a name="38"><span class="lineNum">      38 </span>            : </a>
+<a name="39"><span class="lineNum">      39 </span>            : extern const AP_HAL::HAL&amp; hal;</a>
+<a name="40"><span class="lineNum">      40 </span>            : </a>
+<a name="41"><span class="lineNum">      41 </span>            : SRV_Channel *SRV_Channels::channels;</a>
+<a name="42"><span class="lineNum">      42 </span>            : SRV_Channels *SRV_Channels::_singleton;</a>
+<a name="43"><span class="lineNum">      43 </span>            : </a>
+<a name="44"><span class="lineNum">      44 </span>            : uint16_t SRV_Channels::override_counter[NUM_SERVO_CHANNELS];</a>
+<a name="45"><span class="lineNum">      45 </span>            : </a>
+<a name="46"><span class="lineNum">      46 </span>            : uint32_t SRV_Channels::disabled_mask;</a>
+<a name="47"><span class="lineNum">      47 </span>            : uint32_t SRV_Channels::digital_mask;</a>
+<a name="48"><span class="lineNum">      48 </span>            : uint32_t SRV_Channels::reversible_mask;</a>
+<a name="49"><span class="lineNum">      49 </span>            : uint32_t SRV_Channels::invalid_mask;</a>
+<a name="50"><span class="lineNum">      50 </span>            : </a>
+<a name="51"><span class="lineNum">      51 </span>            : bool SRV_Channels::disabled_passthrough;</a>
+<a name="52"><span class="lineNum">      52 </span>            : bool SRV_Channels::initialised;</a>
+<a name="53"><span class="lineNum">      53 </span>            : bool SRV_Channels::emergency_stop;</a>
+<a name="54"><span class="lineNum">      54 </span>            : Bitmask&lt;SRV_Channel::k_nr_aux_servo_functions&gt; SRV_Channels::function_mask;</a>
+<a name="55"><span class="lineNum">      55 </span>            : SRV_Channels::srv_function SRV_Channels::functions[SRV_Channel::k_nr_aux_servo_functions];</a>
+<a name="56"><span class="lineNum">      56 </span>            : SRV_Channels::slew_list *SRV_Channels::_slew;</a>
+<a name="57"><span class="lineNum">      57 </span>            : </a>
+<a name="58"><span class="lineNum">      58 </span>            : const AP_Param::GroupInfo SRV_Channels::var_info[] = {</a>
+<a name="59"><span class="lineNum">      59 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 1)</a>
+<a name="60"><span class="lineNum">      60 </span>            :     // @Group: 1_</a>
+<a name="61"><span class="lineNum">      61 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="62"><span class="lineNum">      62 </span>            :     AP_SUBGROUPINFO(obj_channels[0], &quot;1_&quot;,  1, SRV_Channels, SRV_Channel),</a>
+<a name="63"><span class="lineNum">      63 </span>            : #endif</a>
+<a name="64"><span class="lineNum">      64 </span>            : </a>
+<a name="65"><span class="lineNum">      65 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 2)</a>
+<a name="66"><span class="lineNum">      66 </span>            :     // @Group: 2_</a>
+<a name="67"><span class="lineNum">      67 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="68"><span class="lineNum">      68 </span>            :     AP_SUBGROUPINFO(obj_channels[1], &quot;2_&quot;,  2, SRV_Channels, SRV_Channel),</a>
+<a name="69"><span class="lineNum">      69 </span>            : #endif</a>
+<a name="70"><span class="lineNum">      70 </span>            : </a>
+<a name="71"><span class="lineNum">      71 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 3)</a>
+<a name="72"><span class="lineNum">      72 </span>            :     // @Group: 3_</a>
+<a name="73"><span class="lineNum">      73 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="74"><span class="lineNum">      74 </span>            :     AP_SUBGROUPINFO(obj_channels[2], &quot;3_&quot;,  3, SRV_Channels, SRV_Channel),</a>
+<a name="75"><span class="lineNum">      75 </span>            : #endif</a>
+<a name="76"><span class="lineNum">      76 </span>            : </a>
+<a name="77"><span class="lineNum">      77 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 4)</a>
+<a name="78"><span class="lineNum">      78 </span>            :     // @Group: 4_</a>
+<a name="79"><span class="lineNum">      79 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="80"><span class="lineNum">      80 </span>            :     AP_SUBGROUPINFO(obj_channels[3], &quot;4_&quot;,  4, SRV_Channels, SRV_Channel),</a>
+<a name="81"><span class="lineNum">      81 </span>            : #endif</a>
+<a name="82"><span class="lineNum">      82 </span>            : </a>
+<a name="83"><span class="lineNum">      83 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 5)</a>
+<a name="84"><span class="lineNum">      84 </span>            :     // @Group: 5_</a>
+<a name="85"><span class="lineNum">      85 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="86"><span class="lineNum">      86 </span>            :     AP_SUBGROUPINFO(obj_channels[4], &quot;5_&quot;,  5, SRV_Channels, SRV_Channel),</a>
+<a name="87"><span class="lineNum">      87 </span>            : #endif</a>
+<a name="88"><span class="lineNum">      88 </span>            : </a>
+<a name="89"><span class="lineNum">      89 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 6)</a>
+<a name="90"><span class="lineNum">      90 </span>            :     // @Group: 6_</a>
+<a name="91"><span class="lineNum">      91 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="92"><span class="lineNum">      92 </span>            :     AP_SUBGROUPINFO(obj_channels[5], &quot;6_&quot;,  6, SRV_Channels, SRV_Channel),</a>
+<a name="93"><span class="lineNum">      93 </span>            : #endif</a>
+<a name="94"><span class="lineNum">      94 </span>            : </a>
+<a name="95"><span class="lineNum">      95 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 7)</a>
+<a name="96"><span class="lineNum">      96 </span>            :     // @Group: 7_</a>
+<a name="97"><span class="lineNum">      97 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="98"><span class="lineNum">      98 </span>            :     AP_SUBGROUPINFO(obj_channels[6], &quot;7_&quot;,  7, SRV_Channels, SRV_Channel),</a>
+<a name="99"><span class="lineNum">      99 </span>            : #endif</a>
+<a name="100"><span class="lineNum">     100 </span>            : </a>
+<a name="101"><span class="lineNum">     101 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 8)</a>
+<a name="102"><span class="lineNum">     102 </span>            :     // @Group: 8_</a>
+<a name="103"><span class="lineNum">     103 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="104"><span class="lineNum">     104 </span>            :     AP_SUBGROUPINFO(obj_channels[7], &quot;8_&quot;,  8, SRV_Channels, SRV_Channel),</a>
+<a name="105"><span class="lineNum">     105 </span>            : #endif</a>
+<a name="106"><span class="lineNum">     106 </span>            : </a>
+<a name="107"><span class="lineNum">     107 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 9)</a>
+<a name="108"><span class="lineNum">     108 </span>            :     // @Group: 9_</a>
+<a name="109"><span class="lineNum">     109 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="110"><span class="lineNum">     110 </span>            :     AP_SUBGROUPINFO(obj_channels[8], &quot;9_&quot;,  9, SRV_Channels, SRV_Channel),</a>
+<a name="111"><span class="lineNum">     111 </span>            : #endif</a>
+<a name="112"><span class="lineNum">     112 </span>            : </a>
+<a name="113"><span class="lineNum">     113 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 10)</a>
+<a name="114"><span class="lineNum">     114 </span>            :     // @Group: 10_</a>
+<a name="115"><span class="lineNum">     115 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="116"><span class="lineNum">     116 </span>            :     AP_SUBGROUPINFO(obj_channels[9], &quot;10_&quot;,  10, SRV_Channels, SRV_Channel),</a>
+<a name="117"><span class="lineNum">     117 </span>            : #endif</a>
+<a name="118"><span class="lineNum">     118 </span>            : </a>
+<a name="119"><span class="lineNum">     119 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 11)</a>
+<a name="120"><span class="lineNum">     120 </span>            :     // @Group: 11_</a>
+<a name="121"><span class="lineNum">     121 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="122"><span class="lineNum">     122 </span>            :     AP_SUBGROUPINFO(obj_channels[10], &quot;11_&quot;,  11, SRV_Channels, SRV_Channel),</a>
+<a name="123"><span class="lineNum">     123 </span>            : #endif</a>
+<a name="124"><span class="lineNum">     124 </span>            : </a>
+<a name="125"><span class="lineNum">     125 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 12)</a>
+<a name="126"><span class="lineNum">     126 </span>            :     // @Group: 12_</a>
+<a name="127"><span class="lineNum">     127 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="128"><span class="lineNum">     128 </span>            :     AP_SUBGROUPINFO(obj_channels[11], &quot;12_&quot;,  12, SRV_Channels, SRV_Channel),</a>
+<a name="129"><span class="lineNum">     129 </span>            : #endif</a>
+<a name="130"><span class="lineNum">     130 </span>            : </a>
+<a name="131"><span class="lineNum">     131 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 13)</a>
+<a name="132"><span class="lineNum">     132 </span>            :     // @Group: 13_</a>
+<a name="133"><span class="lineNum">     133 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="134"><span class="lineNum">     134 </span>            :     AP_SUBGROUPINFO(obj_channels[12], &quot;13_&quot;,  13, SRV_Channels, SRV_Channel),</a>
+<a name="135"><span class="lineNum">     135 </span>            : #endif</a>
+<a name="136"><span class="lineNum">     136 </span>            : </a>
+<a name="137"><span class="lineNum">     137 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 14)</a>
+<a name="138"><span class="lineNum">     138 </span>            :     // @Group: 14_</a>
+<a name="139"><span class="lineNum">     139 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="140"><span class="lineNum">     140 </span>            :     AP_SUBGROUPINFO(obj_channels[13], &quot;14_&quot;,  14, SRV_Channels, SRV_Channel),</a>
+<a name="141"><span class="lineNum">     141 </span>            : #endif</a>
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<a name="143"><span class="lineNum">     143 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 15)</a>
+<a name="144"><span class="lineNum">     144 </span>            :     // @Group: 15_</a>
+<a name="145"><span class="lineNum">     145 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="146"><span class="lineNum">     146 </span>            :     AP_SUBGROUPINFO(obj_channels[14], &quot;15_&quot;,  15, SRV_Channels, SRV_Channel),</a>
+<a name="147"><span class="lineNum">     147 </span>            : #endif</a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 16)</a>
+<a name="150"><span class="lineNum">     150 </span>            :     // @Group: 16_</a>
+<a name="151"><span class="lineNum">     151 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="152"><span class="lineNum">     152 </span>            :     AP_SUBGROUPINFO(obj_channels[15], &quot;16_&quot;,  16, SRV_Channels, SRV_Channel),</a>
+<a name="153"><span class="lineNum">     153 </span>            : #endif</a>
+<a name="154"><span class="lineNum">     154 </span>            : </a>
+<a name="155"><span class="lineNum">     155 </span>            : #ifndef  HAL_BUILD_AP_PERIPH</a>
+<a name="156"><span class="lineNum">     156 </span>            :     // @Param{Plane}: _AUTO_TRIM</a>
+<a name="157"><span class="lineNum">     157 </span>            :     // @DisplayName: Automatic servo trim</a>
+<a name="158"><span class="lineNum">     158 </span>            :     // @Description: This enables automatic servo trim in flight. Servos will be trimed in stabilized flight modes when the aircraft is close to level. Changes to servo trim will be saved every 10 seconds and will persist between flights. The automatic trim won't go more than 20% away from a centered trim.</a>
+<a name="159"><span class="lineNum">     159 </span>            :     // @Values: 0:Disable,1:Enable</a>
+<a name="160"><span class="lineNum">     160 </span>            :     // @User: Advanced</a>
+<a name="161"><span class="lineNum">     161 </span>            :     AP_GROUPINFO_FRAME(&quot;_AUTO_TRIM&quot;,  17, SRV_Channels, auto_trim, 0, AP_PARAM_FRAME_PLANE),</a>
+<a name="162"><span class="lineNum">     162 </span>            : #endif</a>
+<a name="163"><span class="lineNum">     163 </span>            : </a>
+<a name="164"><span class="lineNum">     164 </span>            :     // @Param: _RATE</a>
+<a name="165"><span class="lineNum">     165 </span>            :     // @DisplayName: Servo default output rate</a>
+<a name="166"><span class="lineNum">     166 </span>            :     // @Description: Default output rate in Hz for all PWM outputs.</a>
+<a name="167"><span class="lineNum">     167 </span>            :     // @Range: 25 400</a>
+<a name="168"><span class="lineNum">     168 </span>            :     // @User: Advanced</a>
+<a name="169"><span class="lineNum">     169 </span>            :     // @Units: Hz</a>
+<a name="170"><span class="lineNum">     170 </span>            :     AP_GROUPINFO(&quot;_RATE&quot;,  18, SRV_Channels, default_rate, 50),</a>
+<a name="171"><span class="lineNum">     171 </span>            : </a>
+<a name="172"><span class="lineNum">     172 </span>            : #if AP_VOLZ_ENABLED</a>
+<a name="173"><span class="lineNum">     173 </span>            :     // @Group: _VOLZ_</a>
+<a name="174"><span class="lineNum">     174 </span>            :     // @Path: ../AP_Volz_Protocol/AP_Volz_Protocol.cpp</a>
+<a name="175"><span class="lineNum">     175 </span>            :     AP_SUBGROUPINFO(volz, &quot;_VOLZ_&quot;,  19, SRV_Channels, AP_Volz_Protocol),</a>
+<a name="176"><span class="lineNum">     176 </span>            : #endif</a>
+<a name="177"><span class="lineNum">     177 </span>            : </a>
+<a name="178"><span class="lineNum">     178 </span>            : #if AP_SBUSOUTPUT_ENABLED</a>
+<a name="179"><span class="lineNum">     179 </span>            :     // @Group: _SBUS_</a>
+<a name="180"><span class="lineNum">     180 </span>            :     // @Path: ../AP_SBusOut/AP_SBusOut.cpp</a>
+<a name="181"><span class="lineNum">     181 </span>            :     AP_SUBGROUPINFO(sbus, &quot;_SBUS_&quot;,  20, SRV_Channels, AP_SBusOut),</a>
+<a name="182"><span class="lineNum">     182 </span>            : #endif</a>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<a name="184"><span class="lineNum">     184 </span>            : #if HAL_SUPPORT_RCOUT_SERIAL</a>
+<a name="185"><span class="lineNum">     185 </span>            :     // @Group: _BLH_</a>
+<a name="186"><span class="lineNum">     186 </span>            :     // @Path: ../AP_BLHeli/AP_BLHeli.cpp</a>
+<a name="187"><span class="lineNum">     187 </span>            :     AP_SUBGROUPINFO(blheli, &quot;_BLH_&quot;,  21, SRV_Channels, AP_BLHeli),</a>
+<a name="188"><span class="lineNum">     188 </span>            : #endif</a>
+<a name="189"><span class="lineNum">     189 </span>            : </a>
+<a name="190"><span class="lineNum">     190 </span>            : #if AP_ROBOTISSERVO_ENABLED</a>
+<a name="191"><span class="lineNum">     191 </span>            :     // @Group: _ROB_</a>
+<a name="192"><span class="lineNum">     192 </span>            :     // @Path: ../AP_RobotisServo/AP_RobotisServo.cpp</a>
+<a name="193"><span class="lineNum">     193 </span>            :     AP_SUBGROUPINFO(robotis, &quot;_ROB_&quot;,  22, SRV_Channels, AP_RobotisServo),</a>
+<a name="194"><span class="lineNum">     194 </span>            : #endif</a>
+<a name="195"><span class="lineNum">     195 </span>            : </a>
+<a name="196"><span class="lineNum">     196 </span>            : #if AP_FETTEC_ONEWIRE_ENABLED</a>
+<a name="197"><span class="lineNum">     197 </span>            :     // @Group: _FTW_</a>
+<a name="198"><span class="lineNum">     198 </span>            :     // @Path: ../AP_FETtecOneWire/AP_FETtecOneWire.cpp</a>
+<a name="199"><span class="lineNum">     199 </span>            :     AP_SUBGROUPINFO(fetteconwire, &quot;_FTW_&quot;,  25, SRV_Channels, AP_FETtecOneWire),</a>
+<a name="200"><span class="lineNum">     200 </span>            : #endif</a>
+<a name="201"><span class="lineNum">     201 </span>            : </a>
+<a name="202"><span class="lineNum">     202 </span>            :     // @Param: _DSHOT_RATE</a>
+<a name="203"><span class="lineNum">     203 </span>            :     // @DisplayName: Servo DShot output rate</a>
+<a name="204"><span class="lineNum">     204 </span>            :     // @Description: DShot output rate for all outputs as a multiple of the loop rate. 0 sets the output rate to be fixed at 1Khz for low loop rates. This value should never be set below 500Hz.</a>
+<a name="205"><span class="lineNum">     205 </span>            :     // @Values: 0:1Khz,1:loop-rate,2:double loop-rate,3:triple loop-rate,4:quadruple loop rate</a>
+<a name="206"><span class="lineNum">     206 </span>            :     // @User: Advanced</a>
+<a name="207"><span class="lineNum">     207 </span>            :     AP_GROUPINFO(&quot;_DSHOT_RATE&quot;,  23, SRV_Channels, dshot_rate, 0),</a>
+<a name="208"><span class="lineNum">     208 </span>            : </a>
+<a name="209"><span class="lineNum">     209 </span>            :     // @Param: _DSHOT_ESC</a>
+<a name="210"><span class="lineNum">     210 </span>            :     // @DisplayName: Servo DShot ESC type</a>
+<a name="211"><span class="lineNum">     211 </span>            :     // @Description: DShot ESC type for all outputs. The ESC type affects the range of DShot commands available and the bit widths used. None means that no dshot commands will be executed. Some ESC types support Extended DShot Telemetry (EDT) which allows telemetry other than RPM data to be returned when using bi-directional dshot. If you enable EDT you must install EDT capable firmware for correct operation.</a>
+<a name="212"><span class="lineNum">     212 </span>            :     // @Values: 0:None,1:BLHeli32/Kiss/AM32,2:BLHeli_S/BlueJay,3:BLHeli32/AM32/Kiss+EDT,4:BLHeli_S/BlueJay+EDT</a>
+<a name="213"><span class="lineNum">     213 </span>            :     // @User: Advanced</a>
+<a name="214"><span class="lineNum">     214 </span>            :     AP_GROUPINFO(&quot;_DSHOT_ESC&quot;,  24, SRV_Channels, dshot_esc_type, 0),</a>
+<a name="215"><span class="lineNum">     215 </span>            : </a>
+<a name="216"><span class="lineNum">     216 </span>            :     // @Param: _GPIO_MASK</a>
+<a name="217"><span class="lineNum">     217 </span>            :     // @DisplayName: Servo GPIO mask</a>
+<a name="218"><span class="lineNum">     218 </span>            :     // @Description: Bitmask of outputs which will be available as GPIOs. Any output with either the function set to -1 or with the corresponding bit set in this mask will be available for use as a GPIO pin</a>
+<a name="219"><span class="lineNum">     219 </span>            :     // @Bitmask: 0:Servo 1, 1:Servo 2, 2:Servo 3, 3:Servo 4, 4:Servo 5, 5:Servo 6, 6:Servo 7, 7:Servo 8, 8:Servo 9, 9:Servo 10, 10:Servo 11, 11:Servo 12, 12:Servo 13, 13:Servo 14, 14:Servo 15, 15:Servo 16, 16:Servo 17, 17:Servo 18, 18:Servo 19, 19:Servo 20, 20:Servo 21, 21:Servo 22, 22:Servo 23, 23:Servo 24, 24:Servo 25, 25:Servo 26, 26:Servo 27, 27:Servo 28, 28:Servo 29, 29:Servo 30, 30:Servo 31, 31:Servo 32</a>
+<a name="220"><span class="lineNum">     220 </span>            :     // @User: Advanced</a>
+<a name="221"><span class="lineNum">     221 </span>            :     // @RebootRequired: True</a>
+<a name="222"><span class="lineNum">     222 </span>            :     AP_GROUPINFO(&quot;_GPIO_MASK&quot;,  26, SRV_Channels, gpio_mask, 0),  </a>
+<a name="223"><span class="lineNum">     223 </span>            : </a>
+<a name="224"><span class="lineNum">     224 </span>            :     // indexes 27-43 used by SERVO_32_ENABLEd group of params</a>
+<a name="225"><span class="lineNum">     225 </span>            :  </a>
+<a name="226"><span class="lineNum">     226 </span>            :     // @Param: _RC_FS_MSK</a>
+<a name="227"><span class="lineNum">     227 </span>            :     // @DisplayName: Servo RC Failsafe Mask</a>
+<a name="228"><span class="lineNum">     228 </span>            :     // @Description: Bitmask of scaled passthru output channels which will be set to their trim value during rc failsafe instead of holding their last position before failsafe.</a>
+<a name="229"><span class="lineNum">     229 </span>            :     // @Bitmask: 0:RCIN1Scaled, 1:RCIN2Scaled, 2:RCIN3Scaled, 3:RCIN4Scaled, 4:RCIN5Scaled, 5:RCIN6Scaled, 6:RCIN7Scaled, 7:RCIN8Scaled, 8:RCIN9Scaled, 9:RCIN10Scaled, 10:RCIN11Scaled, 11:SRCIN12Scaled, 12:RCIN13Scaled, 13:RCIN14Scaled, 14:RCIN15Scaled, 15:RCIN16Scaled</a>
+<a name="230"><span class="lineNum">     230 </span>            :     // @User: Advanced</a>
+<a name="231"><span class="lineNum">     231 </span>            :     AP_GROUPINFO(&quot;_RC_FS_MSK&quot;, 44, SRV_Channels, rc_fs_mask, 0),</a>
+<a name="232"><span class="lineNum">     232 </span>            :  </a>
+<a name="233"><span class="lineNum">     233 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 17)</a>
+<a name="234"><span class="lineNum">     234 </span>            :     // @Param: _32_ENABLE</a>
+<a name="235"><span class="lineNum">     235 </span>            :     // @DisplayName: Enable outputs 17 to 31</a>
+<a name="236"><span class="lineNum">     236 </span>            :     // @Description: This allows for up to 32 outputs, enabling parameters for outputs above 16</a>
+<a name="237"><span class="lineNum">     237 </span>            :     // @User: Advanced</a>
+<a name="238"><span class="lineNum">     238 </span>            :     // @Values: 0:Disabled,1:Enabled</a>
+<a name="239"><span class="lineNum">     239 </span>            :     AP_GROUPINFO_FLAGS(&quot;_32_ENABLE&quot;, 43, SRV_Channels, enable_32_channels, 0, AP_PARAM_FLAG_ENABLE),</a>
+<a name="240"><span class="lineNum">     240 </span>            : #endif</a>
+<a name="241"><span class="lineNum">     241 </span>            : </a>
+<a name="242"><span class="lineNum">     242 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 17)</a>
+<a name="243"><span class="lineNum">     243 </span>            :     // @Group: 17_</a>
+<a name="244"><span class="lineNum">     244 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="245"><span class="lineNum">     245 </span>            :     AP_SUBGROUPINFO(obj_channels[16], &quot;17_&quot;,  27, SRV_Channels, SRV_Channel),</a>
+<a name="246"><span class="lineNum">     246 </span>            : #endif</a>
+<a name="247"><span class="lineNum">     247 </span>            : </a>
+<a name="248"><span class="lineNum">     248 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 18)</a>
+<a name="249"><span class="lineNum">     249 </span>            :     // @Group: 18_</a>
+<a name="250"><span class="lineNum">     250 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="251"><span class="lineNum">     251 </span>            :     AP_SUBGROUPINFO(obj_channels[17], &quot;18_&quot;, 28, SRV_Channels, SRV_Channel),</a>
+<a name="252"><span class="lineNum">     252 </span>            : #endif</a>
+<a name="253"><span class="lineNum">     253 </span>            : </a>
+<a name="254"><span class="lineNum">     254 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 19)</a>
+<a name="255"><span class="lineNum">     255 </span>            :     // @Group: 19_</a>
+<a name="256"><span class="lineNum">     256 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="257"><span class="lineNum">     257 </span>            :     AP_SUBGROUPINFO(obj_channels[18], &quot;19_&quot;,  29, SRV_Channels, SRV_Channel),</a>
+<a name="258"><span class="lineNum">     258 </span>            : #endif</a>
+<a name="259"><span class="lineNum">     259 </span>            : </a>
+<a name="260"><span class="lineNum">     260 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 20)</a>
+<a name="261"><span class="lineNum">     261 </span>            :     // @Group: 20_</a>
+<a name="262"><span class="lineNum">     262 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="263"><span class="lineNum">     263 </span>            :     AP_SUBGROUPINFO(obj_channels[19], &quot;20_&quot;,  30, SRV_Channels, SRV_Channel),</a>
+<a name="264"><span class="lineNum">     264 </span>            : #endif</a>
+<a name="265"><span class="lineNum">     265 </span>            : </a>
+<a name="266"><span class="lineNum">     266 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 21)</a>
+<a name="267"><span class="lineNum">     267 </span>            :     // @Group: 21_</a>
+<a name="268"><span class="lineNum">     268 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="269"><span class="lineNum">     269 </span>            :     AP_SUBGROUPINFO(obj_channels[20], &quot;21_&quot;,  31, SRV_Channels, SRV_Channel),</a>
+<a name="270"><span class="lineNum">     270 </span>            : #endif</a>
+<a name="271"><span class="lineNum">     271 </span>            : </a>
+<a name="272"><span class="lineNum">     272 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 22)</a>
+<a name="273"><span class="lineNum">     273 </span>            :     // @Group: 22_</a>
+<a name="274"><span class="lineNum">     274 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="275"><span class="lineNum">     275 </span>            :     AP_SUBGROUPINFO(obj_channels[21], &quot;22_&quot;,  32, SRV_Channels, SRV_Channel),</a>
+<a name="276"><span class="lineNum">     276 </span>            : #endif</a>
+<a name="277"><span class="lineNum">     277 </span>            : </a>
+<a name="278"><span class="lineNum">     278 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 23)</a>
+<a name="279"><span class="lineNum">     279 </span>            :     // @Group: 23_</a>
+<a name="280"><span class="lineNum">     280 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="281"><span class="lineNum">     281 </span>            :     AP_SUBGROUPINFO(obj_channels[22], &quot;23_&quot;,  33, SRV_Channels, SRV_Channel),</a>
+<a name="282"><span class="lineNum">     282 </span>            : #endif</a>
+<a name="283"><span class="lineNum">     283 </span>            : </a>
+<a name="284"><span class="lineNum">     284 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 24)</a>
+<a name="285"><span class="lineNum">     285 </span>            :     // @Group: 24_</a>
+<a name="286"><span class="lineNum">     286 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="287"><span class="lineNum">     287 </span>            :     AP_SUBGROUPINFO(obj_channels[23], &quot;24_&quot;,  34, SRV_Channels, SRV_Channel),</a>
+<a name="288"><span class="lineNum">     288 </span>            : #endif</a>
+<a name="289"><span class="lineNum">     289 </span>            : </a>
+<a name="290"><span class="lineNum">     290 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 25)</a>
+<a name="291"><span class="lineNum">     291 </span>            :     // @Group: 25_</a>
+<a name="292"><span class="lineNum">     292 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="293"><span class="lineNum">     293 </span>            :     AP_SUBGROUPINFO(obj_channels[24], &quot;25_&quot;,  35, SRV_Channels, SRV_Channel),</a>
+<a name="294"><span class="lineNum">     294 </span>            : #endif</a>
+<a name="295"><span class="lineNum">     295 </span>            : </a>
+<a name="296"><span class="lineNum">     296 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 26)</a>
+<a name="297"><span class="lineNum">     297 </span>            :     // @Group: 26_</a>
+<a name="298"><span class="lineNum">     298 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="299"><span class="lineNum">     299 </span>            :     AP_SUBGROUPINFO(obj_channels[25], &quot;26_&quot;,  36, SRV_Channels, SRV_Channel),</a>
+<a name="300"><span class="lineNum">     300 </span>            : #endif</a>
+<a name="301"><span class="lineNum">     301 </span>            : </a>
+<a name="302"><span class="lineNum">     302 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 27)</a>
+<a name="303"><span class="lineNum">     303 </span>            :     // @Group: 27_</a>
+<a name="304"><span class="lineNum">     304 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="305"><span class="lineNum">     305 </span>            :     AP_SUBGROUPINFO(obj_channels[26], &quot;27_&quot;,  37, SRV_Channels, SRV_Channel),</a>
+<a name="306"><span class="lineNum">     306 </span>            : #endif</a>
+<a name="307"><span class="lineNum">     307 </span>            : </a>
+<a name="308"><span class="lineNum">     308 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 28)</a>
+<a name="309"><span class="lineNum">     309 </span>            :     // @Group: 28_</a>
+<a name="310"><span class="lineNum">     310 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="311"><span class="lineNum">     311 </span>            :     AP_SUBGROUPINFO(obj_channels[27], &quot;28_&quot;,  38, SRV_Channels, SRV_Channel),</a>
+<a name="312"><span class="lineNum">     312 </span>            : #endif</a>
+<a name="313"><span class="lineNum">     313 </span>            : </a>
+<a name="314"><span class="lineNum">     314 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 29)</a>
+<a name="315"><span class="lineNum">     315 </span>            :     // @Group: 29_</a>
+<a name="316"><span class="lineNum">     316 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="317"><span class="lineNum">     317 </span>            :     AP_SUBGROUPINFO(obj_channels[28], &quot;29_&quot;,  39, SRV_Channels, SRV_Channel),</a>
+<a name="318"><span class="lineNum">     318 </span>            : #endif</a>
+<a name="319"><span class="lineNum">     319 </span>            : </a>
+<a name="320"><span class="lineNum">     320 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 30)</a>
+<a name="321"><span class="lineNum">     321 </span>            :     // @Group: 30_</a>
+<a name="322"><span class="lineNum">     322 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="323"><span class="lineNum">     323 </span>            :     AP_SUBGROUPINFO(obj_channels[29], &quot;30_&quot;,  40, SRV_Channels, SRV_Channel),</a>
+<a name="324"><span class="lineNum">     324 </span>            : #endif</a>
+<a name="325"><span class="lineNum">     325 </span>            : </a>
+<a name="326"><span class="lineNum">     326 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 31)</a>
+<a name="327"><span class="lineNum">     327 </span>            :     // @Group: 31_</a>
+<a name="328"><span class="lineNum">     328 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="329"><span class="lineNum">     329 </span>            :     AP_SUBGROUPINFO(obj_channels[30], &quot;31_&quot;,  41, SRV_Channels, SRV_Channel),</a>
+<a name="330"><span class="lineNum">     330 </span>            : #endif</a>
+<a name="331"><span class="lineNum">     331 </span>            : </a>
+<a name="332"><span class="lineNum">     332 </span>            : #if (NUM_SERVO_CHANNELS &gt;= 32)</a>
+<a name="333"><span class="lineNum">     333 </span>            :     // @Group: 32_</a>
+<a name="334"><span class="lineNum">     334 </span>            :     // @Path: SRV_Channel.cpp</a>
+<a name="335"><span class="lineNum">     335 </span>            :     AP_SUBGROUPINFO(obj_channels[31], &quot;32_&quot;,  42, SRV_Channels, SRV_Channel),</a>
+<a name="336"><span class="lineNum">     336 </span>            : #endif</a>
+<a name="337"><span class="lineNum">     337 </span>            : </a>
+<a name="338"><span class="lineNum">     338 </span>            :     AP_GROUPEND</a>
+<a name="339"><span class="lineNum">     339 </span>            : };</a>
+<a name="340"><span class="lineNum">     340 </span>            : </a>
+<a name="341"><span class="lineNum">     341 </span>            : /*</a>
+<a name="342"><span class="lineNum">     342 </span>            :   constructor</a>
+<a name="343"><span class="lineNum">     343 </span>            :  */</a>
+<a name="344"><span class="lineNum">     344 </span><span class="lineCov">      27984 : SRV_Channels::SRV_Channels(void)</span></a>
+<a name="345"><span class="lineNum">     345 </span>            : {</a>
+<a name="346"><span class="lineNum">     346 </span><span class="lineCov">        848 :     _singleton = this;</span></a>
+<a name="347"><span class="lineNum">     347 </span><span class="lineCov">        848 :     channels = obj_channels;</span></a>
+<a name="348"><span class="lineNum">     348 </span>            : </a>
+<a name="349"><span class="lineNum">     349 </span>            :     // set defaults from the parameter table</a>
+<a name="350"><span class="lineNum">     350 </span><span class="lineCov">        848 :     AP_Param::setup_object_defaults(this, var_info);</span></a>
+<a name="351"><span class="lineNum">     351 </span>            : </a>
+<a name="352"><span class="lineNum">     352 </span>            :     // setup ch_num on channels</a>
+<a name="353"><span class="lineNum">     353 </span><span class="lineCov">      27984 :     for (uint8_t i=0; i&lt;NUM_SERVO_CHANNELS; i++) {</span></a>
+<a name="354"><span class="lineNum">     354 </span><span class="lineCov">      27136 :         channels[i].ch_num = i;</span></a>
+<a name="355"><span class="lineNum">     355 </span>            : #if NUM_SERVO_CHANNELS &gt; 16</a>
+<a name="356"><span class="lineNum">     356 </span><span class="lineCov">      27136 :         if (i &gt;= 16) {</span></a>
+<a name="357"><span class="lineNum">     357 </span>            :             // default to GPIO, this disables the pin and stops logging</a>
+<a name="358"><span class="lineNum">     358 </span><span class="lineCov">      13568 :             channels[i].function.set_default(SRV_Channel::k_GPIO);</span></a>
+<a name="359"><span class="lineNum">     359 </span>            :         }</a>
+<a name="360"><span class="lineNum">     360 </span>            : #endif</a>
+<a name="361"><span class="lineNum">     361 </span>            :     }</a>
+<a name="362"><span class="lineNum">     362 </span><span class="lineCov">        848 : }</span></a>
+<a name="363"><span class="lineNum">     363 </span>            : </a>
+<a name="364"><span class="lineNum">     364 </span>            : // SRV_Channels initialization</a>
+<a name="365"><span class="lineNum">     365 </span><span class="lineCov">        848 : void SRV_Channels::init(uint32_t motor_mask, AP_HAL::RCOutput::output_mode mode)</span></a>
+<a name="366"><span class="lineNum">     366 </span>            : {</a>
+<a name="367"><span class="lineNum">     367 </span>            :     // initialize BLHeli late so that all of the masks it might setup don't get trodden on by motor initialization</a>
+<a name="368"><span class="lineNum">     368 </span>            : #if HAL_SUPPORT_RCOUT_SERIAL</a>
+<a name="369"><span class="lineNum">     369 </span>            :     blheli.init(motor_mask, mode);</a>
+<a name="370"><span class="lineNum">     370 </span>            : #endif</a>
+<a name="371"><span class="lineNum">     371 </span>            : #ifndef HAL_BUILD_AP_PERIPH</a>
+<a name="372"><span class="lineNum">     372 </span><span class="lineCov">        848 :     hal.rcout-&gt;set_dshot_rate(_singleton-&gt;dshot_rate, AP::scheduler().get_loop_rate_hz());</span></a>
+<a name="373"><span class="lineNum">     373 </span>            : #endif</a>
+<a name="374"><span class="lineNum">     374 </span><span class="lineCov">        848 : }</span></a>
+<a name="375"><span class="lineNum">     375 </span>            : </a>
+<a name="376"><span class="lineNum">     376 </span>            : /*</a>
+<a name="377"><span class="lineNum">     377 </span>            :   save adjusted trims</a>
+<a name="378"><span class="lineNum">     378 </span>            :  */</a>
+<a name="379"><span class="lineNum">     379 </span><span class="lineNoCov">          0 : void SRV_Channels::save_trim(void)</span></a>
+<a name="380"><span class="lineNum">     380 </span>            : {</a>
+<a name="381"><span class="lineNum">     381 </span><span class="lineNoCov">          0 :     for (uint8_t i=0; i&lt;NUM_SERVO_CHANNELS; i++) {</span></a>
+<a name="382"><span class="lineNum">     382 </span><span class="lineNoCov">          0 :         if (trimmed_mask &amp; (1U&lt;&lt;i)) {</span></a>
+<a name="383"><span class="lineNum">     383 </span><span class="lineNoCov">          0 :             channels[i].servo_trim.set_and_save(channels[i].servo_trim.get());</span></a>
+<a name="384"><span class="lineNum">     384 </span>            :         }</a>
+<a name="385"><span class="lineNum">     385 </span>            :     }</a>
+<a name="386"><span class="lineNum">     386 </span><span class="lineNoCov">          0 :     trimmed_mask = 0;</span></a>
+<a name="387"><span class="lineNum">     387 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="388"><span class="lineNum">     388 </span>            : </a>
+<a name="389"><span class="lineNum">     389 </span><span class="lineNoCov">          0 : void SRV_Channels::setup_failsafe_trim_all_non_motors(void)</span></a>
+<a name="390"><span class="lineNum">     390 </span>            : {</a>
+<a name="391"><span class="lineNum">     391 </span><span class="lineNoCov">          0 :     for (uint8_t i = 0; i &lt; NUM_SERVO_CHANNELS; i++) {</span></a>
+<a name="392"><span class="lineNum">     392 </span><span class="lineNoCov">          0 :         if (!SRV_Channel::is_motor(channels[i].get_function())) {</span></a>
+<a name="393"><span class="lineNum">     393 </span><span class="lineNoCov">          0 :             hal.rcout-&gt;set_failsafe_pwm(1U&lt;&lt;channels[i].ch_num, channels[i].servo_trim);</span></a>
+<a name="394"><span class="lineNum">     394 </span>            :         }</a>
+<a name="395"><span class="lineNum">     395 </span>            :     }</a>
+<a name="396"><span class="lineNum">     396 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="397"><span class="lineNum">     397 </span>            : </a>
+<a name="398"><span class="lineNum">     398 </span>            : /*</a>
+<a name="399"><span class="lineNum">     399 </span>            :   run calc_pwm for all channels</a>
+<a name="400"><span class="lineNum">     400 </span>            :  */</a>
+<a name="401"><span class="lineNum">     401 </span><span class="lineCov">   27897200 : void SRV_Channels::calc_pwm(void)</span></a>
+<a name="402"><span class="lineNum">     402 </span>            : {</a>
+<a name="403"><span class="lineNum">     403 </span>            :     // slew rate limit functions</a>
+<a name="404"><span class="lineNum">     404 </span><span class="lineCov">   27897200 :     for (slew_list *slew = _slew; slew; slew = slew-&gt;next) {</span></a>
+<a name="405"><span class="lineNum">     405 </span><span class="lineNoCov">          0 :         if (is_positive(slew-&gt;max_change)) {</span></a>
+<a name="406"><span class="lineNum">     406 </span>            :             // treat negative or zero slew rate as disabled</a>
+<a name="407"><span class="lineNum">     407 </span><span class="lineNoCov">          0 :             functions[slew-&gt;func].output_scaled = constrain_float(functions[slew-&gt;func].output_scaled, slew-&gt;last_scaled_output - slew-&gt;max_change, slew-&gt;last_scaled_output + slew-&gt;max_change);</span></a>
+<a name="408"><span class="lineNum">     408 </span>            :         }</a>
+<a name="409"><span class="lineNum">     409 </span><span class="lineNoCov">          0 :         slew-&gt;last_scaled_output = functions[slew-&gt;func].output_scaled;</span></a>
+<a name="410"><span class="lineNum">     410 </span>            :     }</a>
+<a name="411"><span class="lineNum">     411 </span>            : </a>
+<a name="412"><span class="lineNum">     412 </span><span class="lineCov">   55794300 :     WITH_SEMAPHORE(_singleton-&gt;override_counter_sem);</span></a>
+<a name="413"><span class="lineNum">     413 </span>            : </a>
+<a name="414"><span class="lineNum">     414 </span><span class="lineCov">  920606000 :     for (uint8_t i=0; i&lt;NUM_SERVO_CHANNELS; i++) {</span></a>
+<a name="415"><span class="lineNum">     415 </span>            :         // check if channel has been locked out for this loop</a>
+<a name="416"><span class="lineNum">     416 </span>            :         // if it has, decrement the loop count for that channel</a>
+<a name="417"><span class="lineNum">     417 </span><span class="lineCov">  892709000 :         if (override_counter[i] == 0) {</span></a>
+<a name="418"><span class="lineNum">     418 </span><span class="lineCov">  892709000 :             channels[i].set_override(false);</span></a>
+<a name="419"><span class="lineNum">     419 </span>            :         } else {</a>
+<a name="420"><span class="lineNum">     420 </span><span class="lineNoCov">          0 :             channels[i].set_override(true);</span></a>
+<a name="421"><span class="lineNum">     421 </span><span class="lineNoCov">          0 :             override_counter[i]--;</span></a>
+<a name="422"><span class="lineNum">     422 </span>            :         }</a>
+<a name="423"><span class="lineNum">     423 </span><span class="lineCov">  892709000 :         if (channels[i].valid_function()) {</span></a>
+<a name="424"><span class="lineNum">     424 </span><span class="lineCov">  446354000 :             channels[i].calc_pwm(functions[channels[i].function.get()].output_scaled);</span></a>
+<a name="425"><span class="lineNum">     425 </span>            :         }</a>
+<a name="426"><span class="lineNum">     426 </span>            :     }</a>
+<a name="427"><span class="lineNum">     427 </span><span class="lineCov">   27897200 : }</span></a>
+<a name="428"><span class="lineNum">     428 </span>            : </a>
+<a name="429"><span class="lineNum">     429 </span>            : // set output value for a specific function channel as a pwm value</a>
+<a name="430"><span class="lineNum">     430 </span><span class="lineNoCov">          0 : void SRV_Channels::set_output_pwm_chan(uint8_t chan, uint16_t value)</span></a>
+<a name="431"><span class="lineNum">     431 </span>            : {</a>
+<a name="432"><span class="lineNum">     432 </span><span class="lineNoCov">          0 :     if (chan &lt; NUM_SERVO_CHANNELS) {</span></a>
+<a name="433"><span class="lineNum">     433 </span><span class="lineNoCov">          0 :         channels[chan].set_output_pwm(value);</span></a>
+<a name="434"><span class="lineNum">     434 </span>            :     }</a>
+<a name="435"><span class="lineNum">     435 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="436"><span class="lineNum">     436 </span>            : </a>
+<a name="437"><span class="lineNum">     437 </span>            : // get output value for a specific channel as a pwm value</a>
+<a name="438"><span class="lineNum">     438 </span><span class="lineNoCov">          0 : bool SRV_Channels::get_output_pwm_chan(uint8_t chan, uint16_t &amp;value)</span></a>
+<a name="439"><span class="lineNum">     439 </span>            : {</a>
+<a name="440"><span class="lineNum">     440 </span><span class="lineNoCov">          0 :     if (chan &gt;= NUM_SERVO_CHANNELS) {</span></a>
+<a name="441"><span class="lineNum">     441 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="442"><span class="lineNum">     442 </span>            :     }</a>
+<a name="443"><span class="lineNum">     443 </span><span class="lineNoCov">          0 :     value = channels[chan].get_output_pwm();</span></a>
+<a name="444"><span class="lineNum">     444 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="445"><span class="lineNum">     445 </span>            : }</a>
+<a name="446"><span class="lineNum">     446 </span>            : </a>
+<a name="447"><span class="lineNum">     447 </span>            : #if AP_SCRIPTING_ENABLED &amp;&amp; AP_SCHEDULER_ENABLED</a>
+<a name="448"><span class="lineNum">     448 </span>            : // set output value for a specific function channel as a pwm value with loop based timeout</a>
+<a name="449"><span class="lineNum">     449 </span>            : // timeout_ms of zero will clear override of the channel</a>
+<a name="450"><span class="lineNum">     450 </span>            : // minimum override is 1 MAIN_LOOP</a>
+<a name="451"><span class="lineNum">     451 </span><span class="lineNoCov">          0 : void SRV_Channels::set_output_pwm_chan_timeout(uint8_t chan, uint16_t value, uint16_t timeout_ms)</span></a>
+<a name="452"><span class="lineNum">     452 </span>            : {</a>
+<a name="453"><span class="lineNum">     453 </span><span class="lineNoCov">          0 :     WITH_SEMAPHORE(_singleton-&gt;override_counter_sem);</span></a>
+<a name="454"><span class="lineNum">     454 </span>            : </a>
+<a name="455"><span class="lineNum">     455 </span><span class="lineNoCov">          0 :     if (chan &lt; NUM_SERVO_CHANNELS) {</span></a>
+<a name="456"><span class="lineNum">     456 </span><span class="lineNoCov">          0 :         const uint32_t loop_period_us = AP::scheduler().get_loop_period_us();</span></a>
+<a name="457"><span class="lineNum">     457 </span>            :         // round up so any non-zero requested value will result in at least one loop</a>
+<a name="458"><span class="lineNum">     458 </span><span class="lineNoCov">          0 :         const uint32_t loop_count = ((timeout_ms * 1000U) + (loop_period_us - 1U)) / loop_period_us;</span></a>
+<a name="459"><span class="lineNum">     459 </span><span class="lineNoCov">          0 :         override_counter[chan] = constrain_int32(loop_count, 0, UINT16_MAX);</span></a>
+<a name="460"><span class="lineNum">     460 </span><span class="lineNoCov">          0 :         channels[chan].set_override(true);</span></a>
+<a name="461"><span class="lineNum">     461 </span><span class="lineNoCov">          0 :         const bool had_pwm = SRV_Channel::have_pwm_mask &amp; (1U&lt;&lt;chan);</span></a>
+<a name="462"><span class="lineNum">     462 </span><span class="lineNoCov">          0 :         channels[chan].set_output_pwm(value,true);</span></a>
+<a name="463"><span class="lineNum">     463 </span><span class="lineNoCov">          0 :         if (!had_pwm) {</span></a>
+<a name="464"><span class="lineNum">     464 </span>            :             // clear the have PWM mask so the channel will default back to the scaled value when timeout expires</a>
+<a name="465"><span class="lineNum">     465 </span>            :             // this is also cleared by set_output_scaled but that requires it to be re-called as some point</a>
+<a name="466"><span class="lineNum">     466 </span>            :             // after the timeout is applied</a>
+<a name="467"><span class="lineNum">     467 </span>            :             // note that we can't default back to a pre-override PWM value as it is not stored</a>
+<a name="468"><span class="lineNum">     468 </span>            :             // checking had_pwm means the PWM will not change after the timeout, this was the existing behaviour</a>
+<a name="469"><span class="lineNum">     469 </span><span class="lineNoCov">          0 :             SRV_Channel::have_pwm_mask &amp;= ~(1U&lt;&lt;chan);</span></a>
+<a name="470"><span class="lineNum">     470 </span>            :         }</a>
+<a name="471"><span class="lineNum">     471 </span>            :     }</a>
+<a name="472"><span class="lineNum">     472 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="473"><span class="lineNum">     473 </span>            : #endif  // AP_SCRIPTING_ENABLED</a>
+<a name="474"><span class="lineNum">     474 </span>            : </a>
+<a name="475"><span class="lineNum">     475 </span>            : /*</a>
+<a name="476"><span class="lineNum">     476 </span>            :   wrapper around hal.rcout-&gt;cork()</a>
+<a name="477"><span class="lineNum">     477 </span>            :  */</a>
+<a name="478"><span class="lineNum">     478 </span><span class="lineCov">   27897200 : void SRV_Channels::cork()</span></a>
+<a name="479"><span class="lineNum">     479 </span>            : {</a>
+<a name="480"><span class="lineNum">     480 </span><span class="lineCov">   27897200 :     hal.rcout-&gt;cork();</span></a>
+<a name="481"><span class="lineNum">     481 </span><span class="lineCov">   27897200 : }</span></a>
+<a name="482"><span class="lineNum">     482 </span>            : </a>
+<a name="483"><span class="lineNum">     483 </span>            : /*</a>
+<a name="484"><span class="lineNum">     484 </span>            :   wrapper around hal.rcout-&gt;push()</a>
+<a name="485"><span class="lineNum">     485 </span>            :  */</a>
+<a name="486"><span class="lineNum">     486 </span><span class="lineCov">   27741000 : void SRV_Channels::push()</span></a>
+<a name="487"><span class="lineNum">     487 </span>            : {</a>
+<a name="488"><span class="lineNum">     488 </span><span class="lineCov">   27741000 :     hal.rcout-&gt;push();</span></a>
+<a name="489"><span class="lineNum">     489 </span>            : </a>
+<a name="490"><span class="lineNum">     490 </span>            : #if AP_VOLZ_ENABLED</a>
+<a name="491"><span class="lineNum">     491 </span>            :     // give volz library a chance to update</a>
+<a name="492"><span class="lineNum">     492 </span><span class="lineCov">   27741000 :     volz.update();</span></a>
+<a name="493"><span class="lineNum">     493 </span>            : #endif</a>
+<a name="494"><span class="lineNum">     494 </span>            : </a>
+<a name="495"><span class="lineNum">     495 </span>            : #if AP_SBUSOUTPUT_ENABLED</a>
+<a name="496"><span class="lineNum">     496 </span>            :     // give sbus library a chance to update</a>
+<a name="497"><span class="lineNum">     497 </span><span class="lineCov">   27741000 :     sbus.update();</span></a>
+<a name="498"><span class="lineNum">     498 </span>            : #endif</a>
+<a name="499"><span class="lineNum">     499 </span>            : </a>
+<a name="500"><span class="lineNum">     500 </span>            : #if AP_ROBOTISSERVO_ENABLED</a>
+<a name="501"><span class="lineNum">     501 </span>            :     // give robotis library a chance to update</a>
+<a name="502"><span class="lineNum">     502 </span><span class="lineCov">   27741000 :     robotis.update();</span></a>
+<a name="503"><span class="lineNum">     503 </span>            : #endif</a>
+<a name="504"><span class="lineNum">     504 </span>            : </a>
+<a name="505"><span class="lineNum">     505 </span>            : #if HAL_SUPPORT_RCOUT_SERIAL</a>
+<a name="506"><span class="lineNum">     506 </span>            :     // give blheli telemetry a chance to update</a>
+<a name="507"><span class="lineNum">     507 </span>            :     blheli.update_telemetry();</a>
+<a name="508"><span class="lineNum">     508 </span>            : #endif</a>
+<a name="509"><span class="lineNum">     509 </span>            : </a>
+<a name="510"><span class="lineNum">     510 </span>            : #if AP_FETTEC_ONEWIRE_ENABLED</a>
+<a name="511"><span class="lineNum">     511 </span><span class="lineCov">   27741000 :     fetteconwire.update();</span></a>
+<a name="512"><span class="lineNum">     512 </span>            : #endif</a>
+<a name="513"><span class="lineNum">     513 </span>            : </a>
+<a name="514"><span class="lineNum">     514 </span>            : #if AP_KDECAN_ENABLED</a>
+<a name="515"><span class="lineNum">     515 </span><span class="lineCov">   27741000 :     if (AP::kdecan() != nullptr) {</span></a>
+<a name="516"><span class="lineNum">     516 </span><span class="lineCov">   27741000 :         AP::kdecan()-&gt;update();</span></a>
+<a name="517"><span class="lineNum">     517 </span>            :     }</a>
+<a name="518"><span class="lineNum">     518 </span>            : #endif</a>
+<a name="519"><span class="lineNum">     519 </span>            : </a>
+<a name="520"><span class="lineNum">     520 </span>            : #if HAL_ENABLE_DRONECAN_DRIVERS</a>
+<a name="521"><span class="lineNum">     521 </span>            :     // push outputs to CAN</a>
+<a name="522"><span class="lineNum">     522 </span><span class="lineCov">   27741000 :     uint8_t can_num_drivers = AP::can().get_num_drivers();</span></a>
+<a name="523"><span class="lineNum">     523 </span><span class="lineCov">   83223100 :     for (uint8_t i = 0; i &lt; can_num_drivers; i++) {</span></a>
+<a name="524"><span class="lineNum">     524 </span><span class="lineCov">   55482100 :         switch (AP::can().get_driver_type(i)) {</span></a>
+<a name="525"><span class="lineNum">     525 </span><span class="lineCov">      14045 :             case AP_CAN::Protocol::DroneCAN: {</span></a>
+<a name="526"><span class="lineNum">     526 </span><span class="lineCov">      14045 :                 AP_DroneCAN *ap_dronecan = AP_DroneCAN::get_dronecan(i);</span></a>
+<a name="527"><span class="lineNum">     527 </span><span class="lineCov">      14045 :                 if (ap_dronecan == nullptr) {</span></a>
+<a name="528"><span class="lineNum">     528 </span><span class="lineNoCov">          0 :                     continue;</span></a>
+<a name="529"><span class="lineNum">     529 </span>            :                 }</a>
+<a name="530"><span class="lineNum">     530 </span><span class="lineCov">      14045 :                 ap_dronecan-&gt;SRV_push_servos();</span></a>
+<a name="531"><span class="lineNum">     531 </span><span class="lineCov">      14045 :                 break;</span></a>
+<a name="532"><span class="lineNum">     532 </span>            :             }</a>
+<a name="533"><span class="lineNum">     533 </span>            : #if HAL_PICCOLO_CAN_ENABLE</a>
+<a name="534"><span class="lineNum">     534 </span><span class="lineNoCov">          0 :             case AP_CAN::Protocol::PiccoloCAN: {</span></a>
+<a name="535"><span class="lineNum">     535 </span><span class="lineNoCov">          0 :                 AP_PiccoloCAN *ap_pcan = AP_PiccoloCAN::get_pcan(i);</span></a>
+<a name="536"><span class="lineNum">     536 </span><span class="lineNoCov">          0 :                 if (ap_pcan == nullptr) {</span></a>
+<a name="537"><span class="lineNum">     537 </span><span class="lineNoCov">          0 :                     continue;</span></a>
+<a name="538"><span class="lineNum">     538 </span>            :                 }</a>
+<a name="539"><span class="lineNum">     539 </span><span class="lineNoCov">          0 :                 ap_pcan-&gt;update();</span></a>
+<a name="540"><span class="lineNum">     540 </span><span class="lineNoCov">          0 :                 break;</span></a>
+<a name="541"><span class="lineNum">     541 </span>            :             }</a>
+<a name="542"><span class="lineNum">     542 </span>            : #endif</a>
+<a name="543"><span class="lineNum">     543 </span><span class="lineCov">   55468000 :             case AP_CAN::Protocol::None:</span></a>
+<a name="544"><span class="lineNum">     544 </span>            :             default:</a>
+<a name="545"><span class="lineNum">     545 </span><span class="lineCov">   55468000 :                 break;</span></a>
+<a name="546"><span class="lineNum">     546 </span>            :         }</a>
+<a name="547"><span class="lineNum">     547 </span>            :     }</a>
+<a name="548"><span class="lineNum">     548 </span>            : #endif // HAL_NUM_CAN_IFACES</a>
+<a name="549"><span class="lineNum">     549 </span><span class="lineCov">   27741000 : }</span></a>
+<a name="550"><span class="lineNum">     550 </span>            : </a>
+<a name="551"><span class="lineNum">     551 </span><span class="lineNoCov">          0 : void SRV_Channels::zero_rc_outputs()</span></a>
+<a name="552"><span class="lineNum">     552 </span>            : {</a>
+<a name="553"><span class="lineNum">     553 </span>            :     /* Send an invalid signal to the motors to prevent spinning due to</a>
+<a name="554"><span class="lineNum">     554 </span>            :      * neutral (1500) pwm pulse being cut short.  For that matter,</a>
+<a name="555"><span class="lineNum">     555 </span>            :      * send an invalid signal to all channels to prevent</a>
+<a name="556"><span class="lineNum">     556 </span>            :      * undesired/unexpected behavior</a>
+<a name="557"><span class="lineNum">     557 </span>            :      */</a>
+<a name="558"><span class="lineNum">     558 </span><span class="lineNoCov">          0 :     auto &amp;srv = AP::srv();</span></a>
+<a name="559"><span class="lineNum">     559 </span><span class="lineNoCov">          0 :     srv.cork();</span></a>
+<a name="560"><span class="lineNum">     560 </span><span class="lineNoCov">          0 :     for (uint8_t i=0; i&lt;NUM_SERVO_CHANNELS; i++) {</span></a>
+<a name="561"><span class="lineNum">     561 </span><span class="lineNoCov">          0 :         hal.rcout-&gt;write(i, 0);</span></a>
+<a name="562"><span class="lineNum">     562 </span>            :     }</a>
+<a name="563"><span class="lineNum">     563 </span><span class="lineNoCov">          0 :     srv.push();</span></a>
+<a name="564"><span class="lineNum">     564 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="565"><span class="lineNum">     565 </span>            : </a>
+<a name="566"><span class="lineNum">     566 </span>            : /*</a>
+<a name="567"><span class="lineNum">     567 </span>            :   return true if a channel should be available as a GPIO</a>
+<a name="568"><span class="lineNum">     568 </span>            :  */</a>
+<a name="569"><span class="lineNum">     569 </span><span class="lineNoCov">          0 : bool SRV_Channels::is_GPIO(uint8_t channel)</span></a>
+<a name="570"><span class="lineNum">     570 </span>            : {</a>
+<a name="571"><span class="lineNum">     571 </span><span class="lineNoCov">          0 :     if (channel_function(channel) == SRV_Channel::k_GPIO) {</span></a>
+<a name="572"><span class="lineNum">     572 </span><span class="lineNoCov">          0 :         return true;</span></a>
+<a name="573"><span class="lineNum">     573 </span>            :     }</a>
+<a name="574"><span class="lineNum">     574 </span><span class="lineNoCov">          0 :     if (_singleton != nullptr &amp;&amp; (_singleton-&gt;gpio_mask &amp; (1U&lt;&lt;channel)) != 0) {</span></a>
+<a name="575"><span class="lineNum">     575 </span>            :         // user has set this channel in SERVO_GPIO_MASK</a>
+<a name="576"><span class="lineNum">     576 </span><span class="lineNoCov">          0 :         return true;</span></a>
+<a name="577"><span class="lineNum">     577 </span>            :     }</a>
+<a name="578"><span class="lineNum">     578 </span><span class="lineNoCov">          0 :     return false;</span></a>
+<a name="579"><span class="lineNum">     579 </span>            : }</a>
+<a name="580"><span class="lineNum">     580 </span>            : </a>
+<a name="581"><span class="lineNum">     581 </span>            : // Set E - stop</a>
+<a name="582"><span class="lineNum">     582 </span><span class="lineCov">          4 : void SRV_Channels::set_emergency_stop(bool state) {</span></a>
+<a name="583"><span class="lineNum">     583 </span>            : #if HAL_LOGGING_ENABLED</a>
+<a name="584"><span class="lineNum">     584 </span><span class="lineCov">          4 :     if (state != emergency_stop) {</span></a>
+<a name="585"><span class="lineNum">     585 </span><span class="lineCov">          3 :         AP_Logger *logger = AP_Logger::get_singleton();</span></a>
+<a name="586"><span class="lineNum">     586 </span><span class="lineCov">          3 :         if (logger &amp;&amp; logger-&gt;logging_enabled()) {</span></a>
+<a name="587"><span class="lineNum">     587 </span><span class="lineCov">          3 :             logger-&gt;Write_Event(state ? LogEvent::MOTORS_EMERGENCY_STOPPED : LogEvent::MOTORS_EMERGENCY_STOP_CLEARED);</span></a>
+<a name="588"><span class="lineNum">     588 </span>            :         }</a>
+<a name="589"><span class="lineNum">     589 </span>            :     }</a>
+<a name="590"><span class="lineNum">     590 </span>            : #endif</a>
+<a name="591"><span class="lineNum">     591 </span><span class="lineCov">          4 :     emergency_stop = state;</span></a>
+<a name="592"><span class="lineNum">     592 </span><span class="lineCov">          4 : }</span></a>
+<a name="593"><span class="lineNum">     593 </span>            : </a>
+<a name="594"><span class="lineNum">     594 </span>            : namespace AP {</a>
+<a name="595"><span class="lineNum">     595 </span>            : </a>
+<a name="596"><span class="lineNum">     596 </span><span class="lineCov">   27967400 : SRV_Channels &amp;srv()</span></a>
+<a name="597"><span class="lineNum">     597 </span>            : {</a>
+<a name="598"><span class="lineNum">     598 </span><span class="lineCov">   27967400 :     return *SRV_Channels::get_singleton();</span></a>
+<a name="599"><span class="lineNum">     599 </span>            : }</a>
+<a name="600"><span class="lineNum">     600 </span>            : </a>
+<a name="601"><span class="lineNum">     601 </span>            : };</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

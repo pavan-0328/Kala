@@ -1,0 +1,445 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_Mount/AP_Mount_Backend.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_Mount</a> - AP_Mount_Backend.h<span style="font-size: 80%;"> (source / <a href="AP_Mount_Backend.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">35</td>
+            <td class="headerCovTableEntryLo">40.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">33</td>
+            <td class="headerCovTableEntryLo">36.4 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : </a>
+<a name="16"><span class="lineNum">      16 </span>            : /*</a>
+<a name="17"><span class="lineNum">      17 </span>            :   Mount driver backend class. Each supported mount type</a>
+<a name="18"><span class="lineNum">      18 </span>            :   needs to have an object derived from this class.</a>
+<a name="19"><span class="lineNum">      19 </span>            :  */</a>
+<a name="20"><span class="lineNum">      20 </span>            : #pragma once</a>
+<a name="21"><span class="lineNum">      21 </span>            : </a>
+<a name="22"><span class="lineNum">      22 </span>            : #include &quot;AP_Mount_config.h&quot;</a>
+<a name="23"><span class="lineNum">      23 </span>            : </a>
+<a name="24"><span class="lineNum">      24 </span>            : #if HAL_MOUNT_ENABLED</a>
+<a name="25"><span class="lineNum">      25 </span>            : </a>
+<a name="26"><span class="lineNum">      26 </span>            : #include &lt;GCS_MAVLink/GCS_MAVLink.h&gt;</a>
+<a name="27"><span class="lineNum">      27 </span>            : #include &lt;AP_Common/AP_Common.h&gt;</a>
+<a name="28"><span class="lineNum">      28 </span>            : #include &lt;AP_Common/Location.h&gt;</a>
+<a name="29"><span class="lineNum">      29 </span>            : #include &lt;RC_Channel/RC_Channel.h&gt;</a>
+<a name="30"><span class="lineNum">      30 </span>            : #include &lt;AP_Camera/AP_Camera_shareddefs.h&gt;</a>
+<a name="31"><span class="lineNum">      31 </span>            : #include &lt;SRV_Channel/SRV_Channel.h&gt;</a>
+<a name="32"><span class="lineNum">      32 </span>            : #include &quot;AP_Mount.h&quot;</a>
+<a name="33"><span class="lineNum">      33 </span>            : </a>
+<a name="34"><span class="lineNum">      34 </span>            : class AP_Mount_Backend</a>
+<a name="35"><span class="lineNum">      35 </span>            : {</a>
+<a name="36"><span class="lineNum">      36 </span>            : public:</a>
+<a name="37"><span class="lineNum">      37 </span>            :     // Constructor</a>
+<a name="38"><span class="lineNum">      38 </span><span class="lineCov">          8 :     AP_Mount_Backend(class AP_Mount &amp;frontend, class AP_Mount_Params &amp;params, uint8_t instance) :</span></a>
+<a name="39"><span class="lineNum">      39 </span>            :         _frontend(frontend),</a>
+<a name="40"><span class="lineNum">      40 </span>            :         _params(params),</a>
+<a name="41"><span class="lineNum">      41 </span>            :         _instance(instance),</a>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">          8 :         _open_idx(_instance == 0? SRV_Channel::k_mount_open : SRV_Channel::k_mount2_open)</span></a>
+<a name="43"><span class="lineNum">      43 </span><span class="lineCov">          8 :     {}</span></a>
+<a name="44"><span class="lineNum">      44 </span>            : </a>
+<a name="45"><span class="lineNum">      45 </span>            :     // init - performs any required initialisation for this instance</a>
+<a name="46"><span class="lineNum">      46 </span>            :     virtual void init();</a>
+<a name="47"><span class="lineNum">      47 </span>            : </a>
+<a name="48"><span class="lineNum">      48 </span>            :     // set device id of this instance, for MNTx_DEVID parameter</a>
+<a name="49"><span class="lineNum">      49 </span>            :     void set_dev_id(uint32_t id);</a>
+<a name="50"><span class="lineNum">      50 </span>            : </a>
+<a name="51"><span class="lineNum">      51 </span>            :     // update mount position - should be called periodically</a>
+<a name="52"><span class="lineNum">      52 </span>            :     virtual void update();</a>
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<a name="54"><span class="lineNum">      54 </span>            :     // used for gimbals that need to read INS data at full rate</a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">     342503 :     virtual void update_fast() {}</span></a>
+<a name="56"><span class="lineNum">      56 </span>            : </a>
+<a name="57"><span class="lineNum">      57 </span>            :     // return true if healthy</a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">         48 :     virtual bool healthy() const { return true; }</span></a>
+<a name="59"><span class="lineNum">      59 </span>            : </a>
+<a name="60"><span class="lineNum">      60 </span>            :     // return true if this mount accepts roll or pitch targets</a>
+<a name="61"><span class="lineNum">      61 </span>            :     virtual bool has_roll_control() const;</a>
+<a name="62"><span class="lineNum">      62 </span>            :     virtual bool has_pitch_control() const;</a>
+<a name="63"><span class="lineNum">      63 </span>            : </a>
+<a name="64"><span class="lineNum">      64 </span>            :     // returns true if this mount can control its pan (required for multicopters)</a>
+<a name="65"><span class="lineNum">      65 </span>            :     virtual bool has_pan_control() const = 0;</a>
+<a name="66"><span class="lineNum">      66 </span>            : </a>
+<a name="67"><span class="lineNum">      67 </span>            :     // get attitude as a quaternion.  returns true on success.</a>
+<a name="68"><span class="lineNum">      68 </span>            :     // att_quat will be an earth-frame quaternion rotated such that</a>
+<a name="69"><span class="lineNum">      69 </span>            :     // yaw is in body-frame.</a>
+<a name="70"><span class="lineNum">      70 </span>            :     virtual bool get_attitude_quaternion(Quaternion&amp; att_quat) = 0;</a>
+<a name="71"><span class="lineNum">      71 </span>            : </a>
+<a name="72"><span class="lineNum">      72 </span>            :     // get angular velocity of mount. Only available on some backends</a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">       4634 :     virtual bool get_angular_velocity(Vector3f&amp; rates) { return false; }</span></a>
+<a name="74"><span class="lineNum">      74 </span>            : </a>
+<a name="75"><span class="lineNum">      75 </span>            :     // returns true if mode is a valid mode, false otherwise:</a>
+<a name="76"><span class="lineNum">      76 </span>            :     bool valid_mode(MAV_MOUNT_MODE mode) const;</a>
+<a name="77"><span class="lineNum">      77 </span>            : </a>
+<a name="78"><span class="lineNum">      78 </span>            :     // get mount's mode</a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineCov">     175007 :     enum MAV_MOUNT_MODE get_mode() const { return _mode; }</span></a>
+<a name="80"><span class="lineNum">      80 </span>            : </a>
+<a name="81"><span class="lineNum">      81 </span>            :     // set mount's mode</a>
+<a name="82"><span class="lineNum">      82 </span>            :     bool set_mode(enum MAV_MOUNT_MODE mode);</a>
+<a name="83"><span class="lineNum">      83 </span>            : </a>
+<a name="84"><span class="lineNum">      84 </span>            :     // set yaw_lock used in RC_TARGETING mode.  If true, the gimbal's yaw target is maintained in earth-frame meaning it will lock onto an earth-frame heading (e.g. North)</a>
+<a name="85"><span class="lineNum">      85 </span>            :     // If false (aka &quot;follow&quot;) the gimbal's yaw is maintained in body-frame meaning it will rotate with the vehicle</a>
+<a name="86"><span class="lineNum">      86 </span><span class="lineNoCov">          0 :     void set_yaw_lock(bool yaw_lock) { _yaw_lock = yaw_lock; }</span></a>
+<a name="87"><span class="lineNum">      87 </span>            : </a>
+<a name="88"><span class="lineNum">      88 </span>            :     // set angle target in degrees</a>
+<a name="89"><span class="lineNum">      89 </span>            :     // roll and pitch are in earth-frame</a>
+<a name="90"><span class="lineNum">      90 </span>            :     // yaw_is_earth_frame (aka yaw_lock) should be true if yaw angle is earth-frame, false if body-frame</a>
+<a name="91"><span class="lineNum">      91 </span>            :     void set_angle_target(float roll_deg, float pitch_deg, float yaw_deg, bool yaw_is_earth_frame);</a>
+<a name="92"><span class="lineNum">      92 </span>            : </a>
+<a name="93"><span class="lineNum">      93 </span>            :     // sets rate target in deg/s</a>
+<a name="94"><span class="lineNum">      94 </span>            :     // yaw_lock should be true if the yaw rate is earth-frame, false if body-frame (e.g. rotates with body of vehicle)</a>
+<a name="95"><span class="lineNum">      95 </span>            :     void set_rate_target(float roll_degs, float pitch_degs, float yaw_degs, bool yaw_is_earth_frame);</a>
+<a name="96"><span class="lineNum">      96 </span>            : </a>
+<a name="97"><span class="lineNum">      97 </span>            :     // set_roi_target - sets target location that mount should attempt to point towards</a>
+<a name="98"><span class="lineNum">      98 </span>            :     void set_roi_target(const Location &amp;target_loc);</a>
+<a name="99"><span class="lineNum">      99 </span>            :     // clear_roi_target - clears target location that mount should attempt to point towards</a>
+<a name="100"><span class="lineNum">     100 </span>            :     void clear_roi_target();</a>
+<a name="101"><span class="lineNum">     101 </span>            : </a>
+<a name="102"><span class="lineNum">     102 </span>            :     // set_sys_target - sets system that mount should attempt to point towards</a>
+<a name="103"><span class="lineNum">     103 </span>            :     void set_target_sysid(uint8_t sysid);</a>
+<a name="104"><span class="lineNum">     104 </span>            : </a>
+<a name="105"><span class="lineNum">     105 </span>            :     // handle do_mount_control command.  Returns MAV_RESULT_ACCEPTED on success</a>
+<a name="106"><span class="lineNum">     106 </span>            :     MAV_RESULT handle_command_do_mount_control(const mavlink_command_int_t &amp;packet);</a>
+<a name="107"><span class="lineNum">     107 </span>            : </a>
+<a name="108"><span class="lineNum">     108 </span>            :     // handle do_gimbal_manager_configure.  Returns MAV_RESULT_ACCEPTED on success</a>
+<a name="109"><span class="lineNum">     109 </span>            :     // requires original message in order to extract caller's sysid and compid</a>
+<a name="110"><span class="lineNum">     110 </span>            :     MAV_RESULT handle_command_do_gimbal_manager_configure(const mavlink_command_int_t &amp;packet, const mavlink_message_t &amp;msg);</a>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<a name="112"><span class="lineNum">     112 </span>            :     // send a GIMBAL_DEVICE_ATTITUDE_STATUS message to GCS</a>
+<a name="113"><span class="lineNum">     113 </span>            :     void send_gimbal_device_attitude_status(mavlink_channel_t chan);</a>
+<a name="114"><span class="lineNum">     114 </span>            : </a>
+<a name="115"><span class="lineNum">     115 </span>            :     // return gimbal capabilities sent to GCS in the GIMBAL_MANAGER_INFORMATION</a>
+<a name="116"><span class="lineNum">     116 </span>            :     virtual uint32_t get_gimbal_manager_capability_flags() const;</a>
+<a name="117"><span class="lineNum">     117 </span>            : </a>
+<a name="118"><span class="lineNum">     118 </span>            :     // send a GIMBAL_MANAGER_INFORMATION message to GCS</a>
+<a name="119"><span class="lineNum">     119 </span>            :     void send_gimbal_manager_information(mavlink_channel_t chan);</a>
+<a name="120"><span class="lineNum">     120 </span>            : </a>
+<a name="121"><span class="lineNum">     121 </span>            :     // send a GIMBAL_MANAGER_STATUS message to GCS</a>
+<a name="122"><span class="lineNum">     122 </span>            :     void send_gimbal_manager_status(mavlink_channel_t chan);</a>
+<a name="123"><span class="lineNum">     123 </span>            : </a>
+<a name="124"><span class="lineNum">     124 </span>            :     // handle a GIMBAL_REPORT message</a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 :     virtual void handle_gimbal_report(mavlink_channel_t chan, const mavlink_message_t &amp;msg) {}</span></a>
+<a name="126"><span class="lineNum">     126 </span>            : </a>
+<a name="127"><span class="lineNum">     127 </span>            :     // handle a PARAM_VALUE message</a>
+<a name="128"><span class="lineNum">     128 </span><span class="lineNoCov">          0 :     virtual void handle_param_value(const mavlink_message_t &amp;msg) {}</span></a>
+<a name="129"><span class="lineNum">     129 </span>            : </a>
+<a name="130"><span class="lineNum">     130 </span>            :     // handle a GLOBAL_POSITION_INT message</a>
+<a name="131"><span class="lineNum">     131 </span>            :     bool handle_global_position_int(uint8_t msg_sysid, const mavlink_global_position_int_t &amp;packet);</a>
+<a name="132"><span class="lineNum">     132 </span>            : </a>
+<a name="133"><span class="lineNum">     133 </span>            :     // handle GIMBAL_DEVICE_INFORMATION message</a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :     virtual void handle_gimbal_device_information(const mavlink_message_t &amp;msg) {}</span></a>
+<a name="135"><span class="lineNum">     135 </span>            : </a>
+<a name="136"><span class="lineNum">     136 </span>            :     // handle GIMBAL_DEVICE_ATTITUDE_STATUS message</a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineNoCov">          0 :     virtual void handle_gimbal_device_attitude_status(const mavlink_message_t &amp;msg) {}</span></a>
+<a name="138"><span class="lineNum">     138 </span>            : </a>
+<a name="139"><span class="lineNum">     139 </span>            :     // get target rate in deg/sec. returns true on success</a>
+<a name="140"><span class="lineNum">     140 </span>            :     bool get_rate_target(float&amp; roll_degs, float&amp; pitch_degs, float&amp; yaw_degs, bool&amp; yaw_is_earth_frame);</a>
+<a name="141"><span class="lineNum">     141 </span>            : </a>
+<a name="142"><span class="lineNum">     142 </span>            :     // get target angle in deg. returns true on success</a>
+<a name="143"><span class="lineNum">     143 </span>            :     bool get_angle_target(float&amp; roll_deg, float&amp; pitch_deg, float&amp; yaw_deg, bool&amp; yaw_is_earth_frame);</a>
+<a name="144"><span class="lineNum">     144 </span>            : </a>
+<a name="145"><span class="lineNum">     145 </span>            :     // accessors for scripting backends</a>
+<a name="146"><span class="lineNum">     146 </span><span class="lineNoCov">          0 :     virtual bool get_location_target(Location &amp;target_loc) { return false; }</span></a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineNoCov">          0 :     virtual void set_attitude_euler(float roll_deg, float pitch_deg, float yaw_bf_deg) {};</span></a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span>            :     // write mount log packet</a>
+<a name="150"><span class="lineNum">     150 </span>            :     void write_log(uint64_t timestamp_us);</a>
+<a name="151"><span class="lineNum">     151 </span>            : </a>
+<a name="152"><span class="lineNum">     152 </span>            :     //</a>
+<a name="153"><span class="lineNum">     153 </span>            :     // camera controls for gimbals that include a camera</a>
+<a name="154"><span class="lineNum">     154 </span>            :     //</a>
+<a name="155"><span class="lineNum">     155 </span>            : </a>
+<a name="156"><span class="lineNum">     156 </span>            :     // take a picture.  returns true on success</a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 :     virtual bool take_picture() { return false; }</span></a>
+<a name="158"><span class="lineNum">     158 </span>            : </a>
+<a name="159"><span class="lineNum">     159 </span>            :     // start or stop video recording.  returns true on success</a>
+<a name="160"><span class="lineNum">     160 </span>            :     // set start_recording = true to start record, false to stop recording</a>
+<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 :     virtual bool record_video(bool start_recording) { return false; }</span></a>
+<a name="162"><span class="lineNum">     162 </span>            : </a>
+<a name="163"><span class="lineNum">     163 </span>            :     // set zoom specified as a rate or percentage</a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineNoCov">          0 :     virtual bool set_zoom(ZoomType zoom_type, float zoom_value) { return false; }</span></a>
+<a name="165"><span class="lineNum">     165 </span>            : </a>
+<a name="166"><span class="lineNum">     166 </span>            :     // set focus specified as rate, percentage or auto</a>
+<a name="167"><span class="lineNum">     167 </span>            :     // focus in = -1, focus hold = 0, focus out = 1</a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :     virtual SetFocusResult set_focus(FocusType focus_type, float focus_value) { return SetFocusResult::UNSUPPORTED; }</span></a>
+<a name="169"><span class="lineNum">     169 </span>            : </a>
+<a name="170"><span class="lineNum">     170 </span>            :     // set tracking to none, point or rectangle (see TrackingType enum)</a>
+<a name="171"><span class="lineNum">     171 </span>            :     // if POINT only p1 is used, if RECTANGLE then p1 is top-left, p2 is bottom-right</a>
+<a name="172"><span class="lineNum">     172 </span>            :     // p1,p2 are in range 0 to 1.  0 is left or top, 1 is right or bottom</a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :     virtual bool set_tracking(TrackingType tracking_type, const Vector2f&amp; p1, const Vector2f&amp; p2) { return false; }</span></a>
+<a name="174"><span class="lineNum">     174 </span>            : </a>
+<a name="175"><span class="lineNum">     175 </span>            :     // set camera lens as a value from 0 to 5</a>
+<a name="176"><span class="lineNum">     176 </span><span class="lineNoCov">          0 :     virtual bool set_lens(uint8_t lens) { return false; }</span></a>
+<a name="177"><span class="lineNum">     177 </span>            : </a>
+<a name="178"><span class="lineNum">     178 </span>            : #if HAL_MOUNT_SET_CAMERA_SOURCE_ENABLED</a>
+<a name="179"><span class="lineNum">     179 </span>            :     // set_camera_source is functionally the same as set_lens except primary and secondary lenses are specified by type</a>
+<a name="180"><span class="lineNum">     180 </span>            :     // primary and secondary sources use the AP_Camera::CameraSource enum cast to uint8_t</a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineNoCov">          0 :     virtual bool set_camera_source(uint8_t primary_source, uint8_t secondary_source) { return false; }</span></a>
+<a name="182"><span class="lineNum">     182 </span>            : #endif</a>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<a name="184"><span class="lineNum">     184 </span>            :     // send camera information message to GCS</a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineNoCov">          0 :     virtual void send_camera_information(mavlink_channel_t chan) const {}</span></a>
+<a name="186"><span class="lineNum">     186 </span>            : </a>
+<a name="187"><span class="lineNum">     187 </span>            :     // send camera settings message to GCS</a>
+<a name="188"><span class="lineNum">     188 </span><span class="lineNoCov">          0 :     virtual void send_camera_settings(mavlink_channel_t chan) const {}</span></a>
+<a name="189"><span class="lineNum">     189 </span>            : </a>
+<a name="190"><span class="lineNum">     190 </span>            :     // send camera capture status message to GCS</a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineNoCov">          0 :     virtual void send_camera_capture_status(mavlink_channel_t chan) const {}</span></a>
+<a name="192"><span class="lineNum">     192 </span>            : </a>
+<a name="193"><span class="lineNum">     193 </span>            : #if AP_MOUNT_SEND_THERMAL_RANGE_ENABLED</a>
+<a name="194"><span class="lineNum">     194 </span>            :     // send camera thermal status message to GCS</a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 :     virtual void send_camera_thermal_range(mavlink_channel_t chan) const {}</span></a>
+<a name="196"><span class="lineNum">     196 </span>            : #endif</a>
+<a name="197"><span class="lineNum">     197 </span>            : </a>
+<a name="198"><span class="lineNum">     198 </span>            :     // change camera settings not normally used by autopilot</a>
+<a name="199"><span class="lineNum">     199 </span><span class="lineNoCov">          0 :     virtual bool change_setting(CameraSetting setting, float value) { return false; }</span></a>
+<a name="200"><span class="lineNum">     200 </span>            : </a>
+<a name="201"><span class="lineNum">     201 </span>            : #if AP_MOUNT_POI_TO_LATLONALT_ENABLED</a>
+<a name="202"><span class="lineNum">     202 </span>            :     // get poi information.  Returns true on success and fills in gimbal attitude, location and poi location</a>
+<a name="203"><span class="lineNum">     203 </span>            :     bool get_poi(uint8_t instance, Quaternion &amp;quat, Location &amp;loc, Location &amp;poi_loc);</a>
+<a name="204"><span class="lineNum">     204 </span>            : #endif</a>
+<a name="205"><span class="lineNum">     205 </span>            : </a>
+<a name="206"><span class="lineNum">     206 </span>            :     //</a>
+<a name="207"><span class="lineNum">     207 </span>            :     // rangefinder</a>
+<a name="208"><span class="lineNum">     208 </span>            :     //</a>
+<a name="209"><span class="lineNum">     209 </span>            : </a>
+<a name="210"><span class="lineNum">     210 </span>            :     // get rangefinder distance.  Returns true on success</a>
+<a name="211"><span class="lineNum">     211 </span><span class="lineCov">       9481 :     virtual bool get_rangefinder_distance(float&amp; distance_m) const { return false; }</span></a>
+<a name="212"><span class="lineNum">     212 </span>            : </a>
+<a name="213"><span class="lineNum">     213 </span>            :     // enable/disable rangefinder.  Returns true on success</a>
+<a name="214"><span class="lineNum">     214 </span><span class="lineNoCov">          0 :     virtual bool set_rangefinder_enable(bool enable) { return false; }</span></a>
+<a name="215"><span class="lineNum">     215 </span>            : </a>
+<a name="216"><span class="lineNum">     216 </span>            : protected:</a>
+<a name="217"><span class="lineNum">     217 </span>            : </a>
+<a name="218"><span class="lineNum">     218 </span>            :     enum class MountTargetType {</a>
+<a name="219"><span class="lineNum">     219 </span>            :         ANGLE,</a>
+<a name="220"><span class="lineNum">     220 </span>            :         RATE,</a>
+<a name="221"><span class="lineNum">     221 </span>            :     };</a>
+<a name="222"><span class="lineNum">     222 </span>            : </a>
+<a name="223"><span class="lineNum">     223 </span>            :     // class for a single angle or rate target</a>
+<a name="224"><span class="lineNum">     224 </span>            :     class MountTarget {</a>
+<a name="225"><span class="lineNum">     225 </span>            :     public:</a>
+<a name="226"><span class="lineNum">     226 </span>            :         float roll;</a>
+<a name="227"><span class="lineNum">     227 </span>            :         float pitch;</a>
+<a name="228"><span class="lineNum">     228 </span>            :         float yaw;</a>
+<a name="229"><span class="lineNum">     229 </span>            :         bool yaw_is_ef;</a>
+<a name="230"><span class="lineNum">     230 </span>            : </a>
+<a name="231"><span class="lineNum">     231 </span>            :         // return body-frame yaw angle from a mount target (in radians)</a>
+<a name="232"><span class="lineNum">     232 </span>            :         float get_bf_yaw() const;</a>
+<a name="233"><span class="lineNum">     233 </span>            : </a>
+<a name="234"><span class="lineNum">     234 </span>            :         // return earth-frame yaw angle from a mount target (in radians)</a>
+<a name="235"><span class="lineNum">     235 </span>            :         float get_ef_yaw() const;</a>
+<a name="236"><span class="lineNum">     236 </span>            : </a>
+<a name="237"><span class="lineNum">     237 </span>            :         // set roll, pitch, yaw and yaw_is_ef from Vector3f</a>
+<a name="238"><span class="lineNum">     238 </span>            :         void set(const Vector3f&amp; rpy, bool yaw_is_ef_in);</a>
+<a name="239"><span class="lineNum">     239 </span>            :     };</a>
+<a name="240"><span class="lineNum">     240 </span>            : </a>
+<a name="241"><span class="lineNum">     241 </span>            :     // options parameter bitmask handling</a>
+<a name="242"><span class="lineNum">     242 </span>            :     enum class Options : uint8_t {</a>
+<a name="243"><span class="lineNum">     243 </span>            :         RCTARGETING_LOCK_FROM_PREVMODE = (1U &lt;&lt; 0), // RC_TARGETING mode's lock/follow state maintained from previous mode</a>
+<a name="244"><span class="lineNum">     244 </span>            :         NEUTRAL_ON_RC_FS               = (1U &lt;&lt; 1), // move mount to netral position on RC failsafe</a>
+<a name="245"><span class="lineNum">     245 </span>            :     };</a>
+<a name="246"><span class="lineNum">     246 </span><span class="lineNoCov">          0 :     bool option_set(Options opt) const { return (_params.options.get() &amp; (uint8_t)opt) != 0; }</span></a>
+<a name="247"><span class="lineNum">     247 </span>            : </a>
+<a name="248"><span class="lineNum">     248 </span>            :     // called when mount mode is RC-targetting, updates the mnt_target object from RC inputs:</a>
+<a name="249"><span class="lineNum">     249 </span>            :     void update_mnt_target_from_rc_target();</a>
+<a name="250"><span class="lineNum">     250 </span>            : </a>
+<a name="251"><span class="lineNum">     251 </span>            :     // returns true if user has configured a valid roll angle range</a>
+<a name="252"><span class="lineNum">     252 </span>            :     // allows user to disable roll even on 3-axis gimbal</a>
+<a name="253"><span class="lineNum">     253 </span><span class="lineCov">      12757 :     bool roll_range_valid() const { return (_params.roll_angle_min &lt; _params.roll_angle_max); }</span></a>
+<a name="254"><span class="lineNum">     254 </span>            : </a>
+<a name="255"><span class="lineNum">     255 </span>            :     // returns true if user has configured a valid pitch angle range</a>
+<a name="256"><span class="lineNum">     256 </span>            :     // allows user to disable pitch even on 3-axis gimbal</a>
+<a name="257"><span class="lineNum">     257 </span><span class="lineCov">      12757 :     bool pitch_range_valid() const { return (_params.pitch_angle_min &lt; _params.pitch_angle_max); }</span></a>
+<a name="258"><span class="lineNum">     258 </span>            : </a>
+<a name="259"><span class="lineNum">     259 </span>            :     // returns true if user has configured a valid yaw angle range</a>
+<a name="260"><span class="lineNum">     260 </span>            :     // allows user to disable yaw even on 3-axis gimbal</a>
+<a name="261"><span class="lineNum">     261 </span><span class="lineCov">      36121 :     bool yaw_range_valid() const { return (_params.yaw_angle_min &lt; _params.yaw_angle_max); }</span></a>
+<a name="262"><span class="lineNum">     262 </span>            : </a>
+<a name="263"><span class="lineNum">     263 </span>            :     // returns true if mavlink heartbeat should be suppressed for this gimbal (only used by Solo gimbal)</a>
+<a name="264"><span class="lineNum">     264 </span><span class="lineCov">       4285 :     virtual bool suppress_heartbeat() const { return false; }</span></a>
+<a name="265"><span class="lineNum">     265 </span>            : </a>
+<a name="266"><span class="lineNum">     266 </span>            :     // change to RC_TARGETTING mode if rc inputs have changed by more than the dead zone</a>
+<a name="267"><span class="lineNum">     267 </span>            :     // should be called on every update</a>
+<a name="268"><span class="lineNum">     268 </span>            :     void set_rctargeting_on_rcinput_change();</a>
+<a name="269"><span class="lineNum">     269 </span>            : </a>
+<a name="270"><span class="lineNum">     270 </span>            :     // get angle targets (in radians) to ROI location</a>
+<a name="271"><span class="lineNum">     271 </span>            :     // returns true on success, false on failure</a>
+<a name="272"><span class="lineNum">     272 </span>            :     bool get_angle_target_to_roi(MountTarget&amp; angle_rad) const WARN_IF_UNUSED;</a>
+<a name="273"><span class="lineNum">     273 </span>            : </a>
+<a name="274"><span class="lineNum">     274 </span>            :     // get angle targets (in radians) to home location</a>
+<a name="275"><span class="lineNum">     275 </span>            :     // returns true on success, false on failure</a>
+<a name="276"><span class="lineNum">     276 </span>            :     bool get_angle_target_to_home(MountTarget&amp; angle_rad) const WARN_IF_UNUSED;</a>
+<a name="277"><span class="lineNum">     277 </span>            : </a>
+<a name="278"><span class="lineNum">     278 </span>            :     // get angle targets (in radians) to a vehicle with sysid of _target_sysid</a>
+<a name="279"><span class="lineNum">     279 </span>            :     // returns true on success, false on failure</a>
+<a name="280"><span class="lineNum">     280 </span>            :     bool get_angle_target_to_sysid(MountTarget&amp; angle_rad) const WARN_IF_UNUSED;</a>
+<a name="281"><span class="lineNum">     281 </span>            : </a>
+<a name="282"><span class="lineNum">     282 </span>            :     // update angle targets using a given rate target</a>
+<a name="283"><span class="lineNum">     283 </span>            :     // the resulting angle_rad yaw frame will match the rate_rad yaw frame</a>
+<a name="284"><span class="lineNum">     284 </span>            :     // assumes a 50hz update rate</a>
+<a name="285"><span class="lineNum">     285 </span>            :     void update_angle_target_from_rate(const MountTarget&amp; rate_rad, MountTarget&amp; angle_rad) const;</a>
+<a name="286"><span class="lineNum">     286 </span>            : </a>
+<a name="287"><span class="lineNum">     287 </span>            :     // helper function to provide GIMBAL_DEVICE_FLAGS for use in GIMBAL_DEVICE_ATTITUDE_STATUS message</a>
+<a name="288"><span class="lineNum">     288 </span>            :     uint16_t get_gimbal_device_flags() const;</a>
+<a name="289"><span class="lineNum">     289 </span>            : </a>
+<a name="290"><span class="lineNum">     290 </span>            :     // sent warning to GCS</a>
+<a name="291"><span class="lineNum">     291 </span>            :     void send_warning_to_GCS(const char* warning_str);</a>
+<a name="292"><span class="lineNum">     292 </span>            : </a>
+<a name="293"><span class="lineNum">     293 </span>            :     AP_Mount    &amp;_frontend; // reference to the front end which holds parameters</a>
+<a name="294"><span class="lineNum">     294 </span>            :     AP_Mount_Params &amp;_params; // parameters for this backend</a>
+<a name="295"><span class="lineNum">     295 </span>            :     uint8_t     _instance;  // this instance's number</a>
+<a name="296"><span class="lineNum">     296 </span>            : </a>
+<a name="297"><span class="lineNum">     297 </span>            :     MAV_MOUNT_MODE  _mode;          // current mode (see MAV_MOUNT_MODE enum)</a>
+<a name="298"><span class="lineNum">     298 </span>            : </a>
+<a name="299"><span class="lineNum">     299 </span>            :     // structure for MAVLink Targeting angle and rate targets</a>
+<a name="300"><span class="lineNum">     300 </span>            :     struct {</a>
+<a name="301"><span class="lineNum">     301 </span>            :         MountTargetType target_type;// MAVLink targeting mode's current target type (e.g. angle or rate)</a>
+<a name="302"><span class="lineNum">     302 </span>            :         MountTarget angle_rad;      // angle target in radians</a>
+<a name="303"><span class="lineNum">     303 </span>            :         MountTarget rate_rads;      // rate target in rad/s</a>
+<a name="304"><span class="lineNum">     304 </span>            :     } mnt_target;</a>
+<a name="305"><span class="lineNum">     305 </span>            : </a>
+<a name="306"><span class="lineNum">     306 </span>            : private:</a>
+<a name="307"><span class="lineNum">     307 </span>            : </a>
+<a name="308"><span class="lineNum">     308 </span>            :     // get pilot input (in the range -1 to +1) received through RC</a>
+<a name="309"><span class="lineNum">     309 </span>            :     void get_rc_input(float&amp; roll_in, float&amp; pitch_in, float&amp; yaw_in) const;</a>
+<a name="310"><span class="lineNum">     310 </span>            : </a>
+<a name="311"><span class="lineNum">     311 </span>            :     // get angle or rate targets from pilot RC</a>
+<a name="312"><span class="lineNum">     312 </span>            :     // target_type will be either ANGLE or RATE, rpy will be the target angle in deg or rate in deg/s</a>
+<a name="313"><span class="lineNum">     313 </span>            :     void get_rc_target(MountTargetType&amp; target_type, MountTarget&amp; rpy) const;</a>
+<a name="314"><span class="lineNum">     314 </span>            : </a>
+<a name="315"><span class="lineNum">     315 </span>            :     // get angle targets (in radians) to a Location</a>
+<a name="316"><span class="lineNum">     316 </span>            :     // returns true on success, false on failure</a>
+<a name="317"><span class="lineNum">     317 </span>            :     bool get_angle_target_to_location(const Location &amp;loc, MountTarget&amp; angle_rad) const WARN_IF_UNUSED;</a>
+<a name="318"><span class="lineNum">     318 </span>            : </a>
+<a name="319"><span class="lineNum">     319 </span>            : #if AP_MOUNT_POI_TO_LATLONALT_ENABLED</a>
+<a name="320"><span class="lineNum">     320 </span>            :     // calculate the Location that the gimbal is pointing at</a>
+<a name="321"><span class="lineNum">     321 </span>            :     void calculate_poi();</a>
+<a name="322"><span class="lineNum">     322 </span>            : #endif</a>
+<a name="323"><span class="lineNum">     323 </span>            : </a>
+<a name="324"><span class="lineNum">     324 </span>            :     bool _yaw_lock;                 // yaw_lock used in RC_TARGETING mode. True if the gimbal's yaw target is maintained in earth-frame, if false (aka &quot;follow&quot;) it is maintained in body-frame</a>
+<a name="325"><span class="lineNum">     325 </span>            : </a>
+<a name="326"><span class="lineNum">     326 </span>            : #if AP_MOUNT_POI_TO_LATLONALT_ENABLED</a>
+<a name="327"><span class="lineNum">     327 </span>            :     struct {</a>
+<a name="328"><span class="lineNum">     328 </span>            :         HAL_Semaphore sem;        // semaphore protecting this structure</a>
+<a name="329"><span class="lineNum">     329 </span>            :         uint32_t poi_request_ms;  // system time POI was last requested</a>
+<a name="330"><span class="lineNum">     330 </span>            :         uint32_t poi_update_ms;   // system time POI was calculated</a>
+<a name="331"><span class="lineNum">     331 </span>            :         Location loc;             // gimbal location used for poi calculation</a>
+<a name="332"><span class="lineNum">     332 </span>            :         Location poi_loc;         // location of the POI</a>
+<a name="333"><span class="lineNum">     333 </span>            :         Quaternion att_quat;      // attitude quaternion of the gimbal</a>
+<a name="334"><span class="lineNum">     334 </span>            :     } poi_calculation;</a>
+<a name="335"><span class="lineNum">     335 </span>            : #endif</a>
+<a name="336"><span class="lineNum">     336 </span>            : </a>
+<a name="337"><span class="lineNum">     337 </span>            :     Location _roi_target;           // roi target location</a>
+<a name="338"><span class="lineNum">     338 </span>            :     bool _roi_target_set;           // true if the roi target has been set</a>
+<a name="339"><span class="lineNum">     339 </span>            : </a>
+<a name="340"><span class="lineNum">     340 </span>            :     uint8_t _target_sysid;          // sysid to track</a>
+<a name="341"><span class="lineNum">     341 </span>            :     Location _target_sysid_location;// sysid target location</a>
+<a name="342"><span class="lineNum">     342 </span>            :     bool _target_sysid_location_set;// true if _target_sysid has been set</a>
+<a name="343"><span class="lineNum">     343 </span>            : </a>
+<a name="344"><span class="lineNum">     344 </span>            :     uint32_t _last_warning_ms;      // system time of last warning sent to GCS</a>
+<a name="345"><span class="lineNum">     345 </span>            : </a>
+<a name="346"><span class="lineNum">     346 </span>            :     // structure holding the last RC inputs</a>
+<a name="347"><span class="lineNum">     347 </span>            :     struct {</a>
+<a name="348"><span class="lineNum">     348 </span>            :         bool    initialised;</a>
+<a name="349"><span class="lineNum">     349 </span>            :         int16_t roll_in;</a>
+<a name="350"><span class="lineNum">     350 </span>            :         int16_t pitch_in;</a>
+<a name="351"><span class="lineNum">     351 </span>            :         int16_t yaw_in;</a>
+<a name="352"><span class="lineNum">     352 </span>            :     } last_rc_input;</a>
+<a name="353"><span class="lineNum">     353 </span>            : </a>
+<a name="354"><span class="lineNum">     354 </span>            :     // structure holding mavlink sysid and compid of controller of this gimbal</a>
+<a name="355"><span class="lineNum">     355 </span>            :     // see MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE and GIMBAL_MANAGER_STATUS</a>
+<a name="356"><span class="lineNum">     356 </span>            :     struct mavlink_control_id_t {</a>
+<a name="357"><span class="lineNum">     357 </span>            :         uint8_t sysid;</a>
+<a name="358"><span class="lineNum">     358 </span>            :         uint8_t compid;</a>
+<a name="359"><span class="lineNum">     359 </span>            : </a>
+<a name="360"><span class="lineNum">     360 </span>            :         // equality operators</a>
+<a name="361"><span class="lineNum">     361 </span><span class="lineCov">          8 :         bool operator==(const mavlink_control_id_t &amp;rhs) const { return (sysid == rhs.sysid &amp;&amp; compid == rhs.compid); }</span></a>
+<a name="362"><span class="lineNum">     362 </span><span class="lineCov">          8 :         bool operator!=(const mavlink_control_id_t &amp;rhs) const { return !(*this == rhs); }</span></a>
+<a name="363"><span class="lineNum">     363 </span>            :     } mavlink_control_id;</a>
+<a name="364"><span class="lineNum">     364 </span>            : </a>
+<a name="365"><span class="lineNum">     365 </span>            :     // SRV_Channel mount open function index</a>
+<a name="366"><span class="lineNum">     366 </span>            :     SRV_Channel::Function    _open_idx;</a>
+<a name="367"><span class="lineNum">     367 </span>            : };</a>
+<a name="368"><span class="lineNum">     368 </span>            : </a>
+<a name="369"><span class="lineNum">     369 </span>            : #endif // HAL_MOUNT_ENABLED</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

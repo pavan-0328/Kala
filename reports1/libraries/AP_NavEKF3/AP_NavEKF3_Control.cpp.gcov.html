@@ -1,0 +1,951 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_NavEKF3/AP_NavEKF3_Control.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_NavEKF3</a> - AP_NavEKF3_Control.cpp<span style="font-size: 80%;"> (source / <a href="AP_NavEKF3_Control.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">351</td>
+            <td class="headerCovTableEntry">390</td>
+            <td class="headerCovTableEntryHi">90.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntry">27</td>
+            <td class="headerCovTableEntryHi">96.3 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;AP_HAL/AP_HAL.h&gt;</a>
+<a name="2"><span class="lineNum">       2 </span>            : </a>
+<a name="3"><span class="lineNum">       3 </span>            : #include &quot;AP_NavEKF3.h&quot;</a>
+<a name="4"><span class="lineNum">       4 </span>            : #include &quot;AP_NavEKF3_core.h&quot;</a>
+<a name="5"><span class="lineNum">       5 </span>            : #include &lt;GCS_MAVLink/GCS.h&gt;</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            : #include &quot;AP_DAL/AP_DAL.h&quot;</a>
+<a name="8"><span class="lineNum">       8 </span>            : </a>
+<a name="9"><span class="lineNum">       9 </span>            : // Control filter mode transitions</a>
+<a name="10"><span class="lineNum">      10 </span><span class="lineCov">   50092200 : void NavEKF3_core::controlFilterModes()</span></a>
+<a name="11"><span class="lineNum">      11 </span>            : {</a>
+<a name="12"><span class="lineNum">      12 </span>            :     // Determine motor arm status</a>
+<a name="13"><span class="lineNum">      13 </span><span class="lineCov">   50092200 :     prevMotorsArmed = motorsArmed;</span></a>
+<a name="14"><span class="lineNum">      14 </span><span class="lineCov">   50092200 :     motorsArmed = dal.get_armed();</span></a>
+<a name="15"><span class="lineNum">      15 </span><span class="lineCov">   50092200 :     if (motorsArmed &amp;&amp; !prevMotorsArmed) {</span></a>
+<a name="16"><span class="lineNum">      16 </span>            :         // set the time at which we arm to assist with checks</a>
+<a name="17"><span class="lineNum">      17 </span><span class="lineCov">        571 :         timeAtArming_ms =  imuSampleTime_ms;</span></a>
+<a name="18"><span class="lineNum">      18 </span>            :     }</a>
+<a name="19"><span class="lineNum">      19 </span>            : </a>
+<a name="20"><span class="lineNum">      20 </span>            :     // Detect if we are in flight on or ground</a>
+<a name="21"><span class="lineNum">      21 </span><span class="lineCov">   50092200 :     detectFlight();</span></a>
+<a name="22"><span class="lineNum">      22 </span>            : </a>
+<a name="23"><span class="lineNum">      23 </span>            :     // Determine if learning of wind and magnetic field will be enabled and set corresponding indexing limits to</a>
+<a name="24"><span class="lineNum">      24 </span>            :     // avoid unnecessary operations</a>
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">   50092200 :     setWindMagStateLearningMode();</span></a>
+<a name="26"><span class="lineNum">      26 </span>            : </a>
+<a name="27"><span class="lineNum">      27 </span>            :     // Check the alignmnent status of the tilt and yaw attitude</a>
+<a name="28"><span class="lineNum">      28 </span>            :     // Used during initial bootstrap alignment of the filter</a>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">   50092200 :     checkAttitudeAlignmentStatus();</span></a>
+<a name="30"><span class="lineNum">      30 </span>            : </a>
+<a name="31"><span class="lineNum">      31 </span>            :     // Set the type of inertial navigation aiding used</a>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">   50092200 :     setAidingMode();</span></a>
+<a name="33"><span class="lineNum">      33 </span>            : </a>
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">   50092200 : }</span></a>
+<a name="35"><span class="lineNum">      35 </span>            : </a>
+<a name="36"><span class="lineNum">      36 </span>            : /*</a>
+<a name="37"><span class="lineNum">      37 </span>            :   return effective value for _magCal for this core</a>
+<a name="38"><span class="lineNum">      38 </span>            :  */</a>
+<a name="39"><span class="lineNum">      39 </span><span class="lineCov">        962 : NavEKF3_core::MagCal NavEKF3_core::effective_magCal(void) const</span></a>
+<a name="40"><span class="lineNum">      40 </span>            : {</a>
+<a name="41"><span class="lineNum">      41 </span>            :     // force use of simple magnetic heading fusion for specified cores</a>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">        962 :     if (frontend-&gt;_magMask &amp; core_index) {</span></a>
+<a name="43"><span class="lineNum">      43 </span>            :         return MagCal::NEVER;</a>
+<a name="44"><span class="lineNum">      44 </span>            :     }</a>
+<a name="45"><span class="lineNum">      45 </span>            : </a>
+<a name="46"><span class="lineNum">      46 </span>            :     // handle deprecated MagCal::EXTERNAL_YAW and MagCal::EXTERNAL_YAW_FALLBACK values</a>
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">        962 :     const int8_t magCalParamVal = frontend-&gt;_magCal.get();</span></a>
+<a name="48"><span class="lineNum">      48 </span><span class="lineCov">        962 :     if (magCalParamVal == 5) {</span></a>
+<a name="49"><span class="lineNum">      49 </span>            :         return MagCal::NEVER;</a>
+<a name="50"><span class="lineNum">      50 </span>            :     }</a>
+<a name="51"><span class="lineNum">      51 </span><span class="lineCov">        962 :     if (magCalParamVal == 6) {</span></a>
+<a name="52"><span class="lineNum">      52 </span>            :         return MagCal::WHEN_FLYING;</a>
+<a name="53"><span class="lineNum">      53 </span>            :     }</a>
+<a name="54"><span class="lineNum">      54 </span>            : </a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">        962 :     return MagCal(magCalParamVal);</span></a>
+<a name="56"><span class="lineNum">      56 </span>            : }</a>
+<a name="57"><span class="lineNum">      57 </span>            : </a>
+<a name="58"><span class="lineNum">      58 </span>            : // Determine if learning of wind and magnetic field will be enabled and set corresponding indexing limits to</a>
+<a name="59"><span class="lineNum">      59 </span>            : // avoid unnecessary operations</a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineCov">   50092200 : void NavEKF3_core::setWindMagStateLearningMode()</span></a>
+<a name="61"><span class="lineNum">      61 </span>            : {</a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">   50092200 :     const bool canEstimateWind = ((finalInflightYawInit &amp;&amp; dragFusionEnabled) || assume_zero_sideslip()) &amp;&amp;</span></a>
+<a name="63"><span class="lineNum">      63 </span><span class="lineCov">   50092200 :                                  !onGround &amp;&amp;</span></a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :                                  PV_AidingMode != AID_NONE;</span></a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov">   50092200 :     if (!inhibitWindStates &amp;&amp; !canEstimateWind) {</span></a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :         inhibitWindStates = true;</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :         lastAspdEstIsValid = false;</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :         updateStateIndexLim();</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">   50092200 :     } else if (inhibitWindStates &amp;&amp; canEstimateWind &amp;&amp;</span></a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :                (sq(stateStruct.velocity.x) + sq(stateStruct.velocity.y) &gt; sq(5.0f) || dragFusionEnabled)) {</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :         inhibitWindStates = false;</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :         updateStateIndexLim();</span></a>
+<a name="73"><span class="lineNum">      73 </span>            :         // set states and variances</a>
+<a name="74"><span class="lineNum">      74 </span><span class="lineNoCov">          0 :         if (yawAlignComplete &amp;&amp; assume_zero_sideslip()) {</span></a>
+<a name="75"><span class="lineNum">      75 </span>            :             // if we have a valid heading, set the wind states to the reciprocal of the vehicle heading</a>
+<a name="76"><span class="lineNum">      76 </span>            :             // which assumes the vehicle has launched into the wind</a>
+<a name="77"><span class="lineNum">      77 </span>            :             // use airspeed if if recent data available</a>
+<a name="78"><span class="lineNum">      78 </span><span class="lineNoCov">          0 :             Vector3F tempEuler;</span></a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineNoCov">          0 :             stateStruct.quat.to_euler(tempEuler.x, tempEuler.y, tempEuler.z);</span></a>
+<a name="80"><span class="lineNum">      80 </span>            :             ftype trueAirspeedVariance;</a>
+<a name="81"><span class="lineNum">      81 </span><span class="lineNoCov">          0 :             const bool haveAirspeedMeasurement = (tasDataDelayed.allowFusion &amp;&amp; (imuDataDelayed.time_ms - tasDataDelayed.time_ms &lt; 500) &amp;&amp; useAirspeed());</span></a>
+<a name="82"><span class="lineNum">      82 </span>            :             if (haveAirspeedMeasurement) {</a>
+<a name="83"><span class="lineNum">      83 </span><span class="lineNoCov">          0 :                 trueAirspeedVariance = constrain_ftype(tasDataDelayed.tasVariance, WIND_VEL_VARIANCE_MIN, WIND_VEL_VARIANCE_MAX);</span></a>
+<a name="84"><span class="lineNum">      84 </span><span class="lineNoCov">          0 :                 const ftype windSpeed =  sqrtF(sq(stateStruct.velocity.x) + sq(stateStruct.velocity.y)) - tasDataDelayed.tas;</span></a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineNoCov">          0 :                 stateStruct.wind_vel.x = windSpeed * cosF(tempEuler.z);</span></a>
+<a name="86"><span class="lineNum">      86 </span><span class="lineNoCov">          0 :                 stateStruct.wind_vel.y = windSpeed * sinF(tempEuler.z);</span></a>
+<a name="87"><span class="lineNum">      87 </span>            :             } else {</a>
+<a name="88"><span class="lineNum">      88 </span><span class="lineNoCov">          0 :                 trueAirspeedVariance = sq(WIND_VEL_VARIANCE_MAX); // use 2-sigma for faster initial convergence</span></a>
+<a name="89"><span class="lineNum">      89 </span>            :             }</a>
+<a name="90"><span class="lineNum">      90 </span>            : </a>
+<a name="91"><span class="lineNum">      91 </span>            :             // set the wind state variances to the measurement uncertainty</a>
+<a name="92"><span class="lineNum">      92 </span><span class="lineNoCov">          0 :             zeroCols(P, 22, 23);</span></a>
+<a name="93"><span class="lineNum">      93 </span><span class="lineNoCov">          0 :             zeroRows(P, 22, 23);</span></a>
+<a name="94"><span class="lineNum">      94 </span><span class="lineNoCov">          0 :             P[22][22] = P[23][23] = trueAirspeedVariance;</span></a>
+<a name="95"><span class="lineNum">      95 </span>            : </a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineNoCov">          0 :             windStatesAligned = true;</span></a>
+<a name="97"><span class="lineNum">      97 </span>            : </a>
+<a name="98"><span class="lineNum">      98 </span>            :         } else {</a>
+<a name="99"><span class="lineNum">      99 </span>            :             // set the variances using a typical max wind speed for small UAV operation</a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineNoCov">          0 :             zeroCols(P, 22, 23);</span></a>
+<a name="101"><span class="lineNum">     101 </span><span class="lineNoCov">          0 :             zeroRows(P, 22, 23);</span></a>
+<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 :             for (uint8_t index=22; index&lt;=23; index++) {</span></a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 :                 P[index][index] = sq(WIND_VEL_VARIANCE_MAX);</span></a>
+<a name="104"><span class="lineNum">     104 </span>            :             }</a>
+<a name="105"><span class="lineNum">     105 </span>            :         }</a>
+<a name="106"><span class="lineNum">     106 </span>            :     }</a>
+<a name="107"><span class="lineNum">     107 </span>            : </a>
+<a name="108"><span class="lineNum">     108 </span>            :     // determine if the vehicle is manoeuvring</a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineCov">   50092200 :     manoeuvring = accNavMagHoriz &gt; 0.5f;</span></a>
+<a name="110"><span class="lineNum">     110 </span>            : </a>
+<a name="111"><span class="lineNum">     111 </span>            :     // Determine if learning of magnetic field states has been requested by the user</a>
+<a name="112"><span class="lineNum">     112 </span>            :     bool magCalRequested =</a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineCov">   50092200 :         ((effectiveMagCal == MagCal::WHEN_FLYING) &amp;&amp; inFlight) || // when flying</span></a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineCov">   50092200 :         ((effectiveMagCal == MagCal::WHEN_MANOEUVRING) &amp;&amp; manoeuvring)  || // when manoeuvring</span></a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineCov">  100184000 :         ((effectiveMagCal == MagCal::AFTER_FIRST_CLIMB) &amp;&amp; finalInflightYawInit &amp;&amp; finalInflightMagInit) || // when initial in-air yaw and mag field reset is complete</span></a>
+<a name="116"><span class="lineNum">     116 </span>            :         (effectiveMagCal == MagCal::ALWAYS); // all the time</a>
+<a name="117"><span class="lineNum">     117 </span>            : </a>
+<a name="118"><span class="lineNum">     118 </span>            :     // Deny mag calibration request if we aren't using the compass, it has been inhibited by the user,</a>
+<a name="119"><span class="lineNum">     119 </span>            :     // we do not have an absolute position reference or are on the ground (unless explicitly requested by the user)</a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineCov">   50092200 :     bool magCalDenied = !use_compass() || (effectiveMagCal == MagCal::NEVER) || (onGround &amp;&amp; effectiveMagCal != MagCal::ALWAYS);</span></a>
+<a name="121"><span class="lineNum">     121 </span>            : </a>
+<a name="122"><span class="lineNum">     122 </span>            :     // Inhibit the magnetic field calibration if not requested or denied</a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineCov">   50092200 :     bool setMagInhibit = !magCalRequested || magCalDenied;</span></a>
+<a name="124"><span class="lineNum">     124 </span><span class="lineCov">   50092200 :     if (!inhibitMagStates &amp;&amp; setMagInhibit) {</span></a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineCov">        458 :         inhibitMagStates = true;</span></a>
+<a name="126"><span class="lineNum">     126 </span><span class="lineCov">        458 :         updateStateIndexLim();</span></a>
+<a name="127"><span class="lineNum">     127 </span>            :         // variances will be reset in CovariancePrediction</a>
+<a name="128"><span class="lineNum">     128 </span><span class="lineCov">   50091800 :     } else if (inhibitMagStates &amp;&amp; !setMagInhibit) {</span></a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineCov">        464 :         inhibitMagStates = false;</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineCov">        464 :         updateStateIndexLim();</span></a>
+<a name="131"><span class="lineNum">     131 </span><span class="lineCov">        464 :         if (magFieldLearned) {</span></a>
+<a name="132"><span class="lineNum">     132 </span>            :             // if we have already learned the field states, then retain the learned variances</a>
+<a name="133"><span class="lineNum">     133 </span><span class="lineCov">        464 :             P[16][16] = earthMagFieldVar.x;</span></a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineCov">        464 :             P[17][17] = earthMagFieldVar.y;</span></a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineCov">        464 :             P[18][18] = earthMagFieldVar.z;</span></a>
+<a name="136"><span class="lineNum">     136 </span><span class="lineCov">        464 :             P[19][19] = bodyMagFieldVar.x;</span></a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineCov">        464 :             P[20][20] = bodyMagFieldVar.y;</span></a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineCov">        464 :             P[21][21] = bodyMagFieldVar.z;</span></a>
+<a name="139"><span class="lineNum">     139 </span>            :         } else {</a>
+<a name="140"><span class="lineNum">     140 </span>            :             // set the variances equal to the observation variances</a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineNoCov">          0 :             for (uint8_t index=16; index&lt;=21; index++) {</span></a>
+<a name="142"><span class="lineNum">     142 </span><span class="lineNoCov">          0 :                 P[index][index] = sq(frontend-&gt;_magNoise);</span></a>
+<a name="143"><span class="lineNum">     143 </span>            :             }</a>
+<a name="144"><span class="lineNum">     144 </span>            : </a>
+<a name="145"><span class="lineNum">     145 </span>            :             // set the NE earth magnetic field states using the published declination</a>
+<a name="146"><span class="lineNum">     146 </span>            :             // and set the corresponding variances and covariances</a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineNoCov">          0 :             alignMagStateDeclination();</span></a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span>            :         }</a>
+<a name="150"><span class="lineNum">     150 </span>            :         // request a reset of the yaw and magnetic field states if not done before</a>
+<a name="151"><span class="lineNum">     151 </span><span class="lineCov">        464 :         if (!magStateInitComplete || (!finalInflightMagInit &amp;&amp; inFlight)) {</span></a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineNoCov">          0 :             magYawResetRequest = true;</span></a>
+<a name="153"><span class="lineNum">     153 </span>            :         }</a>
+<a name="154"><span class="lineNum">     154 </span>            :     }</a>
+<a name="155"><span class="lineNum">     155 </span>            : </a>
+<a name="156"><span class="lineNum">     156 </span>            :     // inhibit delta velocity bias learning if we have not yet aligned the tilt</a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineCov">   50092200 :     if (tiltAlignComplete &amp;&amp; inhibitDelVelBiasStates) {</span></a>
+<a name="158"><span class="lineNum">     158 </span>            :         // activate the states</a>
+<a name="159"><span class="lineNum">     159 </span><span class="lineCov">        872 :         inhibitDelVelBiasStates = false;</span></a>
+<a name="160"><span class="lineNum">     160 </span><span class="lineCov">        872 :         updateStateIndexLim();</span></a>
+<a name="161"><span class="lineNum">     161 </span>            : </a>
+<a name="162"><span class="lineNum">     162 </span>            :         // set the initial covariance values</a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineCov">        872 :         P[13][13] = sq(ACCEL_BIAS_LIM_SCALER * frontend-&gt;_accBiasLim * dtEkfAvg);</span></a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineCov">        872 :         P[14][14] = P[13][13];</span></a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineCov">        872 :         P[15][15] = P[13][13];</span></a>
+<a name="166"><span class="lineNum">     166 </span>            :     }</a>
+<a name="167"><span class="lineNum">     167 </span>            : </a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineCov">   50092200 :     if (tiltAlignComplete &amp;&amp; inhibitDelAngBiasStates) {</span></a>
+<a name="169"><span class="lineNum">     169 </span>            :         // activate the states</a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineCov">        872 :         inhibitDelAngBiasStates = false;</span></a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineCov">        872 :         updateStateIndexLim();</span></a>
+<a name="172"><span class="lineNum">     172 </span>            : </a>
+<a name="173"><span class="lineNum">     173 </span>            :         // set the initial covariance values</a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineCov">        872 :         P[10][10] = sq(radians(InitialGyroBiasUncertainty() * dtEkfAvg));</span></a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineCov">        872 :         P[11][11] = P[10][10];</span></a>
+<a name="176"><span class="lineNum">     176 </span><span class="lineCov">        872 :         P[12][12] = P[10][10];</span></a>
+<a name="177"><span class="lineNum">     177 </span>            :     }</a>
+<a name="178"><span class="lineNum">     178 </span>            : </a>
+<a name="179"><span class="lineNum">     179 </span>            :     // If on ground we clear the flag indicating that the magnetic field in-flight initialisation has been completed</a>
+<a name="180"><span class="lineNum">     180 </span>            :     // because we want it re-done for each takeoff</a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineCov">   50092200 :     if (onGround) {</span></a>
+<a name="182"><span class="lineNum">     182 </span><span class="lineCov">   23758400 :         finalInflightYawInit = false;</span></a>
+<a name="183"><span class="lineNum">     183 </span><span class="lineCov">   23758400 :         finalInflightMagInit = false;</span></a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineCov">   23758400 :         magFieldLearned = false;</span></a>
+<a name="185"><span class="lineNum">     185 </span>            :     }</a>
+<a name="186"><span class="lineNum">     186 </span>            : </a>
+<a name="187"><span class="lineNum">     187 </span><span class="lineCov">   50092200 :     updateStateIndexLim();</span></a>
+<a name="188"><span class="lineNum">     188 </span><span class="lineCov">   50092200 : }</span></a>
+<a name="189"><span class="lineNum">     189 </span>            : </a>
+<a name="190"><span class="lineNum">     190 </span>            : // Adjust the indexing limits used to address the covariance, states and other EKF arrays to avoid unnecessary operations</a>
+<a name="191"><span class="lineNum">     191 </span>            : // if we are not using those states</a>
+<a name="192"><span class="lineNum">     192 </span><span class="lineCov">   50094900 : void NavEKF3_core::updateStateIndexLim()</span></a>
+<a name="193"><span class="lineNum">     193 </span>            : {</a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineCov">   50094900 :     if (inhibitWindStates) {</span></a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineCov">   50094900 :         if (inhibitMagStates) {</span></a>
+<a name="196"><span class="lineNum">     196 </span><span class="lineCov">   25749000 :             if (inhibitDelVelBiasStates) {</span></a>
+<a name="197"><span class="lineNum">     197 </span><span class="lineCov">     500837 :                 if (inhibitDelAngBiasStates) {</span></a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineCov">     500837 :                     stateIndexLim = 9;</span></a>
+<a name="199"><span class="lineNum">     199 </span>            :                 } else {</a>
+<a name="200"><span class="lineNum">     200 </span><span class="lineNoCov">          0 :                     stateIndexLim = 12;</span></a>
+<a name="201"><span class="lineNum">     201 </span>            :                 }</a>
+<a name="202"><span class="lineNum">     202 </span>            :             } else {</a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineCov">   25248200 :                 stateIndexLim = 15;</span></a>
+<a name="204"><span class="lineNum">     204 </span>            :             }</a>
+<a name="205"><span class="lineNum">     205 </span>            :         } else {</a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineCov">   24345900 :             stateIndexLim = 21;</span></a>
+<a name="207"><span class="lineNum">     207 </span>            :         }</a>
+<a name="208"><span class="lineNum">     208 </span>            :     } else {</a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 :         stateIndexLim = 23;</span></a>
+<a name="210"><span class="lineNum">     210 </span>            :     }</a>
+<a name="211"><span class="lineNum">     211 </span><span class="lineCov">   50094900 : }</span></a>
+<a name="212"><span class="lineNum">     212 </span>            : </a>
+<a name="213"><span class="lineNum">     213 </span>            : // set the default yaw source</a>
+<a name="214"><span class="lineNum">     214 </span><span class="lineCov">   50092200 : void NavEKF3_core::setYawSource()</span></a>
+<a name="215"><span class="lineNum">     215 </span>            : {</a>
+<a name="216"><span class="lineNum">     216 </span><span class="lineCov">   50092200 :     AP_NavEKF_Source::SourceYaw yaw_source = frontend-&gt;sources.getYawSource(core_index);</span></a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineCov">   50092200 :     if (wasLearningCompass_ms &gt; 0) {</span></a>
+<a name="218"><span class="lineNum">     218 </span>            :         // can't use compass while it is being calibrated</a>
+<a name="219"><span class="lineNum">     219 </span><span class="lineCov">      20191 :         if (yaw_source == AP_NavEKF_Source::SourceYaw::COMPASS) {</span></a>
+<a name="220"><span class="lineNum">     220 </span>            :             yaw_source = AP_NavEKF_Source::SourceYaw::NONE;</a>
+<a name="221"><span class="lineNum">     221 </span><span class="lineCov">      16163 :         } else if (yaw_source == AP_NavEKF_Source::SourceYaw::GPS_COMPASS_FALLBACK) {</span></a>
+<a name="222"><span class="lineNum">     222 </span>            :             yaw_source = AP_NavEKF_Source::SourceYaw::GPS;</a>
+<a name="223"><span class="lineNum">     223 </span>            :         }</a>
+<a name="224"><span class="lineNum">     224 </span>            :     }</a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineCov">   50092200 :     if (yaw_source != yaw_source_last) {</span></a>
+<a name="226"><span class="lineNum">     226 </span><span class="lineCov">         38 :         yaw_source_last = yaw_source;</span></a>
+<a name="227"><span class="lineNum">     227 </span><span class="lineCov">         38 :         yaw_source_reset = true;</span></a>
+<a name="228"><span class="lineNum">     228 </span>            :     }</a>
+<a name="229"><span class="lineNum">     229 </span><span class="lineCov">   50092200 : }</span></a>
+<a name="230"><span class="lineNum">     230 </span>            : </a>
+<a name="231"><span class="lineNum">     231 </span>            : // Set inertial navigation aiding mode</a>
+<a name="232"><span class="lineNum">     232 </span><span class="lineCov">   50092200 : void NavEKF3_core::setAidingMode()</span></a>
+<a name="233"><span class="lineNum">     233 </span>            : {</a>
+<a name="234"><span class="lineNum">     234 </span>            :     resetDataSource posResetSource = resetDataSource::DEFAULT;</a>
+<a name="235"><span class="lineNum">     235 </span>            :     resetDataSource velResetSource = resetDataSource::DEFAULT;</a>
+<a name="236"><span class="lineNum">     236 </span>            : </a>
+<a name="237"><span class="lineNum">     237 </span>            :     // Save the previous status so we can detect when it has changed</a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineCov">   50092200 :     PV_AidingModePrev = PV_AidingMode;</span></a>
+<a name="239"><span class="lineNum">     239 </span>            : </a>
+<a name="240"><span class="lineNum">     240 </span><span class="lineCov">   50092200 :     setYawSource();</span></a>
+<a name="241"><span class="lineNum">     241 </span>            : </a>
+<a name="242"><span class="lineNum">     242 </span>            :     // Check that the gyro bias variance has converged</a>
+<a name="243"><span class="lineNum">     243 </span><span class="lineCov">   50092200 :     checkGyroCalStatus();</span></a>
+<a name="244"><span class="lineNum">     244 </span>            : </a>
+<a name="245"><span class="lineNum">     245 </span>            :     // Handle the special case where we are on ground and disarmed without a yaw measurement</a>
+<a name="246"><span class="lineNum">     246 </span>            :     // and navigating. This can occur if not using a magnetometer and yaw was aligned using GPS</a>
+<a name="247"><span class="lineNum">     247 </span>            :     // during the previous flight.</a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineCov">   50092200 :     if (yaw_source_last == AP_NavEKF_Source::SourceYaw::NONE &amp;&amp;</span></a>
+<a name="249"><span class="lineNum">     249 </span><span class="lineCov">     254162 :         !motorsArmed &amp;&amp;</span></a>
+<a name="250"><span class="lineNum">     250 </span><span class="lineCov">     250516 :         onGround &amp;&amp;</span></a>
+<a name="251"><span class="lineNum">     251 </span><span class="lineCov">     250516 :         PV_AidingMode != AID_NONE)</span></a>
+<a name="252"><span class="lineNum">     252 </span>            :     {</a>
+<a name="253"><span class="lineNum">     253 </span><span class="lineCov">         20 :         PV_AidingMode = AID_NONE;</span></a>
+<a name="254"><span class="lineNum">     254 </span><span class="lineCov">         20 :         yawAlignComplete = false;</span></a>
+<a name="255"><span class="lineNum">     255 </span><span class="lineCov">         20 :         yawAlignGpsValidCount = 0;</span></a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineCov">         20 :         finalInflightYawInit = false;</span></a>
+<a name="257"><span class="lineNum">     257 </span><span class="lineCov">         20 :         ResetVelocity(resetDataSource::DEFAULT);</span></a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineCov">         20 :         ResetPosition(resetDataSource::DEFAULT);</span></a>
+<a name="259"><span class="lineNum">     259 </span><span class="lineCov">         20 :         ResetHeight();</span></a>
+<a name="260"><span class="lineNum">     260 </span>            :         // preserve quaternion 4x4 covariances, but zero the other rows and columns</a>
+<a name="261"><span class="lineNum">     261 </span><span class="lineCov">        100 :         for (uint8_t row=0; row&lt;4; row++) {</span></a>
+<a name="262"><span class="lineNum">     262 </span><span class="lineCov">       1680 :             for (uint8_t col=4; col&lt;24; col++) {</span></a>
+<a name="263"><span class="lineNum">     263 </span><span class="lineCov">       1600 :                 P[row][col] = 0.0f;</span></a>
+<a name="264"><span class="lineNum">     264 </span>            :             }</a>
+<a name="265"><span class="lineNum">     265 </span>            :         }</a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineCov">        100 :         for (uint8_t col=0; col&lt;4; col++) {</span></a>
+<a name="267"><span class="lineNum">     267 </span><span class="lineCov">       1680 :             for (uint8_t row=4; row&lt;24; row++) {</span></a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">       1600 :                 P[row][col] = 0.0f;</span></a>
+<a name="269"><span class="lineNum">     269 </span>            :             }</a>
+<a name="270"><span class="lineNum">     270 </span>            :         }</a>
+<a name="271"><span class="lineNum">     271 </span>            :         // keep the IMU bias state variances, but zero the covariances</a>
+<a name="272"><span class="lineNum">     272 </span>            :         ftype oldBiasVariance[6];</a>
+<a name="273"><span class="lineNum">     273 </span><span class="lineCov">        140 :         for (uint8_t row=0; row&lt;6; row++) {</span></a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineCov">        120 :             oldBiasVariance[row] = P[row+10][row+10];</span></a>
+<a name="275"><span class="lineNum">     275 </span>            :         }</a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineCov">         20 :         zeroCols(P,10,15);</span></a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineCov">         20 :         zeroRows(P,10,15);</span></a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineCov">        140 :         for (uint8_t row=0; row&lt;6; row++) {</span></a>
+<a name="279"><span class="lineNum">     279 </span><span class="lineCov">        120 :             P[row+10][row+10] = oldBiasVariance[row];</span></a>
+<a name="280"><span class="lineNum">     280 </span>            :         }</a>
+<a name="281"><span class="lineNum">     281 </span>            :     }</a>
+<a name="282"><span class="lineNum">     282 </span>            : </a>
+<a name="283"><span class="lineNum">     283 </span>            :     // Determine if we should change aiding mode</a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineCov">   50092200 :     switch (PV_AidingMode) {</span></a>
+<a name="285"><span class="lineNum">     285 </span><span class="lineCov">    9344920 :         case AID_NONE: {</span></a>
+<a name="286"><span class="lineNum">     286 </span>            :             // Don't allow filter to start position or velocity aiding until the tilt and yaw alignment is complete</a>
+<a name="287"><span class="lineNum">     287 </span>            :             // and IMU gyro bias estimates have stabilised</a>
+<a name="288"><span class="lineNum">     288 </span>            :             // If GPS usage has been prohiited then we use flow aiding provided optical flow data is present</a>
+<a name="289"><span class="lineNum">     289 </span>            :             // GPS aiding is the preferred option unless excluded by the user</a>
+<a name="290"><span class="lineNum">     290 </span><span class="lineCov">    9344920 :             if (readyToUseGPS() || readyToUseRangeBeacon() || readyToUseExtNav()) {</span></a>
+<a name="291"><span class="lineNum">     291 </span><span class="lineCov">        568 :                 PV_AidingMode = AID_ABSOLUTE;</span></a>
+<a name="292"><span class="lineNum">     292 </span>            :             } else if (</a>
+<a name="293"><span class="lineNum">     293 </span>            : #if EK3_FEATURE_OPTFLOW_FUSION</a>
+<a name="294"><span class="lineNum">     294 </span><span class="lineCov">   18688700 :                 readyToUseOptFlow() ||</span></a>
+<a name="295"><span class="lineNum">     295 </span>            : #endif</a>
+<a name="296"><span class="lineNum">     296 </span><span class="lineCov">    9344350 :                 readyToUseBodyOdm()) {</span></a>
+<a name="297"><span class="lineNum">     297 </span><span class="lineCov">          8 :                 PV_AidingMode = AID_RELATIVE;</span></a>
+<a name="298"><span class="lineNum">     298 </span>            :             }</a>
+<a name="299"><span class="lineNum">     299 </span>            :             break;</a>
+<a name="300"><span class="lineNum">     300 </span>            :         }</a>
+<a name="301"><span class="lineNum">     301 </span><span class="lineCov">     176900 :         case AID_RELATIVE: {</span></a>
+<a name="302"><span class="lineNum">     302 </span>            :             // Check if the fusion has timed out (flow measurements have been rejected for too long)</a>
+<a name="303"><span class="lineNum">     303 </span><span class="lineCov">     176900 :             bool flowFusionTimeout = ((imuSampleTime_ms - prevFlowFuseTime_ms) &gt; 5000);</span></a>
+<a name="304"><span class="lineNum">     304 </span>            :             // Check if the fusion has timed out (body odometry measurements have been rejected for too long)</a>
+<a name="305"><span class="lineNum">     305 </span><span class="lineCov">     176900 :             bool bodyOdmFusionTimeout = ((imuSampleTime_ms - prevBodyVelFuseTime_ms) &gt; 5000);</span></a>
+<a name="306"><span class="lineNum">     306 </span>            :             // Enable switch to absolute position mode if GPS or range beacon data is available</a>
+<a name="307"><span class="lineNum">     307 </span>            :             // If GPS or range beacons data is not available and flow fusion has timed out, then fall-back to no-aiding</a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineCov">     176900 :             if (readyToUseGPS() || readyToUseRangeBeacon() || readyToUseExtNav()) {</span></a>
+<a name="309"><span class="lineNum">     309 </span><span class="lineNoCov">          0 :                 PV_AidingMode = AID_ABSOLUTE;</span></a>
+<a name="310"><span class="lineNum">     310 </span><span class="lineCov">     176900 :             } else if (flowFusionTimeout &amp;&amp; bodyOdmFusionTimeout) {</span></a>
+<a name="311"><span class="lineNum">     311 </span><span class="lineNoCov">          0 :                 PV_AidingMode = AID_NONE;</span></a>
+<a name="312"><span class="lineNum">     312 </span>            :             }</a>
+<a name="313"><span class="lineNum">     313 </span>            :             break;</a>
+<a name="314"><span class="lineNum">     314 </span>            :         }</a>
+<a name="315"><span class="lineNum">     315 </span><span class="lineCov">   40570400 :         case AID_ABSOLUTE: {</span></a>
+<a name="316"><span class="lineNum">     316 </span>            :             // Find the minimum time without data required to trigger any check</a>
+<a name="317"><span class="lineNum">     317 </span><span class="lineCov">   40570400 :             uint16_t minTestTime_ms = MIN(frontend-&gt;tiltDriftTimeMax_ms, MIN(frontend-&gt;posRetryTimeNoVel_ms,frontend-&gt;posRetryTimeUseVel_ms));</span></a>
+<a name="318"><span class="lineNum">     318 </span>            : </a>
+<a name="319"><span class="lineNum">     319 </span>            :             // Check if optical flow data is being used</a>
+<a name="320"><span class="lineNum">     320 </span><span class="lineCov">   40570400 :             bool optFlowUsed = (imuSampleTime_ms - prevFlowFuseTime_ms &lt;= minTestTime_ms);</span></a>
+<a name="321"><span class="lineNum">     321 </span>            : </a>
+<a name="322"><span class="lineNum">     322 </span>            :             // Check if body odometry data is being used</a>
+<a name="323"><span class="lineNum">     323 </span><span class="lineCov">   40570400 :             bool bodyOdmUsed = (imuSampleTime_ms - prevBodyVelFuseTime_ms &lt;= minTestTime_ms);</span></a>
+<a name="324"><span class="lineNum">     324 </span>            : </a>
+<a name="325"><span class="lineNum">     325 </span>            :             // Check if airspeed data is being used</a>
+<a name="326"><span class="lineNum">     326 </span><span class="lineCov">   40570400 :             bool airSpdUsed = (imuSampleTime_ms - lastTasPassTime_ms &lt;= minTestTime_ms);</span></a>
+<a name="327"><span class="lineNum">     327 </span>            : </a>
+<a name="328"><span class="lineNum">     328 </span>            :             // check if drag data is being used</a>
+<a name="329"><span class="lineNum">     329 </span><span class="lineCov">   40570400 :             bool dragUsed = (imuSampleTime_ms - lastDragPassTime_ms &lt;= minTestTime_ms);</span></a>
+<a name="330"><span class="lineNum">     330 </span>            : </a>
+<a name="331"><span class="lineNum">     331 </span>            : #if EK3_FEATURE_BEACON_FUSION</a>
+<a name="332"><span class="lineNum">     332 </span>            :             // Check if range beacon data is being used</a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineCov">   40570400 :             const bool rngBcnUsed = (imuSampleTime_ms - rngBcn.lastPassTime_ms &lt;= minTestTime_ms);</span></a>
+<a name="334"><span class="lineNum">     334 </span>            : #else</a>
+<a name="335"><span class="lineNum">     335 </span>            :             const bool rngBcnUsed = false;</a>
+<a name="336"><span class="lineNum">     336 </span>            : #endif</a>
+<a name="337"><span class="lineNum">     337 </span>            : </a>
+<a name="338"><span class="lineNum">     338 </span>            :             // Check if GPS or external nav is being used</a>
+<a name="339"><span class="lineNum">     339 </span><span class="lineCov">   40570400 :             bool posUsed = (imuSampleTime_ms - lastGpsPosPassTime_ms &lt;= minTestTime_ms);</span></a>
+<a name="340"><span class="lineNum">     340 </span><span class="lineCov">   40570400 :             bool gpsVelUsed = (imuSampleTime_ms - lastVelPassTime_ms &lt;= minTestTime_ms);</span></a>
+<a name="341"><span class="lineNum">     341 </span>            : </a>
+<a name="342"><span class="lineNum">     342 </span>            :             // Check if attitude drift has been constrained by a measurement source</a>
+<a name="343"><span class="lineNum">     343 </span><span class="lineCov">   40570400 :             bool attAiding = posUsed || gpsVelUsed || optFlowUsed || airSpdUsed || dragUsed || rngBcnUsed || bodyOdmUsed;</span></a>
+<a name="344"><span class="lineNum">     344 </span>            : </a>
+<a name="345"><span class="lineNum">     345 </span>            :             // Check if velocity drift has been constrained by a measurement source</a>
+<a name="346"><span class="lineNum">     346 </span>            :             // Currently these are all the same source as will stabilise attitude because we do not currently have</a>
+<a name="347"><span class="lineNum">     347 </span>            :             // a sensor that only observes attitude</a>
+<a name="348"><span class="lineNum">     348 </span><span class="lineCov">   40570400 :             velAiding = posUsed || gpsVelUsed || optFlowUsed || airSpdUsed || dragUsed || rngBcnUsed || bodyOdmUsed;</span></a>
+<a name="349"><span class="lineNum">     349 </span>            : </a>
+<a name="350"><span class="lineNum">     350 </span>            :             // Store the last valid airspeed estimate</a>
+<a name="351"><span class="lineNum">     351 </span><span class="lineCov">   40570400 :             windStateIsObservable = !inhibitWindStates &amp;&amp; (posUsed || gpsVelUsed || optFlowUsed || rngBcnUsed || bodyOdmUsed);</span></a>
+<a name="352"><span class="lineNum">     352 </span><span class="lineCov">   40570400 :             if (windStateIsObservable) {</span></a>
+<a name="353"><span class="lineNum">     353 </span><span class="lineNoCov">          0 :                 lastAirspeedEstimate = (stateStruct.velocity - Vector3F(stateStruct.wind_vel.x, stateStruct.wind_vel.y, 0.0F)).length();</span></a>
+<a name="354"><span class="lineNum">     354 </span><span class="lineNoCov">          0 :                 lastAspdEstIsValid = true;</span></a>
+<a name="355"><span class="lineNum">     355 </span>            :             }</a>
+<a name="356"><span class="lineNum">     356 </span>            : </a>
+<a name="357"><span class="lineNum">     357 </span>            :             // check if position drift has been constrained by a measurement source</a>
+<a name="358"><span class="lineNum">     358 </span><span class="lineCov">   40570400 :             bool posAiding = posUsed || rngBcnUsed;</span></a>
+<a name="359"><span class="lineNum">     359 </span>            : </a>
+<a name="360"><span class="lineNum">     360 </span>            :             // Check if the loss of attitude aiding has become critical</a>
+<a name="361"><span class="lineNum">     361 </span>            :             bool attAidLossCritical = false;</a>
+<a name="362"><span class="lineNum">     362 </span><span class="lineCov">   40570400 :             if (!attAiding) {</span></a>
+<a name="363"><span class="lineNum">     363 </span><span class="lineCov">      39054 :                 attAidLossCritical = (imuSampleTime_ms - prevFlowFuseTime_ms &gt; frontend-&gt;tiltDriftTimeMax_ms) &amp;&amp;</span></a>
+<a name="364"><span class="lineNum">     364 </span><span class="lineCov">      19527 :                                 (imuSampleTime_ms - lastTasPassTime_ms &gt; frontend-&gt;tiltDriftTimeMax_ms) &amp;&amp;</span></a>
+<a name="365"><span class="lineNum">     365 </span>            : #if EK3_FEATURE_BEACON_FUSION</a>
+<a name="366"><span class="lineNum">     366 </span><span class="lineCov">      19527 :                         (imuSampleTime_ms - rngBcn.lastPassTime_ms &gt; frontend-&gt;tiltDriftTimeMax_ms) &amp;&amp;</span></a>
+<a name="367"><span class="lineNum">     367 </span>            : #endif</a>
+<a name="368"><span class="lineNum">     368 </span><span class="lineCov">      38895 :                         (imuSampleTime_ms - lastGpsPosPassTime_ms &gt; frontend-&gt;tiltDriftTimeMax_ms) &amp;&amp;</span></a>
+<a name="369"><span class="lineNum">     369 </span><span class="lineCov">          6 :                         (imuSampleTime_ms - lastVelPassTime_ms &gt; frontend-&gt;tiltDriftTimeMax_ms);</span></a>
+<a name="370"><span class="lineNum">     370 </span>            :             }</a>
+<a name="371"><span class="lineNum">     371 </span>            : </a>
+<a name="372"><span class="lineNum">     372 </span>            :             // Check if the loss of position accuracy has become critical</a>
+<a name="373"><span class="lineNum">     373 </span>            :             bool posAidLossCritical = false;</a>
+<a name="374"><span class="lineNum">     374 </span><span class="lineCov">   40570400 :             if (!posAiding) {</span></a>
+<a name="375"><span class="lineNum">     375 </span>            :                 uint16_t maxLossTime_ms;</a>
+<a name="376"><span class="lineNum">     376 </span><span class="lineCov">      22010 :                 if (!velAiding) {</span></a>
+<a name="377"><span class="lineNum">     377 </span><span class="lineCov">      19527 :                     maxLossTime_ms = frontend-&gt;posRetryTimeNoVel_ms;</span></a>
+<a name="378"><span class="lineNum">     378 </span>            :                 } else {</a>
+<a name="379"><span class="lineNum">     379 </span><span class="lineCov">       2483 :                     maxLossTime_ms = frontend-&gt;posRetryTimeUseVel_ms;</span></a>
+<a name="380"><span class="lineNum">     380 </span>            :                 }</a>
+<a name="381"><span class="lineNum">     381 </span>            :                 posAidLossCritical =</a>
+<a name="382"><span class="lineNum">     382 </span>            : #if EK3_FEATURE_BEACON_FUSION</a>
+<a name="383"><span class="lineNum">     383 </span><span class="lineCov">      22010 :                     (imuSampleTime_ms - rngBcn.lastPassTime_ms &gt; maxLossTime_ms) &amp;&amp;</span></a>
+<a name="384"><span class="lineNum">     384 </span>            : #endif</a>
+<a name="385"><span class="lineNum">     385 </span><span class="lineCov">      22010 :                     (imuSampleTime_ms - lastGpsPosPassTime_ms &gt; maxLossTime_ms);</span></a>
+<a name="386"><span class="lineNum">     386 </span>            :             }</a>
+<a name="387"><span class="lineNum">     387 </span>            : </a>
+<a name="388"><span class="lineNum">     388 </span><span class="lineCov">   40570400 :             if (attAidLossCritical) {</span></a>
+<a name="389"><span class="lineNum">     389 </span>            :                 // if the loss of attitude data is critical, then put the filter into a constant position mode</a>
+<a name="390"><span class="lineNum">     390 </span><span class="lineCov">          6 :                 PV_AidingMode = AID_NONE;</span></a>
+<a name="391"><span class="lineNum">     391 </span><span class="lineCov">          6 :                 posTimeout = true;</span></a>
+<a name="392"><span class="lineNum">     392 </span><span class="lineCov">          6 :                 velTimeout = true;</span></a>
+<a name="393"><span class="lineNum">     393 </span><span class="lineCov">          6 :                 tasTimeout = true;</span></a>
+<a name="394"><span class="lineNum">     394 </span><span class="lineCov">          6 :                 dragTimeout = true;</span></a>
+<a name="395"><span class="lineNum">     395 </span><span class="lineCov">          6 :                 gpsIsInUse = false;</span></a>
+<a name="396"><span class="lineNum">     396 </span><span class="lineCov">   40570400 :              } else if (posAidLossCritical) {</span></a>
+<a name="397"><span class="lineNum">     397 </span>            :                 // if the loss of position is critical, declare all sources of position aiding as being timed out</a>
+<a name="398"><span class="lineNum">     398 </span><span class="lineCov">      19602 :                 posTimeout = true;</span></a>
+<a name="399"><span class="lineNum">     399 </span><span class="lineCov">      19602 :                 velTimeout = !optFlowUsed &amp;&amp; !gpsVelUsed &amp;&amp; !bodyOdmUsed;</span></a>
+<a name="400"><span class="lineNum">     400 </span><span class="lineCov">      19602 :                 gpsIsInUse = false;</span></a>
+<a name="401"><span class="lineNum">     401 </span>            : </a>
+<a name="402"><span class="lineNum">     402 </span>            :             }</a>
+<a name="403"><span class="lineNum">     403 </span>            :             break;</a>
+<a name="404"><span class="lineNum">     404 </span>            :         }</a>
+<a name="405"><span class="lineNum">     405 </span>            :     }</a>
+<a name="406"><span class="lineNum">     406 </span>            : </a>
+<a name="407"><span class="lineNum">     407 </span>            :     // check to see if we are starting or stopping aiding and set states and modes as required</a>
+<a name="408"><span class="lineNum">     408 </span><span class="lineCov">   50092200 :     if (PV_AidingMode != PV_AidingModePrev) {</span></a>
+<a name="409"><span class="lineNum">     409 </span>            :         // set various usage modes based on the condition when we start aiding. These are then held until aiding is stopped.</a>
+<a name="410"><span class="lineNum">     410 </span><span class="lineCov">        602 :         switch (PV_AidingMode) {</span></a>
+<a name="411"><span class="lineNum">     411 </span><span class="lineCov">         26 :         case AID_NONE:</span></a>
+<a name="412"><span class="lineNum">     412 </span>            :             // We have ceased aiding</a>
+<a name="413"><span class="lineNum">     413 </span><span class="lineCov">         26 :             GCS_SEND_TEXT(MAV_SEVERITY_WARNING, &quot;EKF3 IMU%u stopped aiding&quot;,(unsigned)imu_index);</span></a>
+<a name="414"><span class="lineNum">     414 </span>            :             // When not aiding, estimate orientation &amp; height fusing synthetic constant position and zero velocity measurement to constrain tilt errors</a>
+<a name="415"><span class="lineNum">     415 </span><span class="lineCov">         26 :             posTimeout = true;</span></a>
+<a name="416"><span class="lineNum">     416 </span><span class="lineCov">         26 :             velTimeout = true;</span></a>
+<a name="417"><span class="lineNum">     417 </span>            :             // Reset the normalised innovation to avoid false failing bad fusion tests</a>
+<a name="418"><span class="lineNum">     418 </span><span class="lineCov">         26 :             velTestRatio = 0.0f;</span></a>
+<a name="419"><span class="lineNum">     419 </span><span class="lineCov">         26 :             posTestRatio = 0.0f;</span></a>
+<a name="420"><span class="lineNum">     420 </span>            :             // store the current position to be used to keep reporting the last known position</a>
+<a name="421"><span class="lineNum">     421 </span><span class="lineCov">         26 :             lastKnownPositionNE.x = stateStruct.position.x;</span></a>
+<a name="422"><span class="lineNum">     422 </span><span class="lineCov">         26 :             lastKnownPositionNE.y = stateStruct.position.y;</span></a>
+<a name="423"><span class="lineNum">     423 </span>            :             // initialise filtered altitude used to provide a takeoff reference to current baro on disarm</a>
+<a name="424"><span class="lineNum">     424 </span>            :             // this reduces the time required for the baro noise filter to settle before the filtered baro data can be used</a>
+<a name="425"><span class="lineNum">     425 </span><span class="lineCov">         26 :             meaHgtAtTakeOff = baroDataDelayed.hgt;</span></a>
+<a name="426"><span class="lineNum">     426 </span>            :             // reset the vertical position state to faster recover from baro errors experienced during touchdown</a>
+<a name="427"><span class="lineNum">     427 </span><span class="lineCov">         26 :             stateStruct.position.z = -meaHgtAtTakeOff;</span></a>
+<a name="428"><span class="lineNum">     428 </span>            :             // store the current height to be used to keep reporting</a>
+<a name="429"><span class="lineNum">     429 </span>            :             // the last known position</a>
+<a name="430"><span class="lineNum">     430 </span><span class="lineCov">         26 :             lastKnownPositionD = stateStruct.position.z;</span></a>
+<a name="431"><span class="lineNum">     431 </span>            :             // reset relative aiding sensor fusion activity status</a>
+<a name="432"><span class="lineNum">     432 </span><span class="lineCov">         26 :             flowFusionActive = false;</span></a>
+<a name="433"><span class="lineNum">     433 </span><span class="lineCov">         26 :             bodyVelFusionActive = false;</span></a>
+<a name="434"><span class="lineNum">     434 </span><span class="lineCov">         26 :             break;</span></a>
+<a name="435"><span class="lineNum">     435 </span>            : </a>
+<a name="436"><span class="lineNum">     436 </span><span class="lineCov">          8 :         case AID_RELATIVE:</span></a>
+<a name="437"><span class="lineNum">     437 </span>            :             // We are doing relative position navigation where velocity errors are constrained, but position drift will occur</a>
+<a name="438"><span class="lineNum">     438 </span><span class="lineCov">          8 :             GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u started relative aiding&quot;,(unsigned)imu_index);</span></a>
+<a name="439"><span class="lineNum">     439 </span>            : #if EK3_FEATURE_OPTFLOW_FUSION</a>
+<a name="440"><span class="lineNum">     440 </span><span class="lineCov">          8 :             if (readyToUseOptFlow()) {</span></a>
+<a name="441"><span class="lineNum">     441 </span>            :                 // Reset time stamps</a>
+<a name="442"><span class="lineNum">     442 </span><span class="lineCov">          6 :                 flowValidMeaTime_ms = imuSampleTime_ms;</span></a>
+<a name="443"><span class="lineNum">     443 </span><span class="lineCov">          6 :                 prevFlowFuseTime_ms = imuSampleTime_ms;</span></a>
+<a name="444"><span class="lineNum">     444 </span>            :             } else</a>
+<a name="445"><span class="lineNum">     445 </span>            : #endif</a>
+<a name="446"><span class="lineNum">     446 </span><span class="lineCov">          2 :                 if (readyToUseBodyOdm()) {</span></a>
+<a name="447"><span class="lineNum">     447 </span>            :                  // Reset time stamps</a>
+<a name="448"><span class="lineNum">     448 </span><span class="lineCov">          2 :                 lastbodyVelPassTime_ms = imuSampleTime_ms;</span></a>
+<a name="449"><span class="lineNum">     449 </span><span class="lineCov">          2 :                 prevBodyVelFuseTime_ms = imuSampleTime_ms;</span></a>
+<a name="450"><span class="lineNum">     450 </span>            :             }</a>
+<a name="451"><span class="lineNum">     451 </span><span class="lineCov">          8 :             posTimeout = true;</span></a>
+<a name="452"><span class="lineNum">     452 </span><span class="lineCov">          8 :             velTimeout = true;</span></a>
+<a name="453"><span class="lineNum">     453 </span><span class="lineCov">          8 :             break;</span></a>
+<a name="454"><span class="lineNum">     454 </span>            : </a>
+<a name="455"><span class="lineNum">     455 </span><span class="lineCov">        568 :         case AID_ABSOLUTE:</span></a>
+<a name="456"><span class="lineNum">     456 </span><span class="lineCov">        568 :             if (readyToUseGPS()) {</span></a>
+<a name="457"><span class="lineNum">     457 </span>            :                 // We are commencing aiding using GPS - this is the preferred method</a>
+<a name="458"><span class="lineNum">     458 </span>            :                 posResetSource = resetDataSource::GPS;</a>
+<a name="459"><span class="lineNum">     459 </span>            :                 velResetSource = resetDataSource::GPS;</a>
+<a name="460"><span class="lineNum">     460 </span><span class="lineCov">        561 :                 GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u is using GPS&quot;,(unsigned)imu_index);</span></a>
+<a name="461"><span class="lineNum">     461 </span>            : #if EK3_FEATURE_BEACON_FUSION</a>
+<a name="462"><span class="lineNum">     462 </span><span class="lineCov">          7 :             } else if (readyToUseRangeBeacon()) {</span></a>
+<a name="463"><span class="lineNum">     463 </span>            :                 // We are commencing aiding using range beacons</a>
+<a name="464"><span class="lineNum">     464 </span>            :                 posResetSource = resetDataSource::RNGBCN;</a>
+<a name="465"><span class="lineNum">     465 </span><span class="lineCov">          2 :                 GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u is using range beacons&quot;,(unsigned)imu_index);</span></a>
+<a name="466"><span class="lineNum">     466 </span><span class="lineCov">          2 :                 GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u initial pos NE = %3.1f,%3.1f (m)&quot;,(unsigned)imu_index,(double)rngBcn.receiverPos.x,(double)rngBcn.receiverPos.y);</span></a>
+<a name="467"><span class="lineNum">     467 </span><span class="lineCov">          2 :                 GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u initial beacon pos D offset = %3.1f (m)&quot;,(unsigned)imu_index,(double)rngBcn.posOffsetNED.z);</span></a>
+<a name="468"><span class="lineNum">     468 </span>            : #endif  // EK3_FEATURE_BEACON_FUSION</a>
+<a name="469"><span class="lineNum">     469 </span>            : #if EK3_FEATURE_EXTERNAL_NAV</a>
+<a name="470"><span class="lineNum">     470 </span><span class="lineCov">          5 :             } else if (readyToUseExtNav()) {</span></a>
+<a name="471"><span class="lineNum">     471 </span>            :                 // we are commencing aiding using external nav</a>
+<a name="472"><span class="lineNum">     472 </span>            :                 posResetSource = resetDataSource::EXTNAV;</a>
+<a name="473"><span class="lineNum">     473 </span><span class="lineCov">          5 :                 GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u is using external nav data&quot;,(unsigned)imu_index);</span></a>
+<a name="474"><span class="lineNum">     474 </span><span class="lineCov">          5 :                 GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u initial pos NED = %3.1f,%3.1f,%3.1f (m)&quot;,(unsigned)imu_index,(double)extNavDataDelayed.pos.x,(double)extNavDataDelayed.pos.y,(double)extNavDataDelayed.pos.z);</span></a>
+<a name="475"><span class="lineNum">     475 </span><span class="lineCov">          5 :                 if (useExtNavVel) {</span></a>
+<a name="476"><span class="lineNum">     476 </span>            :                     velResetSource = resetDataSource::EXTNAV;</a>
+<a name="477"><span class="lineNum">     477 </span><span class="lineCov">          5 :                     GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u initial vel NED = %3.1f,%3.1f,%3.1f (m/s)&quot;,(unsigned)imu_index,(double)extNavVelDelayed.vel.x,(double)extNavVelDelayed.vel.y,(double)extNavVelDelayed.vel.z);</span></a>
+<a name="478"><span class="lineNum">     478 </span>            :                 }</a>
+<a name="479"><span class="lineNum">     479 </span>            :                 // handle height reset as special case</a>
+<a name="480"><span class="lineNum">     480 </span><span class="lineCov">          5 :                 hgtMea = -extNavDataDelayed.pos.z;</span></a>
+<a name="481"><span class="lineNum">     481 </span><span class="lineCov">          5 :                 posDownObsNoise = sq(constrain_ftype(extNavDataDelayed.posErr, 0.1f, 10.0f));</span></a>
+<a name="482"><span class="lineNum">     482 </span><span class="lineCov">          5 :                 ResetHeight();</span></a>
+<a name="483"><span class="lineNum">     483 </span>            : #endif // EK3_FEATURE_EXTERNAL_NAV</a>
+<a name="484"><span class="lineNum">     484 </span>            :             }</a>
+<a name="485"><span class="lineNum">     485 </span>            : </a>
+<a name="486"><span class="lineNum">     486 </span>            :             // clear timeout flags as a precaution to avoid triggering any additional transitions</a>
+<a name="487"><span class="lineNum">     487 </span><span class="lineCov">        568 :             posTimeout = false;</span></a>
+<a name="488"><span class="lineNum">     488 </span><span class="lineCov">        568 :             velTimeout = false;</span></a>
+<a name="489"><span class="lineNum">     489 </span>            : </a>
+<a name="490"><span class="lineNum">     490 </span>            :             // reset the last fusion accepted times to prevent unwanted activation of timeout logic</a>
+<a name="491"><span class="lineNum">     491 </span><span class="lineCov">        568 :             lastGpsPosPassTime_ms = imuSampleTime_ms;</span></a>
+<a name="492"><span class="lineNum">     492 </span><span class="lineCov">        568 :             lastVelPassTime_ms = imuSampleTime_ms;</span></a>
+<a name="493"><span class="lineNum">     493 </span>            : #if EK3_FEATURE_BEACON_FUSION</a>
+<a name="494"><span class="lineNum">     494 </span><span class="lineCov">        568 :             rngBcn.lastPassTime_ms = imuSampleTime_ms;</span></a>
+<a name="495"><span class="lineNum">     495 </span>            : #endif</a>
+<a name="496"><span class="lineNum">     496 </span><span class="lineCov">        568 :             break;</span></a>
+<a name="497"><span class="lineNum">     497 </span>            :         }</a>
+<a name="498"><span class="lineNum">     498 </span>            : </a>
+<a name="499"><span class="lineNum">     499 </span>            :         // Always reset the position and velocity when changing mode</a>
+<a name="500"><span class="lineNum">     500 </span><span class="lineCov">        602 :         ResetVelocity(velResetSource);</span></a>
+<a name="501"><span class="lineNum">     501 </span><span class="lineCov">        602 :         ResetPosition(posResetSource);</span></a>
+<a name="502"><span class="lineNum">     502 </span>            :     }</a>
+<a name="503"><span class="lineNum">     503 </span>            : </a>
+<a name="504"><span class="lineNum">     504 </span><span class="lineCov">   50092200 : }</span></a>
+<a name="505"><span class="lineNum">     505 </span>            : </a>
+<a name="506"><span class="lineNum">     506 </span>            : // Check the tilt and yaw alignmnent status</a>
+<a name="507"><span class="lineNum">     507 </span>            : // Used during initial bootstrap alignment of the filter</a>
+<a name="508"><span class="lineNum">     508 </span><span class="lineCov">   50092200 : void NavEKF3_core::checkAttitudeAlignmentStatus()</span></a>
+<a name="509"><span class="lineNum">     509 </span>            : {</a>
+<a name="510"><span class="lineNum">     510 </span>            :     // Check for tilt convergence - used during initial alignment</a>
+<a name="511"><span class="lineNum">     511 </span>            :     // Once the tilt variances have reduced, re-set the yaw and magnetic field states</a>
+<a name="512"><span class="lineNum">     512 </span>            :     // and declare the tilt alignment complete</a>
+<a name="513"><span class="lineNum">     513 </span><span class="lineCov">   50092200 :     if (!tiltAlignComplete) {</span></a>
+<a name="514"><span class="lineNum">     514 </span><span class="lineCov">     500837 :         if (tiltErrorVariance &lt; sq(radians(5.0))) {</span></a>
+<a name="515"><span class="lineNum">     515 </span><span class="lineCov">        872 :             tiltAlignComplete = true;</span></a>
+<a name="516"><span class="lineNum">     516 </span><span class="lineCov">        872 :             GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u tilt alignment complete&quot;,(unsigned)imu_index);</span></a>
+<a name="517"><span class="lineNum">     517 </span>            :         }</a>
+<a name="518"><span class="lineNum">     518 </span>            :     }</a>
+<a name="519"><span class="lineNum">     519 </span>            : </a>
+<a name="520"><span class="lineNum">     520 </span>            :     // submit yaw and magnetic field reset request</a>
+<a name="521"><span class="lineNum">     521 </span><span class="lineCov">   50092200 :     if (!yawAlignComplete &amp;&amp; tiltAlignComplete &amp;&amp; use_compass()) {</span></a>
+<a name="522"><span class="lineNum">     522 </span><span class="lineCov">      34538 :         magYawResetRequest = true;</span></a>
+<a name="523"><span class="lineNum">     523 </span>            :     }</a>
+<a name="524"><span class="lineNum">     524 </span>            : </a>
+<a name="525"><span class="lineNum">     525 </span><span class="lineCov">   50092200 : }</span></a>
+<a name="526"><span class="lineNum">     526 </span>            : </a>
+<a name="527"><span class="lineNum">     527 </span>            : // return true if we should use the airspeed sensor</a>
+<a name="528"><span class="lineNum">     528 </span><span class="lineCov">    9503680 : bool NavEKF3_core::useAirspeed(void) const</span></a>
+<a name="529"><span class="lineNum">     529 </span>            : {</a>
+<a name="530"><span class="lineNum">     530 </span><span class="lineCov">    9503680 :     return dal.airspeed_sensor_enabled();</span></a>
+<a name="531"><span class="lineNum">     531 </span>            : }</a>
+<a name="532"><span class="lineNum">     532 </span>            : </a>
+<a name="533"><span class="lineNum">     533 </span>            : // return true if we should use the range finder sensor</a>
+<a name="534"><span class="lineNum">     534 </span><span class="lineNoCov">          0 : bool NavEKF3_core::useRngFinder(void) const</span></a>
+<a name="535"><span class="lineNum">     535 </span>            : {</a>
+<a name="536"><span class="lineNum">     536 </span>            :     // TO-DO add code to set this based in setting of optical flow use parameter and presence of sensor</a>
+<a name="537"><span class="lineNum">     537 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="538"><span class="lineNum">     538 </span>            : }</a>
+<a name="539"><span class="lineNum">     539 </span>            : </a>
+<a name="540"><span class="lineNum">     540 </span>            : #if EK3_FEATURE_OPTFLOW_FUSION</a>
+<a name="541"><span class="lineNum">     541 </span>            : // return true if the filter is ready to start using optical flow measurements</a>
+<a name="542"><span class="lineNum">     542 </span><span class="lineCov">    9344360 : bool NavEKF3_core::readyToUseOptFlow(void) const</span></a>
+<a name="543"><span class="lineNum">     543 </span>            : {</a>
+<a name="544"><span class="lineNum">     544 </span>            :     // ensure flow is used for navigation and not terrain alt estimation</a>
+<a name="545"><span class="lineNum">     545 </span><span class="lineCov">    9344360 :     if (frontend-&gt;_flowUse != FLOW_USE_NAV) {</span></a>
+<a name="546"><span class="lineNum">     546 </span>            :         return false;</a>
+<a name="547"><span class="lineNum">     547 </span>            :     }</a>
+<a name="548"><span class="lineNum">     548 </span>            : </a>
+<a name="549"><span class="lineNum">     549 </span><span class="lineCov">    9344360 :     if (!frontend-&gt;sources.useVelXYSource(AP_NavEKF_Source::SourceXY::OPTFLOW, core_index)) {</span></a>
+<a name="550"><span class="lineNum">     550 </span>            :         return false;</a>
+<a name="551"><span class="lineNum">     551 </span>            :     }</a>
+<a name="552"><span class="lineNum">     552 </span>            : </a>
+<a name="553"><span class="lineNum">     553 </span>            :     // We need stable roll/pitch angles and gyro bias estimates but do not need the yaw angle aligned to use optical flow</a>
+<a name="554"><span class="lineNum">     554 </span><span class="lineCov">       3735 :     return (imuSampleTime_ms - flowMeaTime_ms &lt; 200) &amp;&amp; tiltAlignComplete &amp;&amp; delAngBiasLearned;</span></a>
+<a name="555"><span class="lineNum">     555 </span>            : }</a>
+<a name="556"><span class="lineNum">     556 </span>            : #endif  // EK3_FEATURE_OPTFLOW_FUSION</a>
+<a name="557"><span class="lineNum">     557 </span>            : </a>
+<a name="558"><span class="lineNum">     558 </span>            : // return true if the filter is ready to start using body frame odometry measurements</a>
+<a name="559"><span class="lineNum">     559 </span><span class="lineCov">    9344350 : bool NavEKF3_core::readyToUseBodyOdm(void) const</span></a>
+<a name="560"><span class="lineNum">     560 </span>            : {</a>
+<a name="561"><span class="lineNum">     561 </span>            : #if EK3_FEATURE_BODY_ODOM</a>
+<a name="562"><span class="lineNum">     562 </span><span class="lineCov">   18685400 :     if (!frontend-&gt;sources.useVelXYSource(AP_NavEKF_Source::SourceXY::EXTNAV, core_index) &amp;&amp;</span></a>
+<a name="563"><span class="lineNum">     563 </span><span class="lineCov">    9341040 :         !frontend-&gt;sources.useVelXYSource(AP_NavEKF_Source::SourceXY::WHEEL_ENCODER, core_index)) {</span></a>
+<a name="564"><span class="lineNum">     564 </span>            :         // exit immediately if sources not configured to fuse external nav or wheel encoders</a>
+<a name="565"><span class="lineNum">     565 </span>            :         return false;</a>
+<a name="566"><span class="lineNum">     566 </span>            :     }</a>
+<a name="567"><span class="lineNum">     567 </span>            : </a>
+<a name="568"><span class="lineNum">     568 </span>            :     // Check for fresh visual odometry data that meets the accuracy required for alignment</a>
+<a name="569"><span class="lineNum">     569 </span><span class="lineCov">       3307 :     bool visoDataGood = (imuSampleTime_ms - bodyOdmMeasTime_ms &lt; 200) &amp;&amp; (bodyOdmDataNew.velErr &lt; 1.0f);</span></a>
+<a name="570"><span class="lineNum">     570 </span>            : </a>
+<a name="571"><span class="lineNum">     571 </span>            :     // Check for fresh wheel encoder data</a>
+<a name="572"><span class="lineNum">     572 </span><span class="lineCov">       3307 :     bool wencDataGood = (imuDataDelayed.time_ms - wheelOdmDataDelayed.time_ms &lt; 200);</span></a>
+<a name="573"><span class="lineNum">     573 </span>            : </a>
+<a name="574"><span class="lineNum">     574 </span>            :     // We require stable roll/pitch angles and gyro bias estimates but do not need the yaw angle aligned to use odometry measurements</a>
+<a name="575"><span class="lineNum">     575 </span>            :     // because they are in a body frame of reference</a>
+<a name="576"><span class="lineNum">     576 </span><span class="lineCov">       3307 :     return (visoDataGood || wencDataGood)</span></a>
+<a name="577"><span class="lineNum">     577 </span><span class="lineCov">        802 :             &amp;&amp; tiltAlignComplete</span></a>
+<a name="578"><span class="lineNum">     578 </span><span class="lineCov">       3311 :             &amp;&amp; delAngBiasLearned;</span></a>
+<a name="579"><span class="lineNum">     579 </span>            : #else</a>
+<a name="580"><span class="lineNum">     580 </span>            :     return false;</a>
+<a name="581"><span class="lineNum">     581 </span>            : #endif // EK3_FEATURE_BODY_ODOM</a>
+<a name="582"><span class="lineNum">     582 </span>            : }</a>
+<a name="583"><span class="lineNum">     583 </span>            : </a>
+<a name="584"><span class="lineNum">     584 </span>            : // return true if the filter to be ready to use gps</a>
+<a name="585"><span class="lineNum">     585 </span><span class="lineCov">    9522390 : bool NavEKF3_core::readyToUseGPS(void) const</span></a>
+<a name="586"><span class="lineNum">     586 </span>            : {</a>
+<a name="587"><span class="lineNum">     587 </span><span class="lineCov">    9522390 :     if (frontend-&gt;sources.getPosXYSource(core_index) != AP_NavEKF_Source::SourceXY::GPS) {</span></a>
+<a name="588"><span class="lineNum">     588 </span>            :         return false;</a>
+<a name="589"><span class="lineNum">     589 </span>            :     }</a>
+<a name="590"><span class="lineNum">     590 </span>            : </a>
+<a name="591"><span class="lineNum">     591 </span><span class="lineCov">    9306440 :     return validOrigin &amp;&amp; tiltAlignComplete &amp;&amp; yawAlignComplete &amp;&amp; (delAngBiasLearned || assume_zero_sideslip()) &amp;&amp; gpsGoodToAlign &amp;&amp; gpsDataToFuse;</span></a>
+<a name="592"><span class="lineNum">     592 </span>            : }</a>
+<a name="593"><span class="lineNum">     593 </span>            : </a>
+<a name="594"><span class="lineNum">     594 </span>            : // return true if the filter to be ready to use the beacon range measurements</a>
+<a name="595"><span class="lineNum">     595 </span><span class="lineCov">    9521270 : bool NavEKF3_core::readyToUseRangeBeacon(void) const</span></a>
+<a name="596"><span class="lineNum">     596 </span>            : {</a>
+<a name="597"><span class="lineNum">     597 </span>            : #if EK3_FEATURE_BEACON_FUSION</a>
+<a name="598"><span class="lineNum">     598 </span><span class="lineCov">    9521270 :     if (frontend-&gt;sources.getPosXYSource(core_index) != AP_NavEKF_Source::SourceXY::BEACON) {</span></a>
+<a name="599"><span class="lineNum">     599 </span>            :         return false;</a>
+<a name="600"><span class="lineNum">     600 </span>            :     }</a>
+<a name="601"><span class="lineNum">     601 </span>            : </a>
+<a name="602"><span class="lineNum">     602 </span><span class="lineCov">      29529 :     return tiltAlignComplete &amp;&amp; yawAlignComplete &amp;&amp; delAngBiasLearned &amp;&amp; rngBcn.alignmentCompleted &amp;&amp; rngBcn.dataToFuse;</span></a>
+<a name="603"><span class="lineNum">     603 </span>            : #else</a>
+<a name="604"><span class="lineNum">     604 </span>            :     return false;</a>
+<a name="605"><span class="lineNum">     605 </span>            : #endif  // EK3_FEATURE_BEACON_FUSION</a>
+<a name="606"><span class="lineNum">     606 </span>            : }</a>
+<a name="607"><span class="lineNum">     607 </span>            : </a>
+<a name="608"><span class="lineNum">     608 </span>            : // return true if the filter is ready to use external nav data</a>
+<a name="609"><span class="lineNum">     609 </span><span class="lineCov">    9521260 : bool NavEKF3_core::readyToUseExtNav(void) const</span></a>
+<a name="610"><span class="lineNum">     610 </span>            : {</a>
+<a name="611"><span class="lineNum">     611 </span>            : #if EK3_FEATURE_EXTERNAL_NAV</a>
+<a name="612"><span class="lineNum">     612 </span><span class="lineCov">    9521260 :     if (frontend-&gt;sources.getPosXYSource(core_index) != AP_NavEKF_Source::SourceXY::EXTNAV) {</span></a>
+<a name="613"><span class="lineNum">     613 </span>            :         return false;</a>
+<a name="614"><span class="lineNum">     614 </span>            :     }</a>
+<a name="615"><span class="lineNum">     615 </span>            : </a>
+<a name="616"><span class="lineNum">     616 </span><span class="lineCov">      38508 :     return tiltAlignComplete &amp;&amp; extNavDataToFuse;</span></a>
+<a name="617"><span class="lineNum">     617 </span>            : #else</a>
+<a name="618"><span class="lineNum">     618 </span>            :     return false;</a>
+<a name="619"><span class="lineNum">     619 </span>            : #endif // EK3_FEATURE_EXTERNAL_NAV</a>
+<a name="620"><span class="lineNum">     620 </span>            : }</a>
+<a name="621"><span class="lineNum">     621 </span>            : </a>
+<a name="622"><span class="lineNum">     622 </span>            : // return true if we should use the compass</a>
+<a name="623"><span class="lineNum">     623 </span><span class="lineCov">  155807000 : bool NavEKF3_core::use_compass(void) const</span></a>
+<a name="624"><span class="lineNum">     624 </span>            : {</a>
+<a name="625"><span class="lineNum">     625 </span><span class="lineCov">  155807000 :     if ((yaw_source_last != AP_NavEKF_Source::SourceYaw::COMPASS) &amp;&amp;</span></a>
+<a name="626"><span class="lineNum">     626 </span>            :         (yaw_source_last != AP_NavEKF_Source::SourceYaw::GPS_COMPASS_FALLBACK)) {</a>
+<a name="627"><span class="lineNum">     627 </span>            :         // not using compass as a yaw source</a>
+<a name="628"><span class="lineNum">     628 </span>            :         return false;</a>
+<a name="629"><span class="lineNum">     629 </span>            :     }</a>
+<a name="630"><span class="lineNum">     630 </span>            : </a>
+<a name="631"><span class="lineNum">     631 </span><span class="lineCov">  153718000 :     const auto &amp;compass = dal.compass();</span></a>
+<a name="632"><span class="lineNum">     632 </span><span class="lineCov">  153718000 :     return compass.use_for_yaw(magSelectIndex) &amp;&amp;</span></a>
+<a name="633"><span class="lineNum">     633 </span><span class="lineCov">  153718000 :            !allMagSensorsFailed;</span></a>
+<a name="634"><span class="lineNum">     634 </span>            : }</a>
+<a name="635"><span class="lineNum">     635 </span>            : </a>
+<a name="636"><span class="lineNum">     636 </span>            : // are we using (aka fusing) a non-compass yaw?</a>
+<a name="637"><span class="lineNum">     637 </span><span class="lineCov">      89588 : bool NavEKF3_core::using_noncompass_for_yaw(void) const</span></a>
+<a name="638"><span class="lineNum">     638 </span>            : {</a>
+<a name="639"><span class="lineNum">     639 </span>            : #if EK3_FEATURE_EXTERNAL_NAV</a>
+<a name="640"><span class="lineNum">     640 </span><span class="lineCov">      89588 :     if (yaw_source_last == AP_NavEKF_Source::SourceYaw::EXTNAV) {</span></a>
+<a name="641"><span class="lineNum">     641 </span><span class="lineCov">      22968 :         return ((imuSampleTime_ms - last_extnav_yaw_fusion_ms &lt; 5000) || (imuSampleTime_ms - lastSynthYawTime_ms &lt; 5000));</span></a>
+<a name="642"><span class="lineNum">     642 </span>            :     }</a>
+<a name="643"><span class="lineNum">     643 </span>            : #endif</a>
+<a name="644"><span class="lineNum">     644 </span><span class="lineCov">      66697 :     if (yaw_source_last == AP_NavEKF_Source::SourceYaw::GPS || yaw_source_last == AP_NavEKF_Source::SourceYaw::GPS_COMPASS_FALLBACK ||</span></a>
+<a name="645"><span class="lineNum">     645 </span><span class="lineCov">      66697 :         yaw_source_last == AP_NavEKF_Source::SourceYaw::GSF || !use_compass()) {</span></a>
+<a name="646"><span class="lineNum">     646 </span><span class="lineCov">      66636 :         return imuSampleTime_ms - last_gps_yaw_ms &lt; 5000 || imuSampleTime_ms - lastSynthYawTime_ms &lt; 5000;</span></a>
+<a name="647"><span class="lineNum">     647 </span>            :     }</a>
+<a name="648"><span class="lineNum">     648 </span>            :     return false;</a>
+<a name="649"><span class="lineNum">     649 </span>            : }</a>
+<a name="650"><span class="lineNum">     650 </span>            : </a>
+<a name="651"><span class="lineNum">     651 </span>            : // are we using (aka fusing) external nav for yaw?</a>
+<a name="652"><span class="lineNum">     652 </span><span class="lineCov">       1131 : bool NavEKF3_core::using_extnav_for_yaw() const</span></a>
+<a name="653"><span class="lineNum">     653 </span>            : {</a>
+<a name="654"><span class="lineNum">     654 </span>            : #if EK3_FEATURE_EXTERNAL_NAV</a>
+<a name="655"><span class="lineNum">     655 </span><span class="lineCov">       1131 :     if (yaw_source_last == AP_NavEKF_Source::SourceYaw::EXTNAV) {</span></a>
+<a name="656"><span class="lineNum">     656 </span><span class="lineNoCov">          0 :         return ((imuSampleTime_ms - last_extnav_yaw_fusion_ms &lt; 5000) || (imuSampleTime_ms - lastSynthYawTime_ms &lt; 5000));</span></a>
+<a name="657"><span class="lineNum">     657 </span>            :     }</a>
+<a name="658"><span class="lineNum">     658 </span>            : #endif</a>
+<a name="659"><span class="lineNum">     659 </span>            :     return false;</a>
+<a name="660"><span class="lineNum">     660 </span>            : }</a>
+<a name="661"><span class="lineNum">     661 </span>            : </a>
+<a name="662"><span class="lineNum">     662 </span>            : /*</a>
+<a name="663"><span class="lineNum">     663 </span>            :   should we assume zero sideslip?</a>
+<a name="664"><span class="lineNum">     664 </span>            :  */</a>
+<a name="665"><span class="lineNum">     665 </span><span class="lineCov">  167047000 : bool NavEKF3_core::assume_zero_sideslip(void) const</span></a>
+<a name="666"><span class="lineNum">     666 </span>            : {</a>
+<a name="667"><span class="lineNum">     667 </span>            :     // we don't assume zero sideslip for ground vehicles as EKF could</a>
+<a name="668"><span class="lineNum">     668 </span>            :     // be quite sensitive to a rapid spin of the ground vehicle if</a>
+<a name="669"><span class="lineNum">     669 </span>            :     // traction is lost</a>
+<a name="670"><span class="lineNum">     670 </span><span class="lineCov">  167047000 :     return dal.get_fly_forward() &amp;&amp; dal.get_vehicle_class() != AP_DAL::VehicleClass::GROUND;</span></a>
+<a name="671"><span class="lineNum">     671 </span>            : }</a>
+<a name="672"><span class="lineNum">     672 </span>            : </a>
+<a name="673"><span class="lineNum">     673 </span>            : // sets the local NED origin using a LLH location (latitude, longitude, height)</a>
+<a name="674"><span class="lineNum">     674 </span>            : // returns false if the origin is already set</a>
+<a name="675"><span class="lineNum">     675 </span><span class="lineCov">         18 : bool NavEKF3_core::setOriginLLH(const Location &amp;loc)</span></a>
+<a name="676"><span class="lineNum">     676 </span>            : {</a>
+<a name="677"><span class="lineNum">     677 </span><span class="lineCov">         18 :     return setOrigin(loc);</span></a>
+<a name="678"><span class="lineNum">     678 </span>            : }</a>
+<a name="679"><span class="lineNum">     679 </span>            : </a>
+<a name="680"><span class="lineNum">     680 </span>            : // populates the Earth magnetic field table using the given location</a>
+<a name="681"><span class="lineNum">     681 </span><span class="lineCov">        596 : void NavEKF3_core::setEarthFieldFromLocation(const Location &amp;loc)</span></a>
+<a name="682"><span class="lineNum">     682 </span>            : {</a>
+<a name="683"><span class="lineNum">     683 </span><span class="lineCov">        596 :     const auto &amp;compass = dal.compass();</span></a>
+<a name="684"><span class="lineNum">     684 </span><span class="lineCov">        596 :     if (compass.have_scale_factor(magSelectIndex) &amp;&amp;</span></a>
+<a name="685"><span class="lineNum">     685 </span><span class="lineCov">        596 :         compass.auto_declination_enabled()) {</span></a>
+<a name="686"><span class="lineNum">     686 </span><span class="lineCov">        596 :         getEarthFieldTable(loc);</span></a>
+<a name="687"><span class="lineNum">     687 </span><span class="lineCov">        596 :         if (frontend-&gt;_mag_ef_limit &gt; 0) {</span></a>
+<a name="688"><span class="lineNum">     688 </span>            :             // initialise earth field from tables</a>
+<a name="689"><span class="lineNum">     689 </span><span class="lineCov">        596 :             stateStruct.earth_magfield = table_earth_field_ga;</span></a>
+<a name="690"><span class="lineNum">     690 </span>            :         }</a>
+<a name="691"><span class="lineNum">     691 </span>            :     }</a>
+<a name="692"><span class="lineNum">     692 </span><span class="lineCov">        596 : }</span></a>
+<a name="693"><span class="lineNum">     693 </span>            : </a>
+<a name="694"><span class="lineNum">     694 </span>            : // sets the local NED origin using a LLH location (latitude, longitude, height)</a>
+<a name="695"><span class="lineNum">     695 </span>            : // returns false is the origin has already been set</a>
+<a name="696"><span class="lineNum">     696 </span><span class="lineCov">        602 : bool NavEKF3_core::setOrigin(const Location &amp;loc)</span></a>
+<a name="697"><span class="lineNum">     697 </span>            : {</a>
+<a name="698"><span class="lineNum">     698 </span>            :     // if the origin is valid reject setting a new origin</a>
+<a name="699"><span class="lineNum">     699 </span><span class="lineCov">        602 :     if (validOrigin) {</span></a>
+<a name="700"><span class="lineNum">     700 </span>            :         return false;</a>
+<a name="701"><span class="lineNum">     701 </span>            :     }</a>
+<a name="702"><span class="lineNum">     702 </span>            : </a>
+<a name="703"><span class="lineNum">     703 </span><span class="lineCov">        602 :     EKF_origin = loc;</span></a>
+<a name="704"><span class="lineNum">     704 </span><span class="lineCov">        602 :     ekfGpsRefHgt = (double)0.01 * (double)EKF_origin.alt;</span></a>
+<a name="705"><span class="lineNum">     705 </span>            :     // define Earth rotation vector in the NED navigation frame at the origin</a>
+<a name="706"><span class="lineNum">     706 </span><span class="lineCov">        602 :     calcEarthRateNED(earthRateNED, EKF_origin.lat);</span></a>
+<a name="707"><span class="lineNum">     707 </span><span class="lineCov">        602 :     validOrigin = true;</span></a>
+<a name="708"><span class="lineNum">     708 </span>            : </a>
+<a name="709"><span class="lineNum">     709 </span>            :     // but we do want to populate the WMM table even if we don't have a GPS at all</a>
+<a name="710"><span class="lineNum">     710 </span><span class="lineCov">        602 :     if (!stateStruct.quat.is_zero()) {</span></a>
+<a name="711"><span class="lineNum">     711 </span><span class="lineCov">        596 :         alignMagStateDeclination();</span></a>
+<a name="712"><span class="lineNum">     712 </span><span class="lineCov">        596 :         setEarthFieldFromLocation(EKF_origin);</span></a>
+<a name="713"><span class="lineNum">     713 </span>            :     }</a>
+<a name="714"><span class="lineNum">     714 </span>            : </a>
+<a name="715"><span class="lineNum">     715 </span><span class="lineCov">        602 :     GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;EKF3 IMU%u origin set&quot;,(unsigned)imu_index);</span></a>
+<a name="716"><span class="lineNum">     716 </span>            : </a>
+<a name="717"><span class="lineNum">     717 </span><span class="lineCov">        602 :     if (!frontend-&gt;common_origin_valid) {</span></a>
+<a name="718"><span class="lineNum">     718 </span><span class="lineCov">        301 :         frontend-&gt;common_origin_valid = true;</span></a>
+<a name="719"><span class="lineNum">     719 </span>            :         // put origin in frontend as well to ensure it stays in sync between lanes</a>
+<a name="720"><span class="lineNum">     720 </span><span class="lineCov">        301 :         public_origin = EKF_origin;</span></a>
+<a name="721"><span class="lineNum">     721 </span>            :     }</a>
+<a name="722"><span class="lineNum">     722 </span>            : </a>
+<a name="723"><span class="lineNum">     723 </span>            : </a>
+<a name="724"><span class="lineNum">     724 </span>            :     return true;</a>
+<a name="725"><span class="lineNum">     725 </span>            : }</a>
+<a name="726"><span class="lineNum">     726 </span>            : </a>
+<a name="727"><span class="lineNum">     727 </span>            : // record all requested yaw resets completed</a>
+<a name="728"><span class="lineNum">     728 </span><span class="lineCov">       1371 : void NavEKF3_core::recordYawResetsCompleted()</span></a>
+<a name="729"><span class="lineNum">     729 </span>            : {</a>
+<a name="730"><span class="lineNum">     730 </span><span class="lineCov">       1371 :     gpsYawResetRequest = false;</span></a>
+<a name="731"><span class="lineNum">     731 </span><span class="lineCov">       1371 :     magYawResetRequest = false;</span></a>
+<a name="732"><span class="lineNum">     732 </span><span class="lineCov">       1371 :     yawAlignComplete = true;</span></a>
+<a name="733"><span class="lineNum">     733 </span><span class="lineCov">       1371 :     if (inFlight) {</span></a>
+<a name="734"><span class="lineNum">     734 </span><span class="lineCov">        476 :         finalInflightYawInit = true;</span></a>
+<a name="735"><span class="lineNum">     735 </span>            :     }</a>
+<a name="736"><span class="lineNum">     736 </span><span class="lineCov">       1371 : }</span></a>
+<a name="737"><span class="lineNum">     737 </span>            : </a>
+<a name="738"><span class="lineNum">     738 </span>            : // set the class variable true if the delta angle bias variances are sufficiently small</a>
+<a name="739"><span class="lineNum">     739 </span><span class="lineCov">   50092200 : void NavEKF3_core::checkGyroCalStatus(void)</span></a>
+<a name="740"><span class="lineNum">     740 </span>            : {</a>
+<a name="741"><span class="lineNum">     741 </span>            :     // check delta angle bias variances</a>
+<a name="742"><span class="lineNum">     742 </span><span class="lineCov">   50092200 :     const ftype delAngBiasVarMax = sq(radians(0.15 * dtEkfAvg));</span></a>
+<a name="743"><span class="lineNum">     743 </span><span class="lineCov">   50092200 :     if (!use_compass() &amp;&amp; (yaw_source_last != AP_NavEKF_Source::SourceYaw::GPS) &amp;&amp; (yaw_source_last != AP_NavEKF_Source::SourceYaw::GPS_COMPASS_FALLBACK) &amp;&amp;</span></a>
+<a name="744"><span class="lineNum">     744 </span>            :         (yaw_source_last != AP_NavEKF_Source::SourceYaw::EXTNAV)) {</a>
+<a name="745"><span class="lineNum">     745 </span>            :         // rotate the variances into earth frame and evaluate horizontal terms only as yaw component is poorly observable without a yaw reference</a>
+<a name="746"><span class="lineNum">     746 </span>            :         // which can make this check fail</a>
+<a name="747"><span class="lineNum">     747 </span><span class="lineCov">     296784 :         const Vector3F delAngBiasVarVec { P[10][10], P[11][11], P[12][12] };</span></a>
+<a name="748"><span class="lineNum">     748 </span><span class="lineCov">     296784 :         const Vector3F temp = prevTnb * delAngBiasVarVec;</span></a>
+<a name="749"><span class="lineNum">     749 </span><span class="lineCov">     593568 :         delAngBiasLearned = (fabsF(temp.x) &lt; delAngBiasVarMax) &amp;&amp;</span></a>
+<a name="750"><span class="lineNum">     750 </span><span class="lineCov">     296784 :                             (fabsF(temp.y) &lt; delAngBiasVarMax);</span></a>
+<a name="751"><span class="lineNum">     751 </span>            :     } else {</a>
+<a name="752"><span class="lineNum">     752 </span><span class="lineCov">   49795400 :         delAngBiasLearned = (P[10][10] &lt;= delAngBiasVarMax) &amp;&amp;</span></a>
+<a name="753"><span class="lineNum">     753 </span><span class="lineCov">   49795400 :                             (P[11][11] &lt;= delAngBiasVarMax) &amp;&amp;</span></a>
+<a name="754"><span class="lineNum">     754 </span><span class="lineCov">   47360800 :                             (P[12][12] &lt;= delAngBiasVarMax);</span></a>
+<a name="755"><span class="lineNum">     755 </span>            :     }</a>
+<a name="756"><span class="lineNum">     756 </span><span class="lineCov">   50092200 : }</span></a>
+<a name="757"><span class="lineNum">     757 </span>            : </a>
+<a name="758"><span class="lineNum">     758 </span>            : // Update the filter status</a>
+<a name="759"><span class="lineNum">     759 </span><span class="lineCov">   10110900 : void  NavEKF3_core::updateFilterStatus(void)</span></a>
+<a name="760"><span class="lineNum">     760 </span>            : {</a>
+<a name="761"><span class="lineNum">     761 </span>            :     // init return value</a>
+<a name="762"><span class="lineNum">     762 </span>            :     nav_filter_status status;</a>
+<a name="763"><span class="lineNum">     763 </span><span class="lineCov">   10110900 :     status.value = 0;</span></a>
+<a name="764"><span class="lineNum">     764 </span><span class="lineCov">   10110900 :     bool doingBodyVelNav = (PV_AidingMode != AID_NONE) &amp;&amp; (imuSampleTime_ms - prevBodyVelFuseTime_ms &lt; 5000);</span></a>
+<a name="765"><span class="lineNum">     765 </span><span class="lineCov">   10110900 :     bool doingFlowNav = (PV_AidingMode != AID_NONE) &amp;&amp; flowDataValid;</span></a>
+<a name="766"><span class="lineNum">     766 </span><span class="lineCov">   10110900 :     bool doingWindRelNav = (!tasTimeout &amp;&amp; assume_zero_sideslip()) || !dragTimeout;</span></a>
+<a name="767"><span class="lineNum">     767 </span><span class="lineCov">   10110900 :     bool doingNormalGpsNav = !posTimeout &amp;&amp; (PV_AidingMode == AID_ABSOLUTE);</span></a>
+<a name="768"><span class="lineNum">     768 </span><span class="lineCov">   10110900 :     bool someVertRefData = (!velTimeout &amp;&amp; (useGpsVertVel || useExtNavVel)) || !hgtTimeout;</span></a>
+<a name="769"><span class="lineNum">     769 </span><span class="lineCov">   10110900 :     bool someHorizRefData = !(velTimeout &amp;&amp; posTimeout &amp;&amp; tasTimeout &amp;&amp; dragTimeout) || doingFlowNav || doingBodyVelNav;</span></a>
+<a name="770"><span class="lineNum">     770 </span><span class="lineCov">   10110900 :     bool filterHealthy = healthy() &amp;&amp; tiltAlignComplete &amp;&amp; (yawAlignComplete || (!use_compass() &amp;&amp; (PV_AidingMode != AID_ABSOLUTE)));</span></a>
+<a name="771"><span class="lineNum">     771 </span>            : </a>
+<a name="772"><span class="lineNum">     772 </span>            :     // If GPS height usage is specified, height is considered to be inaccurate until the GPS passes all checks</a>
+<a name="773"><span class="lineNum">     773 </span><span class="lineCov">   10110900 :     bool hgtNotAccurate = (frontend-&gt;sources.getPosZSource(core_index) == AP_NavEKF_Source::SourceZ::GPS) &amp;&amp; !validOrigin;</span></a>
+<a name="774"><span class="lineNum">     774 </span>            : </a>
+<a name="775"><span class="lineNum">     775 </span>            :     // set individual flags</a>
+<a name="776"><span class="lineNum">     776 </span><span class="lineCov">   10110900 :     status.flags.attitude = !stateStruct.quat.is_nan() &amp;&amp; filterHealthy;   // attitude valid (we need a better check)</span></a>
+<a name="777"><span class="lineNum">     777 </span><span class="lineCov">   10110900 :     status.flags.horiz_vel = someHorizRefData &amp;&amp; filterHealthy;      // horizontal velocity estimate valid</span></a>
+<a name="778"><span class="lineNum">     778 </span><span class="lineCov">   10110900 :     status.flags.vert_vel = someVertRefData &amp;&amp; filterHealthy;        // vertical velocity estimate valid</span></a>
+<a name="779"><span class="lineNum">     779 </span>            : </a>
+<a name="780"><span class="lineNum">     780 </span>            : #if EK3_FEATURE_OPTFLOW_SRTM</a>
+<a name="781"><span class="lineNum">     781 </span><span class="lineCov">   10110900 :     const bool optflow_gnd_offset = gndOffsetValid || terrain_srtm_alt_valid;</span></a>
+<a name="782"><span class="lineNum">     782 </span>            : #else</a>
+<a name="783"><span class="lineNum">     783 </span>            :     const bool optflow_gnd_offset = gndOffsetValid;</a>
+<a name="784"><span class="lineNum">     784 </span>            : #endif</a>
+<a name="785"><span class="lineNum">     785 </span><span class="lineCov">   10110900 :     status.flags.horiz_pos_rel = ((doingFlowNav &amp;&amp; optflow_gnd_offset) || doingWindRelNav || doingNormalGpsNav || doingBodyVelNav) &amp;&amp; filterHealthy;   // relative horizontal position estimate valid</span></a>
+<a name="786"><span class="lineNum">     786 </span>            : </a>
+<a name="787"><span class="lineNum">     787 </span><span class="lineCov">   10110900 :     status.flags.horiz_pos_abs = doingNormalGpsNav &amp;&amp; filterHealthy; // absolute horizontal position estimate valid</span></a>
+<a name="788"><span class="lineNum">     788 </span><span class="lineCov">   10110900 :     status.flags.vert_pos = !hgtTimeout &amp;&amp; filterHealthy &amp;&amp; !hgtNotAccurate; // vertical position estimate valid</span></a>
+<a name="789"><span class="lineNum">     789 </span><span class="lineCov">   10110900 :     status.flags.terrain_alt = gndOffsetValid &amp;&amp; filterHealthy;         // terrain height estimate valid</span></a>
+<a name="790"><span class="lineNum">     790 </span><span class="lineCov">   10110900 :     status.flags.const_pos_mode = (PV_AidingMode == AID_NONE) &amp;&amp; filterHealthy;     // constant position mode</span></a>
+<a name="791"><span class="lineNum">     791 </span><span class="lineCov">   10110900 :     status.flags.pred_horiz_pos_rel = status.flags.horiz_pos_rel; // EKF3 enters the required mode before flight</span></a>
+<a name="792"><span class="lineNum">     792 </span><span class="lineCov">   10110900 :     status.flags.pred_horiz_pos_abs = status.flags.horiz_pos_abs; // EKF3 enters the required mode before flight</span></a>
+<a name="793"><span class="lineNum">     793 </span><span class="lineCov">   10110900 :     status.flags.takeoff_detected = takeOffDetected; // takeoff for optical flow navigation has been detected</span></a>
+<a name="794"><span class="lineNum">     794 </span><span class="lineCov">   10110900 :     status.flags.takeoff = dal.get_takeoff_expected(); // The EKF has been told to expect takeoff is in a ground effect mitigation mode and has started the EKF-GSF yaw estimator</span></a>
+<a name="795"><span class="lineNum">     795 </span><span class="lineCov">   10110900 :     status.flags.touchdown = dal.get_touchdown_expected(); // The EKF has been told to detect touchdown and is in a ground effect mitigation mode</span></a>
+<a name="796"><span class="lineNum">     796 </span><span class="lineCov">   10110900 :     status.flags.using_gps = ((imuSampleTime_ms - lastGpsPosPassTime_ms) &lt; 4000) &amp;&amp; (PV_AidingMode == AID_ABSOLUTE);</span></a>
+<a name="797"><span class="lineNum">     797 </span><span class="lineCov">   10110900 :     status.flags.gps_glitching = !gpsAccuracyGood &amp;&amp; (PV_AidingMode == AID_ABSOLUTE) &amp;&amp; (frontend-&gt;sources.getPosXYSource(core_index) == AP_NavEKF_Source::SourceXY::GPS); // GPS glitching is affecting navigation accuracy</span></a>
+<a name="798"><span class="lineNum">     798 </span><span class="lineCov">   10110900 :     status.flags.gps_quality_good = gpsGoodToAlign;</span></a>
+<a name="799"><span class="lineNum">     799 </span>            :     // for reporting purposes we report rejecting airspeed after 3s of not fusing when we want to fuse the data</a>
+<a name="800"><span class="lineNum">     800 </span><span class="lineCov">   20221800 :     status.flags.rejecting_airspeed = lastTasFailTime_ms != 0 &amp;&amp;</span></a>
+<a name="801"><span class="lineNum">     801 </span><span class="lineCov">   10110900 :                                             (imuSampleTime_ms - lastTasFailTime_ms) &lt; 1000 &amp;&amp;</span></a>
+<a name="802"><span class="lineNum">     802 </span><span class="lineNoCov">          0 :                                             (imuSampleTime_ms - lastTasPassTime_ms) &gt; 3000;</span></a>
+<a name="803"><span class="lineNum">     803 </span><span class="lineCov">   10110900 :     status.flags.initalized = status.flags.initalized || healthy();</span></a>
+<a name="804"><span class="lineNum">     804 </span><span class="lineCov">   10110900 :     status.flags.dead_reckoning = (PV_AidingMode != AID_NONE) &amp;&amp; doingWindRelNav &amp;&amp; !((doingFlowNav &amp;&amp; gndOffsetValid) || doingNormalGpsNav || doingBodyVelNav);</span></a>
+<a name="805"><span class="lineNum">     805 </span>            : </a>
+<a name="806"><span class="lineNum">     806 </span><span class="lineCov">   10110900 :     filterStatus.value = status.value;</span></a>
+<a name="807"><span class="lineNum">     807 </span><span class="lineCov">   10110900 : }</span></a>
+<a name="808"><span class="lineNum">     808 </span>            : </a>
+<a name="809"><span class="lineNum">     809 </span><span class="lineCov">   10110900 : void NavEKF3_core::runYawEstimatorPrediction()</span></a>
+<a name="810"><span class="lineNum">     810 </span>            : {</a>
+<a name="811"><span class="lineNum">     811 </span>            :     // exit immediately if no yaw estimator</a>
+<a name="812"><span class="lineNum">     812 </span><span class="lineCov">   10110900 :     if (yawEstimator == nullptr) {</span></a>
+<a name="813"><span class="lineNum">     813 </span>            :         return;</a>
+<a name="814"><span class="lineNum">     814 </span>            :     }</a>
+<a name="815"><span class="lineNum">     815 </span>            : </a>
+<a name="816"><span class="lineNum">     816 </span>            :     // ensure GPS is used for horizontal position and velocity</a>
+<a name="817"><span class="lineNum">     817 </span><span class="lineCov">   20094300 :     if (frontend-&gt;sources.getPosXYSource(core_index) != AP_NavEKF_Source::SourceXY::GPS ||</span></a>
+<a name="818"><span class="lineNum">     818 </span><span class="lineCov">    9991780 :         !frontend-&gt;sources.useVelXYSource(AP_NavEKF_Source::SourceXY::GPS, core_index)) {</span></a>
+<a name="819"><span class="lineNum">     819 </span><span class="lineCov">     110761 :         return;</span></a>
+<a name="820"><span class="lineNum">     820 </span>            :     }</a>
+<a name="821"><span class="lineNum">     821 </span>            : </a>
+<a name="822"><span class="lineNum">     822 </span>            :     ftype trueAirspeed;</a>
+<a name="823"><span class="lineNum">     823 </span><span class="lineCov">    9991750 :     if (tasDataDelayed.allowFusion &amp;&amp; assume_zero_sideslip()) {</span></a>
+<a name="824"><span class="lineNum">     824 </span><span class="lineNoCov">          0 :         trueAirspeed = MAX(tasDataDelayed.tas, 0.0f);</span></a>
+<a name="825"><span class="lineNum">     825 </span>            :     } else {</a>
+<a name="826"><span class="lineNum">     826 </span>            :         trueAirspeed = 0.0f;</a>
+<a name="827"><span class="lineNum">     827 </span>            :     }</a>
+<a name="828"><span class="lineNum">     828 </span><span class="lineCov">    9991750 :     yawEstimator-&gt;update(imuDataDelayed.delAng, imuDataDelayed.delVel, imuDataDelayed.delAngDT, imuDataDelayed.delVelDT, EKFGSF_run_filterbank, trueAirspeed);</span></a>
+<a name="829"><span class="lineNum">     829 </span>            : }</a>
+<a name="830"><span class="lineNum">     830 </span>            : </a>
+<a name="831"><span class="lineNum">     831 </span><span class="lineCov">   10110900 : void NavEKF3_core::runYawEstimatorCorrection()</span></a>
+<a name="832"><span class="lineNum">     832 </span>            : {</a>
+<a name="833"><span class="lineNum">     833 </span>            :     // exit immediately if no yaw estimator</a>
+<a name="834"><span class="lineNum">     834 </span><span class="lineCov">   10110900 :     if (yawEstimator == nullptr) {</span></a>
+<a name="835"><span class="lineNum">     835 </span>            :         return;</a>
+<a name="836"><span class="lineNum">     836 </span>            :     }</a>
+<a name="837"><span class="lineNum">     837 </span>            :     // ensure GPS is used for horizontal position and velocity</a>
+<a name="838"><span class="lineNum">     838 </span><span class="lineCov">   20094300 :     if (frontend-&gt;sources.getPosXYSource(core_index) != AP_NavEKF_Source::SourceXY::GPS ||</span></a>
+<a name="839"><span class="lineNum">     839 </span><span class="lineCov">    9991780 :         !frontend-&gt;sources.useVelXYSource(AP_NavEKF_Source::SourceXY::GPS, core_index)) {</span></a>
+<a name="840"><span class="lineNum">     840 </span><span class="lineCov">     110761 :         return;</span></a>
+<a name="841"><span class="lineNum">     841 </span>            :     }</a>
+<a name="842"><span class="lineNum">     842 </span>            : </a>
+<a name="843"><span class="lineNum">     843 </span><span class="lineCov">    9991750 :     if (EKFGSF_run_filterbank) {</span></a>
+<a name="844"><span class="lineNum">     844 </span><span class="lineCov">    5564360 :         if (gpsDataToFuse) {</span></a>
+<a name="845"><span class="lineNum">     845 </span><span class="lineCov">     345750 :             Vector2F gpsVelNE = Vector2F(gpsDataDelayed.vel.x, gpsDataDelayed.vel.y);</span></a>
+<a name="846"><span class="lineNum">     846 </span><span class="lineCov">     345750 :             ftype gpsVelAcc = fmaxF(gpsSpdAccuracy, ftype(frontend-&gt;_gpsHorizVelNoise));</span></a>
+<a name="847"><span class="lineNum">     847 </span><span class="lineCov">     345750 :             yawEstimator-&gt;fuseVelData(gpsVelNE, gpsVelAcc);</span></a>
+<a name="848"><span class="lineNum">     848 </span>            : </a>
+<a name="849"><span class="lineNum">     849 </span>            :             // after velocity data has been fused the yaw variance estimate will have been refreshed and</a>
+<a name="850"><span class="lineNum">     850 </span>            :             // is used maintain a history of validity</a>
+<a name="851"><span class="lineNum">     851 </span>            :             ftype gsfYaw, gsfYawVariance;</a>
+<a name="852"><span class="lineNum">     852 </span><span class="lineCov">     345750 :             if (EKFGSF_getYaw(gsfYaw, gsfYawVariance)) {</span></a>
+<a name="853"><span class="lineNum">     853 </span><span class="lineCov">     207871 :                 if (EKFGSF_yaw_valid_count &lt;  GSF_YAW_VALID_HISTORY_THRESHOLD) {</span></a>
+<a name="854"><span class="lineNum">     854 </span><span class="lineCov">       2452 :                     EKFGSF_yaw_valid_count++;</span></a>
+<a name="855"><span class="lineNum">     855 </span>            :                 }</a>
+<a name="856"><span class="lineNum">     856 </span>            :             } else {</a>
+<a name="857"><span class="lineNum">     857 </span><span class="lineCov">     137879 :                 EKFGSF_yaw_valid_count = 0;</span></a>
+<a name="858"><span class="lineNum">     858 </span>            :             }</a>
+<a name="859"><span class="lineNum">     859 </span>            :         }</a>
+<a name="860"><span class="lineNum">     860 </span>            : </a>
+<a name="861"><span class="lineNum">     861 </span>            :         // action an external reset request</a>
+<a name="862"><span class="lineNum">     862 </span><span class="lineCov">    5564360 :         if (EKFGSF_yaw_reset_request_ms &gt; 0 &amp;&amp; imuSampleTime_ms - EKFGSF_yaw_reset_request_ms &lt; YAW_RESET_TO_GSF_TIMEOUT_MS) {</span></a>
+<a name="863"><span class="lineNum">     863 </span><span class="lineCov">       1215 :             EKFGSF_resetMainFilterYaw(true);</span></a>
+<a name="864"><span class="lineNum">     864 </span>            :         }</a>
+<a name="865"><span class="lineNum">     865 </span>            :     } else {</a>
+<a name="866"><span class="lineNum">     866 </span><span class="lineCov">    4427390 :         EKFGSF_yaw_valid_count = 0;</span></a>
+<a name="867"><span class="lineNum">     867 </span>            :     }</a>
+<a name="868"><span class="lineNum">     868 </span>            : }</a>
+<a name="869"><span class="lineNum">     869 </span>            : </a>
+<a name="870"><span class="lineNum">     870 </span>            : // request a reset the yaw to the GSF estimate</a>
+<a name="871"><span class="lineNum">     871 </span>            : // request times out after YAW_RESET_TO_GSF_TIMEOUT_MS if it cannot be actioned</a>
+<a name="872"><span class="lineNum">     872 </span><span class="lineCov">         12 : void NavEKF3_core::EKFGSF_requestYawReset()</span></a>
+<a name="873"><span class="lineNum">     873 </span>            : {</a>
+<a name="874"><span class="lineNum">     874 </span><span class="lineCov">         12 :     EKFGSF_yaw_reset_request_ms = imuSampleTime_ms;</span></a>
+<a name="875"><span class="lineNum">     875 </span><span class="lineCov">         12 : }</span></a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

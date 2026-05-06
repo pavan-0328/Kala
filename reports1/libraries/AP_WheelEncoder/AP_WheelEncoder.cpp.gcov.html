@@ -1,0 +1,441 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_WheelEncoder/AP_WheelEncoder.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_WheelEncoder</a> - AP_WheelEncoder.cpp<span style="font-size: 80%;"> (source / <a href="AP_WheelEncoder.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">88</td>
+            <td class="headerCovTableEntryLo">2.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">17</td>
+            <td class="headerCovTableEntryLo">5.9 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : </a>
+<a name="16"><span class="lineNum">      16 </span>            : #include &quot;AP_WheelEncoder.h&quot;</a>
+<a name="17"><span class="lineNum">      17 </span>            : #include &quot;WheelEncoder_Quadrature.h&quot;</a>
+<a name="18"><span class="lineNum">      18 </span>            : #include &quot;WheelEncoder_SITL_Quadrature.h&quot;</a>
+<a name="19"><span class="lineNum">      19 </span>            : #include &lt;AP_Logger/AP_Logger.h&gt;</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : extern const AP_HAL::HAL&amp; hal;</a>
+<a name="22"><span class="lineNum">      22 </span>            : </a>
+<a name="23"><span class="lineNum">      23 </span>            : // table of user settable parameters</a>
+<a name="24"><span class="lineNum">      24 </span>            : const AP_Param::GroupInfo AP_WheelEncoder::var_info[] = {</a>
+<a name="25"><span class="lineNum">      25 </span>            :     // @Param: _TYPE</a>
+<a name="26"><span class="lineNum">      26 </span>            :     // @DisplayName: WheelEncoder type</a>
+<a name="27"><span class="lineNum">      27 </span>            :     // @Description: What type of WheelEncoder is connected</a>
+<a name="28"><span class="lineNum">      28 </span>            :     // @Values: 0:None,1:Quadrature,10:SITL Quadrature</a>
+<a name="29"><span class="lineNum">      29 </span>            :     // @User: Standard</a>
+<a name="30"><span class="lineNum">      30 </span>            :     AP_GROUPINFO_FLAGS(&quot;_TYPE&quot;, 0, AP_WheelEncoder, _type[0], 0, AP_PARAM_FLAG_ENABLE),</a>
+<a name="31"><span class="lineNum">      31 </span>            : </a>
+<a name="32"><span class="lineNum">      32 </span>            :     // @Param: _CPR</a>
+<a name="33"><span class="lineNum">      33 </span>            :     // @DisplayName: WheelEncoder counts per revolution</a>
+<a name="34"><span class="lineNum">      34 </span>            :     // @Description: WheelEncoder counts per full revolution of the wheel</a>
+<a name="35"><span class="lineNum">      35 </span>            :     // @Increment: 1</a>
+<a name="36"><span class="lineNum">      36 </span>            :     // @User: Standard</a>
+<a name="37"><span class="lineNum">      37 </span>            :     AP_GROUPINFO(&quot;_CPR&quot;,     1, AP_WheelEncoder, _counts_per_revolution[0], WHEELENCODER_CPR_DEFAULT),</a>
+<a name="38"><span class="lineNum">      38 </span>            : </a>
+<a name="39"><span class="lineNum">      39 </span>            :     // @Param: _RADIUS</a>
+<a name="40"><span class="lineNum">      40 </span>            :     // @DisplayName: Wheel radius</a>
+<a name="41"><span class="lineNum">      41 </span>            :     // @Description: Wheel radius</a>
+<a name="42"><span class="lineNum">      42 </span>            :     // @Units: m</a>
+<a name="43"><span class="lineNum">      43 </span>            :     // @Increment: 0.001</a>
+<a name="44"><span class="lineNum">      44 </span>            :     // @User: Standard</a>
+<a name="45"><span class="lineNum">      45 </span>            :     AP_GROUPINFO(&quot;_RADIUS&quot;,  2, AP_WheelEncoder, _wheel_radius[0], WHEELENCODER_RADIUS_DEFAULT),</a>
+<a name="46"><span class="lineNum">      46 </span>            : </a>
+<a name="47"><span class="lineNum">      47 </span>            :     // @Param: _POS_X</a>
+<a name="48"><span class="lineNum">      48 </span>            :     // @DisplayName: Wheel's X position offset</a>
+<a name="49"><span class="lineNum">      49 </span>            :     // @Description: X position of the center of the wheel in body frame. Positive X is forward of the origin.</a>
+<a name="50"><span class="lineNum">      50 </span>            :     // @Units: m</a>
+<a name="51"><span class="lineNum">      51 </span>            :     // @Range: -5 5</a>
+<a name="52"><span class="lineNum">      52 </span>            :     // @Increment: 0.01</a>
+<a name="53"><span class="lineNum">      53 </span>            :     // @User: Standard</a>
+<a name="54"><span class="lineNum">      54 </span>            : </a>
+<a name="55"><span class="lineNum">      55 </span>            :     // @Param: _POS_Y</a>
+<a name="56"><span class="lineNum">      56 </span>            :     // @DisplayName: Wheel's Y position offset</a>
+<a name="57"><span class="lineNum">      57 </span>            :     // @Description: Y position of the center of the wheel in body frame. Positive Y is to the right of the origin.</a>
+<a name="58"><span class="lineNum">      58 </span>            :     // @Units: m</a>
+<a name="59"><span class="lineNum">      59 </span>            :     // @Range: -5 5</a>
+<a name="60"><span class="lineNum">      60 </span>            :     // @Increment: 0.01</a>
+<a name="61"><span class="lineNum">      61 </span>            :     // @User: Standard</a>
+<a name="62"><span class="lineNum">      62 </span>            : </a>
+<a name="63"><span class="lineNum">      63 </span>            :     // @Param: _POS_Z</a>
+<a name="64"><span class="lineNum">      64 </span>            :     // @DisplayName: Wheel's Z position offset</a>
+<a name="65"><span class="lineNum">      65 </span>            :     // @Description: Z position of the center of the wheel in body frame. Positive Z is down from the origin.</a>
+<a name="66"><span class="lineNum">      66 </span>            :     // @Units: m</a>
+<a name="67"><span class="lineNum">      67 </span>            :     // @Range: -5 5</a>
+<a name="68"><span class="lineNum">      68 </span>            :     // @Increment: 0.01</a>
+<a name="69"><span class="lineNum">      69 </span>            :     // @User: Standard</a>
+<a name="70"><span class="lineNum">      70 </span>            :     AP_GROUPINFO(&quot;_POS&quot;,     3, AP_WheelEncoder, _pos_offset[0], 0.0f),</a>
+<a name="71"><span class="lineNum">      71 </span>            : </a>
+<a name="72"><span class="lineNum">      72 </span>            :     // @Param: _PINA</a>
+<a name="73"><span class="lineNum">      73 </span>            :     // @DisplayName: Input Pin A</a>
+<a name="74"><span class="lineNum">      74 </span>            :     // @Description: Input Pin A</a>
+<a name="75"><span class="lineNum">      75 </span>            :     // @Values: -1:Disabled,50:AUX1,51:AUX2,52:AUX3,53:AUX4,54:AUX5,55:AUX6</a>
+<a name="76"><span class="lineNum">      76 </span>            :     // @User: Standard</a>
+<a name="77"><span class="lineNum">      77 </span>            :     AP_GROUPINFO(&quot;_PINA&quot;,    4, AP_WheelEncoder, _pina[0], -1),</a>
+<a name="78"><span class="lineNum">      78 </span>            : </a>
+<a name="79"><span class="lineNum">      79 </span>            :     // @Param: _PINB</a>
+<a name="80"><span class="lineNum">      80 </span>            :     // @DisplayName: Input Pin B</a>
+<a name="81"><span class="lineNum">      81 </span>            :     // @Description: Input Pin B</a>
+<a name="82"><span class="lineNum">      82 </span>            :     // @Values: -1:Disabled,50:AUX1,51:AUX2,52:AUX3,53:AUX4,54:AUX5,55:AUX6</a>
+<a name="83"><span class="lineNum">      83 </span>            :     // @User: Standard</a>
+<a name="84"><span class="lineNum">      84 </span>            :     AP_GROUPINFO(&quot;_PINB&quot;,    5, AP_WheelEncoder, _pinb[0], -1),</a>
+<a name="85"><span class="lineNum">      85 </span>            : </a>
+<a name="86"><span class="lineNum">      86 </span>            : #if WHEELENCODER_MAX_INSTANCES &gt; 1</a>
+<a name="87"><span class="lineNum">      87 </span>            :     // @Param: 2_TYPE</a>
+<a name="88"><span class="lineNum">      88 </span>            :     // @DisplayName: Second WheelEncoder type</a>
+<a name="89"><span class="lineNum">      89 </span>            :     // @Description: What type of WheelEncoder sensor is connected</a>
+<a name="90"><span class="lineNum">      90 </span>            :     // @Values: 0:None,1:Quadrature,10:SITL Quadrature</a>
+<a name="91"><span class="lineNum">      91 </span>            :     // @User: Standard</a>
+<a name="92"><span class="lineNum">      92 </span>            :     AP_GROUPINFO(&quot;2_TYPE&quot;,   6, AP_WheelEncoder, _type[1], 0),</a>
+<a name="93"><span class="lineNum">      93 </span>            : </a>
+<a name="94"><span class="lineNum">      94 </span>            :     // @Param: 2_CPR</a>
+<a name="95"><span class="lineNum">      95 </span>            :     // @DisplayName: WheelEncoder 2 counts per revolution</a>
+<a name="96"><span class="lineNum">      96 </span>            :     // @Description: WheelEncoder 2 counts per full revolution of the wheel</a>
+<a name="97"><span class="lineNum">      97 </span>            :     // @Increment: 1</a>
+<a name="98"><span class="lineNum">      98 </span>            :     // @User: Standard</a>
+<a name="99"><span class="lineNum">      99 </span>            :     AP_GROUPINFO(&quot;2_CPR&quot;,     7, AP_WheelEncoder, _counts_per_revolution[1], WHEELENCODER_CPR_DEFAULT),</a>
+<a name="100"><span class="lineNum">     100 </span>            : </a>
+<a name="101"><span class="lineNum">     101 </span>            :     // @Param: 2_RADIUS</a>
+<a name="102"><span class="lineNum">     102 </span>            :     // @DisplayName: Wheel2's radius</a>
+<a name="103"><span class="lineNum">     103 </span>            :     // @Description: Wheel2's radius</a>
+<a name="104"><span class="lineNum">     104 </span>            :     // @Units: m</a>
+<a name="105"><span class="lineNum">     105 </span>            :     // @Increment: 0.001</a>
+<a name="106"><span class="lineNum">     106 </span>            :     // @User: Standard</a>
+<a name="107"><span class="lineNum">     107 </span>            :     AP_GROUPINFO(&quot;2_RADIUS&quot;, 8, AP_WheelEncoder, _wheel_radius[1], WHEELENCODER_RADIUS_DEFAULT),</a>
+<a name="108"><span class="lineNum">     108 </span>            : </a>
+<a name="109"><span class="lineNum">     109 </span>            :     // @Param: 2_POS_X</a>
+<a name="110"><span class="lineNum">     110 </span>            :     // @DisplayName: Wheel2's X position offset</a>
+<a name="111"><span class="lineNum">     111 </span>            :     // @Description: X position of the center of the second wheel in body frame. Positive X is forward of the origin.</a>
+<a name="112"><span class="lineNum">     112 </span>            :     // @Units: m</a>
+<a name="113"><span class="lineNum">     113 </span>            :     // @Range: -5 5</a>
+<a name="114"><span class="lineNum">     114 </span>            :     // @Increment: 0.01</a>
+<a name="115"><span class="lineNum">     115 </span>            :     // @User: Standard</a>
+<a name="116"><span class="lineNum">     116 </span>            : </a>
+<a name="117"><span class="lineNum">     117 </span>            :     // @Param: 2_POS_Y</a>
+<a name="118"><span class="lineNum">     118 </span>            :     // @DisplayName: Wheel2's Y position offset</a>
+<a name="119"><span class="lineNum">     119 </span>            :     // @Description: Y position of the center of the second wheel in body frame. Positive Y is to the right of the origin.</a>
+<a name="120"><span class="lineNum">     120 </span>            :     // @Units: m</a>
+<a name="121"><span class="lineNum">     121 </span>            :     // @Range: -5 5</a>
+<a name="122"><span class="lineNum">     122 </span>            :     // @Increment: 0.01</a>
+<a name="123"><span class="lineNum">     123 </span>            :     // @User: Standard</a>
+<a name="124"><span class="lineNum">     124 </span>            : </a>
+<a name="125"><span class="lineNum">     125 </span>            :     // @Param: 2_POS_Z</a>
+<a name="126"><span class="lineNum">     126 </span>            :     // @DisplayName: Wheel2's Z position offset</a>
+<a name="127"><span class="lineNum">     127 </span>            :     // @Description: Z position of the center of the second wheel in body frame. Positive Z is down from the origin.</a>
+<a name="128"><span class="lineNum">     128 </span>            :     // @Units: m</a>
+<a name="129"><span class="lineNum">     129 </span>            :     // @Range: -5 5</a>
+<a name="130"><span class="lineNum">     130 </span>            :     // @Increment: 0.01</a>
+<a name="131"><span class="lineNum">     131 </span>            :     // @User: Standard</a>
+<a name="132"><span class="lineNum">     132 </span>            :     AP_GROUPINFO(&quot;2_POS&quot;,    9, AP_WheelEncoder, _pos_offset[1], 0.0f),</a>
+<a name="133"><span class="lineNum">     133 </span>            : </a>
+<a name="134"><span class="lineNum">     134 </span>            :     // @Param: 2_PINA</a>
+<a name="135"><span class="lineNum">     135 </span>            :     // @DisplayName: Second Encoder Input Pin A</a>
+<a name="136"><span class="lineNum">     136 </span>            :     // @Description: Second Encoder Input Pin A</a>
+<a name="137"><span class="lineNum">     137 </span>            :     // @Values: -1:Disabled,50:AUX1,51:AUX2,52:AUX3,53:AUX4,54:AUX5,55:AUX6</a>
+<a name="138"><span class="lineNum">     138 </span>            :     // @User: Standard</a>
+<a name="139"><span class="lineNum">     139 </span>            :     AP_GROUPINFO(&quot;2_PINA&quot;,   10, AP_WheelEncoder, _pina[1], 53),</a>
+<a name="140"><span class="lineNum">     140 </span>            : </a>
+<a name="141"><span class="lineNum">     141 </span>            :     // @Param: 2_PINB</a>
+<a name="142"><span class="lineNum">     142 </span>            :     // @DisplayName: Second Encoder Input Pin B</a>
+<a name="143"><span class="lineNum">     143 </span>            :     // @Description: Second Encoder Input Pin B</a>
+<a name="144"><span class="lineNum">     144 </span>            :     // @Values: -1:Disabled,50:AUX1,51:AUX2,52:AUX3,53:AUX4,54:AUX5,55:AUX6</a>
+<a name="145"><span class="lineNum">     145 </span>            :     // @User: Standard</a>
+<a name="146"><span class="lineNum">     146 </span>            :     AP_GROUPINFO(&quot;2_PINB&quot;,   11, AP_WheelEncoder, _pinb[1], 52),</a>
+<a name="147"><span class="lineNum">     147 </span>            : #endif</a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span>            :     AP_GROUPEND</a>
+<a name="150"><span class="lineNum">     150 </span>            : };</a>
+<a name="151"><span class="lineNum">     151 </span>            : </a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineNoCov">          0 : AP_WheelEncoder::AP_WheelEncoder(void)</span></a>
+<a name="153"><span class="lineNum">     153 </span>            : {</a>
+<a name="154"><span class="lineNum">     154 </span><span class="lineNoCov">          0 :     _singleton = this;</span></a>
+<a name="155"><span class="lineNum">     155 </span>            : </a>
+<a name="156"><span class="lineNum">     156 </span><span class="lineNoCov">          0 :     AP_Param::setup_object_defaults(this, var_info);</span></a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="158"><span class="lineNum">     158 </span>            : </a>
+<a name="159"><span class="lineNum">     159 </span>            : // initialise the AP_WheelEncoder class.</a>
+<a name="160"><span class="lineNum">     160 </span><span class="lineNoCov">          0 : void AP_WheelEncoder::init(void)</span></a>
+<a name="161"><span class="lineNum">     161 </span>            : {</a>
+<a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 :     if (num_instances != 0) {</span></a>
+<a name="163"><span class="lineNum">     163 </span>            :         // init called a 2nd time?</a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="165"><span class="lineNum">     165 </span>            :     }</a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :     for (uint8_t i=0; i&lt;WHEELENCODER_MAX_INSTANCES; i++) {</span></a>
+<a name="167"><span class="lineNum">     167 </span><span class="lineNoCov">          0 :         switch ((WheelEncoder_Type)_type[i].get()) {</span></a>
+<a name="168"><span class="lineNum">     168 </span>            : </a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :         case WheelEncoder_TYPE_QUADRATURE:</span></a>
+<a name="170"><span class="lineNum">     170 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_CHIBIOS</a>
+<a name="171"><span class="lineNum">     171 </span>            :             drivers[i] = NEW_NOTHROW AP_WheelEncoder_Quadrature(*this, i, state[i]);</a>
+<a name="172"><span class="lineNum">     172 </span>            : #endif</a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="174"><span class="lineNum">     174 </span>            : </a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 :         case WheelEncoder_TYPE_SITL_QUADRATURE:</span></a>
+<a name="176"><span class="lineNum">     176 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_SITL</a>
+<a name="177"><span class="lineNum">     177 </span><span class="lineNoCov">          0 :             drivers[i] = NEW_NOTHROW AP_WheelEncoder_SITL_Quadrature(*this, i, state[i]);</span></a>
+<a name="178"><span class="lineNum">     178 </span>            : #endif</a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="180"><span class="lineNum">     180 </span>            :             </a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineNoCov">          0 :         case WheelEncoder_TYPE_NONE:</span></a>
+<a name="182"><span class="lineNum">     182 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="183"><span class="lineNum">     183 </span>            :         }</a>
+<a name="184"><span class="lineNum">     184 </span>            : </a>
+<a name="185"><span class="lineNum">     185 </span>            : </a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :         if (drivers[i] != nullptr) {</span></a>
+<a name="187"><span class="lineNum">     187 </span>            :             // we loaded a driver for this instance, so it must be</a>
+<a name="188"><span class="lineNum">     188 </span>            :             // present (although it may not be healthy)</a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineNoCov">          0 :             num_instances = i+1;  // num_instances is a high-water-mark</span></a>
+<a name="190"><span class="lineNum">     190 </span>            :         }</a>
+<a name="191"><span class="lineNum">     191 </span>            :     }</a>
+<a name="192"><span class="lineNum">     192 </span>            : }</a>
+<a name="193"><span class="lineNum">     193 </span>            : </a>
+<a name="194"><span class="lineNum">     194 </span>            : // update WheelEncoder state for all instances. This should be called by main loop</a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 : void AP_WheelEncoder::update(void)</span></a>
+<a name="196"><span class="lineNum">     196 </span>            : {</a>
+<a name="197"><span class="lineNum">     197 </span><span class="lineNoCov">          0 :     for (uint8_t i=0; i&lt;num_instances; i++) {</span></a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineNoCov">          0 :         if (drivers[i] != nullptr &amp;&amp; _type[i] != WheelEncoder_TYPE_NONE) {</span></a>
+<a name="199"><span class="lineNum">     199 </span><span class="lineNoCov">          0 :             drivers[i]-&gt;update();</span></a>
+<a name="200"><span class="lineNum">     200 </span>            :         }</a>
+<a name="201"><span class="lineNum">     201 </span>            :     }</a>
+<a name="202"><span class="lineNum">     202 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="203"><span class="lineNum">     203 </span>            : </a>
+<a name="204"><span class="lineNum">     204 </span>            : #if HAL_LOGGING_ENABLED</a>
+<a name="205"><span class="lineNum">     205 </span>            : // log wheel encoder information</a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineNoCov">          0 : void AP_WheelEncoder::Log_Write() const</span></a>
+<a name="207"><span class="lineNum">     207 </span>            : {</a>
+<a name="208"><span class="lineNum">     208 </span>            :     // return immediately if no wheel encoders are enabled</a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 :     if (!enabled(0) &amp;&amp; !enabled(1)) {</span></a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="211"><span class="lineNum">     211 </span>            :     }</a>
+<a name="212"><span class="lineNum">     212 </span>            : </a>
+<a name="213"><span class="lineNum">     213 </span><span class="lineNoCov">          0 :     struct log_WheelEncoder pkt = {</span></a>
+<a name="214"><span class="lineNum">     214 </span>            :         LOG_PACKET_HEADER_INIT(LOG_WHEELENCODER_MSG),</a>
+<a name="215"><span class="lineNum">     215 </span><span class="lineNoCov">          0 :         time_us     : AP_HAL::micros64(),</span></a>
+<a name="216"><span class="lineNum">     216 </span><span class="lineNoCov">          0 :         distance_0  : get_distance(0),</span></a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 :         quality_0   : (uint8_t)get_signal_quality(0),</span></a>
+<a name="218"><span class="lineNum">     218 </span><span class="lineNoCov">          0 :         distance_1  : get_distance(1),</span></a>
+<a name="219"><span class="lineNum">     219 </span><span class="lineNoCov">          0 :         quality_1   : (uint8_t)get_signal_quality(1),</span></a>
+<a name="220"><span class="lineNum">     220 </span><span class="lineNoCov">          0 :     };</span></a>
+<a name="221"><span class="lineNum">     221 </span><span class="lineNoCov">          0 :     AP::logger().WriteBlock(&amp;pkt, sizeof(pkt));</span></a>
+<a name="222"><span class="lineNum">     222 </span>            : }</a>
+<a name="223"><span class="lineNum">     223 </span>            : #endif</a>
+<a name="224"><span class="lineNum">     224 </span>            : </a>
+<a name="225"><span class="lineNum">     225 </span>            : // check if an instance is healthy</a>
+<a name="226"><span class="lineNum">     226 </span><span class="lineNoCov">          0 : bool AP_WheelEncoder::healthy(uint8_t instance) const</span></a>
+<a name="227"><span class="lineNum">     227 </span>            : {</a>
+<a name="228"><span class="lineNum">     228 </span><span class="lineNoCov">          0 :     if (instance &gt;= num_instances) {</span></a>
+<a name="229"><span class="lineNum">     229 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="230"><span class="lineNum">     230 </span>            :     }</a>
+<a name="231"><span class="lineNum">     231 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="232"><span class="lineNum">     232 </span>            : }</a>
+<a name="233"><span class="lineNum">     233 </span>            : </a>
+<a name="234"><span class="lineNum">     234 </span>            : // check if an instance is activated</a>
+<a name="235"><span class="lineNum">     235 </span><span class="lineNoCov">          0 : bool AP_WheelEncoder::enabled(uint8_t instance) const</span></a>
+<a name="236"><span class="lineNum">     236 </span>            : {</a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 :     if (instance &gt;= num_instances) {</span></a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="239"><span class="lineNum">     239 </span>            :     }</a>
+<a name="240"><span class="lineNum">     240 </span>            :     // if no sensor type is selected, the sensor is not activated.</a>
+<a name="241"><span class="lineNum">     241 </span><span class="lineNoCov">          0 :     if (_type[instance] == WheelEncoder_TYPE_NONE) {</span></a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="243"><span class="lineNum">     243 </span>            :     }</a>
+<a name="244"><span class="lineNum">     244 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="245"><span class="lineNum">     245 </span>            : }</a>
+<a name="246"><span class="lineNum">     246 </span>            : </a>
+<a name="247"><span class="lineNum">     247 </span>            : // get the counts per revolution of the encoder</a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineNoCov">          0 : uint16_t AP_WheelEncoder::get_counts_per_revolution(uint8_t instance) const</span></a>
+<a name="249"><span class="lineNum">     249 </span>            : {</a>
+<a name="250"><span class="lineNum">     250 </span>            :     // for invalid instances return zero vector</a>
+<a name="251"><span class="lineNum">     251 </span><span class="lineNoCov">          0 :     if (instance &gt;= WHEELENCODER_MAX_INSTANCES) {</span></a>
+<a name="252"><span class="lineNum">     252 </span><span class="lineNoCov">          0 :         return 0;</span></a>
+<a name="253"><span class="lineNum">     253 </span>            :     }</a>
+<a name="254"><span class="lineNum">     254 </span><span class="lineNoCov">          0 :     return (uint16_t)_counts_per_revolution[instance];</span></a>
+<a name="255"><span class="lineNum">     255 </span>            : }</a>
+<a name="256"><span class="lineNum">     256 </span>            : </a>
+<a name="257"><span class="lineNum">     257 </span>            : // get the wheel radius in meters</a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineNoCov">          0 : float AP_WheelEncoder::get_wheel_radius(uint8_t instance) const</span></a>
+<a name="259"><span class="lineNum">     259 </span>            : {</a>
+<a name="260"><span class="lineNum">     260 </span>            :     // for invalid instances return zero vector</a>
+<a name="261"><span class="lineNum">     261 </span><span class="lineNoCov">          0 :     if (instance &gt;= WHEELENCODER_MAX_INSTANCES) {</span></a>
+<a name="262"><span class="lineNum">     262 </span><span class="lineNoCov">          0 :         return 0.0f;</span></a>
+<a name="263"><span class="lineNum">     263 </span>            :     }</a>
+<a name="264"><span class="lineNum">     264 </span><span class="lineNoCov">          0 :     return _wheel_radius[instance];</span></a>
+<a name="265"><span class="lineNum">     265 </span>            : }</a>
+<a name="266"><span class="lineNum">     266 </span>            : </a>
+<a name="267"><span class="lineNum">     267 </span>            : // return a 3D vector defining the position offset of the center of the wheel in meters relative to the body frame origin</a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineNoCov">          0 : const Vector3f &amp;AP_WheelEncoder::get_pos_offset(uint8_t instance) const</span></a>
+<a name="269"><span class="lineNum">     269 </span>            : {</a>
+<a name="270"><span class="lineNum">     270 </span>            :     // for invalid instances return zero vector</a>
+<a name="271"><span class="lineNum">     271 </span><span class="lineNoCov">          0 :     if (instance &gt;= WHEELENCODER_MAX_INSTANCES) {</span></a>
+<a name="272"><span class="lineNum">     272 </span><span class="lineNoCov">          0 :         return pos_offset_zero;</span></a>
+<a name="273"><span class="lineNum">     273 </span>            :     }</a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineNoCov">          0 :     return _pos_offset[instance];</span></a>
+<a name="275"><span class="lineNum">     275 </span>            : }</a>
+<a name="276"><span class="lineNum">     276 </span>            : </a>
+<a name="277"><span class="lineNum">     277 </span>            : // get total delta angle (in radians) measured by the wheel encoder</a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 : float AP_WheelEncoder::get_delta_angle(uint8_t instance) const</span></a>
+<a name="279"><span class="lineNum">     279 </span>            : {</a>
+<a name="280"><span class="lineNum">     280 </span>            :     // for invalid instances return zero</a>
+<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :     if (instance &gt;= WHEELENCODER_MAX_INSTANCES) {</span></a>
+<a name="282"><span class="lineNum">     282 </span><span class="lineNoCov">          0 :         return 0.0f;</span></a>
+<a name="283"><span class="lineNum">     283 </span>            :     }</a>
+<a name="284"><span class="lineNum">     284 </span>            :     // protect against divide by zero</a>
+<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 :     if (_counts_per_revolution[instance] == 0) {</span></a>
+<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 :         return 0.0f;</span></a>
+<a name="287"><span class="lineNum">     287 </span>            :     }</a>
+<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 :     return M_2PI * state[instance].distance_count / _counts_per_revolution[instance];</span></a>
+<a name="289"><span class="lineNum">     289 </span>            : }</a>
+<a name="290"><span class="lineNum">     290 </span>            : </a>
+<a name="291"><span class="lineNum">     291 </span>            : // get the total distance traveled in meters</a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineNoCov">          0 : float AP_WheelEncoder::get_distance(uint8_t instance) const</span></a>
+<a name="293"><span class="lineNum">     293 </span>            : {</a>
+<a name="294"><span class="lineNum">     294 </span>            :     // for invalid instances return zero</a>
+<a name="295"><span class="lineNum">     295 </span><span class="lineNoCov">          0 :     return get_delta_angle(instance) * _wheel_radius[instance];</span></a>
+<a name="296"><span class="lineNum">     296 </span>            : }</a>
+<a name="297"><span class="lineNum">     297 </span>            : </a>
+<a name="298"><span class="lineNum">     298 </span>            : // get the instantaneous rate in radians/second</a>
+<a name="299"><span class="lineNum">     299 </span><span class="lineNoCov">          0 : float AP_WheelEncoder::get_rate(uint8_t instance) const</span></a>
+<a name="300"><span class="lineNum">     300 </span>            : {</a>
+<a name="301"><span class="lineNum">     301 </span>            :     // for invalid instances return zero</a>
+<a name="302"><span class="lineNum">     302 </span><span class="lineNoCov">          0 :     if (instance &gt;= WHEELENCODER_MAX_INSTANCES) {</span></a>
+<a name="303"><span class="lineNum">     303 </span><span class="lineNoCov">          0 :         return 0.0f;</span></a>
+<a name="304"><span class="lineNum">     304 </span>            :     }</a>
+<a name="305"><span class="lineNum">     305 </span>            : </a>
+<a name="306"><span class="lineNum">     306 </span>            :     // protect against divide by zero</a>
+<a name="307"><span class="lineNum">     307 </span><span class="lineNoCov">          0 :     if ((state[instance].dt_ms == 0) || _counts_per_revolution[instance] == 0) {</span></a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineNoCov">          0 :         return 0;</span></a>
+<a name="309"><span class="lineNum">     309 </span>            :     }</a>
+<a name="310"><span class="lineNum">     310 </span>            : </a>
+<a name="311"><span class="lineNum">     311 </span>            :     // calculate delta_angle (in radians) per second</a>
+<a name="312"><span class="lineNum">     312 </span><span class="lineNoCov">          0 :     return M_2PI * (state[instance].dist_count_change / ((float)_counts_per_revolution[instance])) / (state[instance].dt_ms * 1e-3f);</span></a>
+<a name="313"><span class="lineNum">     313 </span>            : }</a>
+<a name="314"><span class="lineNum">     314 </span>            : </a>
+<a name="315"><span class="lineNum">     315 </span>            : // get the total number of sensor reading from the encoder</a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineNoCov">          0 : uint32_t AP_WheelEncoder::get_total_count(uint8_t instance) const</span></a>
+<a name="317"><span class="lineNum">     317 </span>            : {</a>
+<a name="318"><span class="lineNum">     318 </span>            :     // for invalid instances return zero</a>
+<a name="319"><span class="lineNum">     319 </span><span class="lineNoCov">          0 :     if (instance &gt;= WHEELENCODER_MAX_INSTANCES) {</span></a>
+<a name="320"><span class="lineNum">     320 </span><span class="lineNoCov">          0 :         return 0;</span></a>
+<a name="321"><span class="lineNum">     321 </span>            :     }</a>
+<a name="322"><span class="lineNum">     322 </span><span class="lineNoCov">          0 :     return state[instance].total_count;</span></a>
+<a name="323"><span class="lineNum">     323 </span>            : }</a>
+<a name="324"><span class="lineNum">     324 </span>            : </a>
+<a name="325"><span class="lineNum">     325 </span>            : // get the total distance traveled in meters</a>
+<a name="326"><span class="lineNum">     326 </span><span class="lineNoCov">          0 : uint32_t AP_WheelEncoder::get_error_count(uint8_t instance) const</span></a>
+<a name="327"><span class="lineNum">     327 </span>            : {</a>
+<a name="328"><span class="lineNum">     328 </span>            :     // for invalid instances return zero</a>
+<a name="329"><span class="lineNum">     329 </span><span class="lineNoCov">          0 :     if (instance &gt;= WHEELENCODER_MAX_INSTANCES) {</span></a>
+<a name="330"><span class="lineNum">     330 </span><span class="lineNoCov">          0 :         return 0;</span></a>
+<a name="331"><span class="lineNum">     331 </span>            :     }</a>
+<a name="332"><span class="lineNum">     332 </span><span class="lineNoCov">          0 :     return state[instance].error_count;</span></a>
+<a name="333"><span class="lineNum">     333 </span>            : }</a>
+<a name="334"><span class="lineNum">     334 </span>            : </a>
+<a name="335"><span class="lineNum">     335 </span>            : // get the signal quality for a sensor</a>
+<a name="336"><span class="lineNum">     336 </span><span class="lineNoCov">          0 : float AP_WheelEncoder::get_signal_quality(uint8_t instance) const</span></a>
+<a name="337"><span class="lineNum">     337 </span>            : {</a>
+<a name="338"><span class="lineNum">     338 </span>            :     // protect against divide by zero</a>
+<a name="339"><span class="lineNum">     339 </span><span class="lineNoCov">          0 :     if (state[instance].total_count == 0) {</span></a>
+<a name="340"><span class="lineNum">     340 </span><span class="lineNoCov">          0 :         return 0.0f;</span></a>
+<a name="341"><span class="lineNum">     341 </span>            :     }</a>
+<a name="342"><span class="lineNum">     342 </span><span class="lineNoCov">          0 :     return constrain_float((1.0f - ((float)state[instance].error_count / (float)state[instance].total_count)) * 100.0f, 0.0f, 100.0f);</span></a>
+<a name="343"><span class="lineNum">     343 </span>            : }</a>
+<a name="344"><span class="lineNum">     344 </span>            : </a>
+<a name="345"><span class="lineNum">     345 </span>            : // get the system time (in milliseconds) of the last update</a>
+<a name="346"><span class="lineNum">     346 </span><span class="lineNoCov">          0 : uint32_t AP_WheelEncoder::get_last_reading_ms(uint8_t instance) const</span></a>
+<a name="347"><span class="lineNum">     347 </span>            : {</a>
+<a name="348"><span class="lineNum">     348 </span>            :     // for invalid instances return zero</a>
+<a name="349"><span class="lineNum">     349 </span><span class="lineNoCov">          0 :     if (instance &gt;= WHEELENCODER_MAX_INSTANCES) {</span></a>
+<a name="350"><span class="lineNum">     350 </span><span class="lineNoCov">          0 :         return 0;</span></a>
+<a name="351"><span class="lineNum">     351 </span>            :     }</a>
+<a name="352"><span class="lineNum">     352 </span><span class="lineNoCov">          0 :     return state[instance].last_reading_ms;</span></a>
+<a name="353"><span class="lineNum">     353 </span>            : }</a>
+<a name="354"><span class="lineNum">     354 </span>            : </a>
+<a name="355"><span class="lineNum">     355 </span>            : // singleton instance</a>
+<a name="356"><span class="lineNum">     356 </span>            : AP_WheelEncoder *AP_WheelEncoder::_singleton;</a>
+<a name="357"><span class="lineNum">     357 </span>            : </a>
+<a name="358"><span class="lineNum">     358 </span>            : namespace AP {</a>
+<a name="359"><span class="lineNum">     359 </span>            : </a>
+<a name="360"><span class="lineNum">     360 </span><span class="lineCov">   27389500 : AP_WheelEncoder *wheelencoder()</span></a>
+<a name="361"><span class="lineNum">     361 </span>            : {</a>
+<a name="362"><span class="lineNum">     362 </span><span class="lineCov">   27389500 :     return AP_WheelEncoder::get_singleton();</span></a>
+<a name="363"><span class="lineNum">     363 </span>            : }</a>
+<a name="364"><span class="lineNum">     364 </span>            : </a>
+<a name="365"><span class="lineNum">     365 </span>            : }</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

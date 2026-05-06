@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_VideoTX/AP_SmartAudio.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_VideoTX</a> - AP_SmartAudio.h<span style="font-size: 80%;"> (source / <a href="AP_SmartAudio.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : </a>
+<a name="16"><span class="lineNum">      16 </span>            : #pragma once</a>
+<a name="17"><span class="lineNum">      17 </span>            : </a>
+<a name="18"><span class="lineNum">      18 </span>            : #include &quot;AP_VideoTX_config.h&quot;</a>
+<a name="19"><span class="lineNum">      19 </span>            : </a>
+<a name="20"><span class="lineNum">      20 </span>            : #if AP_SMARTAUDIO_ENABLED</a>
+<a name="21"><span class="lineNum">      21 </span>            : </a>
+<a name="22"><span class="lineNum">      22 </span>            : #include &lt;AP_Param/AP_Param.h&gt;</a>
+<a name="23"><span class="lineNum">      23 </span>            : #include &lt;AP_HAL/utility/RingBuffer.h&gt;</a>
+<a name="24"><span class="lineNum">      24 </span>            : #include &quot;AP_VideoTX.h&quot;</a>
+<a name="25"><span class="lineNum">      25 </span>            : </a>
+<a name="26"><span class="lineNum">      26 </span>            : #define SMARTAUDIO_BUFFER_CAPACITY 5</a>
+<a name="27"><span class="lineNum">      27 </span>            : </a>
+<a name="28"><span class="lineNum">      28 </span>            : // SmartAudio Serial Protocol</a>
+<a name="29"><span class="lineNum">      29 </span>            : #define AP_SMARTAUDIO_UART_BAUD            4800</a>
+<a name="30"><span class="lineNum">      30 </span>            : #define AP_SMARTAUDIO_SMARTBAUD_MIN        4560     // -5%</a>
+<a name="31"><span class="lineNum">      31 </span>            : #define AP_SMARTAUDIO_SMARTBAUD_MAX        5040     // +5%</a>
+<a name="32"><span class="lineNum">      32 </span>            : #define AP_SMARTAUDIO_SMARTBAUD_STEP       60</a>
+<a name="33"><span class="lineNum">      33 </span>            : #define AP_SMARTAUDIO_UART_BUFSIZE_RX      16</a>
+<a name="34"><span class="lineNum">      34 </span>            : #define AP_SMARTAUDIO_UART_BUFSIZE_TX      16</a>
+<a name="35"><span class="lineNum">      35 </span>            : #define AP_SMARTAUDIO_MAX_PACKET_SIZE      32</a>
+<a name="36"><span class="lineNum">      36 </span>            : </a>
+<a name="37"><span class="lineNum">      37 </span>            : #define SMARTAUDIO_SYNC_BYTE            0xAA</a>
+<a name="38"><span class="lineNum">      38 </span>            : #define SMARTAUDIO_HEADER_BYTE          0x55</a>
+<a name="39"><span class="lineNum">      39 </span>            : #define SMARTAUDIO_START_CODE           SMARTAUDIO_SYNC_BYTE + SMARTAUDIO_HEADER_BYTE</a>
+<a name="40"><span class="lineNum">      40 </span>            : #define SMARTAUDIO_GET_PITMODE_FREQ     (1 &lt;&lt; 14)</a>
+<a name="41"><span class="lineNum">      41 </span>            : #define SMARTAUDIO_SET_PITMODE_FREQ     (1 &lt;&lt; 15)</a>
+<a name="42"><span class="lineNum">      42 </span>            : #define SMARTAUDIO_FREQUENCY_MASK       0x3FFF</a>
+<a name="43"><span class="lineNum">      43 </span>            : </a>
+<a name="44"><span class="lineNum">      44 </span>            : #define SMARTAUDIO_CMD_GET_SETTINGS     0x03</a>
+<a name="45"><span class="lineNum">      45 </span>            : #define SMARTAUDIO_CMD_SET_POWER        0x05</a>
+<a name="46"><span class="lineNum">      46 </span>            : #define SMARTAUDIO_CMD_SET_CHANNEL      0x07</a>
+<a name="47"><span class="lineNum">      47 </span>            : #define SMARTAUDIO_CMD_SET_FREQUENCY    0x09</a>
+<a name="48"><span class="lineNum">      48 </span>            : #define SMARTAUDIO_CMD_SET_MODE         0x0B</a>
+<a name="49"><span class="lineNum">      49 </span>            : </a>
+<a name="50"><span class="lineNum">      50 </span>            : #define SMARTAUDIO_COMMAND_FRAME_SIZE   (sizeof(FrameHeader) + 1)</a>
+<a name="51"><span class="lineNum">      51 </span>            : #define SMARTAUDIO_U8_COMMAND_FRAME_SIZE   (sizeof(FrameHeader) + 2)</a>
+<a name="52"><span class="lineNum">      52 </span>            : #define SMARTAUDIO_U16_COMMAND_FRAME_SIZE   (sizeof(FrameHeader) + 3)</a>
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<a name="54"><span class="lineNum">      54 </span>            : #define SMARTAUDIO_RSP_GET_SETTINGS_V1  SMARTAUDIO_CMD_GET_SETTINGS &gt;&gt; 1</a>
+<a name="55"><span class="lineNum">      55 </span>            : #define SMARTAUDIO_RSP_GET_SETTINGS_V2  (SMARTAUDIO_CMD_GET_SETTINGS &gt;&gt; 1) | 0x08</a>
+<a name="56"><span class="lineNum">      56 </span>            : #define SMARTAUDIO_RSP_GET_SETTINGS_V21 (SMARTAUDIO_CMD_GET_SETTINGS &gt;&gt; 1) | 0x10</a>
+<a name="57"><span class="lineNum">      57 </span>            : #define SMARTAUDIO_RSP_SET_POWER        SMARTAUDIO_CMD_SET_POWER &gt;&gt; 1</a>
+<a name="58"><span class="lineNum">      58 </span>            : #define SMARTAUDIO_RSP_SET_CHANNEL      SMARTAUDIO_CMD_SET_CHANNEL &gt;&gt; 1</a>
+<a name="59"><span class="lineNum">      59 </span>            : #define SMARTAUDIO_RSP_SET_FREQUENCY    SMARTAUDIO_CMD_SET_FREQUENCY &gt;&gt; 1</a>
+<a name="60"><span class="lineNum">      60 </span>            : #define SMARTAUDIO_RSP_SET_MODE         SMARTAUDIO_CMD_SET_MODE &gt;&gt; 1</a>
+<a name="61"><span class="lineNum">      61 </span>            : </a>
+<a name="62"><span class="lineNum">      62 </span>            : #define SMARTAUDIO_BANDCHAN_TO_INDEX(band, channel) (band * VTX_MAX_CHANNELS + (channel))</a>
+<a name="63"><span class="lineNum">      63 </span>            : </a>
+<a name="64"><span class="lineNum">      64 </span>            : //#define SA_DEBUG</a>
+<a name="65"><span class="lineNum">      65 </span>            : </a>
+<a name="66"><span class="lineNum">      66 </span>            : class AP_SmartAudio</a>
+<a name="67"><span class="lineNum">      67 </span>            : {</a>
+<a name="68"><span class="lineNum">      68 </span>            : public:</a>
+<a name="69"><span class="lineNum">      69 </span>            :     enum ProtocolVersion {</a>
+<a name="70"><span class="lineNum">      70 </span>            :         SMARTAUDIO_SPEC_PROTOCOL_v1 = 0,</a>
+<a name="71"><span class="lineNum">      71 </span>            :         SMARTAUDIO_SPEC_PROTOCOL_v2 = 1,</a>
+<a name="72"><span class="lineNum">      72 </span>            :         SMARTAUDIO_SPEC_PROTOCOL_v21 = 2</a>
+<a name="73"><span class="lineNum">      73 </span>            :     };</a>
+<a name="74"><span class="lineNum">      74 </span>            : </a>
+<a name="75"><span class="lineNum">      75 </span>            :     struct Settings {</a>
+<a name="76"><span class="lineNum">      76 </span>            :         uint8_t  version;</a>
+<a name="77"><span class="lineNum">      77 </span>            :         uint8_t  mode;</a>
+<a name="78"><span class="lineNum">      78 </span>            :         uint8_t  channel;</a>
+<a name="79"><span class="lineNum">      79 </span>            :         uint8_t  power;</a>
+<a name="80"><span class="lineNum">      80 </span>            :         uint16_t frequency;</a>
+<a name="81"><span class="lineNum">      81 </span>            :         uint8_t  band;</a>
+<a name="82"><span class="lineNum">      82 </span>            : </a>
+<a name="83"><span class="lineNum">      83 </span>            :         uint8_t num_power_levels;</a>
+<a name="84"><span class="lineNum">      84 </span>            :         uint8_t power_levels[8];</a>
+<a name="85"><span class="lineNum">      85 </span>            :         uint8_t  power_in_dbm;</a>
+<a name="86"><span class="lineNum">      86 </span>            : </a>
+<a name="87"><span class="lineNum">      87 </span>            :         uint16_t pitmodeFrequency;</a>
+<a name="88"><span class="lineNum">      88 </span>            :         bool userFrequencyMode;     // user is setting freq</a>
+<a name="89"><span class="lineNum">      89 </span>            :         bool initialized;</a>
+<a name="90"><span class="lineNum">      90 </span>            :     };</a>
+<a name="91"><span class="lineNum">      91 </span>            : </a>
+<a name="92"><span class="lineNum">      92 </span>            :     struct FrameHeader {</a>
+<a name="93"><span class="lineNum">      93 </span>            :         uint8_t syncByte;</a>
+<a name="94"><span class="lineNum">      94 </span>            :         uint8_t headerByte;</a>
+<a name="95"><span class="lineNum">      95 </span>            :         uint8_t command;</a>
+<a name="96"><span class="lineNum">      96 </span>            :         uint8_t length;</a>
+<a name="97"><span class="lineNum">      97 </span>            : </a>
+<a name="98"><span class="lineNum">      98 </span><span class="lineNoCov">          0 :         void init(uint8_t cmd, uint8_t payloadLength) {</span></a>
+<a name="99"><span class="lineNum">      99 </span><span class="lineNoCov">          0 :             syncByte = SMARTAUDIO_SYNC_BYTE;</span></a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineNoCov">          0 :             headerByte= SMARTAUDIO_HEADER_BYTE;</span></a>
+<a name="101"><span class="lineNum">     101 </span><span class="lineNoCov">          0 :             length = payloadLength;</span></a>
+<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 :             command = cmd;</span></a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 :         }</span></a>
+<a name="104"><span class="lineNum">     104 </span>            :     } PACKED;</a>
+<a name="105"><span class="lineNum">     105 </span>            : </a>
+<a name="106"><span class="lineNum">     106 </span>            :     struct Frame {</a>
+<a name="107"><span class="lineNum">     107 </span>            :         FrameHeader header;</a>
+<a name="108"><span class="lineNum">     108 </span>            :         uint8_t payload[3];</a>
+<a name="109"><span class="lineNum">     109 </span>            :     } PACKED;</a>
+<a name="110"><span class="lineNum">     110 </span>            : </a>
+<a name="111"><span class="lineNum">     111 </span>            :     struct U8ResponseFrame {</a>
+<a name="112"><span class="lineNum">     112 </span>            :         FrameHeader header;</a>
+<a name="113"><span class="lineNum">     113 </span>            :         uint8_t payload;</a>
+<a name="114"><span class="lineNum">     114 </span>            :         //uint8_t reserved;</a>
+<a name="115"><span class="lineNum">     115 </span>            :         //uint8_t crc;</a>
+<a name="116"><span class="lineNum">     116 </span>            :     } PACKED;</a>
+<a name="117"><span class="lineNum">     117 </span>            : </a>
+<a name="118"><span class="lineNum">     118 </span>            :     struct U16ResponseFrame {</a>
+<a name="119"><span class="lineNum">     119 </span>            :         FrameHeader header;</a>
+<a name="120"><span class="lineNum">     120 </span>            :         uint16_t payload;</a>
+<a name="121"><span class="lineNum">     121 </span>            :         //uint8_t reserved;</a>
+<a name="122"><span class="lineNum">     122 </span>            :         //uint8_t crc;</a>
+<a name="123"><span class="lineNum">     123 </span>            :     } PACKED;</a>
+<a name="124"><span class="lineNum">     124 </span>            : </a>
+<a name="125"><span class="lineNum">     125 </span>            :     struct SettingsResponseFrame {</a>
+<a name="126"><span class="lineNum">     126 </span>            :         FrameHeader header;</a>
+<a name="127"><span class="lineNum">     127 </span>            :         uint8_t channel;</a>
+<a name="128"><span class="lineNum">     128 </span>            :         uint8_t power;</a>
+<a name="129"><span class="lineNum">     129 </span>            :         uint8_t operationMode;</a>
+<a name="130"><span class="lineNum">     130 </span>            :         uint16_t frequency;</a>
+<a name="131"><span class="lineNum">     131 </span>            :         //uint8_t crc;</a>
+<a name="132"><span class="lineNum">     132 </span>            :     } PACKED;</a>
+<a name="133"><span class="lineNum">     133 </span>            : </a>
+<a name="134"><span class="lineNum">     134 </span>            :     struct SettingsExtendedResponseFrame {</a>
+<a name="135"><span class="lineNum">     135 </span>            :         SettingsResponseFrame settings;</a>
+<a name="136"><span class="lineNum">     136 </span>            :         uint8_t power_dbm;  // current power</a>
+<a name="137"><span class="lineNum">     137 </span>            :         uint8_t num_power_levels;</a>
+<a name="138"><span class="lineNum">     138 </span>            :         uint8_t power_levels[8];   // first in the list of dbm levels</a>
+<a name="139"><span class="lineNum">     139 </span>            :         //uint8_t crc;</a>
+<a name="140"><span class="lineNum">     140 </span>            :     } PACKED;</a>
+<a name="141"><span class="lineNum">     141 </span>            : </a>
+<a name="142"><span class="lineNum">     142 </span>            :     // v 2.1 additions to response frame</a>
+<a name="143"><span class="lineNum">     143 </span>            :     //0x0E (current power in dBm) 0x03 (amount of power levels) 0x00(dBm level 1) 0x0E (dBm level 2) 0x14 (dBm level 3) 0x1A (dBm level 4) 0x01(CRC8)</a>
+<a name="144"><span class="lineNum">     144 </span>            : </a>
+<a name="145"><span class="lineNum">     145 </span>            :     // request packet to be processed</a>
+<a name="146"><span class="lineNum">     146 </span>            :     struct Packet {</a>
+<a name="147"><span class="lineNum">     147 </span>            :         Frame frame;</a>
+<a name="148"><span class="lineNum">     148 </span>            :         uint8_t frame_size;</a>
+<a name="149"><span class="lineNum">     149 </span>            :     } PACKED;</a>
+<a name="150"><span class="lineNum">     150 </span>            : </a>
+<a name="151"><span class="lineNum">     151 </span>            :     AP_SmartAudio();</a>
+<a name="152"><span class="lineNum">     152 </span>            : </a>
+<a name="153"><span class="lineNum">     153 </span>            :     static AP_SmartAudio *get_singleton(void)</a>
+<a name="154"><span class="lineNum">     154 </span>            :     {</a>
+<a name="155"><span class="lineNum">     155 </span>            :         return _singleton;</a>
+<a name="156"><span class="lineNum">     156 </span>            :     }</a>
+<a name="157"><span class="lineNum">     157 </span>            : </a>
+<a name="158"><span class="lineNum">     158 </span>            :     /* Do not allow copies */</a>
+<a name="159"><span class="lineNum">     159 </span>            :     CLASS_NO_COPY(AP_SmartAudio);</a>
+<a name="160"><span class="lineNum">     160 </span>            : </a>
+<a name="161"><span class="lineNum">     161 </span>            :     // init threads and lookup for io uart.</a>
+<a name="162"><span class="lineNum">     162 </span>            :     bool init();</a>
+<a name="163"><span class="lineNum">     163 </span>            : </a>
+<a name="164"><span class="lineNum">     164 </span>            : private:</a>
+<a name="165"><span class="lineNum">     165 </span>            :     // serial interface</a>
+<a name="166"><span class="lineNum">     166 </span>            :     AP_HAL::UARTDriver *_port;                  // UART used to send data to SmartAudio VTX</a>
+<a name="167"><span class="lineNum">     167 </span>            : </a>
+<a name="168"><span class="lineNum">     168 </span>            :     //Pointer to singleton</a>
+<a name="169"><span class="lineNum">     169 </span>            :     static AP_SmartAudio* _singleton;</a>
+<a name="170"><span class="lineNum">     170 </span>            : </a>
+<a name="171"><span class="lineNum">     171 </span>            :     // response buffer length, permit splitted responses</a>
+<a name="172"><span class="lineNum">     172 </span>            :     uint8_t _inline_buffer_length;</a>
+<a name="173"><span class="lineNum">     173 </span>            :     // expected packet size</a>
+<a name="174"><span class="lineNum">     174 </span>            :     uint8_t _packet_size;</a>
+<a name="175"><span class="lineNum">     175 </span>            : </a>
+<a name="176"><span class="lineNum">     176 </span>            :     ProtocolVersion _protocol_version;</a>
+<a name="177"><span class="lineNum">     177 </span>            :     // statistics</a>
+<a name="178"><span class="lineNum">     178 </span>            :     uint16_t _packets_sent;</a>
+<a name="179"><span class="lineNum">     179 </span>            :     uint16_t _packets_rcvd;</a>
+<a name="180"><span class="lineNum">     180 </span>            : </a>
+<a name="181"><span class="lineNum">     181 </span>            :     bool _vtx_freq_change_pending; // a vtx command has been issued but not confirmed by a vtx broadcast frame</a>
+<a name="182"><span class="lineNum">     182 </span>            :     bool _vtx_power_change_pending;</a>
+<a name="183"><span class="lineNum">     183 </span>            :     bool _vtx_options_change_pending;</a>
+<a name="184"><span class="lineNum">     184 </span>            :     bool _vtx_changes_pending;</a>
+<a name="185"><span class="lineNum">     185 </span>            :     bool _vtx_use_set_freq; // should frequency set by band/channel or frequency</a>
+<a name="186"><span class="lineNum">     186 </span>            : </a>
+<a name="187"><span class="lineNum">     187 </span>            :     // value for current baud adjust</a>
+<a name="188"><span class="lineNum">     188 </span>            :     int32_t _smartbaud = AP_SMARTAUDIO_UART_BAUD;</a>
+<a name="189"><span class="lineNum">     189 </span>            :     int32_t _smartbaud_direction = 1;</a>
+<a name="190"><span class="lineNum">     190 </span>            : </a>
+<a name="191"><span class="lineNum">     191 </span>            :     // hw vtx state control with 2 elements array use methods _push _peek</a>
+<a name="192"><span class="lineNum">     192 </span>            :     uint8_t _vtx_state_idx;</a>
+<a name="193"><span class="lineNum">     193 </span>            :     Settings _vtx_states_buffer[2];</a>
+<a name="194"><span class="lineNum">     194 </span>            :     Settings *_vtx_current_state;</a>
+<a name="195"><span class="lineNum">     195 </span>            : </a>
+<a name="196"><span class="lineNum">     196 </span>            :     // ready to go</a>
+<a name="197"><span class="lineNum">     197 </span>            :     volatile bool _initialised;</a>
+<a name="198"><span class="lineNum">     198 </span>            : </a>
+<a name="199"><span class="lineNum">     199 </span>            :     // RingBuffer to store outgoing request.</a>
+<a name="200"><span class="lineNum">     200 </span>            :     ObjectBuffer&lt;Packet&gt; requests_queue{SMARTAUDIO_BUFFER_CAPACITY};</a>
+<a name="201"><span class="lineNum">     201 </span>            : </a>
+<a name="202"><span class="lineNum">     202 </span>            :     // time the last_request is process</a>
+<a name="203"><span class="lineNum">     203 </span>            :     uint32_t _last_request_sent_ms;</a>
+<a name="204"><span class="lineNum">     204 </span>            : </a>
+<a name="205"><span class="lineNum">     205 </span>            :     // loops is waiting a response after a request</a>
+<a name="206"><span class="lineNum">     206 </span>            :     bool _is_waiting_response;</a>
+<a name="207"><span class="lineNum">     207 </span>            : </a>
+<a name="208"><span class="lineNum">     208 </span>            : #ifdef SA_DEBUG</a>
+<a name="209"><span class="lineNum">     209 </span>            :     // utility method for debugging.</a>
+<a name="210"><span class="lineNum">     210 </span>            :     void print_bytes_to_hex_string(const char* msg, const uint8_t buf[], uint8_t length);</a>
+<a name="211"><span class="lineNum">     211 </span>            : #endif</a>
+<a name="212"><span class="lineNum">     212 </span>            :     void print_settings(const Settings* settings);</a>
+<a name="213"><span class="lineNum">     213 </span>            : </a>
+<a name="214"><span class="lineNum">     214 </span>            :     void update_vtx_params();</a>
+<a name="215"><span class="lineNum">     215 </span>            :     void update_vtx_settings(const Settings&amp; settings);</a>
+<a name="216"><span class="lineNum">     216 </span>            : </a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 :     bool ignore_crc() const { return AP::vtx().has_option(AP_VideoTX::VideoOptions::VTX_SA_IGNORE_CRC); }</span></a>
+<a name="218"><span class="lineNum">     218 </span>            : </a>
+<a name="219"><span class="lineNum">     219 </span>            :     // looping over requests</a>
+<a name="220"><span class="lineNum">     220 </span>            :     void loop();</a>
+<a name="221"><span class="lineNum">     221 </span>            :     // send a frame over the wire</a>
+<a name="222"><span class="lineNum">     222 </span>            :     void send_request(const Frame&amp; requestFrame, uint8_t size);</a>
+<a name="223"><span class="lineNum">     223 </span>            :     // receive a frame response over the wire</a>
+<a name="224"><span class="lineNum">     224 </span>            :     bool read_response(uint8_t *response_buffer);</a>
+<a name="225"><span class="lineNum">     225 </span>            :     // parses the response and updates the vtx settings</a>
+<a name="226"><span class="lineNum">     226 </span>            :     bool parse_frame_response(const uint8_t *buffer);</a>
+<a name="227"><span class="lineNum">     227 </span>            :     bool parse_response_buffer(const uint8_t *buffer);</a>
+<a name="228"><span class="lineNum">     228 </span>            :     // get last reading from the fifo queue</a>
+<a name="229"><span class="lineNum">     229 </span>            :     bool get_readings(AP_VideoTX *vtx_dest);</a>
+<a name="230"><span class="lineNum">     230 </span>            : </a>
+<a name="231"><span class="lineNum">     231 </span>            :     // command functions</a>
+<a name="232"><span class="lineNum">     232 </span>            :     // request settings</a>
+<a name="233"><span class="lineNum">     233 </span>            :     void request_settings();</a>
+<a name="234"><span class="lineNum">     234 </span>            :     // change the mode</a>
+<a name="235"><span class="lineNum">     235 </span>            :     void set_operation_mode(uint8_t mode);</a>
+<a name="236"><span class="lineNum">     236 </span>            :     // change the frequency</a>
+<a name="237"><span class="lineNum">     237 </span>            :     void set_frequency(uint16_t frequency, bool isPitModeFreq);</a>
+<a name="238"><span class="lineNum">     238 </span>            :     // change the channel</a>
+<a name="239"><span class="lineNum">     239 </span>            :     void set_channel(uint8_t chan);</a>
+<a name="240"><span class="lineNum">     240 </span>            :     // get the pitmode frequency</a>
+<a name="241"><span class="lineNum">     241 </span>            :     void request_pit_mode_frequency();</a>
+<a name="242"><span class="lineNum">     242 </span>            :     // set the power</a>
+<a name="243"><span class="lineNum">     243 </span>            :     void set_power(uint16_t power_mw, uint16_t dbm);</a>
+<a name="244"><span class="lineNum">     244 </span>            :     // set the power using power_level, spec versions 1 and 2 or dbm value for spec version 2.1</a>
+<a name="245"><span class="lineNum">     245 </span>            :     void set_power(uint8_t power_level);</a>
+<a name="246"><span class="lineNum">     246 </span>            :     // set the band and channel</a>
+<a name="247"><span class="lineNum">     247 </span>            :     void set_band_channel(const uint8_t band, const uint8_t channel);</a>
+<a name="248"><span class="lineNum">     248 </span>            : </a>
+<a name="249"><span class="lineNum">     249 </span>            :     // command functions</a>
+<a name="250"><span class="lineNum">     250 </span>            :     void push_command_only_frame(uint8_t command);</a>
+<a name="251"><span class="lineNum">     251 </span>            :     void push_uint8_command_frame(uint8_t command, uint8_t data);</a>
+<a name="252"><span class="lineNum">     252 </span>            :     void push_uint16_command_frame(uint8_t command, uint16_t data);</a>
+<a name="253"><span class="lineNum">     253 </span>            : </a>
+<a name="254"><span class="lineNum">     254 </span>            :     static void unpack_frequency(Settings *settings, const uint16_t frequency);</a>
+<a name="255"><span class="lineNum">     255 </span>            :     static void unpack_settings(Settings *settings, const SettingsResponseFrame *frame);</a>
+<a name="256"><span class="lineNum">     256 </span>            :     static void unpack_settings(Settings *settings, const SettingsExtendedResponseFrame *frame);</a>
+<a name="257"><span class="lineNum">     257 </span>            : </a>
+<a name="258"><span class="lineNum">     258 </span>            :     // change baud automatically when request-response fails many times</a>
+<a name="259"><span class="lineNum">     259 </span>            :     void update_baud_rate();</a>
+<a name="260"><span class="lineNum">     260 </span>            : </a>
+<a name="261"><span class="lineNum">     261 </span><span class="lineNoCov">          0 :     void set_configuration_pending(bool pending) { _vtx_changes_pending = pending; }</span></a>
+<a name="262"><span class="lineNum">     262 </span><span class="lineNoCov">          0 :     bool is_configuration_pending(){ return _vtx_changes_pending;}</span></a>
+<a name="263"><span class="lineNum">     263 </span>            : };</a>
+<a name="264"><span class="lineNum">     264 </span>            : #endif</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

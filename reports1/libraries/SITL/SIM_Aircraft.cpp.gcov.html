@@ -1,0 +1,1491 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/SITL/SIM_Aircraft.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/SITL</a> - SIM_Aircraft.cpp<span style="font-size: 80%;"> (source / <a href="SIM_Aircraft.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">469</td>
+            <td class="headerCovTableEntry">659</td>
+            <td class="headerCovTableEntryLo">71.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">31</td>
+            <td class="headerCovTableEntry">40</td>
+            <td class="headerCovTableEntryMed">77.5 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : /*</a>
+<a name="16"><span class="lineNum">      16 </span>            :   parent class for aircraft simulators</a>
+<a name="17"><span class="lineNum">      17 </span>            : */</a>
+<a name="18"><span class="lineNum">      18 </span>            : </a>
+<a name="19"><span class="lineNum">      19 </span>            : #include &quot;SIM_Aircraft.h&quot;</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : #include &lt;stdio.h&gt;</a>
+<a name="22"><span class="lineNum">      22 </span>            : #include &lt;sys/time.h&gt;</a>
+<a name="23"><span class="lineNum">      23 </span>            : #include &lt;unistd.h&gt;</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            : #include &lt;GCS_MAVLink/GCS.h&gt;</a>
+<a name="26"><span class="lineNum">      26 </span>            : #include &lt;AP_Logger/AP_Logger.h&gt;</a>
+<a name="27"><span class="lineNum">      27 </span>            : #include &lt;AP_Param/AP_Param.h&gt;</a>
+<a name="28"><span class="lineNum">      28 </span>            : #include &lt;AP_Declination/AP_Declination.h&gt;</a>
+<a name="29"><span class="lineNum">      29 </span>            : #include &lt;AP_Terrain/AP_Terrain.h&gt;</a>
+<a name="30"><span class="lineNum">      30 </span>            : #include &lt;AP_Scheduler/AP_Scheduler.h&gt;</a>
+<a name="31"><span class="lineNum">      31 </span>            : #include &lt;AP_BoardConfig/AP_BoardConfig.h&gt;</a>
+<a name="32"><span class="lineNum">      32 </span>            : #include &lt;AP_JSON/AP_JSON.h&gt;</a>
+<a name="33"><span class="lineNum">      33 </span>            : #include &lt;AP_Filesystem/AP_Filesystem.h&gt;</a>
+<a name="34"><span class="lineNum">      34 </span>            : #include &lt;AP_AHRS/AP_AHRS.h&gt;</a>
+<a name="35"><span class="lineNum">      35 </span>            : #include &lt;AP_HAL_SITL/HAL_SITL_Class.h&gt;</a>
+<a name="36"><span class="lineNum">      36 </span>            : #include &lt;AP_Vehicle/AP_Vehicle_Type.h&gt;</a>
+<a name="37"><span class="lineNum">      37 </span>            : </a>
+<a name="38"><span class="lineNum">      38 </span>            : using namespace SITL;</a>
+<a name="39"><span class="lineNum">      39 </span>            : </a>
+<a name="40"><span class="lineNum">      40 </span>            : extern const AP_HAL::HAL&amp; hal;</a>
+<a name="41"><span class="lineNum">      41 </span>            : </a>
+<a name="42"><span class="lineNum">      42 </span>            : // the SITL HAL can add information about pausing the simulation and its effect on the UART.  Not present when we're compiling for simulation-on-hardware</a>
+<a name="43"><span class="lineNum">      43 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_SITL</a>
+<a name="44"><span class="lineNum">      44 </span>            : extern const HAL_SITL&amp; hal_sitl;</a>
+<a name="45"><span class="lineNum">      45 </span>            : #endif</a>
+<a name="46"><span class="lineNum">      46 </span>            : </a>
+<a name="47"><span class="lineNum">      47 </span>            : Aircraft *Aircraft::instances[MAX_SIM_INSTANCES];</a>
+<a name="48"><span class="lineNum">      48 </span>            : </a>
+<a name="49"><span class="lineNum">      49 </span>            : /*</a>
+<a name="50"><span class="lineNum">      50 </span>            :   parent class for all simulator types</a>
+<a name="51"><span class="lineNum">      51 </span>            :  */</a>
+<a name="52"><span class="lineNum">      52 </span>            : </a>
+<a name="53"><span class="lineNum">      53 </span><span class="lineCov">        848 : Aircraft::Aircraft(const char *frame_str) :</span></a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">      14416 :     frame(frame_str)</span></a>
+<a name="55"><span class="lineNum">      55 </span>            : {</a>
+<a name="56"><span class="lineNum">      56 </span>            :     // make the SIM_* variables available to simulator backends</a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineCov">        848 :     sitl = AP::sitl();</span></a>
+<a name="58"><span class="lineNum">      58 </span>            : </a>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">        848 :     set_speedup(1.0f);</span></a>
+<a name="60"><span class="lineNum">      60 </span>            : </a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">        848 :     last_wall_time_us = get_wall_time_us();</span></a>
+<a name="62"><span class="lineNum">      62 </span>            : </a>
+<a name="63"><span class="lineNum">      63 </span>            :     // allow for orientation settings, such as with tailsitters</a>
+<a name="64"><span class="lineNum">      64 </span>            :     enum ap_var_type ptype;</a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov">        848 :     ahrs_orientation = (AP_Int8 *)AP_Param::find(&quot;AHRS_ORIENTATION&quot;, &amp;ptype);</span></a>
+<a name="66"><span class="lineNum">      66 </span>            : </a>
+<a name="67"><span class="lineNum">      67 </span>            :     // ahrs_orientation-&gt;get() returns ROTATION_NONE here, regardless of the actual value</a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">        848 :     enum Rotation imu_rotation = ahrs_orientation?(enum Rotation)ahrs_orientation-&gt;get():ROTATION_NONE;</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">        848 :     last_imu_rotation = imu_rotation;</span></a>
+<a name="70"><span class="lineNum">      70 </span>            :     // sitl is null if running example program</a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineCov">        848 :     if (sitl) {</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineCov">        848 :         sitl-&gt;ahrs_rotation.from_rotation(imu_rotation);</span></a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">        848 :         sitl-&gt;ahrs_rotation_inv = sitl-&gt;ahrs_rotation.transposed();</span></a>
+<a name="74"><span class="lineNum">      74 </span>            :     }</a>
+<a name="75"><span class="lineNum">      75 </span>            : </a>
+<a name="76"><span class="lineNum">      76 </span>            :     // init rangefinder array to NaN to signify no data</a>
+<a name="77"><span class="lineNum">      77 </span><span class="lineCov">       9328 :     for (uint8_t i = 0; i &lt; ARRAY_SIZE(rangefinder_m); i++){</span></a>
+<a name="78"><span class="lineNum">      78 </span><span class="lineCov">       8480 :         rangefinder_m[i] = nanf(&quot;&quot;);</span></a>
+<a name="79"><span class="lineNum">      79 </span>            :     }</a>
+<a name="80"><span class="lineNum">      80 </span><span class="lineCov">        848 : }</span></a>
+<a name="81"><span class="lineNum">      81 </span>            : </a>
+<a name="82"><span class="lineNum">      82 </span><span class="lineCov">        848 : void Aircraft::set_start_location(const Location &amp;start_loc, const float start_yaw)</span></a>
+<a name="83"><span class="lineNum">      83 </span>            : {</a>
+<a name="84"><span class="lineNum">      84 </span><span class="lineCov">        848 :     home = start_loc;</span></a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineCov">        848 :     origin = home;</span></a>
+<a name="86"><span class="lineNum">      86 </span><span class="lineCov">        848 :     position.xy().zero();</span></a>
+<a name="87"><span class="lineNum">      87 </span><span class="lineCov">        848 :     home_yaw = start_yaw;</span></a>
+<a name="88"><span class="lineNum">      88 </span><span class="lineCov">        848 :     home_is_set = true;</span></a>
+<a name="89"><span class="lineNum">      89 </span>            : </a>
+<a name="90"><span class="lineNum">      90 </span><span class="lineCov">        848 :     ::printf(&quot;Home: %f %f alt=%fm hdg=%f\n&quot;,</span></a>
+<a name="91"><span class="lineNum">      91 </span><span class="lineCov">        848 :              home.lat*1e-7,</span></a>
+<a name="92"><span class="lineNum">      92 </span><span class="lineCov">        848 :              home.lng*1e-7,</span></a>
+<a name="93"><span class="lineNum">      93 </span><span class="lineCov">        848 :              home.alt*0.01,</span></a>
+<a name="94"><span class="lineNum">      94 </span><span class="lineCov">        848 :              home_yaw);</span></a>
+<a name="95"><span class="lineNum">      95 </span>            : </a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineCov">        848 :     location = home;</span></a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineCov">        848 :     ground_level = home.alt * 0.01f;</span></a>
+<a name="98"><span class="lineNum">      98 </span>            : </a>
+<a name="99"><span class="lineNum">      99 </span>            : #if 0</a>
+<a name="100"><span class="lineNum">     100 </span>            :     // useful test for home position being very different from origin</a>
+<a name="101"><span class="lineNum">     101 </span>            :     home.offset(-3000*1000, 1800*1000);</a>
+<a name="102"><span class="lineNum">     102 </span>            : #endif</a>
+<a name="103"><span class="lineNum">     103 </span>            : </a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineCov">        848 :     dcm.from_euler(0.0f, 0.0f, radians(home_yaw));</span></a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineCov">        848 : }</span></a>
+<a name="106"><span class="lineNum">     106 </span>            : </a>
+<a name="107"><span class="lineNum">     107 </span>            : /*</a>
+<a name="108"><span class="lineNum">     108 </span>            :    return difference in altitude between home position and current loc</a>
+<a name="109"><span class="lineNum">     109 </span>            : */</a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineCov">  302023000 : float Aircraft::ground_height_difference() const</span></a>
+<a name="111"><span class="lineNum">     111 </span>            : {</a>
+<a name="112"><span class="lineNum">     112 </span>            : #if AP_TERRAIN_AVAILABLE</a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineCov">  302023000 :     AP_Terrain *terrain = AP::terrain();</span></a>
+<a name="114"><span class="lineNum">     114 </span>            :     float h1, h2;</a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineCov">  302023000 :     if (sitl &amp;&amp;</span></a>
+<a name="116"><span class="lineNum">     116 </span><span class="lineCov">  302023000 :         terrain != nullptr &amp;&amp;</span></a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineCov">  600721000 :         sitl-&gt;terrain_enable &amp;&amp;</span></a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineCov">  902744000 :         terrain-&gt;height_amsl(home, h1, false) &amp;&amp;</span></a>
+<a name="119"><span class="lineNum">     119 </span><span class="lineCov">  286450000 :         terrain-&gt;height_amsl(location, h2, false)) {</span></a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineCov">  286450000 :         h2 += local_ground_level;</span></a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineCov">  286450000 :         return h2 - h1;</span></a>
+<a name="122"><span class="lineNum">     122 </span>            :     }</a>
+<a name="123"><span class="lineNum">     123 </span>            : #endif</a>
+<a name="124"><span class="lineNum">     124 </span><span class="lineCov">   15573100 :     return local_ground_level;</span></a>
+<a name="125"><span class="lineNum">     125 </span>            : }</a>
+<a name="126"><span class="lineNum">     126 </span>            : </a>
+<a name="127"><span class="lineNum">     127 </span><span class="lineNoCov">          0 : float Aircraft::ambient_temperature_degC() const</span></a>
+<a name="128"><span class="lineNum">     128 </span>            : {</a>
+<a name="129"><span class="lineNum">     129 </span>            :     // FIXME: AP_Baro_SITL should be getting temperature from the</a>
+<a name="130"><span class="lineNum">     130 </span>            :     // simulated aircraft, not the other way around!</a>
+<a name="131"><span class="lineNum">     131 </span>            : #if !APM_BUILD_TYPE(APM_BUILD_AP_Periph)    // Periph does not instantiate Baro</a>
+<a name="132"><span class="lineNum">     132 </span><span class="lineNoCov">          0 :     return AP::baro().get_temperature();</span></a>
+<a name="133"><span class="lineNum">     133 </span>            : #endif</a>
+<a name="134"><span class="lineNum">     134 </span>            :     return 25.0;</a>
+<a name="135"><span class="lineNum">     135 </span>            : }</a>
+<a name="136"><span class="lineNum">     136 </span>            : </a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineCov">        848 : void Aircraft::set_precland(SIM_Precland *_precland) {</span></a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineCov">        848 :     precland = _precland;</span></a>
+<a name="139"><span class="lineNum">     139 </span><span class="lineCov">        848 :     precland-&gt;set_default_location(home.lat * 1.0e-7f, home.lng * 1.0e-7f, static_cast&lt;int16_t&gt;(get_home_yaw()));</span></a>
+<a name="140"><span class="lineNum">     140 </span><span class="lineCov">        848 : }</span></a>
+<a name="141"><span class="lineNum">     141 </span>            : </a>
+<a name="142"><span class="lineNum">     142 </span>            : /*</a>
+<a name="143"><span class="lineNum">     143 </span>            :    return current height above ground level (metres)</a>
+<a name="144"><span class="lineNum">     144 </span>            : */</a>
+<a name="145"><span class="lineNum">     145 </span><span class="lineCov">  258050000 : float Aircraft::hagl() const</span></a>
+<a name="146"><span class="lineNum">     146 </span>            : {</a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineCov">  258050000 :     return (-position.z) + home.alt * 0.01f - ground_level - frame_height - ground_height_difference();</span></a>
+<a name="148"><span class="lineNum">     148 </span>            : }</a>
+<a name="149"><span class="lineNum">     149 </span>            : </a>
+<a name="150"><span class="lineNum">     150 </span>            : /*</a>
+<a name="151"><span class="lineNum">     151 </span>            :    return true if we are on the ground</a>
+<a name="152"><span class="lineNum">     152 </span>            : */</a>
+<a name="153"><span class="lineNum">     153 </span><span class="lineCov">  257497000 : bool Aircraft::on_ground() const</span></a>
+<a name="154"><span class="lineNum">     154 </span>            : {</a>
+<a name="155"><span class="lineNum">     155 </span><span class="lineCov">  257497000 :     return hagl() &lt;= 0.001f;  // prevent bouncing around ground</span></a>
+<a name="156"><span class="lineNum">     156 </span>            : }</a>
+<a name="157"><span class="lineNum">     157 </span>            : </a>
+<a name="158"><span class="lineNum">     158 </span>            : /*</a>
+<a name="159"><span class="lineNum">     159 </span>            :    update location from position</a>
+<a name="160"><span class="lineNum">     160 </span>            : */</a>
+<a name="161"><span class="lineNum">     161 </span><span class="lineCov">   85832400 : void Aircraft::update_position(void)</span></a>
+<a name="162"><span class="lineNum">     162 </span>            : {</a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineCov">   85832400 :     location = origin;</span></a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineCov">   85832400 :     location.offset(position.x, position.y);</span></a>
+<a name="165"><span class="lineNum">     165 </span>            : </a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineCov">   85832400 :     location.alt  = static_cast&lt;int32_t&gt;(home.alt - position.z * 100.0f);</span></a>
+<a name="167"><span class="lineNum">     167 </span>            : </a>
+<a name="168"><span class="lineNum">     168 </span>            : #if 0</a>
+<a name="169"><span class="lineNum">     169 </span>            :     Vector3d pos_home = position;</a>
+<a name="170"><span class="lineNum">     170 </span>            :     pos_home.xy() += home.get_distance_NE_double(origin);</a>
+<a name="171"><span class="lineNum">     171 </span>            : </a>
+<a name="172"><span class="lineNum">     172 </span>            :     // logging of raw sitl data</a>
+<a name="173"><span class="lineNum">     173 </span>            :     Vector3f accel_ef = dcm * accel_body;</a>
+<a name="174"><span class="lineNum">     174 </span>            : // @LoggerMessage: SITL</a>
+<a name="175"><span class="lineNum">     175 </span>            : // @Description: Simulation data</a>
+<a name="176"><span class="lineNum">     176 </span>            : // @Field: TimeUS: Time since system startup</a>
+<a name="177"><span class="lineNum">     177 </span>            : // @Field: VN: Velocity - North component</a>
+<a name="178"><span class="lineNum">     178 </span>            : // @Field: VE: Velocity - East component</a>
+<a name="179"><span class="lineNum">     179 </span>            : // @Field: VD: Velocity - Down component</a>
+<a name="180"><span class="lineNum">     180 </span>            : // @Field: AN: Acceleration - North component</a>
+<a name="181"><span class="lineNum">     181 </span>            : // @Field: AE: Acceleration - East component</a>
+<a name="182"><span class="lineNum">     182 </span>            : // @Field: AD: Acceleration - Down component</a>
+<a name="183"><span class="lineNum">     183 </span>            : // @Field: PN: Position - North component</a>
+<a name="184"><span class="lineNum">     184 </span>            : // @Field: PE: Position - East component</a>
+<a name="185"><span class="lineNum">     185 </span>            : // @Field: PD: Position - Down component</a>
+<a name="186"><span class="lineNum">     186 </span>            :     AP::logger().WriteStreaming(&quot;SITL&quot;, &quot;TimeUS,VN,VE,VD,AN,AE,AD,PN,PE,PD&quot;, &quot;Qfffffffff&quot;,</a>
+<a name="187"><span class="lineNum">     187 </span>            :                                            AP_HAL::micros64(),</a>
+<a name="188"><span class="lineNum">     188 </span>            :                                            velocity_ef.x, velocity_ef.y, velocity_ef.z,</a>
+<a name="189"><span class="lineNum">     189 </span>            :                                            accel_ef.x, accel_ef.y, accel_ef.z,</a>
+<a name="190"><span class="lineNum">     190 </span>            :                                            pos_home.x, pos_home.y, pos_home.z);</a>
+<a name="191"><span class="lineNum">     191 </span>            : #endif</a>
+<a name="192"><span class="lineNum">     192 </span>            : </a>
+<a name="193"><span class="lineNum">     193 </span><span class="lineCov">   85832400 :     if (!disable_origin_movement) {</span></a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineCov">   85832400 :         uint32_t now = AP_HAL::millis();</span></a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineCov">   85832400 :         if (now - last_one_hz_ms &gt;= 1000) {</span></a>
+<a name="196"><span class="lineNum">     196 </span>            :             // shift origin of position at 1Hz to current location</a>
+<a name="197"><span class="lineNum">     197 </span>            :             // this prevents spherical errors building up in the GPS data</a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineCov">      71065 :             last_one_hz_ms = now;</span></a>
+<a name="199"><span class="lineNum">     199 </span><span class="lineCov">      71065 :             Vector2d diffNE = origin.get_distance_NE_double(location);</span></a>
+<a name="200"><span class="lineNum">     200 </span><span class="lineCov">      71065 :             position.xy() -= diffNE;</span></a>
+<a name="201"><span class="lineNum">     201 </span><span class="lineCov">      71065 :             smoothing.position.xy() -= diffNE;</span></a>
+<a name="202"><span class="lineNum">     202 </span><span class="lineCov">      71065 :             origin.lat = location.lat;</span></a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineCov">      71065 :             origin.lng = location.lng;</span></a>
+<a name="204"><span class="lineNum">     204 </span>            :         }</a>
+<a name="205"><span class="lineNum">     205 </span>            :     }</a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineCov">   85832400 : }</span></a>
+<a name="207"><span class="lineNum">     207 </span>            : </a>
+<a name="208"><span class="lineNum">     208 </span>            : /*</a>
+<a name="209"><span class="lineNum">     209 </span>            :    update body magnetic field from position and rotation</a>
+<a name="210"><span class="lineNum">     210 </span>            : */</a>
+<a name="211"><span class="lineNum">     211 </span><span class="lineCov">   85832400 : void Aircraft::update_mag_field_bf()</span></a>
+<a name="212"><span class="lineNum">     212 </span>            : {</a>
+<a name="213"><span class="lineNum">     213 </span>            :     // get the magnetic field intensity and orientation</a>
+<a name="214"><span class="lineNum">     214 </span>            :     float intensity;</a>
+<a name="215"><span class="lineNum">     215 </span>            :     float declination;</a>
+<a name="216"><span class="lineNum">     216 </span>            :     float inclination;</a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineCov">   85832400 :     AP_Declination::get_mag_field_ef(location.lat * 1e-7f, location.lng * 1e-7f, intensity, declination, inclination);</span></a>
+<a name="218"><span class="lineNum">     218 </span>            : </a>
+<a name="219"><span class="lineNum">     219 </span>            :     // create a field vector and rotate to the required orientation</a>
+<a name="220"><span class="lineNum">     220 </span><span class="lineCov">   85832400 :     Vector3f mag_ef(1e3f * intensity, 0.0f, 0.0f);</span></a>
+<a name="221"><span class="lineNum">     221 </span><span class="lineCov">   85832400 :     Matrix3f R;</span></a>
+<a name="222"><span class="lineNum">     222 </span><span class="lineCov">   85832400 :     R.from_euler(0.0f, -radians(inclination), radians(declination));</span></a>
+<a name="223"><span class="lineNum">     223 </span><span class="lineCov">   85832400 :     mag_ef = R * mag_ef;</span></a>
+<a name="224"><span class="lineNum">     224 </span>            : </a>
+<a name="225"><span class="lineNum">     225 </span>            :     // calculate frame height above ground</a>
+<a name="226"><span class="lineNum">     226 </span><span class="lineCov">   85832400 :     const float frame_height_agl = fmaxf((-position.z) + home.alt * 0.01f - ground_level, 0.0f);</span></a>
+<a name="227"><span class="lineNum">     227 </span>            : </a>
+<a name="228"><span class="lineNum">     228 </span><span class="lineCov">   85832400 :     if (!sitl) {</span></a>
+<a name="229"><span class="lineNum">     229 </span>            :         // running example program</a>
+<a name="230"><span class="lineNum">     230 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="231"><span class="lineNum">     231 </span>            :     }</a>
+<a name="232"><span class="lineNum">     232 </span>            : </a>
+<a name="233"><span class="lineNum">     233 </span>            :     // calculate scaling factor that varies from 1 at ground level to 1/8 at sitl-&gt;mag_anomaly_hgt</a>
+<a name="234"><span class="lineNum">     234 </span>            :     // Assume magnetic anomaly strength scales with 1/R**3</a>
+<a name="235"><span class="lineNum">     235 </span><span class="lineCov">   85832400 :     float anomaly_scaler = (sitl-&gt;mag_anomaly_hgt / (frame_height_agl + sitl-&gt;mag_anomaly_hgt));</span></a>
+<a name="236"><span class="lineNum">     236 </span><span class="lineCov">   85832400 :     anomaly_scaler = anomaly_scaler * anomaly_scaler * anomaly_scaler;</span></a>
+<a name="237"><span class="lineNum">     237 </span>            : </a>
+<a name="238"><span class="lineNum">     238 </span>            :     // add scaled anomaly to earth field</a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineCov">   85832400 :     mag_ef += sitl-&gt;mag_anomaly_ned.get() * anomaly_scaler;</span></a>
+<a name="240"><span class="lineNum">     240 </span>            : </a>
+<a name="241"><span class="lineNum">     241 </span>            :     // Rotate into body frame</a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineCov">   85832400 :     mag_bf = dcm.transposed() * mag_ef;</span></a>
+<a name="243"><span class="lineNum">     243 </span>            : </a>
+<a name="244"><span class="lineNum">     244 </span>            :     // add motor interference</a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineCov">   85832400 :     mag_bf += sitl-&gt;mag_mot.get() * battery_current;</span></a>
+<a name="246"><span class="lineNum">     246 </span>            : }</a>
+<a name="247"><span class="lineNum">     247 </span>            : </a>
+<a name="248"><span class="lineNum">     248 </span>            : /* advance time by deltat in seconds */</a>
+<a name="249"><span class="lineNum">     249 </span><span class="lineCov">   85832400 : void Aircraft::time_advance()</span></a>
+<a name="250"><span class="lineNum">     250 </span>            : {</a>
+<a name="251"><span class="lineNum">     251 </span>            :     // we only advance time if it hasn't been advanced already by the</a>
+<a name="252"><span class="lineNum">     252 </span>            :     // backend</a>
+<a name="253"><span class="lineNum">     253 </span><span class="lineCov">   85832400 :     if (last_time_us == time_now_us) {</span></a>
+<a name="254"><span class="lineNum">     254 </span><span class="lineCov">   85832400 :         time_now_us += frame_time_us;</span></a>
+<a name="255"><span class="lineNum">     255 </span>            :     }</a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineCov">   85832400 :     last_time_us = time_now_us;</span></a>
+<a name="257"><span class="lineNum">     257 </span><span class="lineCov">   85832400 :     if (use_time_sync) {</span></a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineCov">   85832400 :         sync_frame_time();</span></a>
+<a name="259"><span class="lineNum">     259 </span>            :     }</a>
+<a name="260"><span class="lineNum">     260 </span><span class="lineCov">   85832400 : }</span></a>
+<a name="261"><span class="lineNum">     261 </span>            : </a>
+<a name="262"><span class="lineNum">     262 </span>            : /* setup the frame step time */</a>
+<a name="263"><span class="lineNum">     263 </span><span class="lineCov">       2576 : void Aircraft::setup_frame_time(float new_rate, float new_speedup)</span></a>
+<a name="264"><span class="lineNum">     264 </span>            : {</a>
+<a name="265"><span class="lineNum">     265 </span><span class="lineCov">       2576 :     rate_hz = new_rate;</span></a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineCov">       2576 :     target_speedup = new_speedup;</span></a>
+<a name="267"><span class="lineNum">     267 </span><span class="lineCov">       2576 :     frame_time_us = uint64_t(1.0e6f/rate_hz);</span></a>
+<a name="268"><span class="lineNum">     268 </span>            : </a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineCov">       2576 :     last_wall_time_us = get_wall_time_us();</span></a>
+<a name="270"><span class="lineNum">     270 </span><span class="lineCov">       2576 : }</span></a>
+<a name="271"><span class="lineNum">     271 </span>            : </a>
+<a name="272"><span class="lineNum">     272 </span>            : /* adjust frame_time calculation */</a>
+<a name="273"><span class="lineNum">     273 </span><span class="lineCov">   85832400 : void Aircraft::adjust_frame_time(float new_rate)</span></a>
+<a name="274"><span class="lineNum">     274 </span>            : {</a>
+<a name="275"><span class="lineNum">     275 </span><span class="lineCov">   85832400 :     frame_time_us = uint64_t(1.0e6f/new_rate);</span></a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineCov">   85832400 :     rate_hz = new_rate;</span></a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineCov">   85832400 : }</span></a>
+<a name="278"><span class="lineNum">     278 </span>            : </a>
+<a name="279"><span class="lineNum">     279 </span>            : /*</a>
+<a name="280"><span class="lineNum">     280 </span>            :    try to synchronise simulation time with wall clock time, taking</a>
+<a name="281"><span class="lineNum">     281 </span>            :    into account desired speedup</a>
+<a name="282"><span class="lineNum">     282 </span>            :    This tries to take account of possible granularity of</a>
+<a name="283"><span class="lineNum">     283 </span>            :    get_wall_time_us() so it works reasonably well on windows</a>
+<a name="284"><span class="lineNum">     284 </span>            : */</a>
+<a name="285"><span class="lineNum">     285 </span><span class="lineCov">   85832400 : void Aircraft::sync_frame_time(void)</span></a>
+<a name="286"><span class="lineNum">     286 </span>            : {</a>
+<a name="287"><span class="lineNum">     287 </span><span class="lineCov">   85832400 :     frame_counter++;</span></a>
+<a name="288"><span class="lineNum">     288 </span><span class="lineCov">   85832400 :     uint64_t now = get_wall_time_us();</span></a>
+<a name="289"><span class="lineNum">     289 </span><span class="lineCov">   85832400 :     uint64_t dt_us = now - last_wall_time_us;</span></a>
+<a name="290"><span class="lineNum">     290 </span>            : </a>
+<a name="291"><span class="lineNum">     291 </span><span class="lineCov">   85832400 :     const float target_dt_us = 1.0e6/(rate_hz*target_speedup);</span></a>
+<a name="292"><span class="lineNum">     292 </span>            : </a>
+<a name="293"><span class="lineNum">     293 </span>            :     // accumulate sleep debt if we're running too fast</a>
+<a name="294"><span class="lineNum">     294 </span><span class="lineCov">   85832400 :     sleep_debt_us += target_dt_us - dt_us;</span></a>
+<a name="295"><span class="lineNum">     295 </span>            : </a>
+<a name="296"><span class="lineNum">     296 </span><span class="lineCov">   85832400 :     if (sleep_debt_us &lt; -1.0e5) {</span></a>
+<a name="297"><span class="lineNum">     297 </span>            :         // don't let a large negative debt build up</a>
+<a name="298"><span class="lineNum">     298 </span><span class="lineCov">   74941600 :         sleep_debt_us = -1.0e5;</span></a>
+<a name="299"><span class="lineNum">     299 </span>            :     }</a>
+<a name="300"><span class="lineNum">     300 </span><span class="lineCov">   85832400 :     if (sleep_debt_us &gt; min_sleep_time) {</span></a>
+<a name="301"><span class="lineNum">     301 </span>            :         // sleep if we have built up a debt of min_sleep_tim</a>
+<a name="302"><span class="lineNum">     302 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_SITL</a>
+<a name="303"><span class="lineNum">     303 </span><span class="lineCov">      88429 :         usleep(sleep_debt_us);</span></a>
+<a name="304"><span class="lineNum">     304 </span>            : #elif CONFIG_HAL_BOARD == HAL_BOARD_CHIBIOS</a>
+<a name="305"><span class="lineNum">     305 </span>            :         hal.scheduler-&gt;delay_microseconds(sleep_debt_us);</a>
+<a name="306"><span class="lineNum">     306 </span>            : #else</a>
+<a name="307"><span class="lineNum">     307 </span>            :         // ??</a>
+<a name="308"><span class="lineNum">     308 </span>            : #endif</a>
+<a name="309"><span class="lineNum">     309 </span><span class="lineCov">      88429 :         sleep_debt_us -= (get_wall_time_us() - now);</span></a>
+<a name="310"><span class="lineNum">     310 </span>            :     }</a>
+<a name="311"><span class="lineNum">     311 </span><span class="lineCov">   85832400 :     last_wall_time_us = get_wall_time_us();</span></a>
+<a name="312"><span class="lineNum">     312 </span>            : </a>
+<a name="313"><span class="lineNum">     313 </span><span class="lineCov">   85832400 :     uint32_t now_ms = last_wall_time_us / 1000ULL;</span></a>
+<a name="314"><span class="lineNum">     314 </span><span class="lineCov">   85832400 :     float dt_wall = (now_ms - last_fps_report_ms) * 0.001;</span></a>
+<a name="315"><span class="lineNum">     315 </span><span class="lineCov">   85832400 :     if (dt_wall &gt; 0.01) {  // 0.01s average</span></a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineCov">     301313 :         achieved_rate_hz = (frame_counter - last_frame_count) / dt_wall;</span></a>
+<a name="317"><span class="lineNum">     317 </span>            : #if 0</a>
+<a name="318"><span class="lineNum">     318 </span>            :         ::printf(&quot;Rate: target:%.1f achieved:%.1f speedup %.1f/%.1f\n&quot;,</a>
+<a name="319"><span class="lineNum">     319 </span>            :                  rate_hz*target_speedup, achieved_rate_hz,</a>
+<a name="320"><span class="lineNum">     320 </span>            :                  achieved_rate_hz/rate_hz, target_speedup);</a>
+<a name="321"><span class="lineNum">     321 </span>            : #endif</a>
+<a name="322"><span class="lineNum">     322 </span><span class="lineCov">     301313 :         last_frame_count = frame_counter;</span></a>
+<a name="323"><span class="lineNum">     323 </span><span class="lineCov">     301313 :         last_fps_report_ms = now_ms;</span></a>
+<a name="324"><span class="lineNum">     324 </span>            :     }</a>
+<a name="325"><span class="lineNum">     325 </span><span class="lineCov">   85832400 : }</span></a>
+<a name="326"><span class="lineNum">     326 </span>            : </a>
+<a name="327"><span class="lineNum">     327 </span>            : /* add noise based on throttle level (from 0..1) */</a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineNoCov">          0 : void Aircraft::add_noise(float throttle)</span></a>
+<a name="329"><span class="lineNum">     329 </span>            : {</a>
+<a name="330"><span class="lineNum">     330 </span><span class="lineNoCov">          0 :     gyro += Vector3f(rand_normal(0, 1),</span></a>
+<a name="331"><span class="lineNum">     331 </span><span class="lineNoCov">          0 :                      rand_normal(0, 1),</span></a>
+<a name="332"><span class="lineNum">     332 </span><span class="lineNoCov">          0 :                      rand_normal(0, 1)) * gyro_noise * fabsf(throttle);</span></a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineNoCov">          0 :     accel_body += Vector3f(rand_normal(0, 1),</span></a>
+<a name="334"><span class="lineNum">     334 </span><span class="lineNoCov">          0 :                            rand_normal(0, 1),</span></a>
+<a name="335"><span class="lineNum">     335 </span><span class="lineNoCov">          0 :                            rand_normal(0, 1)) * accel_noise * fabsf(throttle);</span></a>
+<a name="336"><span class="lineNum">     336 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="337"><span class="lineNum">     337 </span>            : </a>
+<a name="338"><span class="lineNum">     338 </span>            : /*</a>
+<a name="339"><span class="lineNum">     339 </span>            :   normal distribution random numbers</a>
+<a name="340"><span class="lineNum">     340 </span>            :   See</a>
+<a name="341"><span class="lineNum">     341 </span>            :   http://en.literateprograms.org/index.php?title=Special:DownloadCode/Box-Muller_transform_%28C%29&amp;oldid=7011</a>
+<a name="342"><span class="lineNum">     342 </span>            : */</a>
+<a name="343"><span class="lineNum">     343 </span><span class="lineCov">      64486 : double Aircraft::rand_normal(double mean, double stddev)</span></a>
+<a name="344"><span class="lineNum">     344 </span>            : {</a>
+<a name="345"><span class="lineNum">     345 </span>            :     static double n2 = 0.0;</a>
+<a name="346"><span class="lineNum">     346 </span>            :     static int n2_cached = 0;</a>
+<a name="347"><span class="lineNum">     347 </span><span class="lineCov">      64486 :     if (!n2_cached) {</span></a>
+<a name="348"><span class="lineNum">     348 </span>            :         double x, y, r;</a>
+<a name="349"><span class="lineNum">     349 </span><span class="lineCov">       8815 :         do</span></a>
+<a name="350"><span class="lineNum">     350 </span>            :         {</a>
+<a name="351"><span class="lineNum">     351 </span><span class="lineCov">      41058 :             x = 2.0 * rand()/RAND_MAX - 1;</span></a>
+<a name="352"><span class="lineNum">     352 </span><span class="lineCov">      41058 :             y = 2.0 * rand()/RAND_MAX - 1;</span></a>
+<a name="353"><span class="lineNum">     353 </span><span class="lineCov">      41058 :             r = x*x + y*y;</span></a>
+<a name="354"><span class="lineNum">     354 </span><span class="lineCov">      41058 :         } while (is_zero(r) || r &gt; 1.0);</span></a>
+<a name="355"><span class="lineNum">     355 </span><span class="lineCov">      32243 :         const double d = sqrt(-2.0 * log(r)/r);</span></a>
+<a name="356"><span class="lineNum">     356 </span><span class="lineCov">      32243 :         const double n1 = x * d;</span></a>
+<a name="357"><span class="lineNum">     357 </span><span class="lineCov">      32243 :         n2 = y * d;</span></a>
+<a name="358"><span class="lineNum">     358 </span><span class="lineCov">      32243 :         const double result = n1 * stddev + mean;</span></a>
+<a name="359"><span class="lineNum">     359 </span><span class="lineCov">      32243 :         n2_cached = 1;</span></a>
+<a name="360"><span class="lineNum">     360 </span><span class="lineCov">      32243 :         return result;</span></a>
+<a name="361"><span class="lineNum">     361 </span>            :     } else {</a>
+<a name="362"><span class="lineNum">     362 </span><span class="lineCov">      32243 :         n2_cached = 0;</span></a>
+<a name="363"><span class="lineNum">     363 </span><span class="lineCov">      32243 :         return n2 * stddev + mean;</span></a>
+<a name="364"><span class="lineNum">     364 </span>            :     }</a>
+<a name="365"><span class="lineNum">     365 </span>            : }</a>
+<a name="366"><span class="lineNum">     366 </span>            : </a>
+<a name="367"><span class="lineNum">     367 </span>            : </a>
+<a name="368"><span class="lineNum">     368 </span>            : </a>
+<a name="369"><span class="lineNum">     369 </span>            : </a>
+<a name="370"><span class="lineNum">     370 </span>            : /*</a>
+<a name="371"><span class="lineNum">     371 </span>            :    fill a sitl_fdm structure from the simulator state</a>
+<a name="372"><span class="lineNum">     372 </span>            : */</a>
+<a name="373"><span class="lineNum">     373 </span><span class="lineCov">   85832400 : void Aircraft::fill_fdm(struct sitl_fdm &amp;fdm)</span></a>
+<a name="374"><span class="lineNum">     374 </span>            : {</a>
+<a name="375"><span class="lineNum">     375 </span><span class="lineCov">   85832400 :     bool is_smoothed = false;</span></a>
+<a name="376"><span class="lineNum">     376 </span><span class="lineCov">   85832400 :     if (use_smoothing) {</span></a>
+<a name="377"><span class="lineNum">     377 </span><span class="lineCov">   70726200 :         smooth_sensors();</span></a>
+<a name="378"><span class="lineNum">     378 </span><span class="lineCov">   70726200 :         is_smoothed = true;</span></a>
+<a name="379"><span class="lineNum">     379 </span>            :     }</a>
+<a name="380"><span class="lineNum">     380 </span><span class="lineCov">   85832400 :     fdm.timestamp_us = time_now_us;</span></a>
+<a name="381"><span class="lineNum">     381 </span><span class="lineCov">   85832400 :     if (fdm.home.lat == 0 &amp;&amp; fdm.home.lng == 0) {</span></a>
+<a name="382"><span class="lineNum">     382 </span>            :         // initialise home</a>
+<a name="383"><span class="lineNum">     383 </span><span class="lineCov">        848 :         fdm.home = home;</span></a>
+<a name="384"><span class="lineNum">     384 </span>            :     }</a>
+<a name="385"><span class="lineNum">     385 </span><span class="lineCov">   85832400 :     fdm.is_lock_step_scheduled = lock_step_scheduled;</span></a>
+<a name="386"><span class="lineNum">     386 </span><span class="lineCov">   85832400 :     fdm.latitude  = location.lat * 1.0e-7;</span></a>
+<a name="387"><span class="lineNum">     387 </span><span class="lineCov">   85832400 :     fdm.longitude = location.lng * 1.0e-7;</span></a>
+<a name="388"><span class="lineNum">     388 </span><span class="lineCov">   85832400 :     fdm.altitude  = location.alt * 1.0e-2;</span></a>
+<a name="389"><span class="lineNum">     389 </span><span class="lineCov">   85832400 :     fdm.heading   = degrees(atan2f(velocity_ef.y, velocity_ef.x));</span></a>
+<a name="390"><span class="lineNum">     390 </span><span class="lineCov">   85832400 :     fdm.speedN    = velocity_ef.x;</span></a>
+<a name="391"><span class="lineNum">     391 </span><span class="lineCov">   85832400 :     fdm.speedE    = velocity_ef.y;</span></a>
+<a name="392"><span class="lineNum">     392 </span><span class="lineCov">   85832400 :     fdm.speedD    = velocity_ef.z;</span></a>
+<a name="393"><span class="lineNum">     393 </span><span class="lineCov">   85832400 :     fdm.xAccel    = accel_body.x;</span></a>
+<a name="394"><span class="lineNum">     394 </span><span class="lineCov">   85832400 :     fdm.yAccel    = accel_body.y;</span></a>
+<a name="395"><span class="lineNum">     395 </span><span class="lineCov">   85832400 :     fdm.zAccel    = accel_body.z;</span></a>
+<a name="396"><span class="lineNum">     396 </span><span class="lineCov">   85832400 :     fdm.rollRate  = degrees(gyro.x);</span></a>
+<a name="397"><span class="lineNum">     397 </span><span class="lineCov">   85832400 :     fdm.pitchRate = degrees(gyro.y);</span></a>
+<a name="398"><span class="lineNum">     398 </span><span class="lineCov">   85832400 :     fdm.yawRate   = degrees(gyro.z);</span></a>
+<a name="399"><span class="lineNum">     399 </span>            :     float r, p, y;</a>
+<a name="400"><span class="lineNum">     400 </span><span class="lineCov">   85832400 :     dcm.to_euler(&amp;r, &amp;p, &amp;y);</span></a>
+<a name="401"><span class="lineNum">     401 </span><span class="lineCov">   85832400 :     fdm.rollDeg  = degrees(r);</span></a>
+<a name="402"><span class="lineNum">     402 </span><span class="lineCov">   85832400 :     fdm.pitchDeg = degrees(p);</span></a>
+<a name="403"><span class="lineNum">     403 </span><span class="lineCov">   85832400 :     fdm.yawDeg   = degrees(y);</span></a>
+<a name="404"><span class="lineNum">     404 </span><span class="lineCov">   85832400 :     fdm.quaternion.from_rotation_matrix(dcm);</span></a>
+<a name="405"><span class="lineNum">     405 </span><span class="lineCov">   85832400 :     fdm.airspeed = airspeed_pitot;</span></a>
+<a name="406"><span class="lineNum">     406 </span><span class="lineCov">   85832400 :     fdm.velocity_air_bf = velocity_air_bf;</span></a>
+<a name="407"><span class="lineNum">     407 </span><span class="lineCov">   85832400 :     fdm.battery_voltage = battery_voltage;</span></a>
+<a name="408"><span class="lineNum">     408 </span><span class="lineCov">   85832400 :     fdm.battery_current = battery_current;</span></a>
+<a name="409"><span class="lineNum">     409 </span><span class="lineCov">   85832400 :     fdm.motor_mask = motor_mask | sitl-&gt;vibe_motor_mask;</span></a>
+<a name="410"><span class="lineNum">     410 </span><span class="lineCov">   85832400 :     memcpy(fdm.rpm, rpm, sizeof(fdm.rpm));</span></a>
+<a name="411"><span class="lineNum">     411 </span><span class="lineCov">   85832400 :     fdm.rcin_chan_count = rcin_chan_count;</span></a>
+<a name="412"><span class="lineNum">     412 </span><span class="lineCov">   85832400 :     fdm.range = rangefinder_range();</span></a>
+<a name="413"><span class="lineNum">     413 </span><span class="lineCov">   85832400 :     memcpy(fdm.rcin, rcin, rcin_chan_count * sizeof(float));</span></a>
+<a name="414"><span class="lineNum">     414 </span><span class="lineCov">   85832400 :     fdm.bodyMagField = mag_bf;</span></a>
+<a name="415"><span class="lineNum">     415 </span>            : </a>
+<a name="416"><span class="lineNum">     416 </span><span class="lineCov">   85832400 :     fdm.bodyMagField.rotate(sitl-&gt;imu_orientation);</span></a>
+<a name="417"><span class="lineNum">     417 </span>            : </a>
+<a name="418"><span class="lineNum">     418 </span>            :     // copy laser scanner results</a>
+<a name="419"><span class="lineNum">     419 </span><span class="lineCov">   85832400 :     fdm.scanner.points = scanner.points;</span></a>
+<a name="420"><span class="lineNum">     420 </span><span class="lineCov">   85832400 :     fdm.scanner.ranges = scanner.ranges;</span></a>
+<a name="421"><span class="lineNum">     421 </span>            : </a>
+<a name="422"><span class="lineNum">     422 </span>            :     // copy rangefinder</a>
+<a name="423"><span class="lineNum">     423 </span><span class="lineCov">   85832400 :     memcpy(fdm.rangefinder_m, rangefinder_m, sizeof(fdm.rangefinder_m));</span></a>
+<a name="424"><span class="lineNum">     424 </span>            : </a>
+<a name="425"><span class="lineNum">     425 </span><span class="lineCov">   85832400 :     fdm.wind_vane_apparent.direction = wind_vane_apparent.direction;</span></a>
+<a name="426"><span class="lineNum">     426 </span><span class="lineCov">   85832400 :     fdm.wind_vane_apparent.speed = wind_vane_apparent.speed;</span></a>
+<a name="427"><span class="lineNum">     427 </span>            : </a>
+<a name="428"><span class="lineNum">     428 </span><span class="lineCov">   85832400 :     fdm.wind_ef = wind_ef;</span></a>
+<a name="429"><span class="lineNum">     429 </span>            : </a>
+<a name="430"><span class="lineNum">     430 </span><span class="lineCov">   85832400 :     if (is_smoothed) {</span></a>
+<a name="431"><span class="lineNum">     431 </span><span class="lineCov">   70726200 :         fdm.xAccel = smoothing.accel_body.x;</span></a>
+<a name="432"><span class="lineNum">     432 </span><span class="lineCov">   70726200 :         fdm.yAccel = smoothing.accel_body.y;</span></a>
+<a name="433"><span class="lineNum">     433 </span><span class="lineCov">   70726200 :         fdm.zAccel = smoothing.accel_body.z;</span></a>
+<a name="434"><span class="lineNum">     434 </span><span class="lineCov">   70726200 :         fdm.rollRate  = degrees(smoothing.gyro.x);</span></a>
+<a name="435"><span class="lineNum">     435 </span><span class="lineCov">   70726200 :         fdm.pitchRate = degrees(smoothing.gyro.y);</span></a>
+<a name="436"><span class="lineNum">     436 </span><span class="lineCov">   70726200 :         fdm.yawRate   = degrees(smoothing.gyro.z);</span></a>
+<a name="437"><span class="lineNum">     437 </span><span class="lineCov">   70726200 :         fdm.speedN    = smoothing.velocity_ef.x;</span></a>
+<a name="438"><span class="lineNum">     438 </span><span class="lineCov">   70726200 :         fdm.speedE    = smoothing.velocity_ef.y;</span></a>
+<a name="439"><span class="lineNum">     439 </span><span class="lineCov">   70726200 :         fdm.speedD    = smoothing.velocity_ef.z;</span></a>
+<a name="440"><span class="lineNum">     440 </span><span class="lineCov">   70726200 :         fdm.latitude  = smoothing.location.lat * 1.0e-7;</span></a>
+<a name="441"><span class="lineNum">     441 </span><span class="lineCov">   70726200 :         fdm.longitude = smoothing.location.lng * 1.0e-7;</span></a>
+<a name="442"><span class="lineNum">     442 </span><span class="lineCov">   70726200 :         fdm.altitude  = smoothing.location.alt * 1.0e-2;</span></a>
+<a name="443"><span class="lineNum">     443 </span>            :     }</a>
+<a name="444"><span class="lineNum">     444 </span>            : </a>
+<a name="445"><span class="lineNum">     445 </span>            : </a>
+<a name="446"><span class="lineNum">     446 </span><span class="lineCov">   85832400 :     if (ahrs_orientation != nullptr) {</span></a>
+<a name="447"><span class="lineNum">     447 </span><span class="lineCov">   85832400 :         enum Rotation imu_rotation = (enum Rotation)ahrs_orientation-&gt;get();</span></a>
+<a name="448"><span class="lineNum">     448 </span><span class="lineCov">   85832400 :         if (imu_rotation != last_imu_rotation) {</span></a>
+<a name="449"><span class="lineNum">     449 </span><span class="lineNoCov">          0 :             sitl-&gt;ahrs_rotation.from_rotation(imu_rotation);</span></a>
+<a name="450"><span class="lineNum">     450 </span><span class="lineNoCov">          0 :             sitl-&gt;ahrs_rotation_inv = sitl-&gt;ahrs_rotation.transposed();</span></a>
+<a name="451"><span class="lineNum">     451 </span><span class="lineNoCov">          0 :             last_imu_rotation = imu_rotation;</span></a>
+<a name="452"><span class="lineNum">     452 </span>            :         }</a>
+<a name="453"><span class="lineNum">     453 </span><span class="lineCov">   85832400 :         if (imu_rotation != ROTATION_NONE) {</span></a>
+<a name="454"><span class="lineNum">     454 </span><span class="lineNoCov">          0 :             Matrix3f m = dcm;</span></a>
+<a name="455"><span class="lineNum">     455 </span><span class="lineNoCov">          0 :             m = m * sitl-&gt;ahrs_rotation_inv;</span></a>
+<a name="456"><span class="lineNum">     456 </span>            : </a>
+<a name="457"><span class="lineNum">     457 </span><span class="lineNoCov">          0 :             m.to_euler(&amp;r, &amp;p, &amp;y);</span></a>
+<a name="458"><span class="lineNum">     458 </span><span class="lineNoCov">          0 :             fdm.rollDeg  = degrees(r);</span></a>
+<a name="459"><span class="lineNum">     459 </span><span class="lineNoCov">          0 :             fdm.pitchDeg = degrees(p);</span></a>
+<a name="460"><span class="lineNum">     460 </span><span class="lineNoCov">          0 :             fdm.yawDeg   = degrees(y);</span></a>
+<a name="461"><span class="lineNum">     461 </span><span class="lineNoCov">          0 :             fdm.quaternion.from_rotation_matrix(m);</span></a>
+<a name="462"><span class="lineNum">     462 </span>            :         }</a>
+<a name="463"><span class="lineNum">     463 </span>            :     }</a>
+<a name="464"><span class="lineNum">     464 </span>            : </a>
+<a name="465"><span class="lineNum">     465 </span>            :     // in the first call here, if a speedup option is specified, overwrite it</a>
+<a name="466"><span class="lineNum">     466 </span><span class="lineCov">   85832400 :     if (is_equal(last_speedup, -1.0f) &amp;&amp; !is_equal(get_speedup(), 1.0f)) {</span></a>
+<a name="467"><span class="lineNum">     467 </span><span class="lineNoCov">          0 :         sitl-&gt;speedup.set(get_speedup());</span></a>
+<a name="468"><span class="lineNum">     468 </span>            :     }</a>
+<a name="469"><span class="lineNum">     469 </span>            :     </a>
+<a name="470"><span class="lineNum">     470 </span><span class="lineCov">   85832400 :     if (!is_equal(last_speedup, float(sitl-&gt;speedup)) &amp;&amp; sitl-&gt;speedup &gt; 0) {</span></a>
+<a name="471"><span class="lineNum">     471 </span><span class="lineCov">        880 :         set_speedup(sitl-&gt;speedup);</span></a>
+<a name="472"><span class="lineNum">     472 </span><span class="lineCov">        880 :         last_speedup = sitl-&gt;speedup;</span></a>
+<a name="473"><span class="lineNum">     473 </span>            :     }</a>
+<a name="474"><span class="lineNum">     474 </span>            : </a>
+<a name="475"><span class="lineNum">     475 </span>            : #if HAL_LOGGING_ENABLED</a>
+<a name="476"><span class="lineNum">     476 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_SITL</a>
+<a name="477"><span class="lineNum">     477 </span>            :     // the SITL HAL can add information about pausing the simulation</a>
+<a name="478"><span class="lineNum">     478 </span>            :     // and its effect on the UART.  Not present when we're compiling</a>
+<a name="479"><span class="lineNum">     479 </span>            :     // for simulation-on-hardware</a>
+<a name="480"><span class="lineNum">     480 </span><span class="lineCov">   85832400 :     const uint32_t full_count = hal_sitl.get_uart_output_full_queue_count();</span></a>
+<a name="481"><span class="lineNum">     481 </span>            : #else</a>
+<a name="482"><span class="lineNum">     482 </span>            :     const uint32_t full_count = 0;</a>
+<a name="483"><span class="lineNum">     483 </span>            : #endif</a>
+<a name="484"><span class="lineNum">     484 </span>            :     // for EKF comparison log relhome pos and velocity at loop rate</a>
+<a name="485"><span class="lineNum">     485 </span>            :     static uint16_t last_ticks;</a>
+<a name="486"><span class="lineNum">     486 </span>            :     // FIXME: stop using AP_Scheduler here!  It's from &quot;the other side&quot;</a>
+<a name="487"><span class="lineNum">     487 </span><span class="lineCov">   85832400 :     const auto *scheduler = AP_Scheduler::get_singleton();</span></a>
+<a name="488"><span class="lineNum">     488 </span><span class="lineCov">   85832400 :     if (scheduler == nullptr) {</span></a>
+<a name="489"><span class="lineNum">     489 </span>            :         // not instantiated in examples</a>
+<a name="490"><span class="lineNum">     490 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="491"><span class="lineNum">     491 </span>            :     }</a>
+<a name="492"><span class="lineNum">     492 </span><span class="lineCov">   85832400 :     uint16_t ticks = scheduler-&gt;ticks();</span></a>
+<a name="493"><span class="lineNum">     493 </span><span class="lineCov">   85832400 :     if (last_ticks != ticks) {</span></a>
+<a name="494"><span class="lineNum">     494 </span><span class="lineCov">   27709600 :         last_ticks = ticks;</span></a>
+<a name="495"><span class="lineNum">     495 </span>            : // @LoggerMessage: SIM2</a>
+<a name="496"><span class="lineNum">     496 </span>            : // @Description: Additional simulator state</a>
+<a name="497"><span class="lineNum">     497 </span>            : // @Field: TimeUS: Time since system startup</a>
+<a name="498"><span class="lineNum">     498 </span>            : // @Field: PN: North position from home</a>
+<a name="499"><span class="lineNum">     499 </span>            : // @Field: PE: East position from home</a>
+<a name="500"><span class="lineNum">     500 </span>            : // @Field: PD: Down position from home</a>
+<a name="501"><span class="lineNum">     501 </span>            : // @Field: VN: Velocity north</a>
+<a name="502"><span class="lineNum">     502 </span>            : // @Field: VE: Velocity east</a>
+<a name="503"><span class="lineNum">     503 </span>            : // @Field: VD: Velocity down</a>
+<a name="504"><span class="lineNum">     504 </span>            : // @Field: As: Airspeed</a>
+<a name="505"><span class="lineNum">     505 </span>            : // @Field: ASpdU: Achieved simulation speedup value</a>
+<a name="506"><span class="lineNum">     506 </span>            : // @Field: UFC: Number of times simulation paused for serial0 output</a>
+<a name="507"><span class="lineNum">     507 </span><span class="lineCov">   27709600 :         Vector3d pos = get_position_relhome();</span></a>
+<a name="508"><span class="lineNum">     508 </span><span class="lineCov">   27709600 :         Vector3f vel = get_velocity_ef();</span></a>
+<a name="509"><span class="lineNum">     509 </span><span class="lineCov">   55419300 :         AP::logger().WriteStreaming(</span></a>
+<a name="510"><span class="lineNum">     510 </span>            :             &quot;SIM2&quot;,</a>
+<a name="511"><span class="lineNum">     511 </span>            :             &quot;TimeUS,PN,PE,PD,VN,VE,VD,As,ASpdU,UFC&quot;,</a>
+<a name="512"><span class="lineNum">     512 </span>            :             &quot;QdddfffffI&quot;,</a>
+<a name="513"><span class="lineNum">     513 </span>            :             AP_HAL::micros64(),</a>
+<a name="514"><span class="lineNum">     514 </span>            :             pos.x, pos.y, pos.z,</a>
+<a name="515"><span class="lineNum">     515 </span><span class="lineCov">   27709600 :             vel.x, vel.y, vel.z,</span></a>
+<a name="516"><span class="lineNum">     516 </span><span class="lineCov">   27709600 :             airspeed_pitot,</span></a>
+<a name="517"><span class="lineNum">     517 </span><span class="lineCov">   27709600 :             achieved_rate_hz/rate_hz,</span></a>
+<a name="518"><span class="lineNum">     518 </span>            :             full_count</a>
+<a name="519"><span class="lineNum">     519 </span>            :         );</a>
+<a name="520"><span class="lineNum">     520 </span>            :     }</a>
+<a name="521"><span class="lineNum">     521 </span>            : #endif</a>
+<a name="522"><span class="lineNum">     522 </span>            : }</a>
+<a name="523"><span class="lineNum">     523 </span>            : </a>
+<a name="524"><span class="lineNum">     524 </span>            : /*</a>
+<a name="525"><span class="lineNum">     525 </span>            :   rover and copter have special handling for horizontal rangefinders</a>
+<a name="526"><span class="lineNum">     526 </span>            :   as distance to obstacles - this takes effect for yaw-only</a>
+<a name="527"><span class="lineNum">     527 </span>            :   orientations</a>
+<a name="528"><span class="lineNum">     528 </span>            :  */</a>
+<a name="529"><span class="lineNum">     529 </span>            : #define SITL_RANGEFINDER_AS_OBJECT_SENSOR (APM_BUILD_TYPE(APM_BUILD_Kala) || APM_BUILD_TYPE(APM_BUILD_Rover))</a>
+<a name="530"><span class="lineNum">     530 </span>            : #define SITL_RANGEFINDER_IS_YAW_ONLY(orientation) (orientation &lt;= ROTATION_YAW_315)</a>
+<a name="531"><span class="lineNum">     531 </span>            : </a>
+<a name="532"><span class="lineNum">     532 </span>            : // returns perpendicular height to surface rangefinder is bouncing off</a>
+<a name="533"><span class="lineNum">     533 </span><span class="lineCov">  456673000 : float Aircraft::perpendicular_distance_to_rangefinder_surface() const</span></a>
+<a name="534"><span class="lineNum">     534 </span>            : {</a>
+<a name="535"><span class="lineNum">     535 </span>            : #if SITL_RANGEFINDER_AS_OBJECT_SENSOR</a>
+<a name="536"><span class="lineNum">     536 </span><span class="lineCov">  456673000 :     const auto orientation = (Rotation)sitl-&gt;sonar_rot.get();</span></a>
+<a name="537"><span class="lineNum">     537 </span><span class="lineCov">  456673000 :     if (SITL_RANGEFINDER_IS_YAW_ONLY(orientation)) {</span></a>
+<a name="538"><span class="lineNum">     538 </span>            :         // assume these are avoidance sensors</a>
+<a name="539"><span class="lineNum">     539 </span><span class="lineNoCov">          0 :         return sitl-&gt;measure_distance_at_angle_bf(location, sitl-&gt;sonar_rot.get()*45);</span></a>
+<a name="540"><span class="lineNum">     540 </span>            :     }</a>
+<a name="541"><span class="lineNum">     541 </span>            : #endif</a>
+<a name="542"><span class="lineNum">     542 </span>            : </a>
+<a name="543"><span class="lineNum">     543 </span>            :     // default is ground sensing rangefinders</a>
+<a name="544"><span class="lineNum">     544 </span><span class="lineCov">  456673000 :     return sitl-&gt;state.height_agl;</span></a>
+<a name="545"><span class="lineNum">     545 </span>            : }</a>
+<a name="546"><span class="lineNum">     546 </span>            : </a>
+<a name="547"><span class="lineNum">     547 </span><span class="lineCov">  456673000 : float Aircraft::rangefinder_range() const</span></a>
+<a name="548"><span class="lineNum">     548 </span>            : {</a>
+<a name="549"><span class="lineNum">     549 </span><span class="lineCov">  456673000 :     float altitude = perpendicular_distance_to_rangefinder_surface();</span></a>
+<a name="550"><span class="lineNum">     550 </span>            : </a>
+<a name="551"><span class="lineNum">     551 </span>            :     // sensor position offset in body frame</a>
+<a name="552"><span class="lineNum">     552 </span><span class="lineCov">  456673000 :     const Vector3f relPosSensorBF = sitl-&gt;rngfnd_pos_offset;</span></a>
+<a name="553"><span class="lineNum">     553 </span>            : </a>
+<a name="554"><span class="lineNum">     554 </span>            :     // n.b. the following code is assuming rotation-pitch-270:</a>
+<a name="555"><span class="lineNum">     555 </span>            :     // adjust altitude for position of the sensor on the vehicle if position offset is non-zero</a>
+<a name="556"><span class="lineNum">     556 </span><span class="lineCov">  456673000 :     if (!relPosSensorBF.is_zero()) {</span></a>
+<a name="557"><span class="lineNum">     557 </span>            :         // get a rotation matrix following DCM conventions (body to earth)</a>
+<a name="558"><span class="lineNum">     558 </span><span class="lineNoCov">          0 :         Matrix3f rotmat;</span></a>
+<a name="559"><span class="lineNum">     559 </span><span class="lineNoCov">          0 :         sitl-&gt;state.quaternion.rotation_matrix(rotmat);</span></a>
+<a name="560"><span class="lineNum">     560 </span>            :         // rotate the offset into earth frame</a>
+<a name="561"><span class="lineNum">     561 </span><span class="lineNoCov">          0 :         const Vector3f relPosSensorEF = rotmat * relPosSensorBF;</span></a>
+<a name="562"><span class="lineNum">     562 </span>            :         // correct the altitude at the sensor</a>
+<a name="563"><span class="lineNum">     563 </span><span class="lineNoCov">          0 :         altitude -= relPosSensorEF.z;</span></a>
+<a name="564"><span class="lineNum">     564 </span>            :     }</a>
+<a name="565"><span class="lineNum">     565 </span>            : </a>
+<a name="566"><span class="lineNum">     566 </span><span class="lineCov">  456673000 :     const auto orientation = (Rotation)sitl-&gt;sonar_rot.get();</span></a>
+<a name="567"><span class="lineNum">     567 </span>            : #if SITL_RANGEFINDER_AS_OBJECT_SENSOR</a>
+<a name="568"><span class="lineNum">     568 </span>            : </a>
+<a name="569"><span class="lineNum">     569 </span><span class="lineCov">  456673000 :     float roll = sitl-&gt;state.rollDeg;</span></a>
+<a name="570"><span class="lineNum">     570 </span><span class="lineCov">  456673000 :     float pitch = sitl-&gt;state.pitchDeg;</span></a>
+<a name="571"><span class="lineNum">     571 </span>            : </a>
+<a name="572"><span class="lineNum">     572 </span><span class="lineCov">  456673000 :     if (roll &gt; 0) {</span></a>
+<a name="573"><span class="lineNum">     573 </span><span class="lineCov">  130783000 :         roll -= rangefinder_beam_width();</span></a>
+<a name="574"><span class="lineNum">     574 </span><span class="lineCov">  130783000 :         if (roll &lt; 0) {</span></a>
+<a name="575"><span class="lineNum">     575 </span><span class="lineNoCov">          0 :             roll = 0;</span></a>
+<a name="576"><span class="lineNum">     576 </span>            :         }</a>
+<a name="577"><span class="lineNum">     577 </span>            :     } else {</a>
+<a name="578"><span class="lineNum">     578 </span><span class="lineCov">  325890000 :         roll += rangefinder_beam_width();</span></a>
+<a name="579"><span class="lineNum">     579 </span><span class="lineCov">  325890000 :         if (roll &gt; 0) {</span></a>
+<a name="580"><span class="lineNum">     580 </span><span class="lineNoCov">          0 :             roll = 0;</span></a>
+<a name="581"><span class="lineNum">     581 </span>            :         }</a>
+<a name="582"><span class="lineNum">     582 </span>            :     }</a>
+<a name="583"><span class="lineNum">     583 </span><span class="lineCov">  456673000 :     if (pitch &gt; 0) {</span></a>
+<a name="584"><span class="lineNum">     584 </span><span class="lineCov">  121266000 :         pitch -= rangefinder_beam_width();</span></a>
+<a name="585"><span class="lineNum">     585 </span><span class="lineCov">  121266000 :         if (pitch &lt; 0) {</span></a>
+<a name="586"><span class="lineNum">     586 </span><span class="lineNoCov">          0 :             pitch = 0;</span></a>
+<a name="587"><span class="lineNum">     587 </span>            :         }</a>
+<a name="588"><span class="lineNum">     588 </span>            :     } else {</a>
+<a name="589"><span class="lineNum">     589 </span><span class="lineCov">  335407000 :         pitch += rangefinder_beam_width();</span></a>
+<a name="590"><span class="lineNum">     590 </span><span class="lineCov">  335407000 :         if (pitch &gt; 0) {</span></a>
+<a name="591"><span class="lineNum">     591 </span><span class="lineNoCov">          0 :             pitch = 0;</span></a>
+<a name="592"><span class="lineNum">     592 </span>            :         }</a>
+<a name="593"><span class="lineNum">     593 </span>            :     }</a>
+<a name="594"><span class="lineNum">     594 </span>            : </a>
+<a name="595"><span class="lineNum">     595 </span>            :     /*</a>
+<a name="596"><span class="lineNum">     596 </span>            :       rover and copter using SITL rangefinders as obstacle sensors</a>
+<a name="597"><span class="lineNum">     597 </span>            :      */</a>
+<a name="598"><span class="lineNum">     598 </span><span class="lineCov">  456673000 :     if (SITL_RANGEFINDER_IS_YAW_ONLY(orientation)) {</span></a>
+<a name="599"><span class="lineNum">     599 </span><span class="lineNoCov">          0 :         if (fabs(roll) &gt;= 90.0 || fabs(pitch) &gt;= 90.0) {</span></a>
+<a name="600"><span class="lineNum">     600 </span>            :             // not going to hit the ground....</a>
+<a name="601"><span class="lineNum">     601 </span><span class="lineNoCov">          0 :             return INFINITY;</span></a>
+<a name="602"><span class="lineNum">     602 </span>            :         }</a>
+<a name="603"><span class="lineNum">     603 </span><span class="lineNoCov">          0 :         altitude /= cosf(radians(roll)) * cosf(radians(pitch));</span></a>
+<a name="604"><span class="lineNum">     604 </span>            :     } else</a>
+<a name="605"><span class="lineNum">     605 </span>            : #endif</a>
+<a name="606"><span class="lineNum">     606 </span>            :     {</a>
+<a name="607"><span class="lineNum">     607 </span>            :         // adjust for rotation based on orientation of the sensor</a>
+<a name="608"><span class="lineNum">     608 </span><span class="lineCov">  456673000 :         Matrix3f rotmat;</span></a>
+<a name="609"><span class="lineNum">     609 </span><span class="lineCov">  456673000 :         sitl-&gt;state.quaternion.rotation_matrix(rotmat);</span></a>
+<a name="610"><span class="lineNum">     610 </span><span class="lineCov">  456673000 :         Vector3f v{1, 0, 0};</span></a>
+<a name="611"><span class="lineNum">     611 </span><span class="lineCov">  456673000 :         v.rotate(orientation);</span></a>
+<a name="612"><span class="lineNum">     612 </span><span class="lineCov">  456673000 :         v = rotmat * v;</span></a>
+<a name="613"><span class="lineNum">     613 </span>            : </a>
+<a name="614"><span class="lineNum">     614 </span><span class="lineCov">  456673000 :         if (!is_positive(v.z)) {</span></a>
+<a name="615"><span class="lineNum">     615 </span><span class="lineCov">     531948 :             return INFINITY;</span></a>
+<a name="616"><span class="lineNum">     616 </span>            :         }</a>
+<a name="617"><span class="lineNum">     617 </span><span class="lineCov">  456141000 :         altitude /= v.z;</span></a>
+<a name="618"><span class="lineNum">     618 </span>            : </a>
+<a name="619"><span class="lineNum">     619 </span>            :         // this is awful, but there are drawbacks to assuming an</a>
+<a name="620"><span class="lineNum">     620 </span>            :         // infinite plane.  If we don't do this here then we end up</a>
+<a name="621"><span class="lineNum">     621 </span>            :         // with a ridiculous rangefinder range, and that can cause</a>
+<a name="622"><span class="lineNum">     622 </span>            :         // floating point exceptions when we return a distance in cm</a>
+<a name="623"><span class="lineNum">     623 </span>            :         // from the AP_RangeFinder_SITL.</a>
+<a name="624"><span class="lineNum">     624 </span><span class="lineCov">  456141000 :         if (altitude &gt; 100000) {</span></a>
+<a name="625"><span class="lineNum">     625 </span><span class="lineCov">         48 :             return INFINITY;</span></a>
+<a name="626"><span class="lineNum">     626 </span>            :         }</a>
+<a name="627"><span class="lineNum">     627 </span>            :     }</a>
+<a name="628"><span class="lineNum">     628 </span>            : </a>
+<a name="629"><span class="lineNum">     629 </span>            :     // Add some noise on reading</a>
+<a name="630"><span class="lineNum">     630 </span><span class="lineCov">  456141000 :     altitude += sitl-&gt;sonar_noise * rand_float();</span></a>
+<a name="631"><span class="lineNum">     631 </span>            : </a>
+<a name="632"><span class="lineNum">     632 </span>            :     // our starting positions can disagree with the terrain database:</a>
+<a name="633"><span class="lineNum">     633 </span><span class="lineCov">  456141000 :     if (altitude &lt; 0) {</span></a>
+<a name="634"><span class="lineNum">     634 </span><span class="lineCov">   21822500 :         altitude = 0;</span></a>
+<a name="635"><span class="lineNum">     635 </span>            :     }</a>
+<a name="636"><span class="lineNum">     636 </span>            : </a>
+<a name="637"><span class="lineNum">     637 </span><span class="lineCov">  456141000 :     return altitude;</span></a>
+<a name="638"><span class="lineNum">     638 </span>            : }</a>
+<a name="639"><span class="lineNum">     639 </span>            : </a>
+<a name="640"><span class="lineNum">     640 </span>            : #if defined(__CYGWIN__) || defined(__CYGWIN64__)</a>
+<a name="641"><span class="lineNum">     641 </span>            : extern &quot;C&quot; { uint32_t timeGetTime(); }</a>
+<a name="642"><span class="lineNum">     642 </span>            : #endif</a>
+<a name="643"><span class="lineNum">     643 </span>            : </a>
+<a name="644"><span class="lineNum">     644 </span>            : // potentially replace this with a call to AP_HAL::Util::get_hw_rtc</a>
+<a name="645"><span class="lineNum">     645 </span><span class="lineCov">  171757000 : uint64_t Aircraft::get_wall_time_us() const</span></a>
+<a name="646"><span class="lineNum">     646 </span>            : {</a>
+<a name="647"><span class="lineNum">     647 </span>            : #if defined(__CYGWIN__) || defined(__CYGWIN64__)</a>
+<a name="648"><span class="lineNum">     648 </span>            :     static uint32_t tPrev;</a>
+<a name="649"><span class="lineNum">     649 </span>            :     static uint64_t last_ret_us;</a>
+<a name="650"><span class="lineNum">     650 </span>            :     if (tPrev == 0) {</a>
+<a name="651"><span class="lineNum">     651 </span>            :         tPrev = timeGetTime();</a>
+<a name="652"><span class="lineNum">     652 </span>            :         return 0;</a>
+<a name="653"><span class="lineNum">     653 </span>            :     }</a>
+<a name="654"><span class="lineNum">     654 </span>            :     uint32_t now = timeGetTime();</a>
+<a name="655"><span class="lineNum">     655 </span>            :     last_ret_us += (uint64_t)((now - tPrev)*1000UL);</a>
+<a name="656"><span class="lineNum">     656 </span>            :     tPrev = now;</a>
+<a name="657"><span class="lineNum">     657 </span>            :     return last_ret_us;</a>
+<a name="658"><span class="lineNum">     658 </span>            : #elif CONFIG_HAL_BOARD == HAL_BOARD_SITL</a>
+<a name="659"><span class="lineNum">     659 </span>            :     struct timespec ts;</a>
+<a name="660"><span class="lineNum">     660 </span><span class="lineCov">  171757000 :     clock_gettime(CLOCK_MONOTONIC, &amp;ts);</span></a>
+<a name="661"><span class="lineNum">     661 </span><span class="lineCov">  171757000 :     return uint64_t(ts.tv_sec * 1000000ULL + ts.tv_nsec / 1000ULL);</span></a>
+<a name="662"><span class="lineNum">     662 </span>            : #else</a>
+<a name="663"><span class="lineNum">     663 </span>            :     return AP_HAL::micros64();</a>
+<a name="664"><span class="lineNum">     664 </span>            : #endif</a>
+<a name="665"><span class="lineNum">     665 </span>            : }</a>
+<a name="666"><span class="lineNum">     666 </span>            : </a>
+<a name="667"><span class="lineNum">     667 </span>            : /*</a>
+<a name="668"><span class="lineNum">     668 </span>            :   set simulation speedup</a>
+<a name="669"><span class="lineNum">     669 </span>            :  */</a>
+<a name="670"><span class="lineNum">     670 </span><span class="lineCov">       2576 : void Aircraft::set_speedup(float speedup)</span></a>
+<a name="671"><span class="lineNum">     671 </span>            : {</a>
+<a name="672"><span class="lineNum">     672 </span><span class="lineCov">       2576 :     setup_frame_time(rate_hz, speedup);</span></a>
+<a name="673"><span class="lineNum">     673 </span><span class="lineCov">       2576 : }</span></a>
+<a name="674"><span class="lineNum">     674 </span>            : </a>
+<a name="675"><span class="lineNum">     675 </span><span class="lineCov">   85832400 : void Aircraft::update_home()</span></a>
+<a name="676"><span class="lineNum">     676 </span>            : {</a>
+<a name="677"><span class="lineNum">     677 </span><span class="lineCov">   85832400 :     if (!home_is_set) {</span></a>
+<a name="678"><span class="lineNum">     678 </span><span class="lineNoCov">          0 :         if (sitl == nullptr) {</span></a>
+<a name="679"><span class="lineNum">     679 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="680"><span class="lineNum">     680 </span>            :         }</a>
+<a name="681"><span class="lineNum">     681 </span>            :         const Location loc{</a>
+<a name="682"><span class="lineNum">     682 </span><span class="lineNoCov">          0 :             int32_t(sitl-&gt;opos.lat.get() * 1.0e7),</span></a>
+<a name="683"><span class="lineNum">     683 </span><span class="lineNoCov">          0 :             int32_t(sitl-&gt;opos.lng.get() * 1.0e7),</span></a>
+<a name="684"><span class="lineNum">     684 </span><span class="lineNoCov">          0 :             int32_t(sitl-&gt;opos.alt.get() * 1.0e2),</span></a>
+<a name="685"><span class="lineNum">     685 </span>            :             Location::AltFrame::ABSOLUTE</a>
+<a name="686"><span class="lineNum">     686 </span><span class="lineNoCov">          0 :         };</span></a>
+<a name="687"><span class="lineNum">     687 </span><span class="lineNoCov">          0 :         set_start_location(loc, sitl-&gt;opos.hdg.get());</span></a>
+<a name="688"><span class="lineNum">     688 </span>            :     }</a>
+<a name="689"><span class="lineNum">     689 </span>            : }</a>
+<a name="690"><span class="lineNum">     690 </span>            : </a>
+<a name="691"><span class="lineNum">     691 </span><span class="lineCov">   85832400 : void Aircraft::update_model(const struct sitl_input &amp;input)</span></a>
+<a name="692"><span class="lineNum">     692 </span>            : {</a>
+<a name="693"><span class="lineNum">     693 </span><span class="lineCov">   85832400 :     local_ground_level = 0.0f;</span></a>
+<a name="694"><span class="lineNum">     694 </span><span class="lineCov">   85832400 :     if (sitl != nullptr) {</span></a>
+<a name="695"><span class="lineNum">     695 </span><span class="lineCov">   85832400 :         update(input);</span></a>
+<a name="696"><span class="lineNum">     696 </span>            :     } else {</a>
+<a name="697"><span class="lineNum">     697 </span><span class="lineNoCov">          0 :         time_advance();</span></a>
+<a name="698"><span class="lineNum">     698 </span>            :     }</a>
+<a name="699"><span class="lineNum">     699 </span><span class="lineCov">   85832400 : }</span></a>
+<a name="700"><span class="lineNum">     700 </span>            : </a>
+<a name="701"><span class="lineNum">     701 </span>            : /*</a>
+<a name="702"><span class="lineNum">     702 </span>            :   update the simulation attitude and relative position</a>
+<a name="703"><span class="lineNum">     703 </span>            :  */</a>
+<a name="704"><span class="lineNum">     704 </span><span class="lineCov">   85832400 : void Aircraft::update_dynamics(const Vector3f &amp;rot_accel)</span></a>
+<a name="705"><span class="lineNum">     705 </span>            : {</a>
+<a name="706"><span class="lineNum">     706 </span><span class="lineCov">  171665000 :     WITH_SEMAPHORE(pose_sem);</span></a>
+<a name="707"><span class="lineNum">     707 </span>            : </a>
+<a name="708"><span class="lineNum">     708 </span>            :     // update eas2tas and air density</a>
+<a name="709"><span class="lineNum">     709 </span>            : #if AP_AHRS_ENABLED</a>
+<a name="710"><span class="lineNum">     710 </span><span class="lineCov">   85832400 :     eas2tas = AP::ahrs().get_EAS2TAS();</span></a>
+<a name="711"><span class="lineNum">     711 </span>            : #endif</a>
+<a name="712"><span class="lineNum">     712 </span><span class="lineCov">   85832400 :     air_density = SSL_AIR_DENSITY / sq(eas2tas);</span></a>
+<a name="713"><span class="lineNum">     713 </span>            : </a>
+<a name="714"><span class="lineNum">     714 </span><span class="lineCov">   85832400 :     const float delta_time = frame_time_us * 1.0e-6f;</span></a>
+<a name="715"><span class="lineNum">     715 </span>            : </a>
+<a name="716"><span class="lineNum">     716 </span>            :     // update eas2tas and air density</a>
+<a name="717"><span class="lineNum">     717 </span><span class="lineCov">   85832400 :     eas2tas = AP_Baro::get_EAS2TAS_for_alt_amsl(location.alt*0.01);</span></a>
+<a name="718"><span class="lineNum">     718 </span><span class="lineCov">   85832400 :     air_density = AP_Baro::get_air_density_for_alt_amsl(location.alt*0.01);</span></a>
+<a name="719"><span class="lineNum">     719 </span>            : </a>
+<a name="720"><span class="lineNum">     720 </span>            :     // update rotational rates in body frame</a>
+<a name="721"><span class="lineNum">     721 </span><span class="lineCov">   85832400 :     gyro += rot_accel * delta_time;</span></a>
+<a name="722"><span class="lineNum">     722 </span>            : </a>
+<a name="723"><span class="lineNum">     723 </span><span class="lineCov">   85832400 :     gyro.x = constrain_float(gyro.x, -radians(2000.0f), radians(2000.0f));</span></a>
+<a name="724"><span class="lineNum">     724 </span><span class="lineCov">   85832400 :     gyro.y = constrain_float(gyro.y, -radians(2000.0f), radians(2000.0f));</span></a>
+<a name="725"><span class="lineNum">     725 </span><span class="lineCov">   85832400 :     gyro.z = constrain_float(gyro.z, -radians(2000.0f), radians(2000.0f));</span></a>
+<a name="726"><span class="lineNum">     726 </span>            : </a>
+<a name="727"><span class="lineNum">     727 </span>            :     // limit body accel to 64G</a>
+<a name="728"><span class="lineNum">     728 </span><span class="lineCov">   85832400 :     const float accel_limit = 64*GRAVITY_MSS;</span></a>
+<a name="729"><span class="lineNum">     729 </span><span class="lineCov">   85832400 :     accel_body.x = constrain_float(accel_body.x, -accel_limit, accel_limit);</span></a>
+<a name="730"><span class="lineNum">     730 </span><span class="lineCov">   85832400 :     accel_body.y = constrain_float(accel_body.y, -accel_limit, accel_limit);</span></a>
+<a name="731"><span class="lineNum">     731 </span><span class="lineCov">   85832400 :     accel_body.z = constrain_float(accel_body.z, -accel_limit, accel_limit);</span></a>
+<a name="732"><span class="lineNum">     732 </span>            : </a>
+<a name="733"><span class="lineNum">     733 </span>            :     // update attitude</a>
+<a name="734"><span class="lineNum">     734 </span><span class="lineCov">   85832400 :     dcm.rotate(gyro * delta_time);</span></a>
+<a name="735"><span class="lineNum">     735 </span><span class="lineCov">   85832400 :     dcm.normalize();</span></a>
+<a name="736"><span class="lineNum">     736 </span>            : </a>
+<a name="737"><span class="lineNum">     737 </span><span class="lineCov">   85832400 :     Vector3f accel_earth = dcm * accel_body;</span></a>
+<a name="738"><span class="lineNum">     738 </span><span class="lineCov">   85832400 :     accel_earth += Vector3f(0.0f, 0.0f, GRAVITY_MSS);</span></a>
+<a name="739"><span class="lineNum">     739 </span>            : </a>
+<a name="740"><span class="lineNum">     740 </span>            :     // if we're on the ground, then our vertical acceleration is limited</a>
+<a name="741"><span class="lineNum">     741 </span>            :     // to zero. This effectively adds the force of the ground on the aircraft</a>
+<a name="742"><span class="lineNum">     742 </span><span class="lineCov">   85832400 :     if (on_ground() &amp;&amp; accel_earth.z &gt; 0) {</span></a>
+<a name="743"><span class="lineNum">     743 </span><span class="lineCov">   43713200 :         accel_earth.z = 0;</span></a>
+<a name="744"><span class="lineNum">     744 </span>            :     }</a>
+<a name="745"><span class="lineNum">     745 </span>            : </a>
+<a name="746"><span class="lineNum">     746 </span>            :     // work out acceleration as seen by the accelerometers. It sees the kinematic</a>
+<a name="747"><span class="lineNum">     747 </span>            :     // acceleration (ie. real movement), plus gravity</a>
+<a name="748"><span class="lineNum">     748 </span><span class="lineCov">   85832400 :     accel_body = dcm.transposed() * (accel_earth + Vector3f(0.0f, 0.0f, -GRAVITY_MSS));</span></a>
+<a name="749"><span class="lineNum">     749 </span>            : </a>
+<a name="750"><span class="lineNum">     750 </span>            :     // new velocity vector</a>
+<a name="751"><span class="lineNum">     751 </span><span class="lineCov">   85832400 :     velocity_ef += accel_earth * delta_time;</span></a>
+<a name="752"><span class="lineNum">     752 </span>            : </a>
+<a name="753"><span class="lineNum">     753 </span><span class="lineCov">   85832400 :     const bool was_on_ground = on_ground();</span></a>
+<a name="754"><span class="lineNum">     754 </span>            :     // new position vector</a>
+<a name="755"><span class="lineNum">     755 </span><span class="lineCov">   85832400 :     position += (velocity_ef * delta_time).todouble();</span></a>
+<a name="756"><span class="lineNum">     756 </span>            : </a>
+<a name="757"><span class="lineNum">     757 </span>            :     // velocity relative to air mass, in earth frame</a>
+<a name="758"><span class="lineNum">     758 </span><span class="lineCov">   85832400 :     velocity_air_ef = velocity_ef - wind_ef;</span></a>
+<a name="759"><span class="lineNum">     759 </span>            : </a>
+<a name="760"><span class="lineNum">     760 </span>            :     // velocity relative to airmass in body frame</a>
+<a name="761"><span class="lineNum">     761 </span><span class="lineCov">   85832400 :     velocity_air_bf = dcm.transposed() * velocity_air_ef;</span></a>
+<a name="762"><span class="lineNum">     762 </span>            : </a>
+<a name="763"><span class="lineNum">     763 </span>            :     // airspeed</a>
+<a name="764"><span class="lineNum">     764 </span><span class="lineCov">   85832400 :     update_eas_airspeed();</span></a>
+<a name="765"><span class="lineNum">     765 </span>            : </a>
+<a name="766"><span class="lineNum">     766 </span>            :     // constrain height to the ground</a>
+<a name="767"><span class="lineNum">     767 </span><span class="lineCov">   85832400 :     if (on_ground()) {</span></a>
+<a name="768"><span class="lineNum">     768 </span><span class="lineCov">   43973100 :         if (!was_on_ground &amp;&amp; AP_HAL::millis() - last_ground_contact_ms &gt; 1000) {</span></a>
+<a name="769"><span class="lineNum">     769 </span><span class="lineCov">        348 :             GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;SIM Hit ground at %f m/s&quot;, velocity_ef.z);</span></a>
+<a name="770"><span class="lineNum">     770 </span><span class="lineCov">        348 :             last_ground_contact_ms = AP_HAL::millis();</span></a>
+<a name="771"><span class="lineNum">     771 </span>            :         }</a>
+<a name="772"><span class="lineNum">     772 </span><span class="lineCov">   43973100 :         position.z = -(ground_level + frame_height - home.alt * 0.01f + ground_height_difference());</span></a>
+<a name="773"><span class="lineNum">     773 </span>            : </a>
+<a name="774"><span class="lineNum">     774 </span>            :         // get speed of ground movement (for ship takeoff/landing)</a>
+<a name="775"><span class="lineNum">     775 </span><span class="lineCov">   43973100 :         float yaw_rate = 0;</span></a>
+<a name="776"><span class="lineNum">     776 </span>            : #if AP_SIM_SHIP_ENABLED</a>
+<a name="777"><span class="lineNum">     777 </span><span class="lineCov">   43973100 :         const Vector2f ship_movement = sitl-&gt;models.shipsim.get_ground_speed_adjustment(location, yaw_rate);</span></a>
+<a name="778"><span class="lineNum">     778 </span><span class="lineCov">   43973100 :         const Vector3f gnd_movement(ship_movement.x, ship_movement.y, 0);</span></a>
+<a name="779"><span class="lineNum">     779 </span>            : #else</a>
+<a name="780"><span class="lineNum">     780 </span>            :         const Vector3f gnd_movement;</a>
+<a name="781"><span class="lineNum">     781 </span>            : #endif</a>
+<a name="782"><span class="lineNum">     782 </span><span class="lineCov">   43973100 :         switch (ground_behavior) {</span></a>
+<a name="783"><span class="lineNum">     783 </span><span class="lineCov">   15107500 :         case GROUND_BEHAVIOR_NONE:</span></a>
+<a name="784"><span class="lineNum">     784 </span><span class="lineCov">   15107500 :             break;</span></a>
+<a name="785"><span class="lineNum">     785 </span><span class="lineCov">   28865600 :         case GROUND_BEHAVIOR_NO_MOVEMENT: {</span></a>
+<a name="786"><span class="lineNum">     786 </span>            :             // zero roll/pitch, but keep yaw</a>
+<a name="787"><span class="lineNum">     787 </span>            :             float r, p, y;</a>
+<a name="788"><span class="lineNum">     788 </span><span class="lineCov">   28865600 :             dcm.to_euler(&amp;r, &amp;p, &amp;y);</span></a>
+<a name="789"><span class="lineNum">     789 </span><span class="lineCov">   28865600 :             y = y + yaw_rate * delta_time;</span></a>
+<a name="790"><span class="lineNum">     790 </span><span class="lineCov">   28865600 :             dcm.from_euler(0.0f, 0.0f, y);</span></a>
+<a name="791"><span class="lineNum">     791 </span>            :             // X, Y movement tracks ground movement</a>
+<a name="792"><span class="lineNum">     792 </span><span class="lineCov">   28865600 :             velocity_ef.x = gnd_movement.x;</span></a>
+<a name="793"><span class="lineNum">     793 </span><span class="lineCov">   28865600 :             velocity_ef.y = gnd_movement.y;</span></a>
+<a name="794"><span class="lineNum">     794 </span><span class="lineCov">   28865600 :             if (velocity_ef.z &gt; 0.0f) {</span></a>
+<a name="795"><span class="lineNum">     795 </span><span class="lineCov">        349 :                 velocity_ef.z = 0.0f;</span></a>
+<a name="796"><span class="lineNum">     796 </span>            :             }</a>
+<a name="797"><span class="lineNum">     797 </span><span class="lineCov">   28865600 :             gyro.zero();</span></a>
+<a name="798"><span class="lineNum">     798 </span><span class="lineCov">   28865600 :             use_smoothing = true;</span></a>
+<a name="799"><span class="lineNum">     799 </span><span class="lineCov">   28865600 :             break;</span></a>
+<a name="800"><span class="lineNum">     800 </span>            :         }</a>
+<a name="801"><span class="lineNum">     801 </span><span class="lineNoCov">          0 :         case GROUND_BEHAVIOR_FWD_ONLY: {</span></a>
+<a name="802"><span class="lineNum">     802 </span>            :             // zero roll/pitch, but keep yaw</a>
+<a name="803"><span class="lineNum">     803 </span>            :             float r, p, y;</a>
+<a name="804"><span class="lineNum">     804 </span><span class="lineNoCov">          0 :             dcm.to_euler(&amp;r, &amp;p, &amp;y);</span></a>
+<a name="805"><span class="lineNum">     805 </span><span class="lineNoCov">          0 :             if (velocity_ef.length() &lt; 5) {</span></a>
+<a name="806"><span class="lineNum">     806 </span>            :                 // at high speeds don't constrain pitch, otherwise we</a>
+<a name="807"><span class="lineNum">     807 </span>            :                 // can get stuck in takeoff</a>
+<a name="808"><span class="lineNum">     808 </span><span class="lineNoCov">          0 :                 p = 0;</span></a>
+<a name="809"><span class="lineNum">     809 </span>            :             } else {</a>
+<a name="810"><span class="lineNum">     810 </span><span class="lineNoCov">          0 :                 p = MAX(p, 0);</span></a>
+<a name="811"><span class="lineNum">     811 </span>            :             }</a>
+<a name="812"><span class="lineNum">     812 </span><span class="lineNoCov">          0 :             y = y + yaw_rate * delta_time;</span></a>
+<a name="813"><span class="lineNum">     813 </span><span class="lineNoCov">          0 :             dcm.from_euler(0.0f, p, y);</span></a>
+<a name="814"><span class="lineNum">     814 </span>            :             // only fwd movement</a>
+<a name="815"><span class="lineNum">     815 </span><span class="lineNoCov">          0 :             Vector3f v_bf = dcm.transposed() * velocity_ef;</span></a>
+<a name="816"><span class="lineNum">     816 </span><span class="lineNoCov">          0 :             v_bf.y = 0.0f;</span></a>
+<a name="817"><span class="lineNum">     817 </span><span class="lineNoCov">          0 :             if (v_bf.x &lt; 0.0f) {</span></a>
+<a name="818"><span class="lineNum">     818 </span><span class="lineNoCov">          0 :                 v_bf.x = 0.0f;</span></a>
+<a name="819"><span class="lineNum">     819 </span>            :             }</a>
+<a name="820"><span class="lineNum">     820 </span>            : </a>
+<a name="821"><span class="lineNum">     821 </span><span class="lineNoCov">          0 :             Vector3f gnd_movement_bf = dcm.transposed() * gnd_movement;</span></a>
+<a name="822"><span class="lineNum">     822 </span>            : </a>
+<a name="823"><span class="lineNum">     823 </span>            :             // lateral speed equals ground movement</a>
+<a name="824"><span class="lineNum">     824 </span><span class="lineNoCov">          0 :             v_bf.y = gnd_movement_bf.y;</span></a>
+<a name="825"><span class="lineNum">     825 </span>            : </a>
+<a name="826"><span class="lineNum">     826 </span><span class="lineNoCov">          0 :             if (!gnd_movement_bf.is_zero()) {</span></a>
+<a name="827"><span class="lineNum">     827 </span>            :                 // fwd speed slowly approaches ground movement to simulate wheel friction</a>
+<a name="828"><span class="lineNum">     828 </span><span class="lineNoCov">          0 :                 const float tconst = 20; // seconds</span></a>
+<a name="829"><span class="lineNum">     829 </span><span class="lineNoCov">          0 :                 const float alpha = delta_time/(delta_time+tconst/M_2PI);</span></a>
+<a name="830"><span class="lineNum">     830 </span><span class="lineNoCov">          0 :                 v_bf.x += (gnd_movement.x - v_bf.x) * alpha;</span></a>
+<a name="831"><span class="lineNum">     831 </span>            :             }</a>
+<a name="832"><span class="lineNum">     832 </span>            : </a>
+<a name="833"><span class="lineNum">     833 </span><span class="lineNoCov">          0 :             velocity_ef = dcm * v_bf;</span></a>
+<a name="834"><span class="lineNum">     834 </span><span class="lineNoCov">          0 :             if (velocity_ef.z &gt; 0.0f) {</span></a>
+<a name="835"><span class="lineNum">     835 </span><span class="lineNoCov">          0 :                 velocity_ef.z = 0.0f;</span></a>
+<a name="836"><span class="lineNum">     836 </span>            :             }</a>
+<a name="837"><span class="lineNum">     837 </span><span class="lineNoCov">          0 :             gyro.zero();</span></a>
+<a name="838"><span class="lineNum">     838 </span><span class="lineNoCov">          0 :             gyro.z = yaw_rate;</span></a>
+<a name="839"><span class="lineNum">     839 </span><span class="lineNoCov">          0 :             use_smoothing = true;</span></a>
+<a name="840"><span class="lineNum">     840 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="841"><span class="lineNum">     841 </span>            :         }</a>
+<a name="842"><span class="lineNum">     842 </span><span class="lineNoCov">          0 :         case GROUND_BEHAVIOR_TAILSITTER: {</span></a>
+<a name="843"><span class="lineNum">     843 </span>            :             // rotate normal refernce frame to get yaw angle, then rotate back</a>
+<a name="844"><span class="lineNum">     844 </span><span class="lineNoCov">          0 :             Matrix3f rot;</span></a>
+<a name="845"><span class="lineNum">     845 </span><span class="lineNoCov">          0 :             rot.from_rotation(ROTATION_PITCH_270);</span></a>
+<a name="846"><span class="lineNum">     846 </span>            :             float r, p, y;</a>
+<a name="847"><span class="lineNum">     847 </span><span class="lineNoCov">          0 :             (dcm * rot).to_euler(&amp;r, &amp;p, &amp;y);</span></a>
+<a name="848"><span class="lineNum">     848 </span><span class="lineNoCov">          0 :             y = y + yaw_rate * delta_time;</span></a>
+<a name="849"><span class="lineNum">     849 </span><span class="lineNoCov">          0 :             dcm.from_euler(0.0, 0.0, y);</span></a>
+<a name="850"><span class="lineNum">     850 </span><span class="lineNoCov">          0 :             rot.from_rotation(ROTATION_PITCH_90);</span></a>
+<a name="851"><span class="lineNum">     851 </span><span class="lineNoCov">          0 :             dcm *= rot;</span></a>
+<a name="852"><span class="lineNum">     852 </span>            :             // X, Y movement tracks ground movement</a>
+<a name="853"><span class="lineNum">     853 </span><span class="lineNoCov">          0 :             velocity_ef.x = gnd_movement.x;</span></a>
+<a name="854"><span class="lineNum">     854 </span><span class="lineNoCov">          0 :             velocity_ef.y = gnd_movement.y;</span></a>
+<a name="855"><span class="lineNum">     855 </span><span class="lineNoCov">          0 :             if (velocity_ef.z &gt; 0.0f) {</span></a>
+<a name="856"><span class="lineNum">     856 </span><span class="lineNoCov">          0 :                 velocity_ef.z = 0.0f;</span></a>
+<a name="857"><span class="lineNum">     857 </span>            :             }</a>
+<a name="858"><span class="lineNum">     858 </span><span class="lineNoCov">          0 :             gyro.zero();</span></a>
+<a name="859"><span class="lineNum">     859 </span><span class="lineNoCov">          0 :             gyro.x = yaw_rate;</span></a>
+<a name="860"><span class="lineNum">     860 </span><span class="lineNoCov">          0 :             use_smoothing = true;</span></a>
+<a name="861"><span class="lineNum">     861 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="862"><span class="lineNum">     862 </span>            :         }</a>
+<a name="863"><span class="lineNum">     863 </span>            :         }</a>
+<a name="864"><span class="lineNum">     864 </span>            :     }</a>
+<a name="865"><span class="lineNum">     865 </span>            : </a>
+<a name="866"><span class="lineNum">     866 </span>            :     // update slung payload</a>
+<a name="867"><span class="lineNum">     867 </span>            : #if AP_SIM_SLUNGPAYLOAD_ENABLED</a>
+<a name="868"><span class="lineNum">     868 </span><span class="lineCov">   85832400 :     sitl-&gt;models.slung_payload_sim.update(get_position_relhome(), velocity_ef, accel_earth, wind_ef);</span></a>
+<a name="869"><span class="lineNum">     869 </span>            : #endif</a>
+<a name="870"><span class="lineNum">     870 </span>            : </a>
+<a name="871"><span class="lineNum">     871 </span>            :     // update tether</a>
+<a name="872"><span class="lineNum">     872 </span>            : #if AP_SIM_TETHER_ENABLED</a>
+<a name="873"><span class="lineNum">     873 </span><span class="lineCov">   85832400 :     sitl-&gt;models.tether_sim.update(location);</span></a>
+<a name="874"><span class="lineNum">     874 </span>            : #endif</a>
+<a name="875"><span class="lineNum">     875 </span>            : </a>
+<a name="876"><span class="lineNum">     876 </span>            :     // allow for changes in physics step</a>
+<a name="877"><span class="lineNum">     877 </span><span class="lineCov">   85832400 :     adjust_frame_time(constrain_float(sitl-&gt;loop_rate_hz, rate_hz-1, rate_hz+1));</span></a>
+<a name="878"><span class="lineNum">     878 </span><span class="lineCov">   85832400 : }</span></a>
+<a name="879"><span class="lineNum">     879 </span>            : </a>
+<a name="880"><span class="lineNum">     880 </span>            : /*</a>
+<a name="881"><span class="lineNum">     881 </span>            :   update wind vector</a>
+<a name="882"><span class="lineNum">     882 </span>            : */</a>
+<a name="883"><span class="lineNum">     883 </span><span class="lineCov">   70726200 : void Aircraft::update_wind(const struct sitl_input &amp;input)</span></a>
+<a name="884"><span class="lineNum">     884 </span>            : {</a>
+<a name="885"><span class="lineNum">     885 </span>            :     // wind vector in earth frame</a>
+<a name="886"><span class="lineNum">     886 </span><span class="lineCov">   70726200 :     wind_ef = Vector3f(cosf(radians(input.wind.direction))*cosf(radians(input.wind.dir_z)), </span></a>
+<a name="887"><span class="lineNum">     887 </span><span class="lineCov">   70726200 :                        sinf(radians(input.wind.direction))*cosf(radians(input.wind.dir_z)), </span></a>
+<a name="888"><span class="lineNum">     888 </span><span class="lineCov">  141452000 :                        sinf(radians(input.wind.dir_z))) * input.wind.speed;</span></a>
+<a name="889"><span class="lineNum">     889 </span>            : </a>
+<a name="890"><span class="lineNum">     890 </span><span class="lineCov">   70726200 :     wind_ef.z += get_local_updraft(position + home.get_distance_NED_double(origin));</span></a>
+<a name="891"><span class="lineNum">     891 </span>            : </a>
+<a name="892"><span class="lineNum">     892 </span><span class="lineCov">   70726200 :     const float wind_turb = input.wind.turbulence * 10.0f;  // scale input.wind.turbulence to match standard deviation when using iir_coef=0.98</span></a>
+<a name="893"><span class="lineNum">     893 </span><span class="lineCov">   70726200 :     const float iir_coef = 0.98f;  // filtering high frequencies from turbulence</span></a>
+<a name="894"><span class="lineNum">     894 </span>            : </a>
+<a name="895"><span class="lineNum">     895 </span><span class="lineCov">   70726200 :     if (wind_turb &gt; 0 &amp;&amp; !on_ground()) {</span></a>
+<a name="896"><span class="lineNum">     896 </span>            : </a>
+<a name="897"><span class="lineNum">     897 </span><span class="lineNoCov">          0 :         turbulence_azimuth = turbulence_azimuth + (2 * rand());</span></a>
+<a name="898"><span class="lineNum">     898 </span>            : </a>
+<a name="899"><span class="lineNum">     899 </span><span class="lineNoCov">          0 :         turbulence_horizontal_speed =</span></a>
+<a name="900"><span class="lineNum">     900 </span><span class="lineNoCov">          0 :                 static_cast&lt;float&gt;(turbulence_horizontal_speed * iir_coef+wind_turb * rand_normal(0, 1) * (1 - iir_coef));</span></a>
+<a name="901"><span class="lineNum">     901 </span>            : </a>
+<a name="902"><span class="lineNum">     902 </span><span class="lineNoCov">          0 :         turbulence_vertical_speed = static_cast&lt;float&gt;((turbulence_vertical_speed * iir_coef) + (wind_turb * rand_normal(0, 1) * (1 - iir_coef)));</span></a>
+<a name="903"><span class="lineNum">     903 </span>            : </a>
+<a name="904"><span class="lineNum">     904 </span><span class="lineNoCov">          0 :         wind_ef += Vector3f(</span></a>
+<a name="905"><span class="lineNum">     905 </span><span class="lineNoCov">          0 :             cosf(radians(turbulence_azimuth)) * turbulence_horizontal_speed,</span></a>
+<a name="906"><span class="lineNum">     906 </span><span class="lineNoCov">          0 :             sinf(radians(turbulence_azimuth)) * turbulence_horizontal_speed,</span></a>
+<a name="907"><span class="lineNum">     907 </span><span class="lineNoCov">          0 :             turbulence_vertical_speed);</span></a>
+<a name="908"><span class="lineNum">     908 </span>            :     }</a>
+<a name="909"><span class="lineNum">     909 </span>            : </a>
+<a name="910"><span class="lineNum">     910 </span>            :     // the AHRS wants wind with opposite sense</a>
+<a name="911"><span class="lineNum">     911 </span><span class="lineCov">   70726200 :     wind_ef = -wind_ef;</span></a>
+<a name="912"><span class="lineNum">     912 </span><span class="lineCov">   70726200 : }</span></a>
+<a name="913"><span class="lineNum">     913 </span>            : </a>
+<a name="914"><span class="lineNum">     914 </span>            : /*</a>
+<a name="915"><span class="lineNum">     915 </span>            :   smooth sensors for kinematic consistancy when we interact with the ground</a>
+<a name="916"><span class="lineNum">     916 </span>            :  */</a>
+<a name="917"><span class="lineNum">     917 </span><span class="lineCov">   70726200 : void Aircraft::smooth_sensors(void)</span></a>
+<a name="918"><span class="lineNum">     918 </span>            : {</a>
+<a name="919"><span class="lineNum">     919 </span><span class="lineCov">   70726200 :     uint64_t now = time_now_us;</span></a>
+<a name="920"><span class="lineNum">     920 </span><span class="lineCov">   70726200 :     Vector3d delta_pos = position - smoothing.position;</span></a>
+<a name="921"><span class="lineNum">     921 </span><span class="lineCov">   70726200 :     if (smoothing.last_update_us == 0 || delta_pos.length() &gt; 10) {</span></a>
+<a name="922"><span class="lineNum">     922 </span><span class="lineCov">        846 :         smoothing.position = position;</span></a>
+<a name="923"><span class="lineNum">     923 </span><span class="lineCov">        846 :         smoothing.rotation_b2e = dcm;</span></a>
+<a name="924"><span class="lineNum">     924 </span><span class="lineCov">        846 :         smoothing.accel_body = accel_body;</span></a>
+<a name="925"><span class="lineNum">     925 </span><span class="lineCov">        846 :         smoothing.velocity_ef = velocity_ef;</span></a>
+<a name="926"><span class="lineNum">     926 </span><span class="lineCov">        846 :         smoothing.gyro = gyro;</span></a>
+<a name="927"><span class="lineNum">     927 </span><span class="lineCov">        846 :         smoothing.last_update_us = now;</span></a>
+<a name="928"><span class="lineNum">     928 </span><span class="lineCov">        846 :         smoothing.location = location;</span></a>
+<a name="929"><span class="lineNum">     929 </span><span class="lineCov">        846 :         printf(&quot;Smoothing reset at %.3f\n&quot;, now * 1.0e-6f);</span></a>
+<a name="930"><span class="lineNum">     930 </span><span class="lineCov">        846 :         return;</span></a>
+<a name="931"><span class="lineNum">     931 </span>            :     }</a>
+<a name="932"><span class="lineNum">     932 </span><span class="lineCov">   70725400 :     const float delta_time = (now - smoothing.last_update_us) * 1.0e-6f;</span></a>
+<a name="933"><span class="lineNum">     933 </span><span class="lineCov">   70725400 :     if (delta_time &lt; 0 || delta_time &gt; 0.1) {</span></a>
+<a name="934"><span class="lineNum">     934 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="935"><span class="lineNum">     935 </span>            :     }</a>
+<a name="936"><span class="lineNum">     936 </span>            : </a>
+<a name="937"><span class="lineNum">     937 </span>            :     // calculate required accel to get us to desired position and velocity in the time_constant</a>
+<a name="938"><span class="lineNum">     938 </span><span class="lineCov">   70725400 :     const float time_constant = 0.1f;</span></a>
+<a name="939"><span class="lineNum">     939 </span><span class="lineCov">   70725400 :     Vector3f dvel = (velocity_ef - smoothing.velocity_ef) + (delta_pos / time_constant).tofloat();</span></a>
+<a name="940"><span class="lineNum">     940 </span><span class="lineCov">   70725400 :     Vector3f accel_e = dvel / time_constant + (dcm * accel_body + Vector3f(0.0f, 0.0f, GRAVITY_MSS));</span></a>
+<a name="941"><span class="lineNum">     941 </span><span class="lineCov">   70725400 :     const float accel_limit = 14 * GRAVITY_MSS;</span></a>
+<a name="942"><span class="lineNum">     942 </span><span class="lineCov">   70725400 :     accel_e.x = constrain_float(accel_e.x, -accel_limit, accel_limit);</span></a>
+<a name="943"><span class="lineNum">     943 </span><span class="lineCov">   70725400 :     accel_e.y = constrain_float(accel_e.y, -accel_limit, accel_limit);</span></a>
+<a name="944"><span class="lineNum">     944 </span><span class="lineCov">   70725400 :     accel_e.z = constrain_float(accel_e.z, -accel_limit, accel_limit);</span></a>
+<a name="945"><span class="lineNum">     945 </span><span class="lineCov">   70725400 :     smoothing.accel_body = smoothing.rotation_b2e.transposed() * (accel_e + Vector3f(0.0f, 0.0f, -GRAVITY_MSS));</span></a>
+<a name="946"><span class="lineNum">     946 </span>            : </a>
+<a name="947"><span class="lineNum">     947 </span>            :     // calculate rotational rate to get us to desired attitude in time constant</a>
+<a name="948"><span class="lineNum">     948 </span><span class="lineCov">   70725400 :     Quaternion desired_q, current_q, error_q;</span></a>
+<a name="949"><span class="lineNum">     949 </span><span class="lineCov">   70725400 :     desired_q.from_rotation_matrix(dcm);</span></a>
+<a name="950"><span class="lineNum">     950 </span><span class="lineCov">   70725400 :     desired_q.normalize();</span></a>
+<a name="951"><span class="lineNum">     951 </span><span class="lineCov">   70725400 :     current_q.from_rotation_matrix(smoothing.rotation_b2e);</span></a>
+<a name="952"><span class="lineNum">     952 </span><span class="lineCov">   70725400 :     current_q.normalize();</span></a>
+<a name="953"><span class="lineNum">     953 </span><span class="lineCov">   70725400 :     error_q = desired_q / current_q;</span></a>
+<a name="954"><span class="lineNum">     954 </span><span class="lineCov">   70725400 :     error_q.normalize();</span></a>
+<a name="955"><span class="lineNum">     955 </span>            : </a>
+<a name="956"><span class="lineNum">     956 </span><span class="lineCov">   70725400 :     Vector3f angle_differential;</span></a>
+<a name="957"><span class="lineNum">     957 </span><span class="lineCov">   70725400 :     error_q.to_axis_angle(angle_differential);</span></a>
+<a name="958"><span class="lineNum">     958 </span><span class="lineCov">   70725400 :     smoothing.gyro = gyro + angle_differential / time_constant;</span></a>
+<a name="959"><span class="lineNum">     959 </span>            : </a>
+<a name="960"><span class="lineNum">     960 </span>            :     float R, P, Y;</a>
+<a name="961"><span class="lineNum">     961 </span><span class="lineCov">   70725400 :     smoothing.rotation_b2e.to_euler(&amp;R, &amp;P, &amp;Y);</span></a>
+<a name="962"><span class="lineNum">     962 </span>            :     float R2, P2, Y2;</a>
+<a name="963"><span class="lineNum">     963 </span><span class="lineCov">   70725400 :     dcm.to_euler(&amp;R2, &amp;P2, &amp;Y2);</span></a>
+<a name="964"><span class="lineNum">     964 </span>            : </a>
+<a name="965"><span class="lineNum">     965 </span>            : #if 0</a>
+<a name="966"><span class="lineNum">     966 </span>            : // @LoggerMessage: SMOO</a>
+<a name="967"><span class="lineNum">     967 </span>            : // @Description: Smoothed sensor data fed to EKF to avoid inconsistencies</a>
+<a name="968"><span class="lineNum">     968 </span>            : // @Field: TimeUS: Time since system startup</a>
+<a name="969"><span class="lineNum">     969 </span>            : // @Field: AEx: Angular Velocity (around x-axis)</a>
+<a name="970"><span class="lineNum">     970 </span>            : // @Field: AEy: Angular Velocity (around y-axis)</a>
+<a name="971"><span class="lineNum">     971 </span>            : // @Field: AEz: Angular Velocity (around z-axis)</a>
+<a name="972"><span class="lineNum">     972 </span>            : // @Field: DPx: Velocity (along x-axis)</a>
+<a name="973"><span class="lineNum">     973 </span>            : // @Field: DPy: Velocity (along y-axis)</a>
+<a name="974"><span class="lineNum">     974 </span>            : // @Field: DPz: Velocity (along z-axis)</a>
+<a name="975"><span class="lineNum">     975 </span>            : // @Field: R: Roll</a>
+<a name="976"><span class="lineNum">     976 </span>            : // @Field: P: Pitch</a>
+<a name="977"><span class="lineNum">     977 </span>            : // @Field: Y: Yaw</a>
+<a name="978"><span class="lineNum">     978 </span>            : // @Field: R2: DCM Roll</a>
+<a name="979"><span class="lineNum">     979 </span>            : // @Field: P2: DCM Pitch</a>
+<a name="980"><span class="lineNum">     980 </span>            : // @Field: Y2: DCM Yaw</a>
+<a name="981"><span class="lineNum">     981 </span>            :     AP::logger().WriteStreaming(&quot;SMOO&quot;, &quot;TimeUS,AEx,AEy,AEz,DPx,DPy,DPz,R,P,Y,R2,P2,Y2&quot;,</a>
+<a name="982"><span class="lineNum">     982 </span>            :                                            &quot;Qffffffffffff&quot;,</a>
+<a name="983"><span class="lineNum">     983 </span>            :                                            AP_HAL::micros64(),</a>
+<a name="984"><span class="lineNum">     984 </span>            :                                            degrees(angle_differential.x),</a>
+<a name="985"><span class="lineNum">     985 </span>            :                                            degrees(angle_differential.y),</a>
+<a name="986"><span class="lineNum">     986 </span>            :                                            degrees(angle_differential.z),</a>
+<a name="987"><span class="lineNum">     987 </span>            :                                            delta_pos.x, delta_pos.y, delta_pos.z,</a>
+<a name="988"><span class="lineNum">     988 </span>            :                                            degrees(R), degrees(P), degrees(Y),</a>
+<a name="989"><span class="lineNum">     989 </span>            :                                            degrees(R2), degrees(P2), degrees(Y2));</a>
+<a name="990"><span class="lineNum">     990 </span>            : #endif</a>
+<a name="991"><span class="lineNum">     991 </span>            : </a>
+<a name="992"><span class="lineNum">     992 </span>            : </a>
+<a name="993"><span class="lineNum">     993 </span>            :     // integrate to get new attitude</a>
+<a name="994"><span class="lineNum">     994 </span><span class="lineCov">   70725400 :     smoothing.rotation_b2e.rotate(smoothing.gyro * delta_time);</span></a>
+<a name="995"><span class="lineNum">     995 </span><span class="lineCov">   70725400 :     smoothing.rotation_b2e.normalize();</span></a>
+<a name="996"><span class="lineNum">     996 </span>            : </a>
+<a name="997"><span class="lineNum">     997 </span>            :     // integrate to get new position</a>
+<a name="998"><span class="lineNum">     998 </span><span class="lineCov">   70725400 :     smoothing.velocity_ef += accel_e * delta_time;</span></a>
+<a name="999"><span class="lineNum">     999 </span><span class="lineCov">   70725400 :     smoothing.position += (smoothing.velocity_ef * delta_time).todouble();</span></a>
+<a name="1000"><span class="lineNum">    1000 </span>            : </a>
+<a name="1001"><span class="lineNum">    1001 </span><span class="lineCov">   70725400 :     smoothing.location = origin;</span></a>
+<a name="1002"><span class="lineNum">    1002 </span><span class="lineCov">   70725400 :     smoothing.location.offset(smoothing.position.x, smoothing.position.y);</span></a>
+<a name="1003"><span class="lineNum">    1003 </span><span class="lineCov">   70725400 :     smoothing.location.alt  = static_cast&lt;int32_t&gt;(home.alt - smoothing.position.z * 100.0f);</span></a>
+<a name="1004"><span class="lineNum">    1004 </span>            : </a>
+<a name="1005"><span class="lineNum">    1005 </span><span class="lineCov">   70725400 :     smoothing.last_update_us = now;</span></a>
+<a name="1006"><span class="lineNum">    1006 </span>            : }</a>
+<a name="1007"><span class="lineNum">    1007 </span>            : </a>
+<a name="1008"><span class="lineNum">    1008 </span>            : /*</a>
+<a name="1009"><span class="lineNum">    1009 </span>            :   return a filtered servo input as a value from -1 to 1</a>
+<a name="1010"><span class="lineNum">    1010 </span>            :   servo is assumed to be 1000 to 2000, trim at 1500</a>
+<a name="1011"><span class="lineNum">    1011 </span>            :  */</a>
+<a name="1012"><span class="lineNum">    1012 </span><span class="lineNoCov">          0 : float Aircraft::filtered_servo_angle(const struct sitl_input &amp;input, uint8_t idx)</span></a>
+<a name="1013"><span class="lineNum">    1013 </span>            : {</a>
+<a name="1014"><span class="lineNum">    1014 </span><span class="lineNoCov">          0 :     uint16_t pwm = input.servos[idx] == 0 ? 1500 : input.servos[idx];</span></a>
+<a name="1015"><span class="lineNum">    1015 </span><span class="lineNoCov">          0 :     return servo_filter[idx].filter_angle(pwm, frame_time_us * 1.0e-6);</span></a>
+<a name="1016"><span class="lineNum">    1016 </span>            : }</a>
+<a name="1017"><span class="lineNum">    1017 </span>            : </a>
+<a name="1018"><span class="lineNum">    1018 </span>            : /*</a>
+<a name="1019"><span class="lineNum">    1019 </span>            :   return a filtered servo input as a value from 0 to 1</a>
+<a name="1020"><span class="lineNum">    1020 </span>            :   servo is assumed to be 1000 to 2000</a>
+<a name="1021"><span class="lineNum">    1021 </span>            :  */</a>
+<a name="1022"><span class="lineNum">    1022 </span><span class="lineNoCov">          0 : float Aircraft::filtered_servo_range(const struct sitl_input &amp;input, uint8_t idx)</span></a>
+<a name="1023"><span class="lineNum">    1023 </span>            : {</a>
+<a name="1024"><span class="lineNum">    1024 </span><span class="lineNoCov">          0 :     return servo_filter[idx].filter_range(input.servos[idx], frame_time_us * 1.0e-6);</span></a>
+<a name="1025"><span class="lineNum">    1025 </span>            : }</a>
+<a name="1026"><span class="lineNum">    1026 </span>            : </a>
+<a name="1027"><span class="lineNum">    1027 </span>            : // setup filtering for servo</a>
+<a name="1028"><span class="lineNum">    1028 </span><span class="lineNoCov">          0 : void Aircraft::filtered_servo_setup(uint8_t idx, uint16_t pwm_min, uint16_t pwm_max, float deflection_deg)</span></a>
+<a name="1029"><span class="lineNum">    1029 </span>            : {</a>
+<a name="1030"><span class="lineNum">    1030 </span><span class="lineNoCov">          0 :     servo_filter[idx].set_pwm_range(pwm_min, pwm_max);</span></a>
+<a name="1031"><span class="lineNum">    1031 </span><span class="lineNoCov">          0 :     servo_filter[idx].set_deflection(deflection_deg);</span></a>
+<a name="1032"><span class="lineNum">    1032 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="1033"><span class="lineNum">    1033 </span>            : </a>
+<a name="1034"><span class="lineNum">    1034 </span>            : // extrapolate sensors by a given delta time in seconds</a>
+<a name="1035"><span class="lineNum">    1035 </span><span class="lineNoCov">          0 : void Aircraft::extrapolate_sensors(float delta_time)</span></a>
+<a name="1036"><span class="lineNum">    1036 </span>            : {</a>
+<a name="1037"><span class="lineNum">    1037 </span><span class="lineNoCov">          0 :     Vector3f accel_earth = dcm * accel_body;</span></a>
+<a name="1038"><span class="lineNum">    1038 </span><span class="lineNoCov">          0 :     accel_earth.z += GRAVITY_MSS;</span></a>
+<a name="1039"><span class="lineNum">    1039 </span>            : </a>
+<a name="1040"><span class="lineNum">    1040 </span><span class="lineNoCov">          0 :     dcm.rotate(gyro * delta_time);</span></a>
+<a name="1041"><span class="lineNum">    1041 </span><span class="lineNoCov">          0 :     dcm.normalize();</span></a>
+<a name="1042"><span class="lineNum">    1042 </span>            : </a>
+<a name="1043"><span class="lineNum">    1043 </span>            :     // work out acceleration as seen by the accelerometers. It sees the kinematic</a>
+<a name="1044"><span class="lineNum">    1044 </span>            :     // acceleration (ie. real movement), plus gravity</a>
+<a name="1045"><span class="lineNum">    1045 </span><span class="lineNoCov">          0 :     accel_body = dcm.transposed() * (accel_earth + Vector3f(0,0,-GRAVITY_MSS));</span></a>
+<a name="1046"><span class="lineNum">    1046 </span>            : </a>
+<a name="1047"><span class="lineNum">    1047 </span>            :     // new velocity and position vectors</a>
+<a name="1048"><span class="lineNum">    1048 </span><span class="lineNoCov">          0 :     velocity_ef += accel_earth * delta_time;</span></a>
+<a name="1049"><span class="lineNum">    1049 </span><span class="lineNoCov">          0 :     position += (velocity_ef * delta_time).todouble();</span></a>
+<a name="1050"><span class="lineNum">    1050 </span><span class="lineNoCov">          0 :     velocity_air_ef = velocity_ef - wind_ef;</span></a>
+<a name="1051"><span class="lineNum">    1051 </span><span class="lineNoCov">          0 :     velocity_air_bf = dcm.transposed() * velocity_air_ef;</span></a>
+<a name="1052"><span class="lineNum">    1052 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="1053"><span class="lineNum">    1053 </span>            : </a>
+<a name="1054"><span class="lineNum">    1054 </span><span class="lineCov">   70726200 : bool Aircraft::Clamp::clamped(Aircraft &amp;aircraft, const struct sitl_input &amp;input)</span></a>
+<a name="1055"><span class="lineNum">    1055 </span>            : {</a>
+<a name="1056"><span class="lineNum">    1056 </span><span class="lineCov">   70726200 :     const auto clamp_ch = AP::sitl()-&gt;clamp_ch;</span></a>
+<a name="1057"><span class="lineNum">    1057 </span><span class="lineCov">   70726200 :     if (clamp_ch &lt; 1) {</span></a>
+<a name="1058"><span class="lineNum">    1058 </span><span class="lineCov">   70432600 :         return false;</span></a>
+<a name="1059"><span class="lineNum">    1059 </span>            :     }</a>
+<a name="1060"><span class="lineNum">    1060 </span><span class="lineCov">     293559 :     const uint32_t clamp_idx = clamp_ch - 1;</span></a>
+<a name="1061"><span class="lineNum">    1061 </span><span class="lineCov">     293559 :     if (clamp_idx &gt; ARRAY_SIZE(input.servos)) {</span></a>
+<a name="1062"><span class="lineNum">    1062 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="1063"><span class="lineNum">    1063 </span>            :     }</a>
+<a name="1064"><span class="lineNum">    1064 </span><span class="lineCov">     293559 :     const uint16_t servo_pos = input.servos[clamp_idx];</span></a>
+<a name="1065"><span class="lineNum">    1065 </span><span class="lineCov">     293559 :     bool new_clamped = currently_clamped;</span></a>
+<a name="1066"><span class="lineNum">    1066 </span><span class="lineCov">     293559 :     if (servo_pos == 0) {</span></a>
+<a name="1067"><span class="lineNum">    1067 </span>            :         // invalid value, do nothing</a>
+<a name="1068"><span class="lineNum">    1068 </span><span class="lineCov">     240402 :     } else if (servo_pos &lt; 1200) {</span></a>
+<a name="1069"><span class="lineNum">    1069 </span><span class="lineCov">     222074 :         if (currently_clamped) {</span></a>
+<a name="1070"><span class="lineNum">    1070 </span><span class="lineCov">          2 :             GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;SITL: Clamp: released vehicle&quot;);</span></a>
+<a name="1071"><span class="lineNum">    1071 </span><span class="lineCov">          2 :             new_clamped = false;</span></a>
+<a name="1072"><span class="lineNum">    1072 </span>            :         }</a>
+<a name="1073"><span class="lineNum">    1073 </span><span class="lineCov">     222074 :         grab_attempted = false;</span></a>
+<a name="1074"><span class="lineNum">    1074 </span>            :     } else {</a>
+<a name="1075"><span class="lineNum">    1075 </span>            :         // re-clamp if &lt; 10cm from home</a>
+<a name="1076"><span class="lineNum">    1076 </span><span class="lineCov">      18328 :         if (servo_pos &gt; 1800 &amp;&amp; !grab_attempted) {</span></a>
+<a name="1077"><span class="lineNum">    1077 </span><span class="lineCov">          4 :             const Vector3d pos = aircraft.get_position_relhome();</span></a>
+<a name="1078"><span class="lineNum">    1078 </span><span class="lineCov">          4 :             const float distance_from_home = pos.length();</span></a>
+<a name="1079"><span class="lineNum">    1079 </span>            :             // GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;SITL: Clamp: dist=%f&quot;, distance_from_home);</a>
+<a name="1080"><span class="lineNum">    1080 </span><span class="lineCov">          4 :             if (distance_from_home &lt; 0.5) {</span></a>
+<a name="1081"><span class="lineNum">    1081 </span><span class="lineCov">          3 :                 GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;SITL: Clamp: grabbed vehicle&quot;);</span></a>
+<a name="1082"><span class="lineNum">    1082 </span><span class="lineCov">          3 :                 new_clamped = true;</span></a>
+<a name="1083"><span class="lineNum">    1083 </span><span class="lineCov">          1 :             } else if (!grab_attempted) {</span></a>
+<a name="1084"><span class="lineNum">    1084 </span><span class="lineCov">          1 :                 GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;SITL: Clamp: missed vehicle&quot;);</span></a>
+<a name="1085"><span class="lineNum">    1085 </span>            :             }</a>
+<a name="1086"><span class="lineNum">    1086 </span><span class="lineCov">          4 :             grab_attempted = true;</span></a>
+<a name="1087"><span class="lineNum">    1087 </span>            :         }</a>
+<a name="1088"><span class="lineNum">    1088 </span>            :     }</a>
+<a name="1089"><span class="lineNum">    1089 </span>            : </a>
+<a name="1090"><span class="lineNum">    1090 </span><span class="lineCov">     293559 :     currently_clamped = new_clamped;</span></a>
+<a name="1091"><span class="lineNum">    1091 </span>            : </a>
+<a name="1092"><span class="lineNum">    1092 </span><span class="lineCov">     293559 :     return currently_clamped;</span></a>
+<a name="1093"><span class="lineNum">    1093 </span>            : }</a>
+<a name="1094"><span class="lineNum">    1094 </span>            : </a>
+<a name="1095"><span class="lineNum">    1095 </span><span class="lineCov">   70726200 : void Aircraft::update_external_payload(const struct sitl_input &amp;input)</span></a>
+<a name="1096"><span class="lineNum">    1096 </span>            : {</a>
+<a name="1097"><span class="lineNum">    1097 </span><span class="lineCov">   70726200 :     external_payload_mass = 0;</span></a>
+<a name="1098"><span class="lineNum">    1098 </span>            : </a>
+<a name="1099"><span class="lineNum">    1099 </span>            :     // update sprayer</a>
+<a name="1100"><span class="lineNum">    1100 </span><span class="lineCov">   70726200 :     if (sprayer &amp;&amp; sprayer-&gt;is_enabled()) {</span></a>
+<a name="1101"><span class="lineNum">    1101 </span><span class="lineCov">     204705 :         sprayer-&gt;update(input);</span></a>
+<a name="1102"><span class="lineNum">    1102 </span><span class="lineCov">     204705 :         external_payload_mass += sprayer-&gt;payload_mass();</span></a>
+<a name="1103"><span class="lineNum">    1103 </span>            :     }</a>
+<a name="1104"><span class="lineNum">    1104 </span>            : </a>
+<a name="1105"><span class="lineNum">    1105 </span>            :     {</a>
+<a name="1106"><span class="lineNum">    1106 </span><span class="lineCov">   70726200 :         const float range = rangefinder_range();</span></a>
+<a name="1107"><span class="lineNum">    1107 </span><span class="lineCov">   70726200 :         if (!isinf(range) &amp;&amp; range &gt; 100000) {</span></a>
+<a name="1108"><span class="lineNum">    1108 </span><span class="lineNoCov">          0 :             AP_HAL::panic(&quot;Bad rangefinder calculation&quot;);</span></a>
+<a name="1109"><span class="lineNum">    1109 </span>            :         }</a>
+<a name="1110"><span class="lineNum">    1110 </span><span class="lineCov">  777988000 :         for (uint8_t i=0; i&lt;ARRAY_SIZE(rangefinder_m); i++) {</span></a>
+<a name="1111"><span class="lineNum">    1111 </span><span class="lineCov">  707262000 :             rangefinder_m[i] = range;</span></a>
+<a name="1112"><span class="lineNum">    1112 </span>            :         }</a>
+<a name="1113"><span class="lineNum">    1113 </span>            :     }</a>
+<a name="1114"><span class="lineNum">    1114 </span>            : </a>
+<a name="1115"><span class="lineNum">    1115 </span>            :     // update i2c</a>
+<a name="1116"><span class="lineNum">    1116 </span><span class="lineCov">   70726200 :     if (i2c) {</span></a>
+<a name="1117"><span class="lineNum">    1117 </span><span class="lineCov">   70726200 :         i2c-&gt;update(*this);</span></a>
+<a name="1118"><span class="lineNum">    1118 </span>            :     }</a>
+<a name="1119"><span class="lineNum">    1119 </span>            : </a>
+<a name="1120"><span class="lineNum">    1120 </span>            :     // update buzzer</a>
+<a name="1121"><span class="lineNum">    1121 </span><span class="lineCov">   70726200 :     if (buzzer &amp;&amp; buzzer-&gt;is_enabled()) {</span></a>
+<a name="1122"><span class="lineNum">    1122 </span><span class="lineNoCov">          0 :         buzzer-&gt;update(input);</span></a>
+<a name="1123"><span class="lineNum">    1123 </span>            :     }</a>
+<a name="1124"><span class="lineNum">    1124 </span>            : </a>
+<a name="1125"><span class="lineNum">    1125 </span>            :     // update grippers</a>
+<a name="1126"><span class="lineNum">    1126 </span><span class="lineCov">   70726200 :     if (gripper &amp;&amp; gripper-&gt;is_enabled()) {</span></a>
+<a name="1127"><span class="lineNum">    1127 </span><span class="lineCov">     552507 :         gripper-&gt;set_alt(hagl());</span></a>
+<a name="1128"><span class="lineNum">    1128 </span><span class="lineCov">     552507 :         gripper-&gt;update(input);</span></a>
+<a name="1129"><span class="lineNum">    1129 </span><span class="lineCov">     552507 :         external_payload_mass += gripper-&gt;payload_mass();</span></a>
+<a name="1130"><span class="lineNum">    1130 </span>            :     }</a>
+<a name="1131"><span class="lineNum">    1131 </span><span class="lineCov">   70726200 :     if (gripper_epm &amp;&amp; gripper_epm-&gt;is_enabled()) {</span></a>
+<a name="1132"><span class="lineNum">    1132 </span><span class="lineNoCov">          0 :         gripper_epm-&gt;update(input);</span></a>
+<a name="1133"><span class="lineNum">    1133 </span><span class="lineNoCov">          0 :         external_payload_mass += gripper_epm-&gt;payload_mass();</span></a>
+<a name="1134"><span class="lineNum">    1134 </span>            :     }</a>
+<a name="1135"><span class="lineNum">    1135 </span>            : </a>
+<a name="1136"><span class="lineNum">    1136 </span>            :     // update parachute</a>
+<a name="1137"><span class="lineNum">    1137 </span><span class="lineCov">   70726200 :     if (parachute &amp;&amp; parachute-&gt;is_enabled()) {</span></a>
+<a name="1138"><span class="lineNum">    1138 </span><span class="lineCov">     336062 :         parachute-&gt;update(input);</span></a>
+<a name="1139"><span class="lineNum">    1139 </span>            :         // TODO: add drag to vehicle, presumably proportional to velocity</a>
+<a name="1140"><span class="lineNum">    1140 </span>            :     }</a>
+<a name="1141"><span class="lineNum">    1141 </span>            : </a>
+<a name="1142"><span class="lineNum">    1142 </span><span class="lineCov">   70726200 :     if (precland &amp;&amp; precland-&gt;is_enabled()) {</span></a>
+<a name="1143"><span class="lineNum">    1143 </span><span class="lineCov">     213347 :         precland-&gt;update(get_location());</span></a>
+<a name="1144"><span class="lineNum">    1144 </span><span class="lineCov">     213347 :         if (precland-&gt;_over_precland_base) {</span></a>
+<a name="1145"><span class="lineNum">    1145 </span><span class="lineNoCov">          0 :             local_ground_level += precland-&gt;_device_height;</span></a>
+<a name="1146"><span class="lineNum">    1146 </span>            :         }</a>
+<a name="1147"><span class="lineNum">    1147 </span>            :     }</a>
+<a name="1148"><span class="lineNum">    1148 </span>            : </a>
+<a name="1149"><span class="lineNum">    1149 </span>            :     // update RichenPower generator</a>
+<a name="1150"><span class="lineNum">    1150 </span><span class="lineCov">   70726200 :     if (richenpower) {</span></a>
+<a name="1151"><span class="lineNum">    1151 </span><span class="lineCov">     113479 :         richenpower-&gt;update(input);</span></a>
+<a name="1152"><span class="lineNum">    1152 </span>            :     }</a>
+<a name="1153"><span class="lineNum">    1153 </span>            : </a>
+<a name="1154"><span class="lineNum">    1154 </span>            : #if AP_SIM_LOWEHEISER_ENABLED</a>
+<a name="1155"><span class="lineNum">    1155 </span>            :     // update Loweheiser generator</a>
+<a name="1156"><span class="lineNum">    1156 </span><span class="lineCov">   70726200 :     if (loweheiser) {</span></a>
+<a name="1157"><span class="lineNum">    1157 </span><span class="lineCov">     523048 :         loweheiser-&gt;update();</span></a>
+<a name="1158"><span class="lineNum">    1158 </span>            :     }</a>
+<a name="1159"><span class="lineNum">    1159 </span>            : #endif</a>
+<a name="1160"><span class="lineNum">    1160 </span>            : </a>
+<a name="1161"><span class="lineNum">    1161 </span><span class="lineCov">   70726200 :     if (fetteconewireesc) {</span></a>
+<a name="1162"><span class="lineNum">    1162 </span><span class="lineCov">     205921 :         fetteconewireesc-&gt;update(*this);</span></a>
+<a name="1163"><span class="lineNum">    1163 </span>            :     }</a>
+<a name="1164"><span class="lineNum">    1164 </span>            : </a>
+<a name="1165"><span class="lineNum">    1165 </span>            : #if AP_SIM_VOLZ_ENABLED</a>
+<a name="1166"><span class="lineNum">    1166 </span><span class="lineCov">   70726200 :     if (volz) {</span></a>
+<a name="1167"><span class="lineNum">    1167 </span><span class="lineNoCov">          0 :         volz-&gt;update(*this);</span></a>
+<a name="1168"><span class="lineNum">    1168 </span>            :     }</a>
+<a name="1169"><span class="lineNum">    1169 </span>            : #endif  // AP_SIM_VOLZ_ENABLED</a>
+<a name="1170"><span class="lineNum">    1170 </span>            : </a>
+<a name="1171"><span class="lineNum">    1171 </span>            : #if AP_SIM_SHIP_ENABLED</a>
+<a name="1172"><span class="lineNum">    1172 </span><span class="lineCov">   70726200 :     sitl-&gt;models.shipsim.update();</span></a>
+<a name="1173"><span class="lineNum">    1173 </span>            : #endif</a>
+<a name="1174"><span class="lineNum">    1174 </span>            : </a>
+<a name="1175"><span class="lineNum">    1175 </span>            :     // update IntelligentEnergy 2.4kW generator</a>
+<a name="1176"><span class="lineNum">    1176 </span><span class="lineCov">   70726200 :     if (ie24) {</span></a>
+<a name="1177"><span class="lineNum">    1177 </span><span class="lineCov">     422689 :         ie24-&gt;update(input);</span></a>
+<a name="1178"><span class="lineNum">    1178 </span>            :     }</a>
+<a name="1179"><span class="lineNum">    1179 </span>            : </a>
+<a name="1180"><span class="lineNum">    1180 </span>            : #if AP_TEST_DRONECAN_DRIVERS</a>
+<a name="1181"><span class="lineNum">    1181 </span>            :     if (dronecan) {</a>
+<a name="1182"><span class="lineNum">    1182 </span>            :         dronecan-&gt;update();</a>
+<a name="1183"><span class="lineNum">    1183 </span>            :     }</a>
+<a name="1184"><span class="lineNum">    1184 </span>            : #endif</a>
+<a name="1185"><span class="lineNum">    1185 </span>            : </a>
+<a name="1186"><span class="lineNum">    1186 </span>            : #if AP_SIM_GPIO_LED_1_ENABLED</a>
+<a name="1187"><span class="lineNum">    1187 </span>            :     sim_led1.update(*this);</a>
+<a name="1188"><span class="lineNum">    1188 </span>            : #endif</a>
+<a name="1189"><span class="lineNum">    1189 </span>            : #if AP_SIM_GPIO_LED_2_ENABLED</a>
+<a name="1190"><span class="lineNum">    1190 </span>            :     sim_led2.update(*this);</a>
+<a name="1191"><span class="lineNum">    1191 </span>            : #endif</a>
+<a name="1192"><span class="lineNum">    1192 </span>            : #if AP_SIM_GPIO_LED_3_ENABLED</a>
+<a name="1193"><span class="lineNum">    1193 </span>            :     sim_led3.update(*this);</a>
+<a name="1194"><span class="lineNum">    1194 </span>            : #endif</a>
+<a name="1195"><span class="lineNum">    1195 </span>            : #if AP_SIM_GPIO_LED_RGB_ENABLED</a>
+<a name="1196"><span class="lineNum">    1196 </span>            :     sim_ledrgb.update(*this);</a>
+<a name="1197"><span class="lineNum">    1197 </span>            : #endif</a>
+<a name="1198"><span class="lineNum">    1198 </span><span class="lineCov">   70726200 : }</span></a>
+<a name="1199"><span class="lineNum">    1199 </span>            : </a>
+<a name="1200"><span class="lineNum">    1200 </span><span class="lineCov">   70726200 : void Aircraft::add_shove_forces(Vector3f &amp;rot_accel, Vector3f &amp;body_accel)</span></a>
+<a name="1201"><span class="lineNum">    1201 </span>            : {</a>
+<a name="1202"><span class="lineNum">    1202 </span><span class="lineCov">   70726200 :     const uint32_t now = AP_HAL::millis();</span></a>
+<a name="1203"><span class="lineNum">    1203 </span><span class="lineCov">   70726200 :     if (sitl == nullptr) {</span></a>
+<a name="1204"><span class="lineNum">    1204 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="1205"><span class="lineNum">    1205 </span>            :     }</a>
+<a name="1206"><span class="lineNum">    1206 </span><span class="lineCov">   70726200 :     if (sitl-&gt;shove.t == 0) {</span></a>
+<a name="1207"><span class="lineNum">    1207 </span><span class="lineCov">   70514000 :         return;</span></a>
+<a name="1208"><span class="lineNum">    1208 </span>            :     }</a>
+<a name="1209"><span class="lineNum">    1209 </span><span class="lineCov">     212245 :     if (sitl-&gt;shove.start_ms == 0) {</span></a>
+<a name="1210"><span class="lineNum">    1210 </span><span class="lineCov">         31 :         sitl-&gt;shove.start_ms = now;</span></a>
+<a name="1211"><span class="lineNum">    1211 </span>            :     }</a>
+<a name="1212"><span class="lineNum">    1212 </span><span class="lineCov">     212245 :     if (now - sitl-&gt;shove.start_ms &lt; uint32_t(sitl-&gt;shove.t)) {</span></a>
+<a name="1213"><span class="lineNum">    1213 </span>            :         // FIXME: can we get a vector operation here instead?</a>
+<a name="1214"><span class="lineNum">    1214 </span><span class="lineCov">     212240 :         body_accel.x += sitl-&gt;shove.x;</span></a>
+<a name="1215"><span class="lineNum">    1215 </span><span class="lineCov">     212240 :         body_accel.y += sitl-&gt;shove.y;</span></a>
+<a name="1216"><span class="lineNum">    1216 </span><span class="lineCov">     212240 :         body_accel.z += sitl-&gt;shove.z;</span></a>
+<a name="1217"><span class="lineNum">    1217 </span>            :     } else {</a>
+<a name="1218"><span class="lineNum">    1218 </span><span class="lineCov">          5 :         sitl-&gt;shove.start_ms = 0;</span></a>
+<a name="1219"><span class="lineNum">    1219 </span><span class="lineCov">          5 :         sitl-&gt;shove.t.set(0);</span></a>
+<a name="1220"><span class="lineNum">    1220 </span>            :     }</a>
+<a name="1221"><span class="lineNum">    1221 </span>            : }</a>
+<a name="1222"><span class="lineNum">    1222 </span>            : </a>
+<a name="1223"><span class="lineNum">    1223 </span><span class="lineCov">   70726200 : float Aircraft::get_local_updraft(const Vector3d &amp;currentPos)</span></a>
+<a name="1224"><span class="lineNum">    1224 </span>            : {</a>
+<a name="1225"><span class="lineNum">    1225 </span><span class="lineCov">   70726200 :     int scenario = sitl-&gt;thermal_scenario;</span></a>
+<a name="1226"><span class="lineNum">    1226 </span>            : </a>
+<a name="1227"><span class="lineNum">    1227 </span>            :     #define MAX_THERMALS 10</a>
+<a name="1228"><span class="lineNum">    1228 </span>            : </a>
+<a name="1229"><span class="lineNum">    1229 </span>            :     float thermals_w[MAX_THERMALS];</a>
+<a name="1230"><span class="lineNum">    1230 </span>            :     float thermals_r[MAX_THERMALS];</a>
+<a name="1231"><span class="lineNum">    1231 </span>            :     float thermals_x[MAX_THERMALS];</a>
+<a name="1232"><span class="lineNum">    1232 </span>            :     float thermals_y[MAX_THERMALS];</a>
+<a name="1233"><span class="lineNum">    1233 </span>            : </a>
+<a name="1234"><span class="lineNum">    1234 </span><span class="lineCov">   70726200 :     int n_thermals = 0;</span></a>
+<a name="1235"><span class="lineNum">    1235 </span>            : </a>
+<a name="1236"><span class="lineNum">    1236 </span><span class="lineCov">   70726200 :     switch (scenario) {</span></a>
+<a name="1237"><span class="lineNum">    1237 </span><span class="lineCov">   70726200 :         case 0:</span></a>
+<a name="1238"><span class="lineNum">    1238 </span><span class="lineCov">   70726200 :             return 0;</span></a>
+<a name="1239"><span class="lineNum">    1239 </span><span class="lineNoCov">          0 :         case 1:</span></a>
+<a name="1240"><span class="lineNum">    1240 </span><span class="lineNoCov">          0 :             n_thermals = 1;</span></a>
+<a name="1241"><span class="lineNum">    1241 </span><span class="lineNoCov">          0 :             thermals_w[0] =  2.0;</span></a>
+<a name="1242"><span class="lineNum">    1242 </span><span class="lineNoCov">          0 :             thermals_r[0] =  80.0;</span></a>
+<a name="1243"><span class="lineNum">    1243 </span><span class="lineNoCov">          0 :             thermals_x[0] = -180.0;</span></a>
+<a name="1244"><span class="lineNum">    1244 </span><span class="lineNoCov">          0 :             thermals_y[0] = -260.0;</span></a>
+<a name="1245"><span class="lineNum">    1245 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="1246"><span class="lineNum">    1246 </span><span class="lineNoCov">          0 :         case 2:</span></a>
+<a name="1247"><span class="lineNum">    1247 </span><span class="lineNoCov">          0 :             n_thermals = 1;</span></a>
+<a name="1248"><span class="lineNum">    1248 </span><span class="lineNoCov">          0 :             thermals_w[0] =  4.0;</span></a>
+<a name="1249"><span class="lineNum">    1249 </span><span class="lineNoCov">          0 :             thermals_r[0] =  30.0;</span></a>
+<a name="1250"><span class="lineNum">    1250 </span><span class="lineNoCov">          0 :             thermals_x[0] = -180.0;</span></a>
+<a name="1251"><span class="lineNum">    1251 </span><span class="lineNoCov">          0 :             thermals_y[0] = -260.0;</span></a>
+<a name="1252"><span class="lineNum">    1252 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="1253"><span class="lineNum">    1253 </span><span class="lineNoCov">          0 :         case 3:</span></a>
+<a name="1254"><span class="lineNum">    1254 </span><span class="lineNoCov">          0 :             n_thermals = 1;</span></a>
+<a name="1255"><span class="lineNum">    1255 </span><span class="lineNoCov">          0 :             thermals_w[0] =  2.0;</span></a>
+<a name="1256"><span class="lineNum">    1256 </span><span class="lineNoCov">          0 :             thermals_r[0] =  30.0;</span></a>
+<a name="1257"><span class="lineNum">    1257 </span><span class="lineNoCov">          0 :             thermals_x[0] = -180.0;</span></a>
+<a name="1258"><span class="lineNum">    1258 </span><span class="lineNoCov">          0 :             thermals_y[0] = -260.0;</span></a>
+<a name="1259"><span class="lineNum">    1259 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="1260"><span class="lineNum">    1260 </span><span class="lineNoCov">          0 :         case 4:</span></a>
+<a name="1261"><span class="lineNum">    1261 </span><span class="lineNoCov">          0 :             n_thermals = 1;</span></a>
+<a name="1262"><span class="lineNum">    1262 </span><span class="lineNoCov">          0 :             thermals_w[0] =  5.0;</span></a>
+<a name="1263"><span class="lineNum">    1263 </span><span class="lineNoCov">          0 :             thermals_r[0] =  30.0;</span></a>
+<a name="1264"><span class="lineNum">    1264 </span><span class="lineNoCov">          0 :             thermals_x[0] =  0;</span></a>
+<a name="1265"><span class="lineNum">    1265 </span><span class="lineNoCov">          0 :             thermals_y[0] =  0;</span></a>
+<a name="1266"><span class="lineNum">    1266 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="1267"><span class="lineNum">    1267 </span><span class="lineNoCov">          0 :         default:</span></a>
+<a name="1268"><span class="lineNum">    1268 </span><span class="lineNoCov">          0 :             AP_BoardConfig::config_error(&quot;Bad thermal scenario&quot;);</span></a>
+<a name="1269"><span class="lineNum">    1269 </span>            :     }</a>
+<a name="1270"><span class="lineNum">    1270 </span>            : </a>
+<a name="1271"><span class="lineNum">    1271 </span>            :     // Wind drift at this altitude</a>
+<a name="1272"><span class="lineNum">    1272 </span><span class="lineNoCov">          0 :     float driftX = sitl-&gt;wind_speed * (currentPos.z+100) * cosf(sitl-&gt;wind_direction * DEG_TO_RAD);</span></a>
+<a name="1273"><span class="lineNum">    1273 </span><span class="lineNoCov">          0 :     float driftY = sitl-&gt;wind_speed * (currentPos.z+100) * sinf(sitl-&gt;wind_direction * DEG_TO_RAD);</span></a>
+<a name="1274"><span class="lineNum">    1274 </span>            : </a>
+<a name="1275"><span class="lineNum">    1275 </span>            :     int iThermal;</a>
+<a name="1276"><span class="lineNum">    1276 </span><span class="lineNoCov">          0 :     float w = 0.0f;</span></a>
+<a name="1277"><span class="lineNum">    1277 </span>            :     float r2;</a>
+<a name="1278"><span class="lineNum">    1278 </span><span class="lineNoCov">          0 :     for (iThermal=0;iThermal&lt;n_thermals;iThermal++) {</span></a>
+<a name="1279"><span class="lineNum">    1279 </span><span class="lineNoCov">          0 :         Vector3d thermalPos(thermals_x[iThermal] + driftX/thermals_w[iThermal],</span></a>
+<a name="1280"><span class="lineNum">    1280 </span><span class="lineNoCov">          0 :                             thermals_y[iThermal] + driftY/thermals_w[iThermal],</span></a>
+<a name="1281"><span class="lineNum">    1281 </span><span class="lineNoCov">          0 :                             0);</span></a>
+<a name="1282"><span class="lineNum">    1282 </span><span class="lineNoCov">          0 :         Vector3d relVec = currentPos - thermalPos;</span></a>
+<a name="1283"><span class="lineNum">    1283 </span><span class="lineNoCov">          0 :         r2 = relVec.x*relVec.x + relVec.y*relVec.y;</span></a>
+<a name="1284"><span class="lineNum">    1284 </span><span class="lineNoCov">          0 :         w += thermals_w[iThermal]*exp(-r2/(thermals_r[iThermal]*thermals_r[iThermal]));</span></a>
+<a name="1285"><span class="lineNum">    1285 </span>            :     }</a>
+<a name="1286"><span class="lineNum">    1286 </span>            : </a>
+<a name="1287"><span class="lineNum">    1287 </span><span class="lineNoCov">          0 :     return w;</span></a>
+<a name="1288"><span class="lineNum">    1288 </span>            : }</a>
+<a name="1289"><span class="lineNum">    1289 </span>            : </a>
+<a name="1290"><span class="lineNum">    1290 </span><span class="lineCov">   70726200 : void Aircraft::add_twist_forces(Vector3f &amp;rot_accel)</span></a>
+<a name="1291"><span class="lineNum">    1291 </span>            : {</a>
+<a name="1292"><span class="lineNum">    1292 </span><span class="lineCov">   70726200 :     if (sitl == nullptr) {</span></a>
+<a name="1293"><span class="lineNum">    1293 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="1294"><span class="lineNum">    1294 </span>            :     }</a>
+<a name="1295"><span class="lineNum">    1295 </span><span class="lineCov">   70726200 :     if (sitl-&gt;gnd_behav != -1) {</span></a>
+<a name="1296"><span class="lineNum">    1296 </span><span class="lineCov">       1361 :         ground_behavior = (GroundBehaviour)sitl-&gt;gnd_behav.get();</span></a>
+<a name="1297"><span class="lineNum">    1297 </span>            :     }</a>
+<a name="1298"><span class="lineNum">    1298 </span><span class="lineCov">   70726200 :     const uint32_t now = AP_HAL::millis();</span></a>
+<a name="1299"><span class="lineNum">    1299 </span><span class="lineCov">   70726200 :     if (sitl == nullptr) {</span></a>
+<a name="1300"><span class="lineNum">    1300 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="1301"><span class="lineNum">    1301 </span>            :     }</a>
+<a name="1302"><span class="lineNum">    1302 </span><span class="lineCov">   70726200 :     if (sitl-&gt;twist.t == 0) {</span></a>
+<a name="1303"><span class="lineNum">    1303 </span><span class="lineCov">   70726200 :         return;</span></a>
+<a name="1304"><span class="lineNum">    1304 </span>            :     }</a>
+<a name="1305"><span class="lineNum">    1305 </span><span class="lineNoCov">          0 :     if (sitl-&gt;twist.start_ms == 0) {</span></a>
+<a name="1306"><span class="lineNum">    1306 </span><span class="lineNoCov">          0 :         sitl-&gt;twist.start_ms = now;</span></a>
+<a name="1307"><span class="lineNum">    1307 </span>            :     }</a>
+<a name="1308"><span class="lineNum">    1308 </span><span class="lineNoCov">          0 :     if (now - sitl-&gt;twist.start_ms &lt; uint32_t(sitl-&gt;twist.t)) {</span></a>
+<a name="1309"><span class="lineNum">    1309 </span>            :         // FIXME: can we get a vector operation here instead?</a>
+<a name="1310"><span class="lineNum">    1310 </span><span class="lineNoCov">          0 :         rot_accel.x += sitl-&gt;twist.x;</span></a>
+<a name="1311"><span class="lineNum">    1311 </span><span class="lineNoCov">          0 :         rot_accel.y += sitl-&gt;twist.y;</span></a>
+<a name="1312"><span class="lineNum">    1312 </span><span class="lineNoCov">          0 :         rot_accel.z += sitl-&gt;twist.z;</span></a>
+<a name="1313"><span class="lineNum">    1313 </span>            :     } else {</a>
+<a name="1314"><span class="lineNum">    1314 </span><span class="lineNoCov">          0 :         sitl-&gt;twist.start_ms = 0;</span></a>
+<a name="1315"><span class="lineNum">    1315 </span><span class="lineNoCov">          0 :         sitl-&gt;twist.t.set(0);</span></a>
+<a name="1316"><span class="lineNum">    1316 </span>            :     }</a>
+<a name="1317"><span class="lineNum">    1317 </span>            : }</a>
+<a name="1318"><span class="lineNum">    1318 </span>            : </a>
+<a name="1319"><span class="lineNum">    1319 </span>            : // add body-frame force due to slung payload and tether</a>
+<a name="1320"><span class="lineNum">    1320 </span><span class="lineCov">   70726200 : void Aircraft::add_external_forces(Vector3f &amp;body_accel)</span></a>
+<a name="1321"><span class="lineNum">    1321 </span>            : {</a>
+<a name="1322"><span class="lineNum">    1322 </span><span class="lineCov">   70726200 :     Vector3f total_force;</span></a>
+<a name="1323"><span class="lineNum">    1323 </span>            : #if AP_SIM_SLUNGPAYLOAD_ENABLED</a>
+<a name="1324"><span class="lineNum">    1324 </span><span class="lineCov">   70726200 :     Vector3f forces_ef_slung;</span></a>
+<a name="1325"><span class="lineNum">    1325 </span><span class="lineCov">   70726200 :     sitl-&gt;models.slung_payload_sim.get_forces_on_vehicle(forces_ef_slung);</span></a>
+<a name="1326"><span class="lineNum">    1326 </span><span class="lineCov">   70726200 :     total_force += forces_ef_slung;</span></a>
+<a name="1327"><span class="lineNum">    1327 </span>            : #endif</a>
+<a name="1328"><span class="lineNum">    1328 </span>            : </a>
+<a name="1329"><span class="lineNum">    1329 </span>            : #if AP_SIM_TETHER_ENABLED</a>
+<a name="1330"><span class="lineNum">    1330 </span><span class="lineCov">   70726200 :     Vector3f forces_ef_tether;</span></a>
+<a name="1331"><span class="lineNum">    1331 </span><span class="lineCov">   70726200 :     sitl-&gt;models.tether_sim.get_forces_on_vehicle(forces_ef_tether);</span></a>
+<a name="1332"><span class="lineNum">    1332 </span><span class="lineCov">   70726200 :     total_force += forces_ef_tether;</span></a>
+<a name="1333"><span class="lineNum">    1333 </span>            : #endif</a>
+<a name="1334"><span class="lineNum">    1334 </span>            : </a>
+<a name="1335"><span class="lineNum">    1335 </span>            :     // convert ef forces to body-frame accelerations (acceleration = force / mass)</a>
+<a name="1336"><span class="lineNum">    1336 </span><span class="lineCov">   70726200 :     const Vector3f accel_bf_tether = dcm.transposed() * total_force / mass;</span></a>
+<a name="1337"><span class="lineNum">    1337 </span><span class="lineCov">   70726200 :     body_accel += accel_bf_tether;</span></a>
+<a name="1338"><span class="lineNum">    1338 </span><span class="lineCov">   70726200 : }</span></a>
+<a name="1339"><span class="lineNum">    1339 </span>            : </a>
+<a name="1340"><span class="lineNum">    1340 </span>            : /*</a>
+<a name="1341"><span class="lineNum">    1341 </span>            :   get position relative to home</a>
+<a name="1342"><span class="lineNum">    1342 </span>            :  */</a>
+<a name="1343"><span class="lineNum">    1343 </span><span class="lineCov">  200039000 : Vector3d Aircraft::get_position_relhome() const</span></a>
+<a name="1344"><span class="lineNum">    1344 </span>            : {</a>
+<a name="1345"><span class="lineNum">    1345 </span><span class="lineCov">  200039000 :     Vector3d pos = position;</span></a>
+<a name="1346"><span class="lineNum">    1346 </span><span class="lineCov">  200039000 :     pos.xy() += home.get_distance_NE_double(origin);</span></a>
+<a name="1347"><span class="lineNum">    1347 </span><span class="lineCov">  200039000 :     return pos;</span></a>
+<a name="1348"><span class="lineNum">    1348 </span>            : }</a>
+<a name="1349"><span class="lineNum">    1349 </span>            : </a>
+<a name="1350"><span class="lineNum">    1350 </span>            : // get air density in kg/m^3</a>
+<a name="1351"><span class="lineNum">    1351 </span><span class="lineNoCov">          0 : float Aircraft::get_air_density(float alt_amsl) const</span></a>
+<a name="1352"><span class="lineNum">    1352 </span>            : {</a>
+<a name="1353"><span class="lineNum">    1353 </span><span class="lineNoCov">          0 :     return AP_Baro::get_air_density_for_alt_amsl(alt_amsl);</span></a>
+<a name="1354"><span class="lineNum">    1354 </span>            : }</a>
+<a name="1355"><span class="lineNum">    1355 </span>            : </a>
+<a name="1356"><span class="lineNum">    1356 </span>            : /*</a>
+<a name="1357"><span class="lineNum">    1357 </span>            :   update EAS airspeed and pitot speed</a>
+<a name="1358"><span class="lineNum">    1358 </span>            :  */</a>
+<a name="1359"><span class="lineNum">    1359 </span><span class="lineCov">   85832400 : void Aircraft::update_eas_airspeed()</span></a>
+<a name="1360"><span class="lineNum">    1360 </span>            : {</a>
+<a name="1361"><span class="lineNum">    1361 </span><span class="lineCov">   85832400 :     airspeed = velocity_air_ef.length() / eas2tas;</span></a>
+<a name="1362"><span class="lineNum">    1362 </span>            : </a>
+<a name="1363"><span class="lineNum">    1363 </span>            :     /*</a>
+<a name="1364"><span class="lineNum">    1364 </span>            :       airspeed as seen by a fwd pitot tube (limited to 120m/s)</a>
+<a name="1365"><span class="lineNum">    1365 </span>            :     */</a>
+<a name="1366"><span class="lineNum">    1366 </span><span class="lineCov">   85832400 :     airspeed_pitot = airspeed;</span></a>
+<a name="1367"><span class="lineNum">    1367 </span>            : </a>
+<a name="1368"><span class="lineNum">    1368 </span>            :     // calculate angle between the local flow vector and a pitot tube aligned with the X body axis</a>
+<a name="1369"><span class="lineNum">    1369 </span><span class="lineCov">   85832400 :     const float pitot_aoa =  atan2f(sqrtf(sq(velocity_air_bf.y) + sq(velocity_air_bf.z)), velocity_air_bf.x);</span></a>
+<a name="1370"><span class="lineNum">    1370 </span>            : </a>
+<a name="1371"><span class="lineNum">    1371 </span>            :     /*</a>
+<a name="1372"><span class="lineNum">    1372 </span>            :       assume the pitot can correctly capture airspeed up to 20 degrees off the nose</a>
+<a name="1373"><span class="lineNum">    1373 </span>            :       and follows a cose law outside that range</a>
+<a name="1374"><span class="lineNum">    1374 </span>            :     */</a>
+<a name="1375"><span class="lineNum">    1375 </span><span class="lineCov">   85832400 :     const float max_pitot_aoa = radians(20);</span></a>
+<a name="1376"><span class="lineNum">    1376 </span><span class="lineCov">   85832400 :     if (pitot_aoa &gt; radians(90)) {</span></a>
+<a name="1377"><span class="lineNum">    1377 </span><span class="lineCov">   20014900 :         airspeed_pitot = 0;</span></a>
+<a name="1378"><span class="lineNum">    1378 </span><span class="lineCov">   65817500 :     } else if (pitot_aoa &gt; max_pitot_aoa) {</span></a>
+<a name="1379"><span class="lineNum">    1379 </span><span class="lineCov">   22291300 :         const float gain_factor = M_PI_2 / (radians(90) - max_pitot_aoa);</span></a>
+<a name="1380"><span class="lineNum">    1380 </span><span class="lineCov">   22291300 :         airspeed_pitot *= cosf((pitot_aoa - max_pitot_aoa) * gain_factor);</span></a>
+<a name="1381"><span class="lineNum">    1381 </span>            :     }</a>
+<a name="1382"><span class="lineNum">    1382 </span><span class="lineCov">   85832400 : }</span></a>
+<a name="1383"><span class="lineNum">    1383 </span>            : </a>
+<a name="1384"><span class="lineNum">    1384 </span>            : /*</a>
+<a name="1385"><span class="lineNum">    1385 </span>            :   set pose on the aircraft, called from scripting</a>
+<a name="1386"><span class="lineNum">    1386 </span>            :  */</a>
+<a name="1387"><span class="lineNum">    1387 </span><span class="lineNoCov">          0 : bool Aircraft::set_pose(uint8_t instance, const Location &amp;loc, const Quaternion &amp;quat, const Vector3f &amp;velocity_ef, const Vector3f &amp;gyro_rads)</span></a>
+<a name="1388"><span class="lineNum">    1388 </span>            : {</a>
+<a name="1389"><span class="lineNum">    1389 </span><span class="lineNoCov">          0 :     if (instance &gt;= MAX_SIM_INSTANCES || instances[instance] == nullptr) {</span></a>
+<a name="1390"><span class="lineNum">    1390 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="1391"><span class="lineNum">    1391 </span>            :     }</a>
+<a name="1392"><span class="lineNum">    1392 </span><span class="lineNoCov">          0 :     auto &amp;aircraft = *instances[instance];</span></a>
+<a name="1393"><span class="lineNum">    1393 </span><span class="lineNoCov">          0 :     WITH_SEMAPHORE(aircraft.pose_sem);</span></a>
+<a name="1394"><span class="lineNum">    1394 </span>            : </a>
+<a name="1395"><span class="lineNum">    1395 </span><span class="lineNoCov">          0 :     quat.rotation_matrix(aircraft.dcm);</span></a>
+<a name="1396"><span class="lineNum">    1396 </span><span class="lineNoCov">          0 :     aircraft.velocity_ef = velocity_ef;</span></a>
+<a name="1397"><span class="lineNum">    1397 </span><span class="lineNoCov">          0 :     aircraft.location = loc;</span></a>
+<a name="1398"><span class="lineNum">    1398 </span><span class="lineNoCov">          0 :     aircraft.position = aircraft.home.get_distance_NED_double(loc);</span></a>
+<a name="1399"><span class="lineNum">    1399 </span><span class="lineNoCov">          0 :     aircraft.smoothing.position = aircraft.position;</span></a>
+<a name="1400"><span class="lineNum">    1400 </span><span class="lineNoCov">          0 :     aircraft.smoothing.rotation_b2e = aircraft.dcm;</span></a>
+<a name="1401"><span class="lineNum">    1401 </span><span class="lineNoCov">          0 :     aircraft.smoothing.velocity_ef = velocity_ef;</span></a>
+<a name="1402"><span class="lineNum">    1402 </span><span class="lineNoCov">          0 :     aircraft.smoothing.location = loc;</span></a>
+<a name="1403"><span class="lineNum">    1403 </span><span class="lineNoCov">          0 :     aircraft.gyro = gyro_rads;</span></a>
+<a name="1404"><span class="lineNum">    1404 </span>            : </a>
+<a name="1405"><span class="lineNum">    1405 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="1406"><span class="lineNum">    1406 </span>            : }</a>
+<a name="1407"><span class="lineNum">    1407 </span>            : </a>
+<a name="1408"><span class="lineNum">    1408 </span>            : /*</a>
+<a name="1409"><span class="lineNum">    1409 </span>            :   wrapper for scripting access</a>
+<a name="1410"><span class="lineNum">    1410 </span>            :  */</a>
+<a name="1411"><span class="lineNum">    1411 </span><span class="lineNoCov">          0 : bool SITL::SIM::set_pose(uint8_t instance, const Location &amp;loc, const Quaternion &amp;quat, const Vector3f &amp;velocity_ef, const Vector3f &amp;gyro_rads)</span></a>
+<a name="1412"><span class="lineNum">    1412 </span>            : {</a>
+<a name="1413"><span class="lineNum">    1413 </span><span class="lineNoCov">          0 :     return Aircraft::set_pose(instance, loc, quat, velocity_ef, gyro_rads);</span></a>
+<a name="1414"><span class="lineNum">    1414 </span>            : }</a>
+<a name="1415"><span class="lineNum">    1415 </span>            : </a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

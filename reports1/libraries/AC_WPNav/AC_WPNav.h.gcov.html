@@ -1,0 +1,516 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AC_WPNav/AC_WPNav.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AC_WPNav</a> - AC_WPNav.h<span style="font-size: 80%;"> (source / <a href="AC_WPNav.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">22</td>
+            <td class="headerCovTableEntryMed">81.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntryMed">85.7 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<a name="2"><span class="lineNum">       2 </span>            : </a>
+<a name="3"><span class="lineNum">       3 </span>            : #include &lt;AP_Common/AP_Common.h&gt;</a>
+<a name="4"><span class="lineNum">       4 </span>            : #include &lt;AP_Param/AP_Param.h&gt;</a>
+<a name="5"><span class="lineNum">       5 </span>            : #include &lt;AP_Math/AP_Math.h&gt;</a>
+<a name="6"><span class="lineNum">       6 </span>            : #include &lt;AP_Math/SCurve.h&gt;</a>
+<a name="7"><span class="lineNum">       7 </span>            : #include &lt;AP_Math/SplineCurve.h&gt;</a>
+<a name="8"><span class="lineNum">       8 </span>            : #include &lt;AP_Common/Location.h&gt;</a>
+<a name="9"><span class="lineNum">       9 </span>            : #include &lt;AC_AttitudeControl/AC_PosControl.h&gt;      // Position control library</a>
+<a name="10"><span class="lineNum">      10 </span>            : #include &lt;AC_AttitudeControl/AC_AttitudeControl.h&gt; // Attitude control library</a>
+<a name="11"><span class="lineNum">      11 </span>            : #include &lt;AP_Terrain/AP_Terrain.h&gt;</a>
+<a name="12"><span class="lineNum">      12 </span>            : #include &lt;AC_Avoidance/AC_Avoid.h&gt;                 // Stop at fence library</a>
+<a name="13"><span class="lineNum">      13 </span>            : </a>
+<a name="14"><span class="lineNum">      14 </span>            : // maximum velocities and accelerations</a>
+<a name="15"><span class="lineNum">      15 </span>            : #define WPNAV_ACCELERATION_MS           2.5        // default horizontal acceleration limit for waypoint navigation (m/s²)</a>
+<a name="16"><span class="lineNum">      16 </span>            : </a>
+<a name="17"><span class="lineNum">      17 </span>            : class AC_WPNav</a>
+<a name="18"><span class="lineNum">      18 </span>            : {</a>
+<a name="19"><span class="lineNum">      19 </span>            : public:</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            :     /// Constructor</a>
+<a name="22"><span class="lineNum">      22 </span>            :     AC_WPNav(const AP_AHRS_View&amp; ahrs, AC_PosControl&amp; pos_control, const AC_AttitudeControl&amp; attitude_control);</a>
+<a name="23"><span class="lineNum">      23 </span>            : </a>
+<a name="24"><span class="lineNum">      24 </span>            :     // Sets terrain offset in cm from EKF origin using rangefinder.</a>
+<a name="25"><span class="lineNum">      25 </span>            :     // See set_rangefinder_terrain_offset_m() for full details.</a>
+<a name="26"><span class="lineNum">      26 </span>            :     void set_rangefinder_terrain_offset_cm(bool use, bool healthy, float terrain_offset_cm) { _rangefinder_available = use; _rangefinder_healthy = healthy; _rangefinder_terrain_offset_m = terrain_offset_cm * 0.01;}</a>
+<a name="27"><span class="lineNum">      27 </span>            : </a>
+<a name="28"><span class="lineNum">      28 </span>            :     // Sets terrain offset in meters from EKF origin using rangefinder data.</a>
+<a name="29"><span class="lineNum">      29 </span>            :     // This value is used to determine alt-above-terrain for terrain following.</a>
+<a name="30"><span class="lineNum">      30 </span><span class="lineCov">   27697400 :     void set_rangefinder_terrain_offset_m(bool use, bool healthy, float terrain_offset_m) { _rangefinder_available = use; _rangefinder_healthy = healthy; _rangefinder_terrain_offset_m = terrain_offset_m;}</span></a>
+<a name="31"><span class="lineNum">      31 </span>            : </a>
+<a name="32"><span class="lineNum">      32 </span>            :     // Returns true if rangefinder is enabled and may be used for terrain following.</a>
+<a name="33"><span class="lineNum">      33 </span><span class="lineCov">    1158690 :     bool rangefinder_used() const { return _rangefinder_use; }</span></a>
+<a name="34"><span class="lineNum">      34 </span>            : </a>
+<a name="35"><span class="lineNum">      35 </span>            :     // Returns true if rangefinder is enabled and currently healthy.</a>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">         71 :     bool rangefinder_used_and_healthy() const { return _rangefinder_use &amp;&amp; _rangefinder_healthy; }</span></a>
+<a name="37"><span class="lineNum">      37 </span>            : </a>
+<a name="38"><span class="lineNum">      38 </span>            :     // Returns the expected source of terrain data when using alt-above-terrain commands.</a>
+<a name="39"><span class="lineNum">      39 </span>            :     // Used by systems like ModeRTL to determine which terrain provider is active.</a>
+<a name="40"><span class="lineNum">      40 </span>            :     enum class TerrainSource {</a>
+<a name="41"><span class="lineNum">      41 </span>            :         TERRAIN_UNAVAILABLE,</a>
+<a name="42"><span class="lineNum">      42 </span>            :         TERRAIN_FROM_RANGEFINDER,</a>
+<a name="43"><span class="lineNum">      43 </span>            :         TERRAIN_FROM_TERRAINDATABASE,</a>
+<a name="44"><span class="lineNum">      44 </span>            :     };</a>
+<a name="45"><span class="lineNum">      45 </span>            :     AC_WPNav::TerrainSource get_terrain_source() const;</a>
+<a name="46"><span class="lineNum">      46 </span>            : </a>
+<a name="47"><span class="lineNum">      47 </span>            :     // Returns terrain offset in cm above the EKF origin at the current position.</a>
+<a name="48"><span class="lineNum">      48 </span>            :     // See get_terrain_offset_m() for full details.</a>
+<a name="49"><span class="lineNum">      49 </span>            :     bool get_terrain_offset_cm(float&amp; offset_cm);</a>
+<a name="50"><span class="lineNum">      50 </span>            : </a>
+<a name="51"><span class="lineNum">      51 </span>            :     // Returns terrain offset in meters above the EKF origin at the current position.</a>
+<a name="52"><span class="lineNum">      52 </span>            :     // Positive values mean terrain lies above the EKF origin altitude.</a>
+<a name="53"><span class="lineNum">      53 </span>            :     // Source may be rangefinder or terrain database depending on availability.</a>
+<a name="54"><span class="lineNum">      54 </span>            :     bool get_terrain_offset_m(float&amp; offset_m);</a>
+<a name="55"><span class="lineNum">      55 </span>            : </a>
+<a name="56"><span class="lineNum">      56 </span>            :     // Returns the terrain following altitude margin in meters.</a>
+<a name="57"><span class="lineNum">      57 </span>            :     // Vehicle will stop if distance from target altitude exceeds this margin.</a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">    1814360 :     float get_terrain_margin_m() const { return MAX(_terrain_margin_m, 0.1); }</span></a>
+<a name="59"><span class="lineNum">      59 </span>            : </a>
+<a name="60"><span class="lineNum">      60 </span>            :     // Converts a Location to a NEU position vector in cm from the EKF origin.</a>
+<a name="61"><span class="lineNum">      61 </span>            :     // See get_vector_NEU_m() for full details.</a>
+<a name="62"><span class="lineNum">      62 </span>            :     bool get_vector_NEU_cm(const Location &amp;loc, Vector3f &amp;pos_from_origin_NEU_cm, bool &amp;is_terrain_alt);</a>
+<a name="63"><span class="lineNum">      63 </span>            : </a>
+<a name="64"><span class="lineNum">      64 </span>            :     // Converts a Location to a NEU position vector in meters from the EKF origin.</a>
+<a name="65"><span class="lineNum">      65 </span>            :     // Sets `is_terrain_alt` to true if the resulting Z position is relative to terrain.</a>
+<a name="66"><span class="lineNum">      66 </span>            :     // Returns false if terrain data is unavailable or conversion fails.</a>
+<a name="67"><span class="lineNum">      67 </span>            :     bool get_vector_NEU_m(const Location &amp;loc, Vector3f &amp;pos_from_origin_NEU_m, bool &amp;is_terrain_alt);</a>
+<a name="68"><span class="lineNum">      68 </span>            : </a>
+<a name="69"><span class="lineNum">      69 </span>            :     ///</a>
+<a name="70"><span class="lineNum">      70 </span>            :     /// waypoint controller</a>
+<a name="71"><span class="lineNum">      71 </span>            :     ///</a>
+<a name="72"><span class="lineNum">      72 </span>            : </a>
+<a name="73"><span class="lineNum">      73 </span>            :     // Initializes waypoint and spline controllers using inputs in cm.</a>
+<a name="74"><span class="lineNum">      74 </span>            :     // See wp_and_spline_init_m() for full details.</a>
+<a name="75"><span class="lineNum">      75 </span>            :     void wp_and_spline_init_cm(float speed_cms = 0.0f, Vector3f stopping_point_neu_cm = Vector3f{});</a>
+<a name="76"><span class="lineNum">      76 </span>            : </a>
+<a name="77"><span class="lineNum">      77 </span>            :     // Initializes waypoint and spline navigation using inputs in meters.</a>
+<a name="78"><span class="lineNum">      78 </span>            :     // Sets speed and acceleration limits, calculates jerk constraints,</a>
+<a name="79"><span class="lineNum">      79 </span>            :     // and initializes spline or S-curve leg with a defined starting point.</a>
+<a name="80"><span class="lineNum">      80 </span>            :     void wp_and_spline_init_m(float speed_ms = 0.0f, Vector3f stopping_point_neu_m = Vector3f{});</a>
+<a name="81"><span class="lineNum">      81 </span>            : </a>
+<a name="82"><span class="lineNum">      82 </span>            :     // Sets the target horizontal speed in cm/s during waypoint navigation.</a>
+<a name="83"><span class="lineNum">      83 </span>            :     // See set_speed_NE_ms() for full details.</a>
+<a name="84"><span class="lineNum">      84 </span>            :     void set_speed_NE_cms(float speed_cms);</a>
+<a name="85"><span class="lineNum">      85 </span>            : </a>
+<a name="86"><span class="lineNum">      86 </span>            :     // Sets the target horizontal speed in m/s during waypoint navigation.</a>
+<a name="87"><span class="lineNum">      87 </span>            :     // Also updates internal velocity offsets and path shaping limits.</a>
+<a name="88"><span class="lineNum">      88 </span>            :     void set_speed_NE_ms(float speed_ms);</a>
+<a name="89"><span class="lineNum">      89 </span>            : </a>
+<a name="90"><span class="lineNum">      90 </span>            :     // Pauses progression along the waypoint track.</a>
+<a name="91"><span class="lineNum">      91 </span><span class="lineCov">          4 :     void set_pause() { _paused = true; }</span></a>
+<a name="92"><span class="lineNum">      92 </span>            : </a>
+<a name="93"><span class="lineNum">      93 </span>            :     // Resumes waypoint navigation after a pause. Track advancement continues from the current position.</a>
+<a name="94"><span class="lineNum">      94 </span><span class="lineCov">          4 :     void set_resume() { _paused = false; }</span></a>
+<a name="95"><span class="lineNum">      95 </span>            : </a>
+<a name="96"><span class="lineNum">      96 </span>            :     // Returns true if waypoint navigation is currently paused via set_pause().</a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineCov">     412353 :     bool paused() { return _paused; }</span></a>
+<a name="98"><span class="lineNum">      98 </span>            : </a>
+<a name="99"><span class="lineNum">      99 </span>            :     // Sets the climb speed for waypoint navigation in cm/s.</a>
+<a name="100"><span class="lineNum">     100 </span>            :     // See set_speed_up_ms() for full details.</a>
+<a name="101"><span class="lineNum">     101 </span>            :     void set_speed_up_cms(float speed_up_cms);</a>
+<a name="102"><span class="lineNum">     102 </span>            : </a>
+<a name="103"><span class="lineNum">     103 </span>            :     // Sets the climb speed for waypoint navigation in m/s.</a>
+<a name="104"><span class="lineNum">     104 </span>            :     // Updates the vertical controller with the new ascent rate limit.</a>
+<a name="105"><span class="lineNum">     105 </span>            :     void set_speed_up_ms(float speed_up_ms);</a>
+<a name="106"><span class="lineNum">     106 </span>            : </a>
+<a name="107"><span class="lineNum">     107 </span>            :     // Sets the descent speed for waypoint navigation in cm/s.</a>
+<a name="108"><span class="lineNum">     108 </span>            :     // See set_speed_down_ms() for full details.</a>
+<a name="109"><span class="lineNum">     109 </span>            :     void set_speed_down_cms(float speed_down_cms);</a>
+<a name="110"><span class="lineNum">     110 </span>            : </a>
+<a name="111"><span class="lineNum">     111 </span>            :     // Sets the descent speed for waypoint navigation in m/s.</a>
+<a name="112"><span class="lineNum">     112 </span>            :     // Updates the vertical controller with the new descent rate limit.</a>
+<a name="113"><span class="lineNum">     113 </span>            :     void set_speed_down_ms(float speed_down_ms);</a>
+<a name="114"><span class="lineNum">     114 </span>            : </a>
+<a name="115"><span class="lineNum">     115 </span>            :     // Returns the default horizontal speed in cm/s used during waypoint navigation.</a>
+<a name="116"><span class="lineNum">     116 </span>            :     // See get_default_speed_NE_ms() for full details.</a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineCov">        240 :     float get_default_speed_NE_cms() const { return get_default_speed_NE_ms() * 100.0; }</span></a>
+<a name="118"><span class="lineNum">     118 </span>            : </a>
+<a name="119"><span class="lineNum">     119 </span>            :     // Returns the default horizontal speed in m/s used during waypoint navigation.</a>
+<a name="120"><span class="lineNum">     120 </span>            :     // Derived from the WPNAV_SPEED parameter.</a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineCov">    1595450 :     float get_default_speed_NE_ms() const { return _wp_speed_cms * 0.01; }</span></a>
+<a name="122"><span class="lineNum">     122 </span>            : </a>
+<a name="123"><span class="lineNum">     123 </span>            :     // Returns the default climb speed in cm/s used during waypoint navigation.</a>
+<a name="124"><span class="lineNum">     124 </span>            :     // See get_default_speed_up_ms() for full details.</a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 :     float get_default_speed_up_cms() const { return get_default_speed_up_ms() * 100.0; }</span></a>
+<a name="126"><span class="lineNum">     126 </span>            : </a>
+<a name="127"><span class="lineNum">     127 </span>            :     // Returns the default climb speed in m/s used during waypoint navigation.</a>
+<a name="128"><span class="lineNum">     128 </span>            :     // Derived from the WPNAV_SPEED_UP parameter.</a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineCov">      35848 :     float get_default_speed_up_ms() const { return _wp_speed_up_cms * 0.01; }</span></a>
+<a name="130"><span class="lineNum">     130 </span>            : </a>
+<a name="131"><span class="lineNum">     131 </span>            :     // Returns the default descent rate in cm/s used during waypoint navigation.</a>
+<a name="132"><span class="lineNum">     132 </span>            :     // Always positive. See get_default_speed_down_ms() for full details.</a>
+<a name="133"><span class="lineNum">     133 </span><span class="lineCov">       1048 :     float get_default_speed_down_cms() const { return get_default_speed_down_ms() * 100.0; }</span></a>
+<a name="134"><span class="lineNum">     134 </span>            : </a>
+<a name="135"><span class="lineNum">     135 </span>            :     // Returns the default descent rate in m/s used during waypoint navigation.</a>
+<a name="136"><span class="lineNum">     136 </span>            :     // Derived from the WPNAV_SPEED_DN parameter. Always positive.</a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineCov">      36855 :     float get_default_speed_down_ms() const { return fabsf(_wp_speed_down_cms * 0.01); }</span></a>
+<a name="138"><span class="lineNum">     138 </span>            : </a>
+<a name="139"><span class="lineNum">     139 </span>            :     // Returns the vertical acceleration in cm/s² used during waypoint navigation.</a>
+<a name="140"><span class="lineNum">     140 </span>            :     // Always positive. See get_accel_U_mss() for full details.</a>
+<a name="141"><span class="lineNum">     141 </span>            :     float get_accel_U_cmss() const { return get_accel_U_mss() * 100.0; }</a>
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<a name="143"><span class="lineNum">     143 </span>            :     // Returns the vertical acceleration in m/s² used during waypoint navigation.</a>
+<a name="144"><span class="lineNum">     144 </span>            :     // Derived from the WPNAV_ACCEL_Z parameter. Always positive.</a>
+<a name="145"><span class="lineNum">     145 </span><span class="lineCov">       1630 :     float get_accel_U_mss() const { return _wp_accel_z_cmss * 0.01; }</span></a>
+<a name="146"><span class="lineNum">     146 </span>            : </a>
+<a name="147"><span class="lineNum">     147 </span>            :     // Returns the horizontal acceleration in cm/s² used during waypoint navigation.</a>
+<a name="148"><span class="lineNum">     148 </span>            :     // See get_wp_acceleration_mss() for full details.</a>
+<a name="149"><span class="lineNum">     149 </span>            :     float get_wp_acceleration_cmss() const { return get_wp_acceleration_mss() * 100.0; }</a>
+<a name="150"><span class="lineNum">     150 </span>            : </a>
+<a name="151"><span class="lineNum">     151 </span>            :     // Returns the horizontal acceleration in m/s² used during waypoint navigation.</a>
+<a name="152"><span class="lineNum">     152 </span>            :     // Derived from the WPNAV_ACCEL parameter. Falls back to a default if unset.</a>
+<a name="153"><span class="lineNum">     153 </span><span class="lineCov">   10457200 :     float get_wp_acceleration_mss() const { return (is_positive(_wp_accel_cmss)) ? _wp_accel_cmss * 0.01 : WPNAV_ACCELERATION_MS; }</span></a>
+<a name="154"><span class="lineNum">     154 </span>            : </a>
+<a name="155"><span class="lineNum">     155 </span>            :     // Returns the maximum lateral acceleration in m/s² used during waypoint cornering.</a>
+<a name="156"><span class="lineNum">     156 </span>            :     // Derived from WPNAV_ACCEL_C or defaults to 2x WPNAV_ACCEL if unset.</a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineCov">    1804900 :     float get_corner_acceleration_mss() const { return (is_positive(_wp_accel_c_cmss)) ? _wp_accel_c_cmss * 0.01 : 2.0 * get_wp_acceleration_mss(); }</span></a>
+<a name="158"><span class="lineNum">     158 </span>            : </a>
+<a name="159"><span class="lineNum">     159 </span>            :     // Returns the destination waypoint vector in NEU frame, in centimeters from EKF origin.</a>
+<a name="160"><span class="lineNum">     160 </span>            :     // See get_wp_destination_NEU_m() for full details.</a>
+<a name="161"><span class="lineNum">     161 </span>            :     const Vector3f get_wp_destination_NEU_cm() const { return get_wp_destination_NEU_m() * 100.0; }</a>
+<a name="162"><span class="lineNum">     162 </span>            : </a>
+<a name="163"><span class="lineNum">     163 </span>            :     // Returns the destination waypoint vector in NEU frame, in meters from EKF origin.</a>
+<a name="164"><span class="lineNum">     164 </span>            :     // Z is relative to terrain or EKF origin, depending on _is_terrain_alt.</a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineCov">      20970 :     const Vector3f &amp;get_wp_destination_NEU_m() const { return _destination_neu_m; }</span></a>
+<a name="166"><span class="lineNum">     166 </span>            : </a>
+<a name="167"><span class="lineNum">     167 </span>            :     // Returns the origin waypoint vector in NEU frame, in centimeters from EKF origin.</a>
+<a name="168"><span class="lineNum">     168 </span>            :     // See get_wp_origin_NEU_m() for full details.</a>
+<a name="169"><span class="lineNum">     169 </span>            :     const Vector3f get_wp_origin_NEU_cm() const { return get_wp_origin_NEU_m() * 100.0; }</a>
+<a name="170"><span class="lineNum">     170 </span>            : </a>
+<a name="171"><span class="lineNum">     171 </span>            :     // Returns the origin waypoint vector in NEU frame, in meters from EKF origin.</a>
+<a name="172"><span class="lineNum">     172 </span>            :     // This marks the start of the current waypoint leg.</a>
+<a name="173"><span class="lineNum">     173 </span>            :     const Vector3f &amp;get_wp_origin_NEU_m() const { return _origin_neu_m; }</a>
+<a name="174"><span class="lineNum">     174 </span>            : </a>
+<a name="175"><span class="lineNum">     175 </span>            :     // Returns true if origin.z and destination.z are specified as altitudes above terrain.</a>
+<a name="176"><span class="lineNum">     176 </span>            :     // Returns false if altitudes are relative to the EKF origin.</a>
+<a name="177"><span class="lineNum">     177 </span>            :     bool origin_and_destination_are_terrain_alt() const { return _is_terrain_alt; }</a>
+<a name="178"><span class="lineNum">     178 </span>            : </a>
+<a name="179"><span class="lineNum">     179 </span>            :     // Sets the current waypoint destination using a Location object.</a>
+<a name="180"><span class="lineNum">     180 </span>            :     // Converts global coordinates to NEU position and sets destination.</a>
+<a name="181"><span class="lineNum">     181 </span>            :     // Returns false if conversion fails (e.g. missing terrain data).</a>
+<a name="182"><span class="lineNum">     182 </span>            :     bool set_wp_destination_loc(const Location&amp; destination);</a>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<a name="184"><span class="lineNum">     184 </span>            :     // Sets the next waypoint destination using a Location object.</a>
+<a name="185"><span class="lineNum">     185 </span>            :     // Converts global coordinates to NEU position and preloads the trajectory.</a>
+<a name="186"><span class="lineNum">     186 </span>            :     // Returns false if conversion fails or terrain data is unavailable.</a>
+<a name="187"><span class="lineNum">     187 </span>            :     bool set_wp_destination_next_loc(const Location&amp; destination);</a>
+<a name="188"><span class="lineNum">     188 </span>            : </a>
+<a name="189"><span class="lineNum">     189 </span>            :     // Gets the current waypoint destination as a Location object.</a>
+<a name="190"><span class="lineNum">     190 </span>            :     // Altitude frame will be ABOVE_TERRAIN or ABOVE_ORIGIN depending on path configuration.</a>
+<a name="191"><span class="lineNum">     191 </span>            :     // Returns false if origin is not set or coordinate conversion fails.</a>
+<a name="192"><span class="lineNum">     192 </span>            :     bool get_wp_destination_loc(Location&amp; destination) const;</a>
+<a name="193"><span class="lineNum">     193 </span>            : </a>
+<a name="194"><span class="lineNum">     194 </span>            :     // Returns the waypoint destination adjusted for object avoidance.</a>
+<a name="195"><span class="lineNum">     195 </span>            :     // In the base class this is identical to get_wp_destination_loc().</a>
+<a name="196"><span class="lineNum">     196 </span>            :     // Used to unify the AC_WPNav and AC_WPNav_OA interfaces.</a>
+<a name="197"><span class="lineNum">     197 </span><span class="lineNoCov">          0 :     virtual bool get_oa_wp_destination(Location&amp; destination) const { return get_wp_destination_loc(destination); }</span></a>
+<a name="198"><span class="lineNum">     198 </span>            : </a>
+<a name="199"><span class="lineNum">     199 </span>            :     // Sets waypoint destination using NEU position vector in centimeters from EKF origin.</a>
+<a name="200"><span class="lineNum">     200 </span>            :     // See set_wp_destination_NEU_m() for full details.</a>
+<a name="201"><span class="lineNum">     201 </span>            :     virtual bool set_wp_destination_NEU_cm(const Vector3f&amp; destination_neu_cm, bool is_terrain_alt = false);</a>
+<a name="202"><span class="lineNum">     202 </span>            : </a>
+<a name="203"><span class="lineNum">     203 </span>            :     // Sets waypoint destination using NEU position vector in meters from EKF origin.</a>
+<a name="204"><span class="lineNum">     204 </span>            :     // If `is_terrain_alt` is true, altitude is interpreted as height above terrain.</a>
+<a name="205"><span class="lineNum">     205 </span>            :     // Reinitializes the current leg if interrupted, updates origin, and computes trajectory.</a>
+<a name="206"><span class="lineNum">     206 </span>            :     // Returns false if terrain offset cannot be determined when required.</a>
+<a name="207"><span class="lineNum">     207 </span>            :     virtual bool set_wp_destination_NEU_m(const Vector3f&amp; destination_neu_m, bool is_terrain_alt = false);</a>
+<a name="208"><span class="lineNum">     208 </span>            : </a>
+<a name="209"><span class="lineNum">     209 </span>            :     // Sets the next waypoint destination using a NEU position vector in centimeters.</a>
+<a name="210"><span class="lineNum">     210 </span>            :     // See set_wp_destination_next_NEU_m() for full details.</a>
+<a name="211"><span class="lineNum">     211 </span>            :     bool set_wp_destination_next_NEU_cm(const Vector3f&amp; destination_neu_cm, bool is_terrain_alt = false);</a>
+<a name="212"><span class="lineNum">     212 </span>            : </a>
+<a name="213"><span class="lineNum">     213 </span>            :     // Sets the next waypoint destination using a NEU position vector in meters.</a>
+<a name="214"><span class="lineNum">     214 </span>            :     // Only updates if terrain frame matches current leg.</a>
+<a name="215"><span class="lineNum">     215 </span>            :     // Calculates trajectory preview for smoother transition into next segment.</a>
+<a name="216"><span class="lineNum">     216 </span>            :     // Updates velocity handoff if previous leg is a spline.</a>
+<a name="217"><span class="lineNum">     217 </span>            :     bool set_wp_destination_next_NEU_m(const Vector3f&amp; destination_neu_m, bool is_terrain_alt = false);</a>
+<a name="218"><span class="lineNum">     218 </span>            : </a>
+<a name="219"><span class="lineNum">     219 </span>            :     // Sets waypoint destination using a NED position vector in meters from EKF origin.</a>
+<a name="220"><span class="lineNum">     220 </span>            :     // Converts internally to NEU. Terrain following is not used.</a>
+<a name="221"><span class="lineNum">     221 </span>            :     bool set_wp_destination_NED_m(const Vector3f&amp; destination_NED_m);</a>
+<a name="222"><span class="lineNum">     222 </span>            : </a>
+<a name="223"><span class="lineNum">     223 </span>            :     // Sets the next waypoint destination using a NED position vector in meters from EKF origin.</a>
+<a name="224"><span class="lineNum">     224 </span>            :     // Converts to NEU internally. Terrain following is not applied.</a>
+<a name="225"><span class="lineNum">     225 </span>            :     bool set_wp_destination_next_NED_m(const Vector3f&amp; destination_NED_m);</a>
+<a name="226"><span class="lineNum">     226 </span>            : </a>
+<a name="227"><span class="lineNum">     227 </span>            :     // Computes the horizontal stopping point in NE frame, returned in centimeters.</a>
+<a name="228"><span class="lineNum">     228 </span>            :     // See get_wp_stopping_point_NE_m() for full details.</a>
+<a name="229"><span class="lineNum">     229 </span>            :     void get_wp_stopping_point_NE_cm(Vector2f&amp; stopping_point_ne_cm) const;</a>
+<a name="230"><span class="lineNum">     230 </span>            : </a>
+<a name="231"><span class="lineNum">     231 </span>            :     // Computes the horizontal stopping point in NE frame, in meters, based on current velocity and configured acceleration.</a>
+<a name="232"><span class="lineNum">     232 </span>            :     // This is the point where the vehicle would come to a stop if decelerated using the configured limits.</a>
+<a name="233"><span class="lineNum">     233 </span>            :     void get_wp_stopping_point_NE_m(Vector2f&amp; stopping_point_ne_m) const;</a>
+<a name="234"><span class="lineNum">     234 </span>            : </a>
+<a name="235"><span class="lineNum">     235 </span>            :     // Computes the full 3D NEU stopping point vector in centimeters based on current kinematics.</a>
+<a name="236"><span class="lineNum">     236 </span>            :     // See get_wp_stopping_point_NEU_m() for full details.</a>
+<a name="237"><span class="lineNum">     237 </span>            :     void get_wp_stopping_point_NEU_cm(Vector3f&amp; stopping_point_neu_cm) const;</a>
+<a name="238"><span class="lineNum">     238 </span>            : </a>
+<a name="239"><span class="lineNum">     239 </span>            :     // Computes the full 3D NEU stopping point in meters based on current velocity and configured acceleration in all axes.</a>
+<a name="240"><span class="lineNum">     240 </span>            :     // Represents where the vehicle will stop if decelerated from current velocity using configured limits.</a>
+<a name="241"><span class="lineNum">     241 </span>            :     void get_wp_stopping_point_NEU_m(Vector3f&amp; stopping_point_neu_m) const;</a>
+<a name="242"><span class="lineNum">     242 </span>            : </a>
+<a name="243"><span class="lineNum">     243 </span>            :     // Returns the horizontal distance to the destination waypoint in centimeters.</a>
+<a name="244"><span class="lineNum">     244 </span>            :     // See get_wp_distance_to_destination_m() for full details.</a>
+<a name="245"><span class="lineNum">     245 </span>            :     virtual float get_wp_distance_to_destination_cm() const;</a>
+<a name="246"><span class="lineNum">     246 </span>            : </a>
+<a name="247"><span class="lineNum">     247 </span>            :     // Returns the horizontal distance in meters between the current position and the destination waypoint.</a>
+<a name="248"><span class="lineNum">     248 </span>            :     virtual float get_wp_distance_to_destination_m() const;</a>
+<a name="249"><span class="lineNum">     249 </span>            : </a>
+<a name="250"><span class="lineNum">     250 </span>            :     // Returns the bearing to the current waypoint destination in centidegrees.</a>
+<a name="251"><span class="lineNum">     251 </span>            :     // See get_wp_bearing_to_destination_rad() for full details.</a>
+<a name="252"><span class="lineNum">     252 </span>            :     virtual int32_t get_wp_bearing_to_destination_cd() const;</a>
+<a name="253"><span class="lineNum">     253 </span>            : </a>
+<a name="254"><span class="lineNum">     254 </span>            :     // Returns the bearing to the current waypoint destination in radians.</a>
+<a name="255"><span class="lineNum">     255 </span>            :     // The bearing is measured clockwise from North, with 0 = North.</a>
+<a name="256"><span class="lineNum">     256 </span>            :     virtual float get_wp_bearing_to_destination_rad() const;</a>
+<a name="257"><span class="lineNum">     257 </span>            : </a>
+<a name="258"><span class="lineNum">     258 </span>            :     // Returns true if the vehicle has reached the waypoint destination.</a>
+<a name="259"><span class="lineNum">     259 </span>            :     // A waypoint is considered reached when the vehicle comes within the defined radius threshold.</a>
+<a name="260"><span class="lineNum">     260 </span><span class="lineCov">    1373190 :     virtual bool reached_wp_destination() const { return _flags.reached_destination; }</span></a>
+<a name="261"><span class="lineNum">     261 </span>            : </a>
+<a name="262"><span class="lineNum">     262 </span>            :     // Returns true if the vehicle's horizontal (NE) distance to the waypoint is less than the waypoint radius.</a>
+<a name="263"><span class="lineNum">     263 </span>            :     // Uses the waypoint radius in meters for comparison.</a>
+<a name="264"><span class="lineNum">     264 </span><span class="lineNoCov">          0 :     bool reached_wp_destination_NE() const {</span></a>
+<a name="265"><span class="lineNum">     265 </span><span class="lineNoCov">          0 :         return get_wp_distance_to_destination_m() &lt; _wp_radius_cm * 0.01;</span></a>
+<a name="266"><span class="lineNum">     266 </span>            :     }</a>
+<a name="267"><span class="lineNum">     267 </span>            : </a>
+<a name="268"><span class="lineNum">     268 </span>            :     // Returns the waypoint acceptance radius in centimeters.</a>
+<a name="269"><span class="lineNum">     269 </span>            :     // See get_wp_radius_m() for full details.</a>
+<a name="270"><span class="lineNum">     270 </span>            :     float get_wp_radius_cm() const { return get_wp_radius_m() * 100.0; }</a>
+<a name="271"><span class="lineNum">     271 </span>            : </a>
+<a name="272"><span class="lineNum">     272 </span>            :     // Returns the waypoint acceptance radius in meters.</a>
+<a name="273"><span class="lineNum">     273 </span>            :     // This radius defines the distance from the target waypoint within which the vehicle is considered to have arrived.</a>
+<a name="274"><span class="lineNum">     274 </span>            :     float get_wp_radius_m() const { return _wp_radius_cm * 0.01; }</a>
+<a name="275"><span class="lineNum">     275 </span>            : </a>
+<a name="276"><span class="lineNum">     276 </span>            :     // Runs the waypoint navigation controller.</a>
+<a name="277"><span class="lineNum">     277 </span>            :     // Advances the target position and updates the position controller.</a>
+<a name="278"><span class="lineNum">     278 </span>            :     // Should be called at 100 Hz or higher for accurate tracking.</a>
+<a name="279"><span class="lineNum">     279 </span>            :     virtual bool update_wpnav();</a>
+<a name="280"><span class="lineNum">     280 </span>            : </a>
+<a name="281"><span class="lineNum">     281 </span>            :     // Returns true if update_wpnav() has been called within the last 200 ms.</a>
+<a name="282"><span class="lineNum">     282 </span>            :     // Used to check if waypoint navigation is currently active.</a>
+<a name="283"><span class="lineNum">     283 </span>            :     bool is_active() const;</a>
+<a name="284"><span class="lineNum">     284 </span>            : </a>
+<a name="285"><span class="lineNum">     285 </span>            :     // Forces a stop at the next waypoint instead of continuing to the subsequent one.</a>
+<a name="286"><span class="lineNum">     286 </span>            :     // Used by Dijkstra’s object avoidance when the future path is obstructed.</a>
+<a name="287"><span class="lineNum">     287 </span>            :     // Only affects regular (non-spline) waypoints.</a>
+<a name="288"><span class="lineNum">     288 </span>            :     // Returns true if the stop behavior was newly enforced.</a>
+<a name="289"><span class="lineNum">     289 </span>            :     bool force_stop_at_next_wp();</a>
+<a name="290"><span class="lineNum">     290 </span>            : </a>
+<a name="291"><span class="lineNum">     291 </span>            :     ///</a>
+<a name="292"><span class="lineNum">     292 </span>            :     /// spline methods</a>
+<a name="293"><span class="lineNum">     293 </span>            :     ///</a>
+<a name="294"><span class="lineNum">     294 </span>            : </a>
+<a name="295"><span class="lineNum">     295 </span>            :     // Sets the current spline waypoint using global coordinates.</a>
+<a name="296"><span class="lineNum">     296 </span>            :     // Converts `destination` and `next_destination` to NEU position vectors and sets up a spline between them.</a>
+<a name="297"><span class="lineNum">     297 </span>            :     // Returns false if conversion from location to vector fails.</a>
+<a name="298"><span class="lineNum">     298 </span>            :     bool set_spline_destination_loc(const Location&amp; destination, const Location&amp; next_destination, bool next_is_spline);</a>
+<a name="299"><span class="lineNum">     299 </span>            : </a>
+<a name="300"><span class="lineNum">     300 </span>            :     // Sets the next spline segment using global coordinates.</a>
+<a name="301"><span class="lineNum">     301 </span>            :     // Converts the next and next-next destinations to NEU position vectors and initializes the spline transition.</a>
+<a name="302"><span class="lineNum">     302 </span>            :     // Returns false if any conversion from location to vector fails.</a>
+<a name="303"><span class="lineNum">     303 </span>            :     bool set_spline_destination_next_loc(const Location&amp; next_destination, const Location&amp; next_next_destination, bool next_next_is_spline);</a>
+<a name="304"><span class="lineNum">     304 </span>            : </a>
+<a name="305"><span class="lineNum">     305 </span>            :     // Sets the current spline segment using position vectors in centimeters.</a>
+<a name="306"><span class="lineNum">     306 </span>            :     // See set_spline_destination_NEU_m() for full details.</a>
+<a name="307"><span class="lineNum">     307 </span>            :     bool set_spline_destination_NEU_cm(const Vector3f&amp; destination_neu_cm, bool is_terrain_alt, const Vector3f&amp; next_destination_neu_cm, bool next_terrain_alt, bool next_is_spline);</a>
+<a name="308"><span class="lineNum">     308 </span>            : </a>
+<a name="309"><span class="lineNum">     309 </span>            :     // Sets the current spline waypoint using NEU position vectors in meters.</a>
+<a name="310"><span class="lineNum">     310 </span>            :     // Initializes a spline path from `destination_neu_m` to `next_destination_neu_m`, respecting terrain altitude framing.</a>
+<a name="311"><span class="lineNum">     311 </span>            :     // Both waypoints must use the same altitude frame (either above terrain or above origin).</a>
+<a name="312"><span class="lineNum">     312 </span>            :     // Returns false if terrain altitude cannot be determined when required.</a>
+<a name="313"><span class="lineNum">     313 </span>            :     bool set_spline_destination_NEU_m(const Vector3f&amp; destination_neu_m, bool is_terrain_alt, const Vector3f&amp; next_destination_neu_m, bool next_terrain_alt, bool next_is_spline);</a>
+<a name="314"><span class="lineNum">     314 </span>            : </a>
+<a name="315"><span class="lineNum">     315 </span>            :     // Sets the next spline segment using NEU position vectors in centimeters.</a>
+<a name="316"><span class="lineNum">     316 </span>            :     // See set_spline_destination_next_NEU_m() for full details.</a>
+<a name="317"><span class="lineNum">     317 </span>            :     bool set_spline_destination_next_NEU_cm(const Vector3f&amp; next_destination_neu_cm, bool next_is_terrain_alt, const Vector3f&amp; next_next_destination_neu_cm, bool next_next_is_terrain_alt, bool next_next_is_spline);</a>
+<a name="318"><span class="lineNum">     318 </span>            : </a>
+<a name="319"><span class="lineNum">     319 </span>            :     // Sets the next spline segment using NEU position vectors in meters.</a>
+<a name="320"><span class="lineNum">     320 </span>            :     // Creates a spline path from the current destination to `next_destination_neu_m`, and prepares transition toward `next_next_destination_neu_m`.</a>
+<a name="321"><span class="lineNum">     321 </span>            :     // All waypoints must use the same altitude frame (above terrain or origin).</a>
+<a name="322"><span class="lineNum">     322 </span>            :     // Returns false if terrain data is missing and required.</a>
+<a name="323"><span class="lineNum">     323 </span>            :     bool set_spline_destination_next_NEU_m(const Vector3f&amp; next_destination_neu_m, bool next_is_terrain_alt, const Vector3f&amp; next_next_destination_neu_m, bool next_next_is_terrain_alt, bool next_next_is_spline);</a>
+<a name="324"><span class="lineNum">     324 </span>            : </a>
+<a name="325"><span class="lineNum">     325 </span>            :     ///</a>
+<a name="326"><span class="lineNum">     326 </span>            :     /// shared methods</a>
+<a name="327"><span class="lineNum">     327 </span>            :     ///</a>
+<a name="328"><span class="lineNum">     328 </span>            : </a>
+<a name="329"><span class="lineNum">     329 </span>            :     // Returns the desired roll angle in radians from the position controller.</a>
+<a name="330"><span class="lineNum">     330 </span>            :     // This value is passed to the attitude controller to achieve lateral motion.</a>
+<a name="331"><span class="lineNum">     331 </span>            :     float get_roll_rad() const { return _pos_control.get_roll_rad(); }</a>
+<a name="332"><span class="lineNum">     332 </span>            : </a>
+<a name="333"><span class="lineNum">     333 </span>            :     // Returns the desired pitch angle in radians from the position controller.</a>
+<a name="334"><span class="lineNum">     334 </span>            :     // This angle controls forward or backward acceleration.</a>
+<a name="335"><span class="lineNum">     335 </span>            :     float get_pitch_rad() const { return _pos_control.get_pitch_rad(); }</a>
+<a name="336"><span class="lineNum">     336 </span>            : </a>
+<a name="337"><span class="lineNum">     337 </span>            :     // Returns the desired yaw angle in radians from the position controller.</a>
+<a name="338"><span class="lineNum">     338 </span>            :     // Used to align the vehicle heading with track direction or command input.</a>
+<a name="339"><span class="lineNum">     339 </span>            :     float get_yaw_rad() const { return _pos_control.get_yaw_rad(); }</a>
+<a name="340"><span class="lineNum">     340 </span>            : </a>
+<a name="341"><span class="lineNum">     341 </span>            :     // Returns the desired 3D unit vector representing the commanded thrust direction.</a>
+<a name="342"><span class="lineNum">     342 </span>            :     // Used to calculate tilt angles for the attitude controller.</a>
+<a name="343"><span class="lineNum">     343 </span>            :     Vector3f get_thrust_vector() const { return _pos_control.get_thrust_vector(); }</a>
+<a name="344"><span class="lineNum">     344 </span>            : </a>
+<a name="345"><span class="lineNum">     345 </span>            :     // Returns the desired roll angle in centidegrees from the position controller.</a>
+<a name="346"><span class="lineNum">     346 </span>            :     // See get_roll_rad() for full details.</a>
+<a name="347"><span class="lineNum">     347 </span>            :     float get_roll() const { return _pos_control.get_roll_cd(); }</a>
+<a name="348"><span class="lineNum">     348 </span>            : </a>
+<a name="349"><span class="lineNum">     349 </span>            :     // Returns the desired pitch angle in centidegrees from the position controller.</a>
+<a name="350"><span class="lineNum">     350 </span>            :     // See get_pitch_rad() for full details.</a>
+<a name="351"><span class="lineNum">     351 </span>            :     float get_pitch() const { return _pos_control.get_pitch_cd(); }</a>
+<a name="352"><span class="lineNum">     352 </span>            : </a>
+<a name="353"><span class="lineNum">     353 </span>            :     // Returns the desired yaw angle in centidegrees from the position controller.</a>
+<a name="354"><span class="lineNum">     354 </span>            :     // See get_yaw_rad() for full details.</a>
+<a name="355"><span class="lineNum">     355 </span>            :     float get_yaw() const { return _pos_control.get_yaw_cd(); }</a>
+<a name="356"><span class="lineNum">     356 </span>            : </a>
+<a name="357"><span class="lineNum">     357 </span>            :     // Advances the target location along the current path segment.</a>
+<a name="358"><span class="lineNum">     358 </span>            :     // Updates target position, velocity, and acceleration based on jerk-limited profile (or spline).</a>
+<a name="359"><span class="lineNum">     359 </span>            :     // Returns true if the update succeeded (e.g., terrain data was available).</a>
+<a name="360"><span class="lineNum">     360 </span>            :     bool advance_wp_target_along_track(float dt);</a>
+<a name="361"><span class="lineNum">     361 </span>            : </a>
+<a name="362"><span class="lineNum">     362 </span>            :     // Updates the current and next path segment to reflect new speed and acceleration limits.</a>
+<a name="363"><span class="lineNum">     363 </span>            :     // Should be called after modifying NE/U controller limits or vehicle configuration.</a>
+<a name="364"><span class="lineNum">     364 </span>            :     void update_track_with_speed_accel_limits();</a>
+<a name="365"><span class="lineNum">     365 </span>            : </a>
+<a name="366"><span class="lineNum">     366 </span>            :     // Returns lateral (cross-track) position error in meters.</a>
+<a name="367"><span class="lineNum">     367 </span>            :     // Computed as the perpendicular distance between current position and the planned path.</a>
+<a name="368"><span class="lineNum">     368 </span>            :     // Used to assess horizontal deviation from the trajectory.</a>
+<a name="369"><span class="lineNum">     369 </span><span class="lineCov">      64021 :     float crosstrack_error_m() const { return _pos_control.crosstrack_error_m();}</span></a>
+<a name="370"><span class="lineNum">     370 </span>            : </a>
+<a name="371"><span class="lineNum">     371 </span>            :     static const struct AP_Param::GroupInfo var_info[];</a>
+<a name="372"><span class="lineNum">     372 </span>            : </a>
+<a name="373"><span class="lineNum">     373 </span>            : protected:</a>
+<a name="374"><span class="lineNum">     374 </span>            : </a>
+<a name="375"><span class="lineNum">     375 </span>            :     // flags structure</a>
+<a name="376"><span class="lineNum">     376 </span>            :     struct wpnav_flags {</a>
+<a name="377"><span class="lineNum">     377 </span>            :         uint8_t reached_destination     : 1;    // true if we have reached the destination</a>
+<a name="378"><span class="lineNum">     378 </span>            :         uint8_t fast_waypoint           : 1;    // true if we should ignore the waypoint radius and consider the waypoint complete once the intermediate target has reached the waypoint</a>
+<a name="379"><span class="lineNum">     379 </span>            :         uint8_t wp_yaw_set              : 1;    // true if yaw target has been set</a>
+<a name="380"><span class="lineNum">     380 </span>            :     } _flags;</a>
+<a name="381"><span class="lineNum">     381 </span>            : </a>
+<a name="382"><span class="lineNum">     382 </span>            :     // Calculates s-curve jerk and snap limits based on attitude controller capabilities.</a>
+<a name="383"><span class="lineNum">     383 </span>            :     // Updates _scurve_jerk_max_msss and _scurve_snap_max_mssss with constrained values.</a>
+<a name="384"><span class="lineNum">     384 </span>            :     void calc_scurve_jerk_and_snap();</a>
+<a name="385"><span class="lineNum">     385 </span>            : </a>
+<a name="386"><span class="lineNum">     386 </span>            :     // References to shared sensor fusion, position, and attitude control subsystems.</a>
+<a name="387"><span class="lineNum">     387 </span>            :     const AP_AHRS_View&amp;     _ahrs;</a>
+<a name="388"><span class="lineNum">     388 </span>            :     AC_PosControl&amp;          _pos_control;</a>
+<a name="389"><span class="lineNum">     389 </span>            :     const AC_AttitudeControl&amp; _attitude_control;</a>
+<a name="390"><span class="lineNum">     390 </span>            : </a>
+<a name="391"><span class="lineNum">     391 </span>            :     // parameters</a>
+<a name="392"><span class="lineNum">     392 </span>            :     AP_Float    _wp_speed_cms;       // default horizontal speed in cm/s for waypoint navigation</a>
+<a name="393"><span class="lineNum">     393 </span>            :     AP_Float    _wp_speed_up_cms;    // default climb rate in cm/s for waypoint navigation</a>
+<a name="394"><span class="lineNum">     394 </span>            :     AP_Float    _wp_speed_down_cms;  // default descent rate in cm/s for waypoint navigation</a>
+<a name="395"><span class="lineNum">     395 </span>            :     AP_Float    _wp_radius_cm;       // waypoint radius in cm; waypoint is considered reached when within this distance</a>
+<a name="396"><span class="lineNum">     396 </span>            :     AP_Float    _wp_accel_cmss;      // maximum horizontal acceleration in cm/s² used during waypoint tracking</a>
+<a name="397"><span class="lineNum">     397 </span>            :     AP_Float    _wp_accel_c_cmss;    // maximum acceleration in cm/s² for turns; defaults to 2x horizontal accel if unset</a>
+<a name="398"><span class="lineNum">     398 </span>            :     AP_Float    _wp_accel_z_cmss;    // maximum vertical acceleration in cm/s² used during climb or descent</a>
+<a name="399"><span class="lineNum">     399 </span>            :     AP_Float    _wp_jerk_msss;       // maximum jerk in m/s³ used for s-curve trajectory shaping</a>
+<a name="400"><span class="lineNum">     400 </span>            :     AP_Float    _terrain_margin_m;   // minimum altitude margin in meters when terrain following is active</a>
+<a name="401"><span class="lineNum">     401 </span>            : </a>
+<a name="402"><span class="lineNum">     402 </span>            :     // WPNAV_SPEED param change checker</a>
+<a name="403"><span class="lineNum">     403 </span>            :     bool _check_wp_speed_change;     // true if WPNAV_SPEED should be monitored for changes during flight</a>
+<a name="404"><span class="lineNum">     404 </span>            :     float _last_wp_speed_cms;        // last recorded WPNAV_SPEED value (cm/s) for change detection</a>
+<a name="405"><span class="lineNum">     405 </span>            :     float _last_wp_speed_up_cms;     // last recorded WPNAV_SPEED_UP value (cm/s)</a>
+<a name="406"><span class="lineNum">     406 </span>            :     float _last_wp_speed_down_cms;   // last recorded WPNAV_SPEED_DN value (cm/s)</a>
+<a name="407"><span class="lineNum">     407 </span>            : </a>
+<a name="408"><span class="lineNum">     408 </span>            :     // s-curve trajectory objects</a>
+<a name="409"><span class="lineNum">     409 </span>            :     SCurve _scurve_prev_leg;         // s-curve for the previous waypoint leg, used for smoothing transitions</a>
+<a name="410"><span class="lineNum">     410 </span>            :     SCurve _scurve_this_leg;         // s-curve for the current active waypoint leg</a>
+<a name="411"><span class="lineNum">     411 </span>            :     SCurve _scurve_next_leg;         // s-curve for the next waypoint leg, used for lookahead blending</a>
+<a name="412"><span class="lineNum">     412 </span>            :     float _scurve_jerk_max_msss;     // computed maximum jerk in m/s³ used for trajectory shaping</a>
+<a name="413"><span class="lineNum">     413 </span>            :     float _scurve_snap_max_mssss;    // computed maximum snap in m/s⁴ derived from controller responsiveness</a>
+<a name="414"><span class="lineNum">     414 </span>            : </a>
+<a name="415"><span class="lineNum">     415 </span>            :     // spline curves</a>
+<a name="416"><span class="lineNum">     416 </span>            :     SplineCurve _spline_this_leg;    // spline curve for the current segment</a>
+<a name="417"><span class="lineNum">     417 </span>            :     SplineCurve _spline_next_leg;    // spline curve for the next segment</a>
+<a name="418"><span class="lineNum">     418 </span>            : </a>
+<a name="419"><span class="lineNum">     419 </span>            :     // path type flags</a>
+<a name="420"><span class="lineNum">     420 </span>            :     bool _this_leg_is_spline;        // true if the current leg uses spline trajectory</a>
+<a name="421"><span class="lineNum">     421 </span>            :     bool _next_leg_is_spline;        // true if the next leg will use spline trajectory</a>
+<a name="422"><span class="lineNum">     422 </span>            : </a>
+<a name="423"><span class="lineNum">     423 </span>            :     // waypoint navigation state</a>
+<a name="424"><span class="lineNum">     424 </span>            :     uint32_t _wp_last_update_ms;         // timestamp of the last update_wpnav() call (milliseconds)</a>
+<a name="425"><span class="lineNum">     425 </span>            :     float _wp_desired_speed_ne_ms;       // desired horizontal speed in m/s for the current segment</a>
+<a name="426"><span class="lineNum">     426 </span>            :     Vector3f _origin_neu_m;              // origin of the current leg in meters (NEU frame)</a>
+<a name="427"><span class="lineNum">     427 </span>            :     Vector3f _destination_neu_m;         // destination of the current leg in meters (NEU frame)</a>
+<a name="428"><span class="lineNum">     428 </span>            :     Vector3f _next_destination_neu_m;    // destination of the next leg in meters (NEU frame)</a>
+<a name="429"><span class="lineNum">     429 </span>            :     float _track_dt_scalar;              // scalar to reduce or increase the advancement along the track (0.0–1.0)</a>
+<a name="430"><span class="lineNum">     430 </span>            :     float _offset_vel_ms;                // filtered horizontal speed target (used for terrain following or pause handling)</a>
+<a name="431"><span class="lineNum">     431 </span>            :     float _offset_accel_mss;             // filtered horizontal acceleration target (used for terrain following or pause handling)</a>
+<a name="432"><span class="lineNum">     432 </span>            :     bool _paused;                        // true if waypoint controller is paused</a>
+<a name="433"><span class="lineNum">     433 </span>            : </a>
+<a name="434"><span class="lineNum">     434 </span>            :     // terrain following state</a>
+<a name="435"><span class="lineNum">     435 </span>            :     bool _is_terrain_alt;                // true if altitude values are relative to terrain height, false if relative to EKF origin</a>
+<a name="436"><span class="lineNum">     436 </span>            :     bool _rangefinder_available;         // true if a rangefinder is enabled and available for use</a>
+<a name="437"><span class="lineNum">     437 </span>            :     AP_Int8 _rangefinder_use;            // parameter specifying whether rangefinder should be used for terrain tracking</a>
+<a name="438"><span class="lineNum">     438 </span>            :     bool _rangefinder_healthy;           // true if the rangefinder reading is valid and within operational range</a>
+<a name="439"><span class="lineNum">     439 </span>            :     float _rangefinder_terrain_offset_m; // rangefinder-derived terrain offset (meters above EKF origin)</a>
+<a name="440"><span class="lineNum">     440 </span>            : };</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

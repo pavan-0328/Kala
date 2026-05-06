@@ -1,0 +1,502 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_Math/AP_Math.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_Math</a> - AP_Math.h<span style="font-size: 80%;"> (source / <a href="AP_Math.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">41</td>
+            <td class="headerCovTableEntry">43</td>
+            <td class="headerCovTableEntryHi">95.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">82</td>
+            <td class="headerCovTableEntry">100</td>
+            <td class="headerCovTableEntryMed">82.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #pragma once</a>
+<a name="2"><span class="lineNum">       2 </span>            : </a>
+<a name="3"><span class="lineNum">       3 </span>            : #include &lt;cmath&gt;</a>
+<a name="4"><span class="lineNum">       4 </span>            : #include &lt;limits&gt;</a>
+<a name="5"><span class="lineNum">       5 </span>            : #include &lt;stdint.h&gt;</a>
+<a name="6"><span class="lineNum">       6 </span>            : #include &lt;type_traits&gt;</a>
+<a name="7"><span class="lineNum">       7 </span>            : </a>
+<a name="8"><span class="lineNum">       8 </span>            : #include &lt;AP_Common/AP_Common.h&gt;</a>
+<a name="9"><span class="lineNum">       9 </span>            : #include &lt;AP_Param/AP_Param.h&gt;</a>
+<a name="10"><span class="lineNum">      10 </span>            : </a>
+<a name="11"><span class="lineNum">      11 </span>            : #include &quot;definitions.h&quot;</a>
+<a name="12"><span class="lineNum">      12 </span>            : #include &quot;crc.h&quot;</a>
+<a name="13"><span class="lineNum">      13 </span>            : #include &quot;matrix3.h&quot;</a>
+<a name="14"><span class="lineNum">      14 </span>            : #include &quot;polygon.h&quot;</a>
+<a name="15"><span class="lineNum">      15 </span>            : #include &quot;quaternion.h&quot;</a>
+<a name="16"><span class="lineNum">      16 </span>            : #include &quot;rotations.h&quot;</a>
+<a name="17"><span class="lineNum">      17 </span>            : #include &quot;vector2.h&quot;</a>
+<a name="18"><span class="lineNum">      18 </span>            : #include &quot;vector3.h&quot;</a>
+<a name="19"><span class="lineNum">      19 </span>            : #include &quot;spline5.h&quot;</a>
+<a name="20"><span class="lineNum">      20 </span>            : #include &quot;location.h&quot;</a>
+<a name="21"><span class="lineNum">      21 </span>            : #include &quot;control.h&quot;</a>
+<a name="22"><span class="lineNum">      22 </span>            : </a>
+<a name="23"><span class="lineNum">      23 </span>            : static const float NaNf = nanf(&quot;0x4152&quot;);</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            : #if HAL_WITH_EKF_DOUBLE</a>
+<a name="26"><span class="lineNum">      26 </span>            : typedef Vector2&lt;double&gt; Vector2F;</a>
+<a name="27"><span class="lineNum">      27 </span>            : typedef Vector3&lt;double&gt; Vector3F;</a>
+<a name="28"><span class="lineNum">      28 </span>            : typedef Matrix3&lt;double&gt; Matrix3F;</a>
+<a name="29"><span class="lineNum">      29 </span>            : typedef QuaternionD QuaternionF;</a>
+<a name="30"><span class="lineNum">      30 </span>            : #else</a>
+<a name="31"><span class="lineNum">      31 </span>            : typedef Vector2&lt;float&gt; Vector2F;</a>
+<a name="32"><span class="lineNum">      32 </span>            : typedef Vector3&lt;float&gt; Vector3F;</a>
+<a name="33"><span class="lineNum">      33 </span>            : typedef Matrix3&lt;float&gt; Matrix3F;</a>
+<a name="34"><span class="lineNum">      34 </span>            : typedef Quaternion QuaternionF;</a>
+<a name="35"><span class="lineNum">      35 </span>            : #endif</a>
+<a name="36"><span class="lineNum">      36 </span>            : </a>
+<a name="37"><span class="lineNum">      37 </span>            : // define AP_Param type AP_Vector3f</a>
+<a name="38"><span class="lineNum">      38 </span>            : AP_PARAMDEFV(Vector3f, Vector3f, AP_PARAM_VECTOR3F);</a>
+<a name="39"><span class="lineNum">      39 </span>            : </a>
+<a name="40"><span class="lineNum">      40 </span>            : /*</a>
+<a name="41"><span class="lineNum">      41 </span>            :  * Check whether two floats are equal</a>
+<a name="42"><span class="lineNum">      42 </span>            :  */</a>
+<a name="43"><span class="lineNum">      43 </span>            : template &lt;typename Arithmetic1, typename Arithmetic2&gt;</a>
+<a name="44"><span class="lineNum">      44 </span>            : typename std::enable_if&lt;std::is_integral&lt;typename std::common_type&lt;Arithmetic1, Arithmetic2&gt;::type&gt;::value ,bool&gt;::type</a>
+<a name="45"><span class="lineNum">      45 </span>            : is_equal(const Arithmetic1 v_1, const Arithmetic2 v_2);</a>
+<a name="46"><span class="lineNum">      46 </span>            : </a>
+<a name="47"><span class="lineNum">      47 </span>            : template &lt;typename Arithmetic1, typename Arithmetic2&gt;</a>
+<a name="48"><span class="lineNum">      48 </span>            : typename std::enable_if&lt;std::is_floating_point&lt;typename std::common_type&lt;Arithmetic1, Arithmetic2&gt;::type&gt;::value, bool&gt;::type</a>
+<a name="49"><span class="lineNum">      49 </span>            : is_equal(const Arithmetic1 v_1, const Arithmetic2 v_2);</a>
+<a name="50"><span class="lineNum">      50 </span>            : </a>
+<a name="51"><span class="lineNum">      51 </span>            : /* </a>
+<a name="52"><span class="lineNum">      52 </span>            :  * @brief: Check whether a float is zero</a>
+<a name="53"><span class="lineNum">      53 </span>            :  */</a>
+<a name="54"><span class="lineNum">      54 </span>            : template &lt;typename T&gt;</a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov"> 3482760000 : inline bool is_zero(const T fVal1) {</span></a>
+<a name="56"><span class="lineNum">      56 </span>            :     static_assert(std::is_floating_point&lt;T&gt;::value || std::is_base_of&lt;T,AP_Float&gt;::value,</a>
+<a name="57"><span class="lineNum">      57 </span>            :                   &quot;Template parameter not of type float&quot;);</a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov"> 3482760000 :     return is_zero(static_cast&lt;float&gt;(fVal1));</span></a>
+<a name="59"><span class="lineNum">      59 </span>            : }</a>
+<a name="60"><span class="lineNum">      60 </span>            : </a>
+<a name="61"><span class="lineNum">      61 </span>            : /* </a>
+<a name="62"><span class="lineNum">      62 </span>            :  * @brief: Check whether a float is greater than zero</a>
+<a name="63"><span class="lineNum">      63 </span>            :  */</a>
+<a name="64"><span class="lineNum">      64 </span>            : template &lt;typename T&gt;</a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov"> 4509424000 : inline bool is_positive(const T fVal1) {</span></a>
+<a name="66"><span class="lineNum">      66 </span>            :     static_assert(std::is_floating_point&lt;T&gt;::value || std::is_base_of&lt;T,AP_Float&gt;::value,</a>
+<a name="67"><span class="lineNum">      67 </span>            :                   &quot;Template parameter not of type float&quot;);</a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov"> 4509424000 :     return (static_cast&lt;float&gt;(fVal1) &gt;= FLT_EPSILON);</span></a>
+<a name="69"><span class="lineNum">      69 </span>            : }</a>
+<a name="70"><span class="lineNum">      70 </span>            : </a>
+<a name="71"><span class="lineNum">      71 </span>            : </a>
+<a name="72"><span class="lineNum">      72 </span>            : /* </a>
+<a name="73"><span class="lineNum">      73 </span>            :  * @brief: Check whether a float is less than zero</a>
+<a name="74"><span class="lineNum">      74 </span>            :  */</a>
+<a name="75"><span class="lineNum">      75 </span>            : template &lt;typename T&gt;</a>
+<a name="76"><span class="lineNum">      76 </span><span class="lineCov"> 2651334552 : inline bool is_negative(const T fVal1) {</span></a>
+<a name="77"><span class="lineNum">      77 </span>            :     static_assert(std::is_floating_point&lt;T&gt;::value || std::is_base_of&lt;T,AP_Float&gt;::value,</a>
+<a name="78"><span class="lineNum">      78 </span>            :                   &quot;Template parameter not of type float&quot;);</a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineCov"> 2651334552 :     return (static_cast&lt;float&gt;(fVal1) &lt;= (-1.0 * FLT_EPSILON));</span></a>
+<a name="80"><span class="lineNum">      80 </span>            : }</a>
+<a name="81"><span class="lineNum">      81 </span>            : </a>
+<a name="82"><span class="lineNum">      82 </span>            : /*</a>
+<a name="83"><span class="lineNum">      83 </span>            :  * @brief: Check whether a double is greater than zero</a>
+<a name="84"><span class="lineNum">      84 </span>            :  */</a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineCov">  220109000 : inline bool is_positive(const double fVal1) {</span></a>
+<a name="86"><span class="lineNum">      86 </span><span class="lineCov">  220109000 :     return (fVal1 &gt;= static_cast&lt;double&gt;(FLT_EPSILON));</span></a>
+<a name="87"><span class="lineNum">      87 </span>            : }</a>
+<a name="88"><span class="lineNum">      88 </span>            : </a>
+<a name="89"><span class="lineNum">      89 </span>            : /*</a>
+<a name="90"><span class="lineNum">      90 </span>            :  * @brief: Check whether a double is less than zero</a>
+<a name="91"><span class="lineNum">      91 </span>            :  */</a>
+<a name="92"><span class="lineNum">      92 </span>            : inline bool is_negative(const double fVal1) {</a>
+<a name="93"><span class="lineNum">      93 </span>            :     return (fVal1 &lt;= static_cast&lt;double&gt;((-1.0 * FLT_EPSILON)));</a>
+<a name="94"><span class="lineNum">      94 </span>            : }</a>
+<a name="95"><span class="lineNum">      95 </span>            : </a>
+<a name="96"><span class="lineNum">      96 </span>            : /*</a>
+<a name="97"><span class="lineNum">      97 </span>            :  * A variant of asin() that checks the input ranges and ensures a valid angle</a>
+<a name="98"><span class="lineNum">      98 </span>            :  * as output. If nan is given as input then zero is returned.</a>
+<a name="99"><span class="lineNum">      99 </span>            :  */</a>
+<a name="100"><span class="lineNum">     100 </span>            : template &lt;typename T&gt;</a>
+<a name="101"><span class="lineNum">     101 </span>            : float safe_asin(const T v);</a>
+<a name="102"><span class="lineNum">     102 </span>            : </a>
+<a name="103"><span class="lineNum">     103 </span>            : /*</a>
+<a name="104"><span class="lineNum">     104 </span>            :  * A variant of sqrt() that checks the input ranges and ensures a valid value</a>
+<a name="105"><span class="lineNum">     105 </span>            :  * as output. If a negative number is given then 0 is returned.  The reasoning</a>
+<a name="106"><span class="lineNum">     106 </span>            :  * is that a negative number for sqrt() in our code is usually caused by small</a>
+<a name="107"><span class="lineNum">     107 </span>            :  * numerical rounding errors, so the real input should have been zero</a>
+<a name="108"><span class="lineNum">     108 </span>            :  */</a>
+<a name="109"><span class="lineNum">     109 </span>            : template &lt;typename T&gt;</a>
+<a name="110"><span class="lineNum">     110 </span>            : float safe_sqrt(const T v);</a>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<a name="112"><span class="lineNum">     112 </span>            : // matrix multiplication of two NxN matrices</a>
+<a name="113"><span class="lineNum">     113 </span>            : template &lt;typename T&gt;</a>
+<a name="114"><span class="lineNum">     114 </span>            : void mat_mul(const T *A, const T *B, T *C, uint16_t n);</a>
+<a name="115"><span class="lineNum">     115 </span>            : </a>
+<a name="116"><span class="lineNum">     116 </span>            : // matrix inverse</a>
+<a name="117"><span class="lineNum">     117 </span>            : template &lt;typename T&gt;</a>
+<a name="118"><span class="lineNum">     118 </span>            : bool mat_inverse(const T *x, T *y, uint16_t dim) WARN_IF_UNUSED;</a>
+<a name="119"><span class="lineNum">     119 </span>            : </a>
+<a name="120"><span class="lineNum">     120 </span>            : // matrix identity</a>
+<a name="121"><span class="lineNum">     121 </span>            : template &lt;typename T&gt;</a>
+<a name="122"><span class="lineNum">     122 </span>            : void mat_identity(T *x, uint16_t dim);</a>
+<a name="123"><span class="lineNum">     123 </span>            : </a>
+<a name="124"><span class="lineNum">     124 </span>            : /*</a>
+<a name="125"><span class="lineNum">     125 </span>            :  * Constrain an angle to be within the range: -180 to 180 degrees. The second</a>
+<a name="126"><span class="lineNum">     126 </span>            :  * parameter changes the units. Default: 1 == degrees, 10 == dezi,</a>
+<a name="127"><span class="lineNum">     127 </span>            :  * 100 == centi.</a>
+<a name="128"><span class="lineNum">     128 </span>            :  */</a>
+<a name="129"><span class="lineNum">     129 </span>            : template &lt;typename T&gt;</a>
+<a name="130"><span class="lineNum">     130 </span>            : T wrap_180(const T angle);</a>
+<a name="131"><span class="lineNum">     131 </span>            : </a>
+<a name="132"><span class="lineNum">     132 </span>            : /*</a>
+<a name="133"><span class="lineNum">     133 </span>            :  * Wrap an angle in centi-degrees. See wrap_180().</a>
+<a name="134"><span class="lineNum">     134 </span>            :  */</a>
+<a name="135"><span class="lineNum">     135 </span>            : template &lt;typename T&gt;</a>
+<a name="136"><span class="lineNum">     136 </span>            : T wrap_180_cd(const T angle);</a>
+<a name="137"><span class="lineNum">     137 </span>            : </a>
+<a name="138"><span class="lineNum">     138 </span>            : /*</a>
+<a name="139"><span class="lineNum">     139 </span>            :  * Constrain an euler angle to be within the range: 0 to 360 degrees. The</a>
+<a name="140"><span class="lineNum">     140 </span>            :  * second parameter changes the units. Default: 1 == degrees, 10 == dezi,</a>
+<a name="141"><span class="lineNum">     141 </span>            :  * 100 == centi.</a>
+<a name="142"><span class="lineNum">     142 </span>            :  */</a>
+<a name="143"><span class="lineNum">     143 </span>            : float wrap_360(const float angle);</a>
+<a name="144"><span class="lineNum">     144 </span>            : #if AP_MATH_ALLOW_DOUBLE_FUNCTIONS</a>
+<a name="145"><span class="lineNum">     145 </span>            : double wrap_360(const double angle);</a>
+<a name="146"><span class="lineNum">     146 </span>            : #endif</a>
+<a name="147"><span class="lineNum">     147 </span>            : int wrap_360(const int angle);</a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span>            : int wrap_360_cd(const int angle);</a>
+<a name="150"><span class="lineNum">     150 </span>            : long wrap_360_cd(const long angle);</a>
+<a name="151"><span class="lineNum">     151 </span>            : float wrap_360_cd(const float angle);</a>
+<a name="152"><span class="lineNum">     152 </span>            : #if AP_MATH_ALLOW_DOUBLE_FUNCTIONS</a>
+<a name="153"><span class="lineNum">     153 </span>            : double wrap_360_cd(const double angle);</a>
+<a name="154"><span class="lineNum">     154 </span>            : #endif</a>
+<a name="155"><span class="lineNum">     155 </span>            : </a>
+<a name="156"><span class="lineNum">     156 </span>            : </a>
+<a name="157"><span class="lineNum">     157 </span>            : /*</a>
+<a name="158"><span class="lineNum">     158 </span>            :   wrap an angle in radians to -PI ~ PI (equivalent to +- 180 degrees)</a>
+<a name="159"><span class="lineNum">     159 </span>            :  */</a>
+<a name="160"><span class="lineNum">     160 </span>            : ftype wrap_PI(const ftype radian);</a>
+<a name="161"><span class="lineNum">     161 </span>            : </a>
+<a name="162"><span class="lineNum">     162 </span>            : /*</a>
+<a name="163"><span class="lineNum">     163 </span>            :  * wrap an angle in radians to 0..2PI</a>
+<a name="164"><span class="lineNum">     164 </span>            :  */</a>
+<a name="165"><span class="lineNum">     165 </span>            : ftype wrap_2PI(const ftype radian);</a>
+<a name="166"><span class="lineNum">     166 </span>            : </a>
+<a name="167"><span class="lineNum">     167 </span>            : /*</a>
+<a name="168"><span class="lineNum">     168 </span>            :  * Constrain a value to be within the range: low and high</a>
+<a name="169"><span class="lineNum">     169 </span>            :  */</a>
+<a name="170"><span class="lineNum">     170 </span>            : template &lt;typename T&gt;</a>
+<a name="171"><span class="lineNum">     171 </span>            : T constrain_value(const T amt, const T low, const T high);</a>
+<a name="172"><span class="lineNum">     172 </span>            : </a>
+<a name="173"><span class="lineNum">     173 </span>            : template &lt;typename T&gt;</a>
+<a name="174"><span class="lineNum">     174 </span>            : T constrain_value_line(const T amt, const T low, const T high, uint32_t line);</a>
+<a name="175"><span class="lineNum">     175 </span>            : </a>
+<a name="176"><span class="lineNum">     176 </span>            : #define constrain_float(amt, low, high) constrain_value_line(float(amt), float(low), float(high), uint32_t(__AP_LINE__))</a>
+<a name="177"><span class="lineNum">     177 </span>            : #define constrain_ftype(amt, low, high) constrain_value_line(ftype(amt), ftype(low), ftype(high), uint32_t(__AP_LINE__))</a>
+<a name="178"><span class="lineNum">     178 </span>            : </a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineCov">   98559000 : inline int16_t constrain_int16(const int16_t amt, const int16_t low, const int16_t high)</span></a>
+<a name="180"><span class="lineNum">     180 </span>            : {</a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineCov">   98559000 :     return constrain_value(amt, low, high);</span></a>
+<a name="182"><span class="lineNum">     182 </span>            : }</a>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineCov">      17611 : inline uint16_t constrain_uint16(const uint16_t amt, const uint16_t low, const uint16_t high)</span></a>
+<a name="185"><span class="lineNum">     185 </span>            : {</a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineCov">      17611 :     return constrain_value(amt, low, high);</span></a>
+<a name="187"><span class="lineNum">     187 </span>            : }</a>
+<a name="188"><span class="lineNum">     188 </span>            : </a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineCov"> 1952720000 : inline int32_t constrain_int32(const int32_t amt, const int32_t low, const int32_t high)</span></a>
+<a name="190"><span class="lineNum">     190 </span>            : {</a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineCov"> 1952720000 :     return constrain_value(amt, low, high);</span></a>
+<a name="192"><span class="lineNum">     192 </span>            : }</a>
+<a name="193"><span class="lineNum">     193 </span>            : </a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineCov">   88499200 : inline uint32_t constrain_uint32(const uint32_t amt, const uint32_t low, const uint32_t high)</span></a>
+<a name="195"><span class="lineNum">     195 </span>            : {</a>
+<a name="196"><span class="lineNum">     196 </span><span class="lineCov">   88499200 :     return constrain_value(amt, low, high);</span></a>
+<a name="197"><span class="lineNum">     197 </span>            : }</a>
+<a name="198"><span class="lineNum">     198 </span>            : </a>
+<a name="199"><span class="lineNum">     199 </span>            : inline int64_t constrain_int64(const int64_t amt, const int64_t low, const int64_t high)</a>
+<a name="200"><span class="lineNum">     200 </span>            : {</a>
+<a name="201"><span class="lineNum">     201 </span>            :     return constrain_value(amt, low, high);</a>
+<a name="202"><span class="lineNum">     202 </span>            : }</a>
+<a name="203"><span class="lineNum">     203 </span>            : </a>
+<a name="204"><span class="lineNum">     204 </span>            : inline uint64_t constrain_uint64(const uint64_t amt, const uint64_t low, const uint64_t high)</a>
+<a name="205"><span class="lineNum">     205 </span>            : {</a>
+<a name="206"><span class="lineNum">     206 </span>            :     return constrain_value(amt, low, high);</a>
+<a name="207"><span class="lineNum">     207 </span>            : }</a>
+<a name="208"><span class="lineNum">     208 </span>            : </a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 : inline double constrain_double(const double amt, const double low, const double high)</span></a>
+<a name="210"><span class="lineNum">     210 </span>            : {</a>
+<a name="211"><span class="lineNum">     211 </span><span class="lineNoCov">          0 :     return constrain_value(amt, low, high);</span></a>
+<a name="212"><span class="lineNum">     212 </span>            : }</a>
+<a name="213"><span class="lineNum">     213 </span>            : </a>
+<a name="214"><span class="lineNum">     214 </span>            : // degrees -&gt; radians</a>
+<a name="215"><span class="lineNum">     215 </span><span class="lineCov"> 2214347175 : static inline constexpr double radians(double deg)</span></a>
+<a name="216"><span class="lineNum">     216 </span>            : {</a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineCov"> 2214347175 :     return deg * DEG_TO_RAD;</span></a>
+<a name="218"><span class="lineNum">     218 </span>            : }</a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span><span class="lineCov"> 2201441364 : static inline constexpr float radians(float deg)</span></a>
+<a name="221"><span class="lineNum">     221 </span>            : {</a>
+<a name="222"><span class="lineNum">     222 </span><span class="lineCov"> 2201441364 :     return deg * DEG_TO_RAD;</span></a>
+<a name="223"><span class="lineNum">     223 </span>            : }</a>
+<a name="224"><span class="lineNum">     224 </span>            : </a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineCov">  113674312 : static inline constexpr float radians(int deg)</span></a>
+<a name="226"><span class="lineNum">     226 </span>            : {</a>
+<a name="227"><span class="lineNum">     227 </span><span class="lineCov">  113674312 :     return deg * DEG_TO_RAD;</span></a>
+<a name="228"><span class="lineNum">     228 </span>            : }</a>
+<a name="229"><span class="lineNum">     229 </span>            : </a>
+<a name="230"><span class="lineNum">     230 </span>            : // centidegrees -&gt; radians</a>
+<a name="231"><span class="lineNum">     231 </span><span class="lineCov">  351749042 : static inline constexpr float cd_to_rad(float cdeg)</span></a>
+<a name="232"><span class="lineNum">     232 </span>            : {</a>
+<a name="233"><span class="lineNum">     233 </span><span class="lineCov">  351749042 :     return cdeg * CDEG_TO_RAD;</span></a>
+<a name="234"><span class="lineNum">     234 </span>            : }</a>
+<a name="235"><span class="lineNum">     235 </span>            : </a>
+<a name="236"><span class="lineNum">     236 </span>            : // radians -&gt; centidegrees</a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineCov">     146228 : static inline constexpr float rad_to_cd(float rad)</span></a>
+<a name="238"><span class="lineNum">     238 </span>            : {</a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineCov">     146228 :     return rad * RAD_TO_CDEG;</span></a>
+<a name="240"><span class="lineNum">     240 </span>            : }</a>
+<a name="241"><span class="lineNum">     241 </span>            : </a>
+<a name="242"><span class="lineNum">     242 </span>            : // radians -&gt; degrees</a>
+<a name="243"><span class="lineNum">     243 </span><span class="lineCov"> 1355126746 : static inline constexpr float degrees(float rad)</span></a>
+<a name="244"><span class="lineNum">     244 </span>            : {</a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineCov"> 1355126746 :     return rad * RAD_TO_DEG;</span></a>
+<a name="246"><span class="lineNum">     246 </span>            : }</a>
+<a name="247"><span class="lineNum">     247 </span>            : </a>
+<a name="248"><span class="lineNum">     248 </span>            : template&lt;typename T&gt;</a>
+<a name="249"><span class="lineNum">     249 </span><span class="lineCov"> 2080026146 : ftype sq(const T val)</span></a>
+<a name="250"><span class="lineNum">     250 </span>            : {</a>
+<a name="251"><span class="lineNum">     251 </span><span class="lineCov"> 2080026146 :     ftype v = static_cast&lt;ftype&gt;(val);</span></a>
+<a name="252"><span class="lineNum">     252 </span><span class="lineCov"> 2080026146 :     return v*v;</span></a>
+<a name="253"><span class="lineNum">     253 </span>            : }</a>
+<a name="254"><span class="lineNum">     254 </span><span class="lineCov"> 8189584300 : static inline constexpr float sq(const float val)</span></a>
+<a name="255"><span class="lineNum">     255 </span>            : {</a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineCov"> 8189584300 :     return val*val;</span></a>
+<a name="257"><span class="lineNum">     257 </span>            : }</a>
+<a name="258"><span class="lineNum">     258 </span>            : </a>
+<a name="259"><span class="lineNum">     259 </span>            : /*</a>
+<a name="260"><span class="lineNum">     260 </span>            :  * Variadic template for calculating the square norm of a vector of any</a>
+<a name="261"><span class="lineNum">     261 </span>            :  * dimension.</a>
+<a name="262"><span class="lineNum">     262 </span>            :  */</a>
+<a name="263"><span class="lineNum">     263 </span>            : template&lt;typename T, typename... Params&gt;</a>
+<a name="264"><span class="lineNum">     264 </span><span class="lineCov"> 3073534000 : ftype sq(const T first, const Params... parameters)</span></a>
+<a name="265"><span class="lineNum">     265 </span>            : {</a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineCov"> 3073534000 :     return sq(first) + sq(parameters...);</span></a>
+<a name="267"><span class="lineNum">     267 </span>            : }</a>
+<a name="268"><span class="lineNum">     268 </span>            : </a>
+<a name="269"><span class="lineNum">     269 </span>            : /*</a>
+<a name="270"><span class="lineNum">     270 </span>            :  * Variadic template for calculating the norm (pythagoras) of a vector of any</a>
+<a name="271"><span class="lineNum">     271 </span>            :  * dimension.</a>
+<a name="272"><span class="lineNum">     272 </span>            :  */</a>
+<a name="273"><span class="lineNum">     273 </span>            : template&lt;typename T, typename U, typename... Params&gt;</a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineCov"> 1799064000 : ftype norm(const T first, const U second, const Params... parameters)</span></a>
+<a name="275"><span class="lineNum">     275 </span>            : {</a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineCov"> 1799064000 :     return sqrtF(sq(first, second, parameters...));</span></a>
+<a name="277"><span class="lineNum">     277 </span>            : }</a>
+<a name="278"><span class="lineNum">     278 </span>            : </a>
+<a name="279"><span class="lineNum">     279 </span>            : #undef MIN</a>
+<a name="280"><span class="lineNum">     280 </span>            : template&lt;typename A, typename B&gt;</a>
+<a name="281"><span class="lineNum">     281 </span><span class="lineCov"> 1532002266 : static inline auto MIN(const A &amp;one, const B &amp;two) -&gt; decltype(one &lt; two ? one : two)</span></a>
+<a name="282"><span class="lineNum">     282 </span>            : {</a>
+<a name="283"><span class="lineNum">     283 </span><span class="lineCov"> 1532002266 :     return one &lt; two ? one : two;</span></a>
+<a name="284"><span class="lineNum">     284 </span>            : }</a>
+<a name="285"><span class="lineNum">     285 </span>            : </a>
+<a name="286"><span class="lineNum">     286 </span>            : #undef MAX</a>
+<a name="287"><span class="lineNum">     287 </span>            : template&lt;typename A, typename B&gt;</a>
+<a name="288"><span class="lineNum">     288 </span><span class="lineCov"> 3487681150 : static inline auto MAX(const A &amp;one, const B &amp;two) -&gt; decltype(one &gt; two ? one : two)</span></a>
+<a name="289"><span class="lineNum">     289 </span>            : {</a>
+<a name="290"><span class="lineNum">     290 </span><span class="lineCov"> 3487681150 :     return one &gt; two ? one : two;</span></a>
+<a name="291"><span class="lineNum">     291 </span>            : }</a>
+<a name="292"><span class="lineNum">     292 </span>            : </a>
+<a name="293"><span class="lineNum">     293 </span>            : inline constexpr uint32_t hz_to_nsec(uint32_t freq)</a>
+<a name="294"><span class="lineNum">     294 </span>            : {</a>
+<a name="295"><span class="lineNum">     295 </span>            :     return AP_NSEC_PER_SEC / freq;</a>
+<a name="296"><span class="lineNum">     296 </span>            : }</a>
+<a name="297"><span class="lineNum">     297 </span>            : </a>
+<a name="298"><span class="lineNum">     298 </span>            : inline constexpr uint32_t nsec_to_hz(uint32_t nsec)</a>
+<a name="299"><span class="lineNum">     299 </span>            : {</a>
+<a name="300"><span class="lineNum">     300 </span>            :     return AP_NSEC_PER_SEC / nsec;</a>
+<a name="301"><span class="lineNum">     301 </span>            : }</a>
+<a name="302"><span class="lineNum">     302 </span>            : </a>
+<a name="303"><span class="lineNum">     303 </span>            : inline constexpr uint32_t usec_to_nsec(uint32_t usec)</a>
+<a name="304"><span class="lineNum">     304 </span>            : {</a>
+<a name="305"><span class="lineNum">     305 </span>            :     return usec * AP_NSEC_PER_USEC;</a>
+<a name="306"><span class="lineNum">     306 </span>            : }</a>
+<a name="307"><span class="lineNum">     307 </span>            : </a>
+<a name="308"><span class="lineNum">     308 </span>            : inline constexpr uint32_t nsec_to_usec(uint32_t nsec)</a>
+<a name="309"><span class="lineNum">     309 </span>            : {</a>
+<a name="310"><span class="lineNum">     310 </span>            :     return nsec / AP_NSEC_PER_USEC;</a>
+<a name="311"><span class="lineNum">     311 </span>            : }</a>
+<a name="312"><span class="lineNum">     312 </span>            : </a>
+<a name="313"><span class="lineNum">     313 </span>            : inline constexpr uint32_t hz_to_usec(uint32_t freq)</a>
+<a name="314"><span class="lineNum">     314 </span>            : {</a>
+<a name="315"><span class="lineNum">     315 </span>            :     return AP_USEC_PER_SEC / freq;</a>
+<a name="316"><span class="lineNum">     316 </span>            : }</a>
+<a name="317"><span class="lineNum">     317 </span>            : </a>
+<a name="318"><span class="lineNum">     318 </span>            : inline constexpr uint32_t usec_to_hz(uint32_t usec)</a>
+<a name="319"><span class="lineNum">     319 </span>            : {</a>
+<a name="320"><span class="lineNum">     320 </span>            :     return AP_USEC_PER_SEC / usec;</a>
+<a name="321"><span class="lineNum">     321 </span>            : }</a>
+<a name="322"><span class="lineNum">     322 </span>            : </a>
+<a name="323"><span class="lineNum">     323 </span>            : /*</a>
+<a name="324"><span class="lineNum">     324 </span>            :   linear interpolation based on a variable in a range</a>
+<a name="325"><span class="lineNum">     325 </span>            :   return value will be in the range [output_low,output_high]</a>
+<a name="326"><span class="lineNum">     326 </span>            : </a>
+<a name="327"><span class="lineNum">     327 </span>            :   Either polarity is supported, so input_low can be higher than input_high</a>
+<a name="328"><span class="lineNum">     328 </span>            : </a>
+<a name="329"><span class="lineNum">     329 </span>            :   Read this as, &quot;Take the value 'input_value' as a value between</a>
+<a name="330"><span class="lineNum">     330 </span>            :   'input_low' and 'input_high'.  Return a value between 'output_low'</a>
+<a name="331"><span class="lineNum">     331 </span>            :   and 'output_high' proportonal to the position of 'input_value'</a>
+<a name="332"><span class="lineNum">     332 </span>            :   between 'input_low' and 'input_high'&quot;</a>
+<a name="333"><span class="lineNum">     333 </span>            :  */</a>
+<a name="334"><span class="lineNum">     334 </span>            : float linear_interpolate(float output_low, float output_high,</a>
+<a name="335"><span class="lineNum">     335 </span>            :                          float input_value,</a>
+<a name="336"><span class="lineNum">     336 </span>            :                          float input_low, float input_high);</a>
+<a name="337"><span class="lineNum">     337 </span>            : </a>
+<a name="338"><span class="lineNum">     338 </span>            : /* cubic &quot;expo&quot; curve generator </a>
+<a name="339"><span class="lineNum">     339 </span>            :  * alpha range: [0,1] min to max expo</a>
+<a name="340"><span class="lineNum">     340 </span>            :  * input range: [-1,1]</a>
+<a name="341"><span class="lineNum">     341 </span>            :  */</a>
+<a name="342"><span class="lineNum">     342 </span>            : float expo_curve(float alpha, float input);</a>
+<a name="343"><span class="lineNum">     343 </span>            : </a>
+<a name="344"><span class="lineNum">     344 </span>            : /* throttle curve generator</a>
+<a name="345"><span class="lineNum">     345 </span>            :  * thr_mid: output at mid stick</a>
+<a name="346"><span class="lineNum">     346 </span>            :  * alpha: expo coefficient</a>
+<a name="347"><span class="lineNum">     347 </span>            :  * thr_in: [0-1]</a>
+<a name="348"><span class="lineNum">     348 </span>            :  */</a>
+<a name="349"><span class="lineNum">     349 </span>            : float throttle_curve(float thr_mid, float alpha, float thr_in);</a>
+<a name="350"><span class="lineNum">     350 </span>            : </a>
+<a name="351"><span class="lineNum">     351 </span>            : /* simple 16 bit random number generator */</a>
+<a name="352"><span class="lineNum">     352 </span>            : uint16_t get_random16(void);</a>
+<a name="353"><span class="lineNum">     353 </span>            : </a>
+<a name="354"><span class="lineNum">     354 </span>            : // generate a random float between -1 and 1, for use in SITL</a>
+<a name="355"><span class="lineNum">     355 </span>            : float rand_float(void);</a>
+<a name="356"><span class="lineNum">     356 </span>            : </a>
+<a name="357"><span class="lineNum">     357 </span>            : // generate a random Vector3f with each value between -1.0 and 1.0</a>
+<a name="358"><span class="lineNum">     358 </span>            : Vector3f rand_vec3f(void);</a>
+<a name="359"><span class="lineNum">     359 </span>            : </a>
+<a name="360"><span class="lineNum">     360 </span>            : // return true if two rotations are equal</a>
+<a name="361"><span class="lineNum">     361 </span>            : bool rotation_equal(enum Rotation r1, enum Rotation r2) WARN_IF_UNUSED;</a>
+<a name="362"><span class="lineNum">     362 </span>            : </a>
+<a name="363"><span class="lineNum">     363 </span>            : /*</a>
+<a name="364"><span class="lineNum">     364 </span>            :  * return a velocity correction (in m/s in NED) for a sensor's position given it's position offsets</a>
+<a name="365"><span class="lineNum">     365 </span>            :  * this correction should be added to the sensor NED measurement</a>
+<a name="366"><span class="lineNum">     366 </span>            :  * sensor_offset_bf is in meters in body frame (Foward, Right, Down)</a>
+<a name="367"><span class="lineNum">     367 </span>            :  * rot_ef_to_bf is a rotation matrix to rotate from earth-frame (NED) to body frame</a>
+<a name="368"><span class="lineNum">     368 </span>            :  * angular_rate is rad/sec</a>
+<a name="369"><span class="lineNum">     369 </span>            :  */</a>
+<a name="370"><span class="lineNum">     370 </span>            : Vector3F get_vel_correction_for_sensor_offset(const Vector3F &amp;sensor_offset_bf, const Matrix3F &amp;rot_ef_to_bf, const Vector3F &amp;angular_rate);</a>
+<a name="371"><span class="lineNum">     371 </span>            : </a>
+<a name="372"><span class="lineNum">     372 </span>            : /*</a>
+<a name="373"><span class="lineNum">     373 </span>            :   calculate a low pass filter alpha value</a>
+<a name="374"><span class="lineNum">     374 </span>            :  */</a>
+<a name="375"><span class="lineNum">     375 </span>            : float calc_lowpass_alpha_dt(float dt, float cutoff_freq);</a>
+<a name="376"><span class="lineNum">     376 </span>            : </a>
+<a name="377"><span class="lineNum">     377 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_SITL</a>
+<a name="378"><span class="lineNum">     378 </span>            : // fill an array of float with NaN, used to invalidate memory in SITL</a>
+<a name="379"><span class="lineNum">     379 </span>            : void fill_nanf(float *f, uint16_t count);</a>
+<a name="380"><span class="lineNum">     380 </span>            : void fill_nanf(double *f, uint16_t count);</a>
+<a name="381"><span class="lineNum">     381 </span>            : #endif</a>
+<a name="382"><span class="lineNum">     382 </span>            : </a>
+<a name="383"><span class="lineNum">     383 </span>            : // from https://embeddedartistry.com/blog/2018/07/12/simple-fixed-point-conversion-in-c/</a>
+<a name="384"><span class="lineNum">     384 </span>            : // Convert to/from 16-bit fixed-point and float</a>
+<a name="385"><span class="lineNum">     385 </span>            : float fixed2float(const uint16_t input, const uint8_t fractional_bits = 8);</a>
+<a name="386"><span class="lineNum">     386 </span>            : uint16_t float2fixed(const float input, const uint8_t fractional_bits = 8);</a>
+<a name="387"><span class="lineNum">     387 </span>            : </a>
+<a name="388"><span class="lineNum">     388 </span>            : /*</a>
+<a name="389"><span class="lineNum">     389 </span>            :   calculate turn rate in deg/sec given a bank angle and airspeed for a</a>
+<a name="390"><span class="lineNum">     390 </span>            :   fixed wing aircraft</a>
+<a name="391"><span class="lineNum">     391 </span>            :  */</a>
+<a name="392"><span class="lineNum">     392 </span>            : float fixedwing_turn_rate(float bank_angle_deg, float airspeed);</a>
+<a name="393"><span class="lineNum">     393 </span>            : </a>
+<a name="394"><span class="lineNum">     394 </span>            : // convert degrees farenheight to Kelvin</a>
+<a name="395"><span class="lineNum">     395 </span>            : float degF_to_Kelvin(float temp_f);</a>
+<a name="396"><span class="lineNum">     396 </span>            : </a>
+<a name="397"><span class="lineNum">     397 </span>            : /*</a>
+<a name="398"><span class="lineNum">     398 </span>            :   constraining conversion functions to prevent undefined behaviour</a>
+<a name="399"><span class="lineNum">     399 </span>            :  */</a>
+<a name="400"><span class="lineNum">     400 </span>            : int16_t float_to_int16(const float v);</a>
+<a name="401"><span class="lineNum">     401 </span>            : uint16_t float_to_uint16(const float v);</a>
+<a name="402"><span class="lineNum">     402 </span>            : int32_t float_to_int32(const float v);</a>
+<a name="403"><span class="lineNum">     403 </span>            : uint32_t float_to_uint32(const float v);</a>
+<a name="404"><span class="lineNum">     404 </span>            : uint32_t double_to_uint32(const double v);</a>
+<a name="405"><span class="lineNum">     405 </span>            : int32_t double_to_int32(const double v);</a>
+<a name="406"><span class="lineNum">     406 </span>            : </a>
+<a name="407"><span class="lineNum">     407 </span>            : /*</a>
+<a name="408"><span class="lineNum">     408 </span>            :   Convert from float to int32_t without breaking Wstrict-aliasing due to type punning</a>
+<a name="409"><span class="lineNum">     409 </span>            : */</a>
+<a name="410"><span class="lineNum">     410 </span>            : int32_t float_to_int32_le(const float&amp; value) WARN_IF_UNUSED;</a>
+<a name="411"><span class="lineNum">     411 </span>            : </a>
+<a name="412"><span class="lineNum">     412 </span>            : /*</a>
+<a name="413"><span class="lineNum">     413 </span>            :   Convert from uint32_t to float without breaking Wstrict-aliasing due to type punning</a>
+<a name="414"><span class="lineNum">     414 </span>            : */</a>
+<a name="415"><span class="lineNum">     415 </span>            : float int32_to_float_le(const uint32_t&amp; value) WARN_IF_UNUSED;</a>
+<a name="416"><span class="lineNum">     416 </span>            : </a>
+<a name="417"><span class="lineNum">     417 </span>            : /*</a>
+<a name="418"><span class="lineNum">     418 </span>            :   Convert from uint64_t to double without breaking Wstrict-aliasing due to type punning</a>
+<a name="419"><span class="lineNum">     419 </span>            : */</a>
+<a name="420"><span class="lineNum">     420 </span>            : double uint64_to_double_le(const uint64_t&amp; value) WARN_IF_UNUSED;</a>
+<a name="421"><span class="lineNum">     421 </span>            : </a>
+<a name="422"><span class="lineNum">     422 </span>            : /*</a>
+<a name="423"><span class="lineNum">     423 </span>            :   get a twos-complement value from the first 'length' bits of a uint32_t</a>
+<a name="424"><span class="lineNum">     424 </span>            :   With thanks to betaflight</a>
+<a name="425"><span class="lineNum">     425 </span>            :  */</a>
+<a name="426"><span class="lineNum">     426 </span>            : int32_t get_twos_complement(uint32_t raw, uint8_t length) WARN_IF_UNUSED;</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

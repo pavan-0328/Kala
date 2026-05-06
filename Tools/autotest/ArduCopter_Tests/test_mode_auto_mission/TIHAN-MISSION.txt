@@ -1,0 +1,55 @@
+QGC WPL 110
+
+# HOME (required, frame ignored)
+0  1  0  16   0 0 0 0   0 0 0   1
+
+# TAKEOFF (NAV → frame 3)
+1  0  3  22   0 0 0 0   0 0 20  1
+
+# WAYPOINT (NAV → frame 3)
+2  0  3  16   0 0 0 0   20 0 20  1
+
+# CONDITION_DELAY (CONDITION → frame 0)
+3  0  0  112  5 0 0 0   0 0 0   1
+
+# WAYPOINT (CLIMB) (NAV → frame 3)
+4  0  3  16   0 0 0 0   40 0 30  1
+
+# CONDITION_DISTANCE (CONDITION → frame 0)
+5  0  0  114  10 0 0 0  0 0 0   1
+
+# DO_CHANGE_SPEED (DO → frame 2)
+6  0  2  178  1 5 -1 0  0 0 0   1
+
+# WAYPOINT (EAST) (NAV → frame 3)
+7  0  3  16   0 0 0 0   40 40 30 1
+
+# DO_SET_ROI (DO → frame 2)
+8  0  2  201  0 0 0 0   0 0 0   1
+
+# LOITER_TIME (NAV → frame 3)
+9  0  3  19   10 0 0 0  0 0 30  1
+
+# CONDITION_YAW (CONDITION → frame 0)
+10 0  0  115  90 30 1 1  0 0 0   1
+
+# SPLINE_WAYPOINT (NAV → frame 3)
+11 0  3  82   0 0 0 0   20 20 30 1
+
+# WAYPOINT (SOUTH) (NAV → frame 3)
+12 0  3  16   0 0 0 0   0 20 30  1
+
+# CONDITION_DELAY (CONDITION → frame 0)
+13 0  0  112  3 0 0 0   0 0 0   1
+
+# LOITER_UNLIM (NAV → frame 3)
+14 0  3  17   0 0 0 0   0 0 30  1
+
+# DO_SET_SERVO (DO → frame 2)
+15 0  2  183  9 1500 0 0  0 0 0  1
+
+# DO_SET_RELAY (DO → frame 2)
+16 0  2  181  0 1 0 0   0 0 0   1
+
+# RTL (NAV → frame 3)
+17 0  3  20   0 0 0 0   0 0 0   1

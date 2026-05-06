@@ -1,0 +1,535 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_AccelCal/AccelCalibrator.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_AccelCal</a> - AccelCalibrator.cpp<span style="font-size: 80%;"> (source / <a href="AccelCalibrator.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">230</td>
+            <td class="headerCovTableEntryLo">6.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntryLo">14.3 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="7"><span class="lineNum">       7 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="8"><span class="lineNum">       8 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="9"><span class="lineNum">       9 </span>            :    GNU General Public License for more details.</a>
+<a name="10"><span class="lineNum">      10 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="11"><span class="lineNum">      11 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="12"><span class="lineNum">      12 </span>            : */</a>
+<a name="13"><span class="lineNum">      13 </span>            : </a>
+<a name="14"><span class="lineNum">      14 </span>            : // Authored by Jonathan Challinger, 3D Robotics Inc.</a>
+<a name="15"><span class="lineNum">      15 </span>            : </a>
+<a name="16"><span class="lineNum">      16 </span>            : #include &quot;AccelCalibrator.h&quot;</a>
+<a name="17"><span class="lineNum">      17 </span>            : #include &lt;stdio.h&gt;</a>
+<a name="18"><span class="lineNum">      18 </span>            : #include &lt;AP_HAL/AP_HAL.h&gt;</a>
+<a name="19"><span class="lineNum">      19 </span>            : </a>
+<a name="20"><span class="lineNum">      20 </span>            : const extern AP_HAL::HAL&amp; hal;</a>
+<a name="21"><span class="lineNum">      21 </span>            : /*</a>
+<a name="22"><span class="lineNum">      22 </span>            :  * TODO</a>
+<a name="23"><span class="lineNum">      23 </span>            :  * - time out when not receiving samples</a>
+<a name="24"><span class="lineNum">      24 </span>            :  */</a>
+<a name="25"><span class="lineNum">      25 </span>            : </a>
+<a name="26"><span class="lineNum">      26 </span>            : ////////////////////////////////////////////////////////////</a>
+<a name="27"><span class="lineNum">      27 </span>            : ///////////////////// PUBLIC INTERFACE /////////////////////</a>
+<a name="28"><span class="lineNum">      28 </span>            : ////////////////////////////////////////////////////////////</a>
+<a name="29"><span class="lineNum">      29 </span>            : </a>
+<a name="30"><span class="lineNum">      30 </span><span class="lineCov">          1 : AccelCalibrator::AccelCalibrator() :</span></a>
+<a name="31"><span class="lineNum">      31 </span>            : _conf_tolerance(ACCEL_CAL_TOLERANCE),</a>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">          1 : _sample_buffer(nullptr)</span></a>
+<a name="33"><span class="lineNum">      33 </span>            : {</a>
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">          1 :     clear();</span></a>
+<a name="35"><span class="lineNum">      35 </span><span class="lineCov">          1 : }</span></a>
+<a name="36"><span class="lineNum">      36 </span>            : /*</a>
+<a name="37"><span class="lineNum">      37 </span>            :     Select options, initialise variables and initiate accel calibration</a>
+<a name="38"><span class="lineNum">      38 </span>            :     Options:</a>
+<a name="39"><span class="lineNum">      39 </span>            :     Fit Type:       Will assume that if accelerometer static samples around all possible orientation</a>
+<a name="40"><span class="lineNum">      40 </span>            :                     are spread in space will cover a surface of AXIS_ALIGNED_ELLIPSOID or any general </a>
+<a name="41"><span class="lineNum">      41 </span>            :                     ELLIPSOID as chosen</a>
+<a name="42"><span class="lineNum">      42 </span>            : </a>
+<a name="43"><span class="lineNum">      43 </span>            :     Num Samples:    Number of samples user should will be gathering, please note that with type of surface</a>
+<a name="44"><span class="lineNum">      44 </span>            :                     chosen the minimum number of samples required will vary, for instance in the case of AXIS</a>
+<a name="45"><span class="lineNum">      45 </span>            :                     ALIGNED ELLIPSOID atleast 6 distinct samples are required while for generic ELLIPSOIDAL fit</a>
+<a name="46"><span class="lineNum">      46 </span>            :                     which will include calculation of offdiagonal parameters too requires atleast 8 parameters</a>
+<a name="47"><span class="lineNum">      47 </span>            :                     to form a distinct ELLIPSOID</a>
+<a name="48"><span class="lineNum">      48 </span>            : </a>
+<a name="49"><span class="lineNum">      49 </span>            :     Sample Time:    Time over which the samples will be gathered and averaged to add to a single sample for least</a>
+<a name="50"><span class="lineNum">      50 </span>            :                     square regression</a>
+<a name="51"><span class="lineNum">      51 </span>            : </a>
+<a name="52"><span class="lineNum">      52 </span>            :     offset,diag,offdiag: initial parameter values for LSQ calculation</a>
+<a name="53"><span class="lineNum">      53 </span>            : */</a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineNoCov">          0 : void AccelCalibrator::start(enum accel_cal_fit_type_t fit_type, uint8_t num_samples, float sample_time) {</span></a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineNoCov">          0 :     start(fit_type, num_samples, sample_time, Vector3f(0,0,0), Vector3f(1,1,1), Vector3f(0,0,0));</span></a>
+<a name="56"><span class="lineNum">      56 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="57"><span class="lineNum">      57 </span>            : </a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineNoCov">          0 : void AccelCalibrator::start(enum accel_cal_fit_type_t fit_type, uint8_t num_samples, float sample_time, Vector3f offset, Vector3f diag, Vector3f offdiag) {</span></a>
+<a name="59"><span class="lineNum">      59 </span><span class="lineNoCov">          0 :     if (_status == ACCEL_CAL_FAILED || _status == ACCEL_CAL_SUCCESS) {</span></a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineNoCov">          0 :         clear();</span></a>
+<a name="61"><span class="lineNum">      61 </span>            :     }</a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineNoCov">          0 :     if (_status != ACCEL_CAL_NOT_STARTED) {</span></a>
+<a name="63"><span class="lineNum">      63 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="64"><span class="lineNum">      64 </span>            :     }</a>
+<a name="65"><span class="lineNum">      65 </span>            : </a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :     _conf_num_samples = num_samples;</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :     _conf_sample_time = sample_time;</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :     _conf_fit_type = fit_type;</span></a>
+<a name="69"><span class="lineNum">      69 </span>            : </a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :     const uint16_t faces = 2*_conf_num_samples-4;</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :     const float a = (4.0f * M_PI / (3.0f * faces)) + M_PI / 3.0f;</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :     const float theta = 0.5f * acosf(cosf(a) / (1.0f - cosf(a)));</span></a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineNoCov">          0 :     _min_sample_dist = GRAVITY_MSS * 2*sinf(theta/2);</span></a>
+<a name="74"><span class="lineNum">      74 </span>            : </a>
+<a name="75"><span class="lineNum">      75 </span><span class="lineNoCov">          0 :     _param.s.offset = offset;</span></a>
+<a name="76"><span class="lineNum">      76 </span><span class="lineNoCov">          0 :     _param.s.diag = diag;</span></a>
+<a name="77"><span class="lineNum">      77 </span><span class="lineNoCov">          0 :     _param.s.offdiag = offdiag;</span></a>
+<a name="78"><span class="lineNum">      78 </span>            : </a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineNoCov">          0 :     switch (_conf_fit_type) {</span></a>
+<a name="80"><span class="lineNum">      80 </span><span class="lineNoCov">          0 :         case ACCEL_CAL_AXIS_ALIGNED_ELLIPSOID:</span></a>
+<a name="81"><span class="lineNum">      81 </span><span class="lineNoCov">          0 :             if (_conf_num_samples &lt; 6) {</span></a>
+<a name="82"><span class="lineNum">      82 </span><span class="lineNoCov">          0 :                 set_status(ACCEL_CAL_FAILED);</span></a>
+<a name="83"><span class="lineNum">      83 </span><span class="lineNoCov">          0 :                 return;</span></a>
+<a name="84"><span class="lineNum">      84 </span>            :             }</a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="86"><span class="lineNum">      86 </span><span class="lineNoCov">          0 :         case ACCEL_CAL_ELLIPSOID:</span></a>
+<a name="87"><span class="lineNum">      87 </span><span class="lineNoCov">          0 :             if (_conf_num_samples &lt; 8) {</span></a>
+<a name="88"><span class="lineNum">      88 </span><span class="lineNoCov">          0 :                 set_status(ACCEL_CAL_FAILED);</span></a>
+<a name="89"><span class="lineNum">      89 </span><span class="lineNoCov">          0 :                 return;</span></a>
+<a name="90"><span class="lineNum">      90 </span>            :             }</a>
+<a name="91"><span class="lineNum">      91 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="92"><span class="lineNum">      92 </span>            :     }</a>
+<a name="93"><span class="lineNum">      93 </span>            : </a>
+<a name="94"><span class="lineNum">      94 </span><span class="lineNoCov">          0 :     set_status(ACCEL_CAL_WAITING_FOR_ORIENTATION);</span></a>
+<a name="95"><span class="lineNum">      95 </span>            : }</a>
+<a name="96"><span class="lineNum">      96 </span>            : </a>
+<a name="97"><span class="lineNum">      97 </span>            : </a>
+<a name="98"><span class="lineNum">      98 </span>            : // set Accel calibrator status to make itself ready for future accel cals</a>
+<a name="99"><span class="lineNum">      99 </span><span class="lineCov">          1 : void AccelCalibrator::clear() {</span></a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineCov">          1 :     set_status(ACCEL_CAL_NOT_STARTED);</span></a>
+<a name="101"><span class="lineNum">     101 </span><span class="lineCov">          1 : }</span></a>
+<a name="102"><span class="lineNum">     102 </span>            : </a>
+<a name="103"><span class="lineNum">     103 </span>            : // returns true if accel calibrator is running</a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 : bool AccelCalibrator::running() {</span></a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineNoCov">          0 :     return _status == ACCEL_CAL_WAITING_FOR_ORIENTATION || _status == ACCEL_CAL_COLLECTING_SAMPLE;</span></a>
+<a name="106"><span class="lineNum">     106 </span>            : }</a>
+<a name="107"><span class="lineNum">     107 </span>            : </a>
+<a name="108"><span class="lineNum">     108 </span>            : // set Accel calibrator to start collecting samples in the next cycle</a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 : void AccelCalibrator::collect_sample() {</span></a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 :     set_status(ACCEL_CAL_COLLECTING_SAMPLE);</span></a>
+<a name="111"><span class="lineNum">     111 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="112"><span class="lineNum">     112 </span>            : </a>
+<a name="113"><span class="lineNum">     113 </span>            : // collect and avg sample to be passed onto LSQ estimator after all requisite orientations are done</a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineNoCov">          0 : void AccelCalibrator::new_sample(const Vector3f&amp; delta_velocity, float dt) {</span></a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineNoCov">          0 :     if (_status != ACCEL_CAL_COLLECTING_SAMPLE) {</span></a>
+<a name="116"><span class="lineNum">     116 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="117"><span class="lineNum">     117 </span>            :     }</a>
+<a name="118"><span class="lineNum">     118 </span>            : </a>
+<a name="119"><span class="lineNum">     119 </span><span class="lineNoCov">          0 :     if (_samples_collected &gt;= _conf_num_samples) {</span></a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 :         set_status(ACCEL_CAL_FAILED);</span></a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="122"><span class="lineNum">     122 </span>            :     }</a>
+<a name="123"><span class="lineNum">     123 </span>            : </a>
+<a name="124"><span class="lineNum">     124 </span><span class="lineNoCov">          0 :     _sample_buffer[_samples_collected].delta_velocity += delta_velocity;</span></a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 :     _sample_buffer[_samples_collected].delta_time += dt;</span></a>
+<a name="126"><span class="lineNum">     126 </span>            : </a>
+<a name="127"><span class="lineNum">     127 </span><span class="lineNoCov">          0 :     _last_samp_frag_collected_ms = AP_HAL::millis();</span></a>
+<a name="128"><span class="lineNum">     128 </span>            : </a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineNoCov">          0 :     if (_sample_buffer[_samples_collected].delta_time &gt; _conf_sample_time) {</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :         Vector3f sample = _sample_buffer[_samples_collected].delta_velocity/_sample_buffer[_samples_collected].delta_time;</span></a>
+<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 :         if (!accept_sample(sample)) {</span></a>
+<a name="132"><span class="lineNum">     132 </span><span class="lineNoCov">          0 :             set_status(ACCEL_CAL_FAILED);</span></a>
+<a name="133"><span class="lineNum">     133 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="134"><span class="lineNum">     134 </span>            :         }</a>
+<a name="135"><span class="lineNum">     135 </span>            : </a>
+<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :         _samples_collected++;</span></a>
+<a name="137"><span class="lineNum">     137 </span>            : </a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineNoCov">          0 :         if (_samples_collected &gt;= _conf_num_samples) {</span></a>
+<a name="139"><span class="lineNum">     139 </span><span class="lineNoCov">          0 :             run_fit(MAX_ITERATIONS, _fitness);</span></a>
+<a name="140"><span class="lineNum">     140 </span>            : </a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineNoCov">          0 :             if (_fitness &lt; _conf_tolerance &amp;&amp; accept_result()) {</span></a>
+<a name="142"><span class="lineNum">     142 </span><span class="lineNoCov">          0 :                 set_status(ACCEL_CAL_SUCCESS);</span></a>
+<a name="143"><span class="lineNum">     143 </span>            :             } else {</a>
+<a name="144"><span class="lineNum">     144 </span><span class="lineNoCov">          0 :                 set_status(ACCEL_CAL_FAILED);</span></a>
+<a name="145"><span class="lineNum">     145 </span>            :             }</a>
+<a name="146"><span class="lineNum">     146 </span>            :         } else {</a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineNoCov">          0 :             set_status(ACCEL_CAL_WAITING_FOR_ORIENTATION);</span></a>
+<a name="148"><span class="lineNum">     148 </span>            :         }</a>
+<a name="149"><span class="lineNum">     149 </span>            :     }</a>
+<a name="150"><span class="lineNum">     150 </span>            : }</a>
+<a name="151"><span class="lineNum">     151 </span>            : </a>
+<a name="152"><span class="lineNum">     152 </span>            : // determines if the result is acceptable</a>
+<a name="153"><span class="lineNum">     153 </span><span class="lineNoCov">          0 : bool AccelCalibrator::accept_result() const {</span></a>
+<a name="154"><span class="lineNum">     154 </span><span class="lineNoCov">          0 :     if (fabsf(_param.s.offset.x) &gt; GRAVITY_MSS ||</span></a>
+<a name="155"><span class="lineNum">     155 </span><span class="lineNoCov">          0 :         fabsf(_param.s.offset.y) &gt; GRAVITY_MSS ||</span></a>
+<a name="156"><span class="lineNum">     156 </span><span class="lineNoCov">          0 :         fabsf(_param.s.offset.z) &gt; GRAVITY_MSS ||</span></a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 :         _param.s.diag.x &lt; 0.8f || _param.s.diag.x &gt; 1.2f ||</span></a>
+<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :         _param.s.diag.y &lt; 0.8f || _param.s.diag.y &gt; 1.2f ||</span></a>
+<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 :         _param.s.diag.z &lt; 0.8f || _param.s.diag.z &gt; 1.2f) {</span></a>
+<a name="160"><span class="lineNum">     160 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="161"><span class="lineNum">     161 </span>            :     } else {</a>
+<a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 :         return true;</span></a>
+<a name="163"><span class="lineNum">     163 </span>            :     }</a>
+<a name="164"><span class="lineNum">     164 </span>            : }</a>
+<a name="165"><span class="lineNum">     165 </span>            : </a>
+<a name="166"><span class="lineNum">     166 </span>            : // interface for LSq estimator to read sample buffer sent after conversion from delta velocity</a>
+<a name="167"><span class="lineNum">     167 </span>            : // to averaged acc over time</a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 : bool AccelCalibrator::get_sample(uint8_t i, Vector3f&amp; s) const {</span></a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :     if (i &gt;= _samples_collected) {</span></a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="171"><span class="lineNum">     171 </span>            :     }</a>
+<a name="172"><span class="lineNum">     172 </span><span class="lineNoCov">          0 :     s = _sample_buffer[i].delta_velocity / _sample_buffer[i].delta_time;</span></a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="174"><span class="lineNum">     174 </span>            : }</a>
+<a name="175"><span class="lineNum">     175 </span>            : </a>
+<a name="176"><span class="lineNum">     176 </span>            : // returns true and sample corrected with diag offdiag parameters as calculated by LSq estimation procedure</a>
+<a name="177"><span class="lineNum">     177 </span>            : // returns false if no correct parameter exists to be applied along with existing sample without corrections</a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineNoCov">          0 : bool AccelCalibrator::get_sample_corrected(uint8_t i, Vector3f&amp; s) const {</span></a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineNoCov">          0 :     if (_status != ACCEL_CAL_SUCCESS || !get_sample(i,s)) {</span></a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="181"><span class="lineNum">     181 </span>            :     }</a>
+<a name="182"><span class="lineNum">     182 </span>            : </a>
+<a name="183"><span class="lineNum">     183 </span>            :     Matrix3f M (</a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineNoCov">          0 :         _param.s.diag.x    , _param.s.offdiag.x , _param.s.offdiag.y,</span></a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineNoCov">          0 :         _param.s.offdiag.x , _param.s.diag.y    , _param.s.offdiag.z,</span></a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :         _param.s.offdiag.y , _param.s.offdiag.z , _param.s.diag.z</span></a>
+<a name="187"><span class="lineNum">     187 </span><span class="lineNoCov">          0 :     );</span></a>
+<a name="188"><span class="lineNum">     188 </span>            : </a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineNoCov">          0 :     s = M*(s+_param.s.offset);</span></a>
+<a name="190"><span class="lineNum">     190 </span>            : </a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="192"><span class="lineNum">     192 </span>            : }</a>
+<a name="193"><span class="lineNum">     193 </span>            : </a>
+<a name="194"><span class="lineNum">     194 </span>            : // checks if no new sample has been received for considerable amount of time</a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 : void AccelCalibrator::check_for_timeout() {</span></a>
+<a name="196"><span class="lineNum">     196 </span><span class="lineNoCov">          0 :     const uint32_t timeout = _conf_sample_time*2*1000 + 500;</span></a>
+<a name="197"><span class="lineNum">     197 </span><span class="lineNoCov">          0 :     if (_status == ACCEL_CAL_COLLECTING_SAMPLE &amp;&amp; AP_HAL::millis() - _last_samp_frag_collected_ms &gt; timeout) {</span></a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineNoCov">          0 :         set_status(ACCEL_CAL_FAILED);</span></a>
+<a name="199"><span class="lineNum">     199 </span>            :     }</a>
+<a name="200"><span class="lineNum">     200 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="201"><span class="lineNum">     201 </span>            : </a>
+<a name="202"><span class="lineNum">     202 </span>            : // returns spherical fit parameters</a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineNoCov">          0 : void AccelCalibrator::get_calibration(Vector3f&amp; offset) const {</span></a>
+<a name="204"><span class="lineNum">     204 </span><span class="lineNoCov">          0 :     offset = -_param.s.offset;</span></a>
+<a name="205"><span class="lineNum">     205 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="206"><span class="lineNum">     206 </span>            : </a>
+<a name="207"><span class="lineNum">     207 </span>            : // returns axis aligned ellipsoidal fit parameters</a>
+<a name="208"><span class="lineNum">     208 </span><span class="lineNoCov">          0 : void AccelCalibrator::get_calibration(Vector3f&amp; offset, Vector3f&amp; diag) const {</span></a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 :     offset = -_param.s.offset;</span></a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineNoCov">          0 :     diag = _param.s.diag;</span></a>
+<a name="211"><span class="lineNum">     211 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="212"><span class="lineNum">     212 </span>            : </a>
+<a name="213"><span class="lineNum">     213 </span>            : // returns generic ellipsoidal fit parameters</a>
+<a name="214"><span class="lineNum">     214 </span><span class="lineNoCov">          0 : void AccelCalibrator::get_calibration(Vector3f&amp; offset, Vector3f&amp; diag, Vector3f&amp; offdiag) const {</span></a>
+<a name="215"><span class="lineNum">     215 </span><span class="lineNoCov">          0 :     offset = -_param.s.offset;</span></a>
+<a name="216"><span class="lineNum">     216 </span><span class="lineNoCov">          0 :     diag = _param.s.diag;</span></a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 :     offdiag = _param.s.offdiag;</span></a>
+<a name="218"><span class="lineNum">     218 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span>            : /////////////////////////////////////////////////////////////</a>
+<a name="221"><span class="lineNum">     221 </span>            : ////////////////////// PRIVATE METHODS //////////////////////</a>
+<a name="222"><span class="lineNum">     222 </span>            : /////////////////////////////////////////////////////////////</a>
+<a name="223"><span class="lineNum">     223 </span>            : </a>
+<a name="224"><span class="lineNum">     224 </span>            : /*</a>
+<a name="225"><span class="lineNum">     225 </span>            :   The sample acceptance distance is determined as follows:</a>
+<a name="226"><span class="lineNum">     226 </span>            :   For any regular polyhedron with triangular faces, the angle theta subtended</a>
+<a name="227"><span class="lineNum">     227 </span>            :   by two closest points is defined as</a>
+<a name="228"><span class="lineNum">     228 </span>            :  </a>
+<a name="229"><span class="lineNum">     229 </span>            :        theta = arccos(cos(A)/(1-cos(A)))</a>
+<a name="230"><span class="lineNum">     230 </span>            :  </a>
+<a name="231"><span class="lineNum">     231 </span>            :   Where:</a>
+<a name="232"><span class="lineNum">     232 </span>            :        A = (4pi/F + pi)/3</a>
+<a name="233"><span class="lineNum">     233 </span>            :   and</a>
+<a name="234"><span class="lineNum">     234 </span>            :        F = 2V - 4 is the number of faces for the polyhedron in consideration,</a>
+<a name="235"><span class="lineNum">     235 </span>            :        which depends on the number of vertices V</a>
+<a name="236"><span class="lineNum">     236 </span>            :  </a>
+<a name="237"><span class="lineNum">     237 </span>            :   The above equation was proved after solving for spherical triangular excess</a>
+<a name="238"><span class="lineNum">     238 </span>            :   and related equations.</a>
+<a name="239"><span class="lineNum">     239 </span>            :  */</a>
+<a name="240"><span class="lineNum">     240 </span><span class="lineNoCov">          0 : bool AccelCalibrator::accept_sample(const Vector3f&amp; sample)</span></a>
+<a name="241"><span class="lineNum">     241 </span>            : {</a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :     if (_sample_buffer == nullptr) {</span></a>
+<a name="243"><span class="lineNum">     243 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="244"><span class="lineNum">     244 </span>            :     }</a>
+<a name="245"><span class="lineNum">     245 </span>            : </a>
+<a name="246"><span class="lineNum">     246 </span><span class="lineNoCov">          0 :     for(uint8_t i=0; i &lt; _samples_collected; i++) {</span></a>
+<a name="247"><span class="lineNum">     247 </span><span class="lineNoCov">          0 :         Vector3f other_sample;</span></a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineNoCov">          0 :         get_sample(i, other_sample);</span></a>
+<a name="249"><span class="lineNum">     249 </span>            : </a>
+<a name="250"><span class="lineNum">     250 </span><span class="lineNoCov">          0 :         if ((other_sample - sample).length() &lt; _min_sample_dist){</span></a>
+<a name="251"><span class="lineNum">     251 </span><span class="lineNoCov">          0 :             return false;</span></a>
+<a name="252"><span class="lineNum">     252 </span>            :         }</a>
+<a name="253"><span class="lineNum">     253 </span>            :     }</a>
+<a name="254"><span class="lineNum">     254 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="255"><span class="lineNum">     255 </span>            : }</a>
+<a name="256"><span class="lineNum">     256 </span>            : </a>
+<a name="257"><span class="lineNum">     257 </span>            : // sets status of calibrator and takes appropriate actions</a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineCov">          1 : void AccelCalibrator::set_status(enum accel_cal_status_t status) {</span></a>
+<a name="259"><span class="lineNum">     259 </span><span class="lineCov">          1 :     switch (status) {</span></a>
+<a name="260"><span class="lineNum">     260 </span><span class="lineCov">          1 :         case ACCEL_CAL_NOT_STARTED:                 </span></a>
+<a name="261"><span class="lineNum">     261 </span>            :             //Calibrator not started</a>
+<a name="262"><span class="lineNum">     262 </span><span class="lineCov">          1 :             _status = ACCEL_CAL_NOT_STARTED;</span></a>
+<a name="263"><span class="lineNum">     263 </span>            : </a>
+<a name="264"><span class="lineNum">     264 </span><span class="lineCov">          1 :             _samples_collected = 0;</span></a>
+<a name="265"><span class="lineNum">     265 </span><span class="lineCov">          1 :             if (_sample_buffer != nullptr) {</span></a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineNoCov">          0 :                 free(_sample_buffer);</span></a>
+<a name="267"><span class="lineNum">     267 </span><span class="lineNoCov">          0 :                 _sample_buffer = nullptr;</span></a>
+<a name="268"><span class="lineNum">     268 </span>            :             }</a>
+<a name="269"><span class="lineNum">     269 </span>            : </a>
+<a name="270"><span class="lineNum">     270 </span><span class="lineCov">          1 :             break;</span></a>
+<a name="271"><span class="lineNum">     271 </span>            : </a>
+<a name="272"><span class="lineNum">     272 </span><span class="lineNoCov">          0 :         case ACCEL_CAL_WAITING_FOR_ORIENTATION:     </span></a>
+<a name="273"><span class="lineNum">     273 </span>            :             //Callibrator has been started and is waiting for user to ack after orientation setting</a>
+<a name="274"><span class="lineNum">     274 </span><span class="lineNoCov">          0 :             if (!running()) {</span></a>
+<a name="275"><span class="lineNum">     275 </span><span class="lineNoCov">          0 :                 _samples_collected = 0;</span></a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineNoCov">          0 :                 if (_sample_buffer == nullptr) {</span></a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineNoCov">          0 :                     _sample_buffer = (struct AccelSample*)calloc(_conf_num_samples,sizeof(struct AccelSample));</span></a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 :                     if (_sample_buffer == nullptr) {</span></a>
+<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 :                         set_status(ACCEL_CAL_FAILED);</span></a>
+<a name="280"><span class="lineNum">     280 </span><span class="lineNoCov">          0 :                         break;</span></a>
+<a name="281"><span class="lineNum">     281 </span>            :                     }</a>
+<a name="282"><span class="lineNum">     282 </span>            :                 }</a>
+<a name="283"><span class="lineNum">     283 </span>            :             }</a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineNoCov">          0 :             if (_samples_collected &gt;= _conf_num_samples) {</span></a>
+<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 :                 break;</span></a>
+<a name="286"><span class="lineNum">     286 </span>            :             }</a>
+<a name="287"><span class="lineNum">     287 </span><span class="lineNoCov">          0 :             _status = ACCEL_CAL_WAITING_FOR_ORIENTATION;</span></a>
+<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="289"><span class="lineNum">     289 </span>            : </a>
+<a name="290"><span class="lineNum">     290 </span><span class="lineNoCov">          0 :         case ACCEL_CAL_COLLECTING_SAMPLE:</span></a>
+<a name="291"><span class="lineNum">     291 </span>            :             // Calibrator is waiting on collecting samples from accelerometer for amount of </a>
+<a name="292"><span class="lineNum">     292 </span>            :             // time as requested by user/GCS</a>
+<a name="293"><span class="lineNum">     293 </span><span class="lineNoCov">          0 :             if (_status != ACCEL_CAL_WAITING_FOR_ORIENTATION) {</span></a>
+<a name="294"><span class="lineNum">     294 </span><span class="lineNoCov">          0 :                 break;</span></a>
+<a name="295"><span class="lineNum">     295 </span>            :             }</a>
+<a name="296"><span class="lineNum">     296 </span><span class="lineNoCov">          0 :             _last_samp_frag_collected_ms = AP_HAL::millis();</span></a>
+<a name="297"><span class="lineNum">     297 </span><span class="lineNoCov">          0 :             _status = ACCEL_CAL_COLLECTING_SAMPLE;</span></a>
+<a name="298"><span class="lineNum">     298 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="299"><span class="lineNum">     299 </span>            : </a>
+<a name="300"><span class="lineNum">     300 </span><span class="lineNoCov">          0 :         case ACCEL_CAL_SUCCESS:</span></a>
+<a name="301"><span class="lineNum">     301 </span>            :             // Calibrator has successfully fitted the samples to user requested surface model </a>
+<a name="302"><span class="lineNum">     302 </span>            :             // and has passed tolerance test</a>
+<a name="303"><span class="lineNum">     303 </span><span class="lineNoCov">          0 :             if (_status != ACCEL_CAL_COLLECTING_SAMPLE) {</span></a>
+<a name="304"><span class="lineNum">     304 </span><span class="lineNoCov">          0 :                 break;</span></a>
+<a name="305"><span class="lineNum">     305 </span>            :             }</a>
+<a name="306"><span class="lineNum">     306 </span>            : </a>
+<a name="307"><span class="lineNum">     307 </span><span class="lineNoCov">          0 :             _status = ACCEL_CAL_SUCCESS;</span></a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="309"><span class="lineNum">     309 </span>            : </a>
+<a name="310"><span class="lineNum">     310 </span><span class="lineNoCov">          0 :         case ACCEL_CAL_FAILED:</span></a>
+<a name="311"><span class="lineNum">     311 </span>            :             // Calibration has failed with reasons that can range from </a>
+<a name="312"><span class="lineNum">     312 </span>            :             // bad sample data leading to failure in tolerance test to lack of distinct samples</a>
+<a name="313"><span class="lineNum">     313 </span><span class="lineNoCov">          0 :             if (_status == ACCEL_CAL_NOT_STARTED) {</span></a>
+<a name="314"><span class="lineNum">     314 </span><span class="lineNoCov">          0 :                 break;</span></a>
+<a name="315"><span class="lineNum">     315 </span>            :             }</a>
+<a name="316"><span class="lineNum">     316 </span>            : </a>
+<a name="317"><span class="lineNum">     317 </span><span class="lineNoCov">          0 :             _status = ACCEL_CAL_FAILED;</span></a>
+<a name="318"><span class="lineNum">     318 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="319"><span class="lineNum">     319 </span>            :     };</a>
+<a name="320"><span class="lineNum">     320 </span><span class="lineCov">          1 : }</span></a>
+<a name="321"><span class="lineNum">     321 </span>            : </a>
+<a name="322"><span class="lineNum">     322 </span>            : /*</a>
+<a name="323"><span class="lineNum">     323 </span>            :     Run Gauss Newton fitting algorithm over the sample space and come up with offsets, diagonal/scale factors</a>
+<a name="324"><span class="lineNum">     324 </span>            :     and crosstalk/offdiagonal parameters</a>
+<a name="325"><span class="lineNum">     325 </span>            : */</a>
+<a name="326"><span class="lineNum">     326 </span><span class="lineNoCov">          0 : void AccelCalibrator::run_fit(uint8_t max_iterations, float&amp; fitness)</span></a>
+<a name="327"><span class="lineNum">     327 </span>            : {</a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineNoCov">          0 :     if (_sample_buffer == nullptr) {</span></a>
+<a name="329"><span class="lineNum">     329 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="330"><span class="lineNum">     330 </span>            :     }</a>
+<a name="331"><span class="lineNum">     331 </span><span class="lineNoCov">          0 :     fitness = calc_mean_squared_residuals(_param.s);</span></a>
+<a name="332"><span class="lineNum">     332 </span><span class="lineNoCov">          0 :     float min_fitness = fitness;</span></a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineNoCov">          0 :     union param_u fit_param = _param;</span></a>
+<a name="334"><span class="lineNum">     334 </span><span class="lineNoCov">          0 :     uint8_t num_iterations = 0;</span></a>
+<a name="335"><span class="lineNum">     335 </span>            : </a>
+<a name="336"><span class="lineNum">     336 </span><span class="lineNoCov">          0 :     while(num_iterations &lt; max_iterations) {</span></a>
+<a name="337"><span class="lineNum">     337 </span><span class="lineNoCov">          0 :         float JTJ[ACCEL_CAL_MAX_NUM_PARAMS*ACCEL_CAL_MAX_NUM_PARAMS] {};</span></a>
+<a name="338"><span class="lineNum">     338 </span><span class="lineNoCov">          0 :         VectorP JTFI;</span></a>
+<a name="339"><span class="lineNum">     339 </span>            : </a>
+<a name="340"><span class="lineNum">     340 </span><span class="lineNoCov">          0 :         for(uint16_t k = 0; k&lt;_samples_collected; k++) {</span></a>
+<a name="341"><span class="lineNum">     341 </span><span class="lineNoCov">          0 :             Vector3f sample;</span></a>
+<a name="342"><span class="lineNum">     342 </span><span class="lineNoCov">          0 :             get_sample(k, sample);</span></a>
+<a name="343"><span class="lineNum">     343 </span>            : </a>
+<a name="344"><span class="lineNum">     344 </span><span class="lineNoCov">          0 :             VectorN&lt;float,ACCEL_CAL_MAX_NUM_PARAMS&gt; jacob;</span></a>
+<a name="345"><span class="lineNum">     345 </span>            : </a>
+<a name="346"><span class="lineNum">     346 </span><span class="lineNoCov">          0 :             calc_jacob(sample, fit_param.s, jacob);</span></a>
+<a name="347"><span class="lineNum">     347 </span>            : </a>
+<a name="348"><span class="lineNum">     348 </span><span class="lineNoCov">          0 :             for(uint8_t i = 0; i &lt; get_num_params(); i++) {</span></a>
+<a name="349"><span class="lineNum">     349 </span>            :                 // compute JTJ</a>
+<a name="350"><span class="lineNum">     350 </span><span class="lineNoCov">          0 :                 for(uint8_t j = 0; j &lt; get_num_params(); j++) {</span></a>
+<a name="351"><span class="lineNum">     351 </span><span class="lineNoCov">          0 :                     JTJ[i*get_num_params()+j] += jacob[i] * jacob[j];</span></a>
+<a name="352"><span class="lineNum">     352 </span>            :                 }</a>
+<a name="353"><span class="lineNum">     353 </span>            :                 // compute JTFI</a>
+<a name="354"><span class="lineNum">     354 </span><span class="lineNoCov">          0 :                 JTFI[i] += jacob[i] * calc_residual(sample, fit_param.s);</span></a>
+<a name="355"><span class="lineNum">     355 </span>            :             }</a>
+<a name="356"><span class="lineNum">     356 </span>            :         }</a>
+<a name="357"><span class="lineNum">     357 </span>            : </a>
+<a name="358"><span class="lineNum">     358 </span><span class="lineNoCov">          0 :         if (!mat_inverse(JTJ, JTJ, get_num_params())) {</span></a>
+<a name="359"><span class="lineNum">     359 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="360"><span class="lineNum">     360 </span>            :         }</a>
+<a name="361"><span class="lineNum">     361 </span>            : </a>
+<a name="362"><span class="lineNum">     362 </span><span class="lineNoCov">          0 :         for(uint8_t row=0; row &lt; get_num_params(); row++) {</span></a>
+<a name="363"><span class="lineNum">     363 </span><span class="lineNoCov">          0 :             for(uint8_t col=0; col &lt; get_num_params(); col++) {</span></a>
+<a name="364"><span class="lineNum">     364 </span><span class="lineNoCov">          0 :                 fit_param.a[row] -= JTFI[col] * JTJ[row*get_num_params()+col];</span></a>
+<a name="365"><span class="lineNum">     365 </span>            :             }</a>
+<a name="366"><span class="lineNum">     366 </span>            :         }</a>
+<a name="367"><span class="lineNum">     367 </span>            : </a>
+<a name="368"><span class="lineNum">     368 </span><span class="lineNoCov">          0 :         fitness = calc_mean_squared_residuals(fit_param.s);</span></a>
+<a name="369"><span class="lineNum">     369 </span>            : </a>
+<a name="370"><span class="lineNum">     370 </span><span class="lineNoCov">          0 :         if (isnan(fitness) || isinf(fitness)) {</span></a>
+<a name="371"><span class="lineNum">     371 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="372"><span class="lineNum">     372 </span>            :         }</a>
+<a name="373"><span class="lineNum">     373 </span>            : </a>
+<a name="374"><span class="lineNum">     374 </span><span class="lineNoCov">          0 :         if (fitness &lt; min_fitness) {</span></a>
+<a name="375"><span class="lineNum">     375 </span><span class="lineNoCov">          0 :             min_fitness = fitness;</span></a>
+<a name="376"><span class="lineNum">     376 </span><span class="lineNoCov">          0 :             _param = fit_param;</span></a>
+<a name="377"><span class="lineNum">     377 </span>            :         }</a>
+<a name="378"><span class="lineNum">     378 </span>            : </a>
+<a name="379"><span class="lineNum">     379 </span><span class="lineNoCov">          0 :         num_iterations++;</span></a>
+<a name="380"><span class="lineNum">     380 </span>            :     }</a>
+<a name="381"><span class="lineNum">     381 </span>            : }</a>
+<a name="382"><span class="lineNum">     382 </span>            : </a>
+<a name="383"><span class="lineNum">     383 </span>            : // calculates residual from samples(corrected using supplied parameter) to gravity</a>
+<a name="384"><span class="lineNum">     384 </span>            : // used to create Fitness column matrix</a>
+<a name="385"><span class="lineNum">     385 </span><span class="lineNoCov">          0 : float AccelCalibrator::calc_residual(const Vector3f&amp; sample, const struct param_t&amp; params) const {</span></a>
+<a name="386"><span class="lineNum">     386 </span>            :     Matrix3f M (</a>
+<a name="387"><span class="lineNum">     387 </span><span class="lineNoCov">          0 :         params.diag.x    , params.offdiag.x , params.offdiag.y,</span></a>
+<a name="388"><span class="lineNum">     388 </span><span class="lineNoCov">          0 :         params.offdiag.x , params.diag.y    , params.offdiag.z,</span></a>
+<a name="389"><span class="lineNum">     389 </span><span class="lineNoCov">          0 :         params.offdiag.y , params.offdiag.z , params.diag.z</span></a>
+<a name="390"><span class="lineNum">     390 </span><span class="lineNoCov">          0 :     );</span></a>
+<a name="391"><span class="lineNum">     391 </span><span class="lineNoCov">          0 :     return GRAVITY_MSS - (M*(sample+params.offset)).length();</span></a>
+<a name="392"><span class="lineNum">     392 </span>            : }</a>
+<a name="393"><span class="lineNum">     393 </span>            : </a>
+<a name="394"><span class="lineNum">     394 </span>            : // calculated the total mean squared fitness of all the collected samples using parameters</a>
+<a name="395"><span class="lineNum">     395 </span>            : // supplied</a>
+<a name="396"><span class="lineNum">     396 </span><span class="lineNoCov">          0 : float AccelCalibrator::calc_mean_squared_residuals(const struct param_t&amp; params) const</span></a>
+<a name="397"><span class="lineNum">     397 </span>            : {</a>
+<a name="398"><span class="lineNum">     398 </span><span class="lineNoCov">          0 :     if (_sample_buffer == nullptr || _samples_collected == 0) {</span></a>
+<a name="399"><span class="lineNum">     399 </span><span class="lineNoCov">          0 :         return 1.0e30f;</span></a>
+<a name="400"><span class="lineNum">     400 </span>            :     }</a>
+<a name="401"><span class="lineNum">     401 </span><span class="lineNoCov">          0 :     float sum = 0.0f;</span></a>
+<a name="402"><span class="lineNum">     402 </span><span class="lineNoCov">          0 :     for(uint16_t i=0; i &lt; _samples_collected; i++){</span></a>
+<a name="403"><span class="lineNum">     403 </span><span class="lineNoCov">          0 :         Vector3f sample;</span></a>
+<a name="404"><span class="lineNum">     404 </span><span class="lineNoCov">          0 :         get_sample(i, sample);</span></a>
+<a name="405"><span class="lineNum">     405 </span><span class="lineNoCov">          0 :         float resid = calc_residual(sample, params);</span></a>
+<a name="406"><span class="lineNum">     406 </span><span class="lineNoCov">          0 :         sum += sq(resid);</span></a>
+<a name="407"><span class="lineNum">     407 </span>            :     }</a>
+<a name="408"><span class="lineNum">     408 </span><span class="lineNoCov">          0 :     sum /= _samples_collected;</span></a>
+<a name="409"><span class="lineNum">     409 </span><span class="lineNoCov">          0 :     return sum;</span></a>
+<a name="410"><span class="lineNum">     410 </span>            : }</a>
+<a name="411"><span class="lineNum">     411 </span>            : </a>
+<a name="412"><span class="lineNum">     412 </span>            : // calculate jacobian, a matrix that defines relation to variation in fitness with variation in each of the parameters</a>
+<a name="413"><span class="lineNum">     413 </span>            : // this is used in LSq estimator to adjust variation in parameter to be used for next iteration of LSq</a>
+<a name="414"><span class="lineNum">     414 </span><span class="lineNoCov">          0 : void AccelCalibrator::calc_jacob(const Vector3f&amp; sample, const struct param_t&amp; params, VectorP &amp;ret) const {</span></a>
+<a name="415"><span class="lineNum">     415 </span><span class="lineNoCov">          0 :     switch (_conf_fit_type) {</span></a>
+<a name="416"><span class="lineNum">     416 </span><span class="lineNoCov">          0 :         case ACCEL_CAL_AXIS_ALIGNED_ELLIPSOID:</span></a>
+<a name="417"><span class="lineNum">     417 </span>            :         case ACCEL_CAL_ELLIPSOID: {</a>
+<a name="418"><span class="lineNum">     418 </span><span class="lineNoCov">          0 :             const Vector3f &amp;offset = params.offset;</span></a>
+<a name="419"><span class="lineNum">     419 </span><span class="lineNoCov">          0 :             const Vector3f &amp;diag = params.diag;</span></a>
+<a name="420"><span class="lineNum">     420 </span><span class="lineNoCov">          0 :             const Vector3f &amp;offdiag = params.offdiag;</span></a>
+<a name="421"><span class="lineNum">     421 </span>            :             Matrix3f M(</a>
+<a name="422"><span class="lineNum">     422 </span><span class="lineNoCov">          0 :                 diag.x    , offdiag.x , offdiag.y,</span></a>
+<a name="423"><span class="lineNum">     423 </span><span class="lineNoCov">          0 :                 offdiag.x , diag.y    , offdiag.z,</span></a>
+<a name="424"><span class="lineNum">     424 </span><span class="lineNoCov">          0 :                 offdiag.y , offdiag.z , diag.z</span></a>
+<a name="425"><span class="lineNum">     425 </span><span class="lineNoCov">          0 :             );</span></a>
+<a name="426"><span class="lineNum">     426 </span>            : </a>
+<a name="427"><span class="lineNum">     427 </span><span class="lineNoCov">          0 :             float A =  (diag.x    * (sample.x + offset.x)) + (offdiag.x * (sample.y + offset.y)) + (offdiag.y * (sample.z + offset.z));</span></a>
+<a name="428"><span class="lineNum">     428 </span><span class="lineNoCov">          0 :             float B =  (offdiag.x * (sample.x + offset.x)) + (diag.y    * (sample.y + offset.y)) + (offdiag.z * (sample.z + offset.z));</span></a>
+<a name="429"><span class="lineNum">     429 </span><span class="lineNoCov">          0 :             float C =  (offdiag.y * (sample.x + offset.x)) + (offdiag.z * (sample.y + offset.y)) + (diag.z    * (sample.z + offset.z));</span></a>
+<a name="430"><span class="lineNum">     430 </span><span class="lineNoCov">          0 :             float length = (M*(sample+offset)).length();</span></a>
+<a name="431"><span class="lineNum">     431 </span>            : </a>
+<a name="432"><span class="lineNum">     432 </span>            :             // 0-2: offsets</a>
+<a name="433"><span class="lineNum">     433 </span><span class="lineNoCov">          0 :             ret[0] = -1.0f * (((diag.x    * A) + (offdiag.x * B) + (offdiag.y * C))/length);</span></a>
+<a name="434"><span class="lineNum">     434 </span><span class="lineNoCov">          0 :             ret[1] = -1.0f * (((offdiag.x * A) + (diag.y    * B) + (offdiag.z * C))/length);</span></a>
+<a name="435"><span class="lineNum">     435 </span><span class="lineNoCov">          0 :             ret[2] = -1.0f * (((offdiag.y * A) + (offdiag.z * B) + (diag.z    * C))/length);</span></a>
+<a name="436"><span class="lineNum">     436 </span>            :             // 3-5: diagonals</a>
+<a name="437"><span class="lineNum">     437 </span><span class="lineNoCov">          0 :             ret[3] = -1.0f * ((sample.x + offset.x) * A)/length;</span></a>
+<a name="438"><span class="lineNum">     438 </span><span class="lineNoCov">          0 :             ret[4] = -1.0f * ((sample.y + offset.y) * B)/length;</span></a>
+<a name="439"><span class="lineNum">     439 </span><span class="lineNoCov">          0 :             ret[5] = -1.0f * ((sample.z + offset.z) * C)/length;</span></a>
+<a name="440"><span class="lineNum">     440 </span>            :             // 6-8: off-diagonals</a>
+<a name="441"><span class="lineNum">     441 </span><span class="lineNoCov">          0 :             ret[6] = -1.0f * (((sample.y + offset.y) * A) + ((sample.x + offset.x) * B))/length;</span></a>
+<a name="442"><span class="lineNum">     442 </span><span class="lineNoCov">          0 :             ret[7] = -1.0f * (((sample.z + offset.z) * A) + ((sample.x + offset.x) * C))/length;</span></a>
+<a name="443"><span class="lineNum">     443 </span><span class="lineNoCov">          0 :             ret[8] = -1.0f * (((sample.z + offset.z) * B) + ((sample.y + offset.y) * C))/length;</span></a>
+<a name="444"><span class="lineNum">     444 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="445"><span class="lineNum">     445 </span>            :         }</a>
+<a name="446"><span class="lineNum">     446 </span>            :     }</a>
+<a name="447"><span class="lineNum">     447 </span>            : }</a>
+<a name="448"><span class="lineNum">     448 </span>            : </a>
+<a name="449"><span class="lineNum">     449 </span>            : // returns number of parameters are required for selected Fit type</a>
+<a name="450"><span class="lineNum">     450 </span><span class="lineNoCov">          0 : uint8_t AccelCalibrator::get_num_params() const {</span></a>
+<a name="451"><span class="lineNum">     451 </span><span class="lineNoCov">          0 :     switch (_conf_fit_type) {</span></a>
+<a name="452"><span class="lineNum">     452 </span><span class="lineNoCov">          0 :         case ACCEL_CAL_AXIS_ALIGNED_ELLIPSOID:</span></a>
+<a name="453"><span class="lineNum">     453 </span><span class="lineNoCov">          0 :             return 6;</span></a>
+<a name="454"><span class="lineNum">     454 </span><span class="lineNoCov">          0 :         case ACCEL_CAL_ELLIPSOID:</span></a>
+<a name="455"><span class="lineNum">     455 </span><span class="lineNoCov">          0 :             return 9;</span></a>
+<a name="456"><span class="lineNum">     456 </span><span class="lineNoCov">          0 :         default:</span></a>
+<a name="457"><span class="lineNum">     457 </span><span class="lineNoCov">          0 :             return 6;</span></a>
+<a name="458"><span class="lineNum">     458 </span>            :     }</a>
+<a name="459"><span class="lineNum">     459 </span>            : }</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

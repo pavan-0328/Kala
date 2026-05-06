@@ -1,0 +1,1565 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - Kala/Parameters.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">Kala</a> - Parameters.cpp<span style="font-size: 80%;"> (source / <a href="Parameters.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">48</td>
+            <td class="headerCovTableEntry">48</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;Copter.h&quot;</a>
+<a name="2"><span class="lineNum">       2 </span>            : </a>
+<a name="3"><span class="lineNum">       3 </span>            : #include &lt;AP_Gripper/AP_Gripper.h&gt;</a>
+<a name="4"><span class="lineNum">       4 </span>            : #include &lt;AP_InertialSensor/AP_InertialSensor_rate_config.h&gt;</a>
+<a name="5"><span class="lineNum">       5 </span>            : </a>
+<a name="6"><span class="lineNum">       6 </span>            : /*</a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="8"><span class="lineNum">       8 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="9"><span class="lineNum">       9 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="10"><span class="lineNum">      10 </span>            :    (at your option) any later version.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="13"><span class="lineNum">      13 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="14"><span class="lineNum">      14 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="15"><span class="lineNum">      15 </span>            :    GNU General Public License for more details.</a>
+<a name="16"><span class="lineNum">      16 </span>            : </a>
+<a name="17"><span class="lineNum">      17 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="18"><span class="lineNum">      18 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="19"><span class="lineNum">      19 </span>            :  */</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : /*</a>
+<a name="22"><span class="lineNum">      22 </span>            :  *  ArduCopter parameter definitions</a>
+<a name="23"><span class="lineNum">      23 </span>            :  *</a>
+<a name="24"><span class="lineNum">      24 </span>            :  */</a>
+<a name="25"><span class="lineNum">      25 </span>            : </a>
+<a name="26"><span class="lineNum">      26 </span>            : // Force Hexa-X frame</a>
+<a name="27"><span class="lineNum">      27 </span>            : // Force Hexa-X frame</a>
+<a name="28"><span class="lineNum">      28 </span>            : #define FORCE_FRAME_CLASS 2   // 1 = Hexa</a>
+<a name="29"><span class="lineNum">      29 </span>            : #define FORCE_FRAME_TYPE  1   // 1 = X</a>
+<a name="30"><span class="lineNum">      30 </span>            : </a>
+<a name="31"><span class="lineNum">      31 </span>            : #if defined(FORCE_FRAME_CLASS)</a>
+<a name="32"><span class="lineNum">      32 </span>            : #define DEFAULT_FRAME_CLASS FORCE_FRAME_CLASS</a>
+<a name="33"><span class="lineNum">      33 </span>            : #elif FRAME_CONFIG == HELI_FRAME</a>
+<a name="34"><span class="lineNum">      34 </span>            : #define DEFAULT_FRAME_CLASS 1</a>
+<a name="35"><span class="lineNum">      35 </span>            : #else</a>
+<a name="36"><span class="lineNum">      36 </span>            : #define DEFAULT_FRAME_CLASS 2   // Hexa</a>
+<a name="37"><span class="lineNum">      37 </span>            : #endif</a>
+<a name="38"><span class="lineNum">      38 </span>            : </a>
+<a name="39"><span class="lineNum">      39 </span>            : const AP_Param::Info Copter::var_info[] = {</a>
+<a name="40"><span class="lineNum">      40 </span>            :     // @Param: FORMAT_VERSION</a>
+<a name="41"><span class="lineNum">      41 </span>            :     // @DisplayName: Eeprom format version number</a>
+<a name="42"><span class="lineNum">      42 </span>            :     // @Description: This value is incremented when changes are made to the eeprom format</a>
+<a name="43"><span class="lineNum">      43 </span>            :     // @User: Advanced</a>
+<a name="44"><span class="lineNum">      44 </span>            :     GSCALAR(format_version, &quot;FORMAT_VERSION&quot;,   0),</a>
+<a name="45"><span class="lineNum">      45 </span>            : </a>
+<a name="46"><span class="lineNum">      46 </span>            :     // SYSID_THISMAV was here</a>
+<a name="47"><span class="lineNum">      47 </span>            : </a>
+<a name="48"><span class="lineNum">      48 </span>            :     // SYSID_MYGCS was here</a>
+<a name="49"><span class="lineNum">      49 </span>            : </a>
+<a name="50"><span class="lineNum">      50 </span>            :     // @Param: PILOT_THR_FILT</a>
+<a name="51"><span class="lineNum">      51 </span>            :     // @DisplayName: Throttle filter cutoff</a>
+<a name="52"><span class="lineNum">      52 </span>            :     // @Description: Throttle filter cutoff (Hz) - active whenever altitude control is inactive - 0 to disable</a>
+<a name="53"><span class="lineNum">      53 </span>            :     // @User: Advanced</a>
+<a name="54"><span class="lineNum">      54 </span>            :     // @Units: Hz</a>
+<a name="55"><span class="lineNum">      55 </span>            :     // @Range: 0 10</a>
+<a name="56"><span class="lineNum">      56 </span>            :     // @Increment: 0.5</a>
+<a name="57"><span class="lineNum">      57 </span>            :     GSCALAR(throttle_filt,  &quot;PILOT_THR_FILT&quot;,     0),</a>
+<a name="58"><span class="lineNum">      58 </span>            : </a>
+<a name="59"><span class="lineNum">      59 </span>            :     // @Param: PILOT_TKOFF_ALT</a>
+<a name="60"><span class="lineNum">      60 </span>            :     // @DisplayName: Pilot takeoff altitude</a>
+<a name="61"><span class="lineNum">      61 </span>            :     // @Description: Altitude that altitude control modes will climb to when a takeoff is triggered with the throttle stick.</a>
+<a name="62"><span class="lineNum">      62 </span>            :     // @User: Standard</a>
+<a name="63"><span class="lineNum">      63 </span>            :     // @Units: cm</a>
+<a name="64"><span class="lineNum">      64 </span>            :     // @Range: 0.0 1000.0</a>
+<a name="65"><span class="lineNum">      65 </span>            :     // @Increment: 10</a>
+<a name="66"><span class="lineNum">      66 </span>            :     GSCALAR(pilot_takeoff_alt_cm,  &quot;PILOT_TKOFF_ALT&quot;,  PILOT_TKOFF_ALT_DEFAULT),</a>
+<a name="67"><span class="lineNum">      67 </span>            : </a>
+<a name="68"><span class="lineNum">      68 </span>            :     // @Param: PILOT_THR_BHV</a>
+<a name="69"><span class="lineNum">      69 </span>            :     // @DisplayName: Throttle stick behavior</a>
+<a name="70"><span class="lineNum">      70 </span>            :     // @Description: Bitmask containing various throttle stick options. TX with sprung throttle can set PILOT_THR_BHV to &quot;1&quot; so motor feedback when landed starts from mid-stick instead of bottom of stick.</a>
+<a name="71"><span class="lineNum">      71 </span>            :     // @User: Standard</a>
+<a name="72"><span class="lineNum">      72 </span>            :     // @Bitmask: 0:Feedback from mid stick,1:High throttle cancels landing,2:Disarm on land detection</a>
+<a name="73"><span class="lineNum">      73 </span>            :     GSCALAR(throttle_behavior, &quot;PILOT_THR_BHV&quot;, 0),</a>
+<a name="74"><span class="lineNum">      74 </span>            : </a>
+<a name="75"><span class="lineNum">      75 </span>            :     // AP_SerialManager was here</a>
+<a name="76"><span class="lineNum">      76 </span>            : </a>
+<a name="77"><span class="lineNum">      77 </span>            :     // @Param: GCS_PID_MASK</a>
+<a name="78"><span class="lineNum">      78 </span>            :     // @DisplayName: GCS PID tuning mask</a>
+<a name="79"><span class="lineNum">      79 </span>            :     // @Description: bitmask of PIDs to send MAVLink PID_TUNING messages for</a>
+<a name="80"><span class="lineNum">      80 </span>            :     // @User: Advanced</a>
+<a name="81"><span class="lineNum">      81 </span>            :     // @Bitmask: 0:Roll,1:Pitch,2:Yaw,3:AccelZ</a>
+<a name="82"><span class="lineNum">      82 </span>            :     GSCALAR(gcs_pid_mask,           &quot;GCS_PID_MASK&quot;,     0),</a>
+<a name="83"><span class="lineNum">      83 </span>            : </a>
+<a name="84"><span class="lineNum">      84 </span>            : #if MODE_RTL_ENABLED</a>
+<a name="85"><span class="lineNum">      85 </span>            :     // @Param: RTL_ALT</a>
+<a name="86"><span class="lineNum">      86 </span>            :     // @DisplayName: RTL Altitude</a>
+<a name="87"><span class="lineNum">      87 </span>            :     // @Description: The minimum alt above home the vehicle will climb to before returning.  If the vehicle is flying higher than this value it will return at its current altitude.</a>
+<a name="88"><span class="lineNum">      88 </span>            :     // @Units: cm</a>
+<a name="89"><span class="lineNum">      89 </span>            :     // @Range: 30 300000</a>
+<a name="90"><span class="lineNum">      90 </span>            :     // @Increment: 1</a>
+<a name="91"><span class="lineNum">      91 </span>            :     // @User: Standard</a>
+<a name="92"><span class="lineNum">      92 </span>            :     GSCALAR(rtl_altitude_cm,   &quot;RTL_ALT&quot;,     RTL_ALT),</a>
+<a name="93"><span class="lineNum">      93 </span>            : </a>
+<a name="94"><span class="lineNum">      94 </span>            :     // @Param: RTL_CONE_SLOPE</a>
+<a name="95"><span class="lineNum">      95 </span>            :     // @DisplayName: RTL cone slope</a>
+<a name="96"><span class="lineNum">      96 </span>            :     // @Description: Defines a cone above home which determines maximum climb</a>
+<a name="97"><span class="lineNum">      97 </span>            :     // @Range: 0.5 10.0</a>
+<a name="98"><span class="lineNum">      98 </span>            :     // @Increment: 0.1</a>
+<a name="99"><span class="lineNum">      99 </span>            :     // @Values: 0:Disabled,1:Shallow,3:Steep</a>
+<a name="100"><span class="lineNum">     100 </span>            :     // @User: Standard</a>
+<a name="101"><span class="lineNum">     101 </span>            :     GSCALAR(rtl_cone_slope,   &quot;RTL_CONE_SLOPE&quot;,     RTL_CONE_SLOPE_DEFAULT),</a>
+<a name="102"><span class="lineNum">     102 </span>            : </a>
+<a name="103"><span class="lineNum">     103 </span>            :     // @Param: RTL_SPEED</a>
+<a name="104"><span class="lineNum">     104 </span>            :     // @DisplayName: RTL speed</a>
+<a name="105"><span class="lineNum">     105 </span>            :     // @Description: Defines the speed in cm/s which the aircraft will attempt to maintain horizontally while flying home. If this is set to zero, WPNAV_SPEED will be used instead.</a>
+<a name="106"><span class="lineNum">     106 </span>            :     // @Units: cm/s</a>
+<a name="107"><span class="lineNum">     107 </span>            :     // @Range: 0 2000</a>
+<a name="108"><span class="lineNum">     108 </span>            :     // @Increment: 50</a>
+<a name="109"><span class="lineNum">     109 </span>            :     // @User: Standard</a>
+<a name="110"><span class="lineNum">     110 </span>            :     GSCALAR(rtl_speed_cms,   &quot;RTL_SPEED&quot;,     0),</a>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<a name="112"><span class="lineNum">     112 </span>            :     // @Param: RTL_ALT_FINAL</a>
+<a name="113"><span class="lineNum">     113 </span>            :     // @DisplayName: RTL Final Altitude</a>
+<a name="114"><span class="lineNum">     114 </span>            :     // @Description: This is the altitude the vehicle will move to as the final stage of Returning to Launch or after completing a mission.  Set to zero to land.</a>
+<a name="115"><span class="lineNum">     115 </span>            :     // @Units: cm</a>
+<a name="116"><span class="lineNum">     116 </span>            :     // @Range: 0 1000</a>
+<a name="117"><span class="lineNum">     117 </span>            :     // @Increment: 1</a>
+<a name="118"><span class="lineNum">     118 </span>            :     // @User: Standard</a>
+<a name="119"><span class="lineNum">     119 </span>            :     GSCALAR(rtl_alt_final_cm,  &quot;RTL_ALT_FINAL&quot;, RTL_ALT_FINAL),</a>
+<a name="120"><span class="lineNum">     120 </span>            : </a>
+<a name="121"><span class="lineNum">     121 </span>            :     // @Param: RTL_CLIMB_MIN</a>
+<a name="122"><span class="lineNum">     122 </span>            :     // @DisplayName: RTL minimum climb</a>
+<a name="123"><span class="lineNum">     123 </span>            :     // @Description: The vehicle will climb this many cm during the initial climb portion of the RTL</a>
+<a name="124"><span class="lineNum">     124 </span>            :     // @Units: cm</a>
+<a name="125"><span class="lineNum">     125 </span>            :     // @Range: 0 3000</a>
+<a name="126"><span class="lineNum">     126 </span>            :     // @Increment: 10</a>
+<a name="127"><span class="lineNum">     127 </span>            :     // @User: Standard</a>
+<a name="128"><span class="lineNum">     128 </span>            :     GSCALAR(rtl_climb_min_cm,  &quot;RTL_CLIMB_MIN&quot;,    RTL_CLIMB_MIN_DEFAULT),</a>
+<a name="129"><span class="lineNum">     129 </span>            : </a>
+<a name="130"><span class="lineNum">     130 </span>            :     // @Param: RTL_LOIT_TIME</a>
+<a name="131"><span class="lineNum">     131 </span>            :     // @DisplayName: RTL loiter time</a>
+<a name="132"><span class="lineNum">     132 </span>            :     // @Description: Time (in milliseconds) to loiter above home before beginning final descent</a>
+<a name="133"><span class="lineNum">     133 </span>            :     // @Units: ms</a>
+<a name="134"><span class="lineNum">     134 </span>            :     // @Range: 0 60000</a>
+<a name="135"><span class="lineNum">     135 </span>            :     // @Increment: 1000</a>
+<a name="136"><span class="lineNum">     136 </span>            :     // @User: Standard</a>
+<a name="137"><span class="lineNum">     137 </span>            :     GSCALAR(rtl_loiter_time,      &quot;RTL_LOIT_TIME&quot;,    RTL_LOITER_TIME),</a>
+<a name="138"><span class="lineNum">     138 </span>            : </a>
+<a name="139"><span class="lineNum">     139 </span>            :     // @Param: RTL_ALT_TYPE</a>
+<a name="140"><span class="lineNum">     140 </span>            :     // @DisplayName: RTL mode altitude type</a>
+<a name="141"><span class="lineNum">     141 </span>            :     // @Description: RTL altitude type.  Set to 1 for Terrain following during RTL and then set WPNAV_RFND_USE=1 to use rangefinder or WPNAV_RFND_USE=0 to use Terrain database</a>
+<a name="142"><span class="lineNum">     142 </span>            :     // @Values: 0:Relative to Home, 1:Terrain</a>
+<a name="143"><span class="lineNum">     143 </span>            :     // @User: Standard</a>
+<a name="144"><span class="lineNum">     144 </span>            :     GSCALAR(rtl_alt_type, &quot;RTL_ALT_TYPE&quot;, 0),</a>
+<a name="145"><span class="lineNum">     145 </span>            : #endif</a>
+<a name="146"><span class="lineNum">     146 </span>            : </a>
+<a name="147"><span class="lineNum">     147 </span>            :     // @Param: FS_GCS_ENABLE</a>
+<a name="148"><span class="lineNum">     148 </span>            :     // @DisplayName: Ground Station Failsafe Enable</a>
+<a name="149"><span class="lineNum">     149 </span>            :     // @Description: Controls whether failsafe will be invoked (and what action to take) when connection with Ground station is lost for at least 5 seconds. See FS_OPTIONS param for additional actions, or for cases allowing Mission continuation, when GCS failsafe is enabled.</a>
+<a name="150"><span class="lineNum">     150 </span>            :     // @Values: 0:Disabled/NoAction,1:RTL,2:RTL or Continue with Mission in Auto Mode (Removed in 4.0+-see FS_OPTIONS),3:SmartRTL or RTL,4:SmartRTL or Land,5:Land,6:Auto DO_LAND_START/DO_RETURN_PATH_START or RTL,7:Brake or Land</a>
+<a name="151"><span class="lineNum">     151 </span>            :     // @User: Standard</a>
+<a name="152"><span class="lineNum">     152 </span>            :     GSCALAR(failsafe_gcs, &quot;FS_GCS_ENABLE&quot;, FS_GCS_DISABLED),</a>
+<a name="153"><span class="lineNum">     153 </span>            : </a>
+<a name="154"><span class="lineNum">     154 </span>            :     // @Param: GPS_HDOP_GOOD</a>
+<a name="155"><span class="lineNum">     155 </span>            :     // @DisplayName: GPS Hdop Good</a>
+<a name="156"><span class="lineNum">     156 </span>            :     // @Description: GPS Hdop value at or below this value represent a good position.  Used for pre-arm checks</a>
+<a name="157"><span class="lineNum">     157 </span>            :     // @Range: 100 900</a>
+<a name="158"><span class="lineNum">     158 </span>            :     // @User: Advanced</a>
+<a name="159"><span class="lineNum">     159 </span>            :     GSCALAR(gps_hdop_good, &quot;GPS_HDOP_GOOD&quot;, GPS_HDOP_GOOD_DEFAULT),</a>
+<a name="160"><span class="lineNum">     160 </span>            : </a>
+<a name="161"><span class="lineNum">     161 </span>            :     // @Param: SUPER_SIMPLE</a>
+<a name="162"><span class="lineNum">     162 </span>            :     // @DisplayName: Super Simple Mode</a>
+<a name="163"><span class="lineNum">     163 </span>            :     // @Description: Bitmask to enable Super Simple mode for some flight modes. Setting this to Disabled(0) will disable Super Simple Mode. The bitmask is for flight mode switch positions</a>
+<a name="164"><span class="lineNum">     164 </span>            :     // @Bitmask: 0:SwitchPos1, 1:SwitchPos2, 2:SwitchPos3, 3:SwitchPos4, 4:SwitchPos5, 5:SwitchPos6</a>
+<a name="165"><span class="lineNum">     165 </span>            :     // @User: Standard</a>
+<a name="166"><span class="lineNum">     166 </span>            :     GSCALAR(super_simple,   &quot;SUPER_SIMPLE&quot;,     0),</a>
+<a name="167"><span class="lineNum">     167 </span>            : </a>
+<a name="168"><span class="lineNum">     168 </span>            :     // @Param: WP_YAW_BEHAVIOR</a>
+<a name="169"><span class="lineNum">     169 </span>            :     // @DisplayName: Yaw behaviour during missions</a>
+<a name="170"><span class="lineNum">     170 </span>            :     // @Description: Determines how the autopilot controls the yaw during missions and RTL</a>
+<a name="171"><span class="lineNum">     171 </span>            :     // @Values: 0:Never change yaw, 1:Face next waypoint, 2:Face next waypoint except RTL, 3:Face along GPS course</a>
+<a name="172"><span class="lineNum">     172 </span>            :     // @User: Standard</a>
+<a name="173"><span class="lineNum">     173 </span>            :     GSCALAR(wp_yaw_behavior,  &quot;WP_YAW_BEHAVIOR&quot;,    WP_YAW_BEHAVIOR_DEFAULT),</a>
+<a name="174"><span class="lineNum">     174 </span>            : </a>
+<a name="175"><span class="lineNum">     175 </span>            :     // @Param: LAND_SPEED</a>
+<a name="176"><span class="lineNum">     176 </span>            :     // @DisplayName: Land speed</a>
+<a name="177"><span class="lineNum">     177 </span>            :     // @Description: The descent speed for the final stage of landing in cm/s</a>
+<a name="178"><span class="lineNum">     178 </span>            :     // @Units: cm/s</a>
+<a name="179"><span class="lineNum">     179 </span>            :     // @Range: 30 200</a>
+<a name="180"><span class="lineNum">     180 </span>            :     // @Increment: 10</a>
+<a name="181"><span class="lineNum">     181 </span>            :     // @User: Standard</a>
+<a name="182"><span class="lineNum">     182 </span>            :     GSCALAR(land_speed_cms,             &quot;LAND_SPEED&quot;,   LAND_SPEED),</a>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<a name="184"><span class="lineNum">     184 </span>            :     // @Param: LAND_SPEED_HIGH</a>
+<a name="185"><span class="lineNum">     185 </span>            :     // @DisplayName: Land speed high</a>
+<a name="186"><span class="lineNum">     186 </span>            :     // @Description: The descent speed for the first stage of landing in cm/s. If this is zero then WPNAV_SPEED_DN is used</a>
+<a name="187"><span class="lineNum">     187 </span>            :     // @Units: cm/s</a>
+<a name="188"><span class="lineNum">     188 </span>            :     // @Range: 0 500</a>
+<a name="189"><span class="lineNum">     189 </span>            :     // @Increment: 10</a>
+<a name="190"><span class="lineNum">     190 </span>            :     // @User: Standard</a>
+<a name="191"><span class="lineNum">     191 </span>            :     GSCALAR(land_speed_high_cms,        &quot;LAND_SPEED_HIGH&quot;,   0),</a>
+<a name="192"><span class="lineNum">     192 </span>            :     </a>
+<a name="193"><span class="lineNum">     193 </span>            :     // @Param: PILOT_SPEED_UP</a>
+<a name="194"><span class="lineNum">     194 </span>            :     // @DisplayName: Pilot maximum vertical speed ascending</a>
+<a name="195"><span class="lineNum">     195 </span>            :     // @Description: The maximum vertical ascending velocity the pilot may request in cm/s</a>
+<a name="196"><span class="lineNum">     196 </span>            :     // @Units: cm/s</a>
+<a name="197"><span class="lineNum">     197 </span>            :     // @Range: 50 500</a>
+<a name="198"><span class="lineNum">     198 </span>            :     // @Increment: 10</a>
+<a name="199"><span class="lineNum">     199 </span>            :     // @User: Standard</a>
+<a name="200"><span class="lineNum">     200 </span>            :     GSCALAR(pilot_speed_up_cms,     &quot;PILOT_SPEED_UP&quot;,   PILOT_VELZ_MAX),</a>
+<a name="201"><span class="lineNum">     201 </span>            : </a>
+<a name="202"><span class="lineNum">     202 </span>            :     // @Param: PILOT_ACCEL_Z</a>
+<a name="203"><span class="lineNum">     203 </span>            :     // @DisplayName: Pilot vertical acceleration</a>
+<a name="204"><span class="lineNum">     204 </span>            :     // @Description: The vertical acceleration used when pilot is controlling the altitude</a>
+<a name="205"><span class="lineNum">     205 </span>            :     // @Units: cm/s/s</a>
+<a name="206"><span class="lineNum">     206 </span>            :     // @Range: 50 500</a>
+<a name="207"><span class="lineNum">     207 </span>            :     // @Increment: 10</a>
+<a name="208"><span class="lineNum">     208 </span>            :     // @User: Standard</a>
+<a name="209"><span class="lineNum">     209 </span>            :     GSCALAR(pilot_accel_u_cmss,  &quot;PILOT_ACCEL_Z&quot;,    PILOT_ACCEL_Z_DEFAULT),</a>
+<a name="210"><span class="lineNum">     210 </span>            : </a>
+<a name="211"><span class="lineNum">     211 </span>            :     // @Param: FS_THR_ENABLE</a>
+<a name="212"><span class="lineNum">     212 </span>            :     // @DisplayName: Throttle Failsafe Enable</a>
+<a name="213"><span class="lineNum">     213 </span>            :     // @Description: The throttle failsafe allows you to configure a software failsafe activated by a setting on the throttle input channel</a>
+<a name="214"><span class="lineNum">     214 </span>            :     // @Values:  0:Disabled,1:Enabled always RTL,2:Enabled Continue with Mission in Auto Mode (Removed in 4.0+),3:Enabled always Land,4:Enabled always SmartRTL or RTL,5:Enabled always SmartRTL or Land,6:Enabled Auto DO_LAND_START/DO_RETURN_PATH_START or RTL,7:Enabled always Brake or Land</a>
+<a name="215"><span class="lineNum">     215 </span>            :     // @User: Standard</a>
+<a name="216"><span class="lineNum">     216 </span>            :     GSCALAR(failsafe_throttle,  &quot;FS_THR_ENABLE&quot;,   FS_THR_ENABLED_ALWAYS_RTL),</a>
+<a name="217"><span class="lineNum">     217 </span>            : </a>
+<a name="218"><span class="lineNum">     218 </span>            :     // @Param: FS_THR_VALUE</a>
+<a name="219"><span class="lineNum">     219 </span>            :     // @DisplayName: Throttle Failsafe Value</a>
+<a name="220"><span class="lineNum">     220 </span>            :     // @Description: The PWM level in microseconds on channel 3 below which throttle failsafe triggers</a>
+<a name="221"><span class="lineNum">     221 </span>            :     // @Range: 910 1100</a>
+<a name="222"><span class="lineNum">     222 </span>            :     // @Units: PWM</a>
+<a name="223"><span class="lineNum">     223 </span>            :     // @Increment: 1</a>
+<a name="224"><span class="lineNum">     224 </span>            :     // @User: Standard</a>
+<a name="225"><span class="lineNum">     225 </span>            :     GSCALAR(failsafe_throttle_value, &quot;FS_THR_VALUE&quot;,      FS_THR_VALUE_DEFAULT),</a>
+<a name="226"><span class="lineNum">     226 </span>            : </a>
+<a name="227"><span class="lineNum">     227 </span>            :     // @Param: THR_DZ</a>
+<a name="228"><span class="lineNum">     228 </span>            :     // @DisplayName: Throttle deadzone</a>
+<a name="229"><span class="lineNum">     229 </span>            :     // @Description: The deadzone above and below mid throttle in PWM microseconds. Used in AltHold, Loiter, PosHold flight modes</a>
+<a name="230"><span class="lineNum">     230 </span>            :     // @User: Standard</a>
+<a name="231"><span class="lineNum">     231 </span>            :     // @Range: 0 300</a>
+<a name="232"><span class="lineNum">     232 </span>            :     // @Units: PWM</a>
+<a name="233"><span class="lineNum">     233 </span>            :     // @Increment: 1</a>
+<a name="234"><span class="lineNum">     234 </span>            :     GSCALAR(throttle_deadzone,  &quot;THR_DZ&quot;,    THR_DZ_DEFAULT),</a>
+<a name="235"><span class="lineNum">     235 </span>            : </a>
+<a name="236"><span class="lineNum">     236 </span>            :     // @Param: FLTMODE1</a>
+<a name="237"><span class="lineNum">     237 </span>            :     // @DisplayName: Flight Mode 1</a>
+<a name="238"><span class="lineNum">     238 </span>            :     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is &lt;= 1230</a>
+<a name="239"><span class="lineNum">     239 </span>            :     // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate,27:Auto RTL,28:Turtle</a>
+<a name="240"><span class="lineNum">     240 </span>            :     // @User: Standard</a>
+<a name="241"><span class="lineNum">     241 </span>            :     GSCALAR(flight_mode1, &quot;FLTMODE1&quot;,               (uint8_t)FLIGHT_MODE_1),</a>
+<a name="242"><span class="lineNum">     242 </span>            : </a>
+<a name="243"><span class="lineNum">     243 </span>            :     // @Param: FLTMODE2</a>
+<a name="244"><span class="lineNum">     244 </span>            :     // @CopyFieldsFrom: FLTMODE1</a>
+<a name="245"><span class="lineNum">     245 </span>            :     // @DisplayName: Flight Mode 2</a>
+<a name="246"><span class="lineNum">     246 </span>            :     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is &gt;1230, &lt;= 1360</a>
+<a name="247"><span class="lineNum">     247 </span>            :     GSCALAR(flight_mode2, &quot;FLTMODE2&quot;,               (uint8_t)FLIGHT_MODE_2),</a>
+<a name="248"><span class="lineNum">     248 </span>            : </a>
+<a name="249"><span class="lineNum">     249 </span>            :     // @Param: FLTMODE3</a>
+<a name="250"><span class="lineNum">     250 </span>            :     // @CopyFieldsFrom: FLTMODE1</a>
+<a name="251"><span class="lineNum">     251 </span>            :     // @DisplayName: Flight Mode 3</a>
+<a name="252"><span class="lineNum">     252 </span>            :     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is &gt;1360, &lt;= 1490</a>
+<a name="253"><span class="lineNum">     253 </span>            :     GSCALAR(flight_mode3, &quot;FLTMODE3&quot;,               (uint8_t)FLIGHT_MODE_3),</a>
+<a name="254"><span class="lineNum">     254 </span>            : </a>
+<a name="255"><span class="lineNum">     255 </span>            :     // @Param: FLTMODE4</a>
+<a name="256"><span class="lineNum">     256 </span>            :     // @CopyFieldsFrom: FLTMODE1</a>
+<a name="257"><span class="lineNum">     257 </span>            :     // @DisplayName: Flight Mode 4</a>
+<a name="258"><span class="lineNum">     258 </span>            :     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is &gt;1490, &lt;= 1620</a>
+<a name="259"><span class="lineNum">     259 </span>            :     GSCALAR(flight_mode4, &quot;FLTMODE4&quot;,               (uint8_t)FLIGHT_MODE_4),</a>
+<a name="260"><span class="lineNum">     260 </span>            : </a>
+<a name="261"><span class="lineNum">     261 </span>            :     // @Param: FLTMODE5</a>
+<a name="262"><span class="lineNum">     262 </span>            :     // @CopyFieldsFrom: FLTMODE1</a>
+<a name="263"><span class="lineNum">     263 </span>            :     // @DisplayName: Flight Mode 5</a>
+<a name="264"><span class="lineNum">     264 </span>            :     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is &gt;1620, &lt;= 1749</a>
+<a name="265"><span class="lineNum">     265 </span>            :     GSCALAR(flight_mode5, &quot;FLTMODE5&quot;,               (uint8_t)FLIGHT_MODE_5),</a>
+<a name="266"><span class="lineNum">     266 </span>            : </a>
+<a name="267"><span class="lineNum">     267 </span>            :     // @Param: FLTMODE6</a>
+<a name="268"><span class="lineNum">     268 </span>            :     // @CopyFieldsFrom: FLTMODE1</a>
+<a name="269"><span class="lineNum">     269 </span>            :     // @DisplayName: Flight Mode 6</a>
+<a name="270"><span class="lineNum">     270 </span>            :     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is &gt;=1750</a>
+<a name="271"><span class="lineNum">     271 </span>            :     GSCALAR(flight_mode6, &quot;FLTMODE6&quot;,               (uint8_t)FLIGHT_MODE_6),</a>
+<a name="272"><span class="lineNum">     272 </span>            : </a>
+<a name="273"><span class="lineNum">     273 </span>            :     // @Param: FLTMODE_CH</a>
+<a name="274"><span class="lineNum">     274 </span>            :     // @DisplayName: Flightmode channel</a>
+<a name="275"><span class="lineNum">     275 </span>            :     // @Description: RC Channel to use for flight mode control</a>
+<a name="276"><span class="lineNum">     276 </span>            :     // @Values: 0:Disabled,5:Channel5,6:Channel6,7:Channel7,8:Channel8,9:Channel9,10:Channel 10,11:Channel 11,12:Channel 12,13:Channel 13,14:Channel 14,15:Channel 15</a>
+<a name="277"><span class="lineNum">     277 </span>            :     // @User: Advanced</a>
+<a name="278"><span class="lineNum">     278 </span>            :     GSCALAR(flight_mode_chan, &quot;FLTMODE_CH&quot;,         CH_MODE_DEFAULT),</a>
+<a name="279"><span class="lineNum">     279 </span>            : </a>
+<a name="280"><span class="lineNum">     280 </span>            :     // @Param: INITIAL_MODE</a>
+<a name="281"><span class="lineNum">     281 </span>            :     // @DisplayName: Initial flight mode</a>
+<a name="282"><span class="lineNum">     282 </span>            :     // @Description: This selects the mode to start in on boot. This is useful for when you want to start in AUTO mode on boot without a receiver.</a>
+<a name="283"><span class="lineNum">     283 </span>            :     // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate</a>
+<a name="284"><span class="lineNum">     284 </span>            :     // @User: Advanced</a>
+<a name="285"><span class="lineNum">     285 </span>            :     GSCALAR(initial_mode,        &quot;INITIAL_MODE&quot;,     (uint8_t)Mode::Number::STABILIZE),</a>
+<a name="286"><span class="lineNum">     286 </span>            : </a>
+<a name="287"><span class="lineNum">     287 </span>            :     // @Param: SIMPLE</a>
+<a name="288"><span class="lineNum">     288 </span>            :     // @DisplayName: Simple mode bitmask</a>
+<a name="289"><span class="lineNum">     289 </span>            :     // @Description: Bitmask which holds which flight modes use simple heading mode (eg bit 0 = 1 means Flight Mode 0 uses simple mode). The bitmask is for flightmode switch positions.</a>
+<a name="290"><span class="lineNum">     290 </span>            :     // @Bitmask: 0:SwitchPos1, 1:SwitchPos2, 2:SwitchPos3, 3:SwitchPos4, 4:SwitchPos5, 5:SwitchPos6</a>
+<a name="291"><span class="lineNum">     291 </span>            :     // @User: Advanced</a>
+<a name="292"><span class="lineNum">     292 </span>            :     GSCALAR(simple_modes, &quot;SIMPLE&quot;,                 0),</a>
+<a name="293"><span class="lineNum">     293 </span>            : </a>
+<a name="294"><span class="lineNum">     294 </span>            :     // @Param: LOG_BITMASK</a>
+<a name="295"><span class="lineNum">     295 </span>            :     // @DisplayName: Log bitmask</a>
+<a name="296"><span class="lineNum">     296 </span>            :     // @Description: Bitmap of what on-board log types to enable. This value is made up of the sum of each of the log types you want to be saved. It is usually best just to enable all basiclog types by setting this to 65535. Note that if you want to reduce log sizes you should consider using LOG_FILE_RATEMAX instead of disabling logging items with this parameter.</a>
+<a name="297"><span class="lineNum">     297 </span>            :     // @Bitmask: 0:Fast Attitude,1:Medium Attitude,2:GPS,3:System Performance,4:Control Tuning,5:Navigation Tuning,6:RC input,7:IMU,8:Mission Commands,9:Battery Monitor,10:RC output,11:Optical Flow,12:PID,13:Compass,15:Camera,17:Motors,18:Fast IMU,19:Raw IMU,20:Video Stabilization,21:Fast harmonic notch logging</a>
+<a name="298"><span class="lineNum">     298 </span>            :     // @User: Standard</a>
+<a name="299"><span class="lineNum">     299 </span>            :     GSCALAR(log_bitmask,    &quot;LOG_BITMASK&quot;,          DEFAULT_LOG_BITMASK),</a>
+<a name="300"><span class="lineNum">     300 </span>            : </a>
+<a name="301"><span class="lineNum">     301 </span>            :     // @Param: ESC_CALIBRATION</a>
+<a name="302"><span class="lineNum">     302 </span>            :     // @DisplayName: ESC Calibration</a>
+<a name="303"><span class="lineNum">     303 </span>            :     // @Description: Controls whether ArduCopter will enter ESC calibration on the next restart.  Do not adjust this parameter manually.</a>
+<a name="304"><span class="lineNum">     304 </span>            :     // @User: Advanced</a>
+<a name="305"><span class="lineNum">     305 </span>            :     // @Values: 0:Normal Start-up, 1:Start-up in ESC Calibration mode if throttle high, 2:Start-up in ESC Calibration mode regardless of throttle, 3:Start-up and automatically calibrate ESCs, 9:Disabled</a>
+<a name="306"><span class="lineNum">     306 </span>            :     GSCALAR(esc_calibrate, &quot;ESC_CALIBRATION&quot;,       0),</a>
+<a name="307"><span class="lineNum">     307 </span>            : </a>
+<a name="308"><span class="lineNum">     308 </span>            : #if AP_RC_TRANSMITTER_TUNING_ENABLED</a>
+<a name="309"><span class="lineNum">     309 </span>            :     // @Param: TUNE</a>
+<a name="310"><span class="lineNum">     310 </span>            :     // @DisplayName: Tuning Parameter</a>
+<a name="311"><span class="lineNum">     311 </span>            :     // @Description: Selects parameter (normally a PID gain) that is being tuned with an RC transmitter's knob. The RC input channel used is assigned by setting RCx_OPTION to 219.</a>
+<a name="312"><span class="lineNum">     312 </span>            :     // @User: Standard</a>
+<a name="313"><span class="lineNum">     313 </span>            :     // @Values: 0:None,1:Stab Roll/Pitch kP,4:Rate Roll/Pitch kP,5:Rate Roll/Pitch kI,21:Rate Roll/Pitch kD,3:Stab Yaw kP,6:Rate Yaw kP,26:Rate Yaw kD,56:Rate Yaw Filter,55:Motor Yaw Headroom,14:AltHold kP,7:Throttle Rate kP,34:Throttle Accel kP,35:Throttle Accel kI,36:Throttle Accel kD,12:Loiter Pos kP,22:Velocity XY kP,28:Velocity XY kI,10:WP Speed,25:Acro Roll/Pitch deg/s,40:Acro Yaw deg/s,45:RC Feel,13:Heli Ext Gyro,38:Declination,39:Circle Rate,46:Rate Pitch kP,47:Rate Pitch kI,48:Rate Pitch kD,49:Rate Roll kP,50:Rate Roll kI,51:Rate Roll kD,52:Rate Pitch FF,53:Rate Roll FF,54:Rate Yaw FF,58:SysID Magnitude,59:PSC Angle Max,60:Loiter Speed</a>
+<a name="314"><span class="lineNum">     314 </span>            :     GSCALAR(rc_tuning_param, &quot;TUNE&quot;,                   0),</a>
+<a name="315"><span class="lineNum">     315 </span>            : #endif  // AP_RC_TRANSMITTER_TUNING_ENABLED</a>
+<a name="316"><span class="lineNum">     316 </span>            : </a>
+<a name="317"><span class="lineNum">     317 </span>            : //#ifndef FORCE_FRAME_TYPE</a>
+<a name="318"><span class="lineNum">     318 </span>            : // @Param: FRAME_TYPE</a>
+<a name="319"><span class="lineNum">     319 </span>            : // @DisplayName: Frame Type (+, X, V, etc)</a>
+<a name="320"><span class="lineNum">     320 </span>            : // @Description: Multirotor arm layout</a>
+<a name="321"><span class="lineNum">     321 </span>            : // @Values: 0:Plus, 1:X</a>
+<a name="322"><span class="lineNum">     322 </span>            : // @User: Standard</a>
+<a name="323"><span class="lineNum">     323 </span>            : // @RebootRequired: True</a>
+<a name="324"><span class="lineNum">     324 </span>            : GSCALAR(frame_type, &quot;FRAME_TYPE&quot;, 1),// default = X</a>
+<a name="325"><span class="lineNum">     325 </span>            : //#endif</a>
+<a name="326"><span class="lineNum">     326 </span>            : </a>
+<a name="327"><span class="lineNum">     327 </span>            :     // @Group: ARMING_</a>
+<a name="328"><span class="lineNum">     328 </span>            :     // @Path: ../libraries/AP_Arming/AP_Arming.cpp</a>
+<a name="329"><span class="lineNum">     329 </span>            :     GOBJECT(arming,                 &quot;ARMING_&quot;, AP_Arming_Copter),</a>
+<a name="330"><span class="lineNum">     330 </span>            : </a>
+<a name="331"><span class="lineNum">     331 </span>            :     // @Param: DISARM_DELAY</a>
+<a name="332"><span class="lineNum">     332 </span>            :     // @DisplayName: Disarm delay</a>
+<a name="333"><span class="lineNum">     333 </span>            :     // @Description: Delay before automatic disarm in seconds after landing touchdown detection. A value of zero disables auto disarm. If Emergency Motor stop active, delay time is half this value.</a>
+<a name="334"><span class="lineNum">     334 </span>            :     // @Units: s</a>
+<a name="335"><span class="lineNum">     335 </span>            :     // @Range: 0 127</a>
+<a name="336"><span class="lineNum">     336 </span>            :     // @User: Advanced</a>
+<a name="337"><span class="lineNum">     337 </span>            :     GSCALAR(disarm_delay, &quot;DISARM_DELAY&quot;,           AUTO_DISARMING_DELAY),</a>
+<a name="338"><span class="lineNum">     338 </span>            :     </a>
+<a name="339"><span class="lineNum">     339 </span>            :     // @Param: ANGLE_MAX</a>
+<a name="340"><span class="lineNum">     340 </span>            :     // @DisplayName: Angle Max</a>
+<a name="341"><span class="lineNum">     341 </span>            :     // @Description: Maximum lean angle in all flight modes</a>
+<a name="342"><span class="lineNum">     342 </span>            :     // @Units: cdeg</a>
+<a name="343"><span class="lineNum">     343 </span>            :     // @Increment: 10</a>
+<a name="344"><span class="lineNum">     344 </span>            :     // @Range: 1000 8000</a>
+<a name="345"><span class="lineNum">     345 </span>            :     // @User: Advanced</a>
+<a name="346"><span class="lineNum">     346 </span>            :     ASCALAR(angle_max, &quot;ANGLE_MAX&quot;,                 DEFAULT_ANGLE_MAX),</a>
+<a name="347"><span class="lineNum">     347 </span>            : </a>
+<a name="348"><span class="lineNum">     348 </span>            : #if MODE_POSHOLD_ENABLED</a>
+<a name="349"><span class="lineNum">     349 </span>            :     // @Param: PHLD_BRAKE_RATE</a>
+<a name="350"><span class="lineNum">     350 </span>            :     // @DisplayName: PosHold braking rate</a>
+<a name="351"><span class="lineNum">     351 </span>            :     // @Description: PosHold flight mode's rotation rate during braking in deg/sec</a>
+<a name="352"><span class="lineNum">     352 </span>            :     // @Units: deg/s</a>
+<a name="353"><span class="lineNum">     353 </span>            :     // @Range: 4 12</a>
+<a name="354"><span class="lineNum">     354 </span>            :     // @User: Advanced</a>
+<a name="355"><span class="lineNum">     355 </span>            :     GSCALAR(poshold_brake_rate_degs, &quot;PHLD_BRAKE_RATE&quot;,  POSHOLD_BRAKE_RATE_DEFAULT),</a>
+<a name="356"><span class="lineNum">     356 </span>            : </a>
+<a name="357"><span class="lineNum">     357 </span>            :     // @Param: PHLD_BRAKE_ANGLE</a>
+<a name="358"><span class="lineNum">     358 </span>            :     // @DisplayName: PosHold braking angle max</a>
+<a name="359"><span class="lineNum">     359 </span>            :     // @Description: PosHold flight mode's max lean angle during braking in centi-degrees</a>
+<a name="360"><span class="lineNum">     360 </span>            :     // @Units: cdeg</a>
+<a name="361"><span class="lineNum">     361 </span>            :     // @Increment: 10</a>
+<a name="362"><span class="lineNum">     362 </span>            :     // @Range: 2000 4500</a>
+<a name="363"><span class="lineNum">     363 </span>            :     // @User: Advanced</a>
+<a name="364"><span class="lineNum">     364 </span>            :     GSCALAR(poshold_brake_angle_max, &quot;PHLD_BRAKE_ANGLE&quot;,  POSHOLD_BRAKE_ANGLE_DEFAULT),</a>
+<a name="365"><span class="lineNum">     365 </span>            : #endif</a>
+<a name="366"><span class="lineNum">     366 </span>            : </a>
+<a name="367"><span class="lineNum">     367 </span>            :     // @Param: LAND_REPOSITION</a>
+<a name="368"><span class="lineNum">     368 </span>            :     // @DisplayName: Land repositioning</a>
+<a name="369"><span class="lineNum">     369 </span>            :     // @Description: Enables user input during LAND mode, the landing phase of RTL, and auto mode landings.</a>
+<a name="370"><span class="lineNum">     370 </span>            :     // @Values: 0:No repositioning, 1:Repositioning</a>
+<a name="371"><span class="lineNum">     371 </span>            :     // @User: Advanced</a>
+<a name="372"><span class="lineNum">     372 </span>            :     GSCALAR(land_repositioning, &quot;LAND_REPOSITION&quot;,     LAND_REPOSITION_DEFAULT),</a>
+<a name="373"><span class="lineNum">     373 </span>            : </a>
+<a name="374"><span class="lineNum">     374 </span>            :     // @Param: FS_EKF_ACTION</a>
+<a name="375"><span class="lineNum">     375 </span>            :     // @DisplayName: EKF Failsafe Action</a>
+<a name="376"><span class="lineNum">     376 </span>            :     // @Description: Controls the action that will be taken when an EKF failsafe is invoked</a>
+<a name="377"><span class="lineNum">     377 </span>            :     // @Values: 0:Report only, 1:Switch to Land mode if current mode requires postion, 2:Switch to AltHold mode if current mode requires postion, 3:Switch to Land mode from all modes</a>
+<a name="378"><span class="lineNum">     378 </span>            :     // @User: Advanced</a>
+<a name="379"><span class="lineNum">     379 </span>            :     GSCALAR(fs_ekf_action, &quot;FS_EKF_ACTION&quot;,    FS_EKF_ACTION_DEFAULT),</a>
+<a name="380"><span class="lineNum">     380 </span>            : </a>
+<a name="381"><span class="lineNum">     381 </span>            :     // @Param: FS_EKF_THRESH</a>
+<a name="382"><span class="lineNum">     382 </span>            :     // @DisplayName: EKF failsafe variance threshold</a>
+<a name="383"><span class="lineNum">     383 </span>            :     // @Description: Allows setting the maximum acceptable compass, velocity, position and height variances. Used in arming check and EKF failsafe.</a>
+<a name="384"><span class="lineNum">     384 </span>            :     // @Values: 0.6:Strict, 0.8:Default, 1.0:Relaxed</a>
+<a name="385"><span class="lineNum">     385 </span>            :     // @User: Advanced</a>
+<a name="386"><span class="lineNum">     386 </span>            :     GSCALAR(fs_ekf_thresh, &quot;FS_EKF_THRESH&quot;,    FS_EKF_THRESHOLD_DEFAULT),</a>
+<a name="387"><span class="lineNum">     387 </span>            : </a>
+<a name="388"><span class="lineNum">     388 </span>            :     // @Param: FS_CRASH_CHECK</a>
+<a name="389"><span class="lineNum">     389 </span>            :     // @DisplayName: Crash check enable</a>
+<a name="390"><span class="lineNum">     390 </span>            :     // @Description: This enables automatic crash checking. When enabled the motors will disarm if a crash is detected.</a>
+<a name="391"><span class="lineNum">     391 </span>            :     // @Values: 0:Disabled, 1:Enabled</a>
+<a name="392"><span class="lineNum">     392 </span>            :     // @User: Advanced</a>
+<a name="393"><span class="lineNum">     393 </span>            :     GSCALAR(fs_crash_check, &quot;FS_CRASH_CHECK&quot;,    1),</a>
+<a name="394"><span class="lineNum">     394 </span>            : </a>
+<a name="395"><span class="lineNum">     395 </span>            :     // @Param: RC_SPEED</a>
+<a name="396"><span class="lineNum">     396 </span>            :     // @DisplayName: ESC Update Speed</a>
+<a name="397"><span class="lineNum">     397 </span>            :     // @Description: This is the speed in Hertz that your ESCs will receive updates</a>
+<a name="398"><span class="lineNum">     398 </span>            :     // @Units: Hz</a>
+<a name="399"><span class="lineNum">     399 </span>            :     // @Range: 50 490</a>
+<a name="400"><span class="lineNum">     400 </span>            :     // @Increment: 1</a>
+<a name="401"><span class="lineNum">     401 </span>            :     // @User: Advanced</a>
+<a name="402"><span class="lineNum">     402 </span>            :     GSCALAR(rc_speed, &quot;RC_SPEED&quot;,              RC_FAST_SPEED),</a>
+<a name="403"><span class="lineNum">     403 </span>            : </a>
+<a name="404"><span class="lineNum">     404 </span>            : #if MODE_ACRO_ENABLED || MODE_SPORT_ENABLED</a>
+<a name="405"><span class="lineNum">     405 </span>            :     // @Param: ACRO_BAL_ROLL</a>
+<a name="406"><span class="lineNum">     406 </span>            :     // @DisplayName: Acro Balance Roll</a>
+<a name="407"><span class="lineNum">     407 </span>            :     // @Description: rate at which roll angle returns to level in acro and sport mode.  A higher value causes the vehicle to return to level faster. For helicopter sets the decay rate of the virtual flybar in the roll axis. A higher value causes faster decay of desired to actual attitude.</a>
+<a name="408"><span class="lineNum">     408 </span>            :     // @Range: 0 3</a>
+<a name="409"><span class="lineNum">     409 </span>            :     // @Increment: 0.1</a>
+<a name="410"><span class="lineNum">     410 </span>            :     // @User: Advanced</a>
+<a name="411"><span class="lineNum">     411 </span>            :     GSCALAR(acro_balance_roll,      &quot;ACRO_BAL_ROLL&quot;,    ACRO_BALANCE_ROLL),</a>
+<a name="412"><span class="lineNum">     412 </span>            : </a>
+<a name="413"><span class="lineNum">     413 </span>            :     // @Param: ACRO_BAL_PITCH</a>
+<a name="414"><span class="lineNum">     414 </span>            :     // @DisplayName: Acro Balance Pitch</a>
+<a name="415"><span class="lineNum">     415 </span>            :     // @Description: rate at which pitch angle returns to level in acro and sport mode.  A higher value causes the vehicle to return to level faster. For helicopter sets the decay rate of the virtual flybar in the pitch axis. A higher value causes faster decay of desired to actual attitude.</a>
+<a name="416"><span class="lineNum">     416 </span>            :     // @Range: 0 3</a>
+<a name="417"><span class="lineNum">     417 </span>            :     // @Increment: 0.1</a>
+<a name="418"><span class="lineNum">     418 </span>            :     // @User: Advanced</a>
+<a name="419"><span class="lineNum">     419 </span>            :     GSCALAR(acro_balance_pitch,     &quot;ACRO_BAL_PITCH&quot;,   ACRO_BALANCE_PITCH),</a>
+<a name="420"><span class="lineNum">     420 </span>            : #endif</a>
+<a name="421"><span class="lineNum">     421 </span>            : </a>
+<a name="422"><span class="lineNum">     422 </span>            :     // ACRO_RP_EXPO moved to Command Model class</a>
+<a name="423"><span class="lineNum">     423 </span>            : </a>
+<a name="424"><span class="lineNum">     424 </span>            : #if MODE_ACRO_ENABLED</a>
+<a name="425"><span class="lineNum">     425 </span>            :     // @Param: ACRO_TRAINER</a>
+<a name="426"><span class="lineNum">     426 </span>            :     // @DisplayName: Acro Trainer</a>
+<a name="427"><span class="lineNum">     427 </span>            :     // @Description: Type of trainer used in acro mode</a>
+<a name="428"><span class="lineNum">     428 </span>            :     // @Values: 0:Disabled,1:Leveling,2:Leveling and Limited</a>
+<a name="429"><span class="lineNum">     429 </span>            :     // @User: Advanced</a>
+<a name="430"><span class="lineNum">     430 </span>            :     GSCALAR(acro_trainer,   &quot;ACRO_TRAINER&quot;,     (uint8_t)ModeAcro::Trainer::LIMITED),</a>
+<a name="431"><span class="lineNum">     431 </span>            : #endif</a>
+<a name="432"><span class="lineNum">     432 </span>            : </a>
+<a name="433"><span class="lineNum">     433 </span>            :     // variables not in the g class which contain EEPROM saved variables</a>
+<a name="434"><span class="lineNum">     434 </span>            : </a>
+<a name="435"><span class="lineNum">     435 </span>            : #if AP_CAMERA_ENABLED</a>
+<a name="436"><span class="lineNum">     436 </span>            :     // @Group: CAM</a>
+<a name="437"><span class="lineNum">     437 </span>            :     // @Path: ../libraries/AP_Camera/AP_Camera.cpp</a>
+<a name="438"><span class="lineNum">     438 </span>            :     GOBJECT(camera, &quot;CAM&quot;, AP_Camera),</a>
+<a name="439"><span class="lineNum">     439 </span>            : #endif</a>
+<a name="440"><span class="lineNum">     440 </span>            : </a>
+<a name="441"><span class="lineNum">     441 </span>            : #if AP_RELAY_ENABLED</a>
+<a name="442"><span class="lineNum">     442 </span>            :     // @Group: RELAY</a>
+<a name="443"><span class="lineNum">     443 </span>            :     // @Path: ../libraries/AP_Relay/AP_Relay.cpp</a>
+<a name="444"><span class="lineNum">     444 </span>            :     GOBJECT(relay,                  &quot;RELAY&quot;, AP_Relay),</a>
+<a name="445"><span class="lineNum">     445 </span>            : #endif</a>
+<a name="446"><span class="lineNum">     446 </span>            : </a>
+<a name="447"><span class="lineNum">     447 </span>            : #if HAL_PARACHUTE_ENABLED</a>
+<a name="448"><span class="lineNum">     448 </span>            :     // @Group: CHUTE_</a>
+<a name="449"><span class="lineNum">     449 </span>            :     // @Path: ../libraries/AP_Parachute/AP_Parachute.cpp</a>
+<a name="450"><span class="lineNum">     450 </span>            :     GOBJECT(parachute, &quot;CHUTE_&quot;, AP_Parachute),</a>
+<a name="451"><span class="lineNum">     451 </span>            : #endif</a>
+<a name="452"><span class="lineNum">     452 </span>            : </a>
+<a name="453"><span class="lineNum">     453 </span>            : #if AP_LANDINGGEAR_ENABLED</a>
+<a name="454"><span class="lineNum">     454 </span>            :     // @Group: LGR_</a>
+<a name="455"><span class="lineNum">     455 </span>            :     // @Path: ../libraries/AP_LandingGear/AP_LandingGear.cpp</a>
+<a name="456"><span class="lineNum">     456 </span>            :     GOBJECT(landinggear,    &quot;LGR_&quot;, AP_LandingGear),</a>
+<a name="457"><span class="lineNum">     457 </span>            : #endif</a>
+<a name="458"><span class="lineNum">     458 </span>            : </a>
+<a name="459"><span class="lineNum">     459 </span>            : #if FRAME_CONFIG == HELI_FRAME</a>
+<a name="460"><span class="lineNum">     460 </span>            :     // @Group: IM_</a>
+<a name="461"><span class="lineNum">     461 </span>            :     // @Path: ../libraries/AC_InputManager/AC_InputManager_Heli.cpp</a>
+<a name="462"><span class="lineNum">     462 </span>            :     GOBJECT(input_manager, &quot;IM_&quot;, AC_InputManager_Heli),</a>
+<a name="463"><span class="lineNum">     463 </span>            : #endif</a>
+<a name="464"><span class="lineNum">     464 </span>            : </a>
+<a name="465"><span class="lineNum">     465 </span>            :     // @Group: COMPASS_</a>
+<a name="466"><span class="lineNum">     466 </span>            :     // @Path: ../libraries/AP_Compass/AP_Compass.cpp</a>
+<a name="467"><span class="lineNum">     467 </span>            :     GOBJECT(compass,        &quot;COMPASS_&quot;, Compass),</a>
+<a name="468"><span class="lineNum">     468 </span>            : </a>
+<a name="469"><span class="lineNum">     469 </span>            :     // @Group: INS</a>
+<a name="470"><span class="lineNum">     470 </span>            :     // @Path: ../libraries/AP_InertialSensor/AP_InertialSensor.cpp</a>
+<a name="471"><span class="lineNum">     471 </span>            :     GOBJECT(ins,            &quot;INS&quot;, AP_InertialSensor),</a>
+<a name="472"><span class="lineNum">     472 </span>            : </a>
+<a name="473"><span class="lineNum">     473 </span>            :     // @Group: WPNAV_</a>
+<a name="474"><span class="lineNum">     474 </span>            :     // @Path: ../libraries/AC_WPNav/AC_WPNav.cpp</a>
+<a name="475"><span class="lineNum">     475 </span>            :     GOBJECTPTR(wp_nav, &quot;WPNAV_&quot;,       AC_WPNav),</a>
+<a name="476"><span class="lineNum">     476 </span>            : </a>
+<a name="477"><span class="lineNum">     477 </span>            :     // @Group: LOIT_</a>
+<a name="478"><span class="lineNum">     478 </span>            :     // @Path: ../libraries/AC_WPNav/AC_Loiter.cpp</a>
+<a name="479"><span class="lineNum">     479 </span>            :     GOBJECTPTR(loiter_nav, &quot;LOIT_&quot;, AC_Loiter),</a>
+<a name="480"><span class="lineNum">     480 </span>            : </a>
+<a name="481"><span class="lineNum">     481 </span>            : #if MODE_CIRCLE_ENABLED</a>
+<a name="482"><span class="lineNum">     482 </span>            :     // @Group: CIRCLE_</a>
+<a name="483"><span class="lineNum">     483 </span>            :     // @Path: ../libraries/AC_WPNav/AC_Circle.cpp</a>
+<a name="484"><span class="lineNum">     484 </span>            :     GOBJECTPTR(circle_nav, &quot;CIRCLE_&quot;,  AC_Circle),</a>
+<a name="485"><span class="lineNum">     485 </span>            : #endif</a>
+<a name="486"><span class="lineNum">     486 </span>            : </a>
+<a name="487"><span class="lineNum">     487 </span>            :     // @Group: ATC_</a>
+<a name="488"><span class="lineNum">     488 </span>            :     // @Path: ../libraries/AC_AttitudeControl/AC_AttitudeControl.cpp,../libraries/AC_AttitudeControl/AC_AttitudeControl_Multi.cpp,../libraries/AC_AttitudeControl/AC_AttitudeControl_Heli.cpp</a>
+<a name="489"><span class="lineNum">     489 </span>            :     GOBJECTVARPTR(attitude_control, &quot;ATC_&quot;, &amp;copter.attitude_control_var_info),</a>
+<a name="490"><span class="lineNum">     490 </span>            : </a>
+<a name="491"><span class="lineNum">     491 </span>            :     // @Group: PSC</a>
+<a name="492"><span class="lineNum">     492 </span>            :     // @Path: ../libraries/AC_AttitudeControl/AC_PosControl.cpp</a>
+<a name="493"><span class="lineNum">     493 </span>            :     GOBJECTPTR(pos_control, &quot;PSC&quot;, AC_PosControl),</a>
+<a name="494"><span class="lineNum">     494 </span>            : </a>
+<a name="495"><span class="lineNum">     495 </span>            :     // SR0 through SR6 was here</a>
+<a name="496"><span class="lineNum">     496 </span>            : </a>
+<a name="497"><span class="lineNum">     497 </span>            :     // @Group: AHRS_</a>
+<a name="498"><span class="lineNum">     498 </span>            :     // @Path: ../libraries/AP_AHRS/AP_AHRS.cpp</a>
+<a name="499"><span class="lineNum">     499 </span>            :     GOBJECT(ahrs,                   &quot;AHRS_&quot;,    AP_AHRS),</a>
+<a name="500"><span class="lineNum">     500 </span>            : </a>
+<a name="501"><span class="lineNum">     501 </span>            : #if HAL_MOUNT_ENABLED</a>
+<a name="502"><span class="lineNum">     502 </span>            :     // @Group: MNT</a>
+<a name="503"><span class="lineNum">     503 </span>            :     // @Path: ../libraries/AP_Mount/AP_Mount.cpp</a>
+<a name="504"><span class="lineNum">     504 </span>            :     GOBJECT(camera_mount,           &quot;MNT&quot;,  AP_Mount),</a>
+<a name="505"><span class="lineNum">     505 </span>            : #endif</a>
+<a name="506"><span class="lineNum">     506 </span>            : </a>
+<a name="507"><span class="lineNum">     507 </span>            :     // @Group: BATT</a>
+<a name="508"><span class="lineNum">     508 </span>            :     // @Path: ../libraries/AP_BattMonitor/AP_BattMonitor.cpp</a>
+<a name="509"><span class="lineNum">     509 </span>            :     GOBJECT(battery,                &quot;BATT&quot;,         AP_BattMonitor),</a>
+<a name="510"><span class="lineNum">     510 </span>            : </a>
+<a name="511"><span class="lineNum">     511 </span>            :     // @Group: BRD_</a>
+<a name="512"><span class="lineNum">     512 </span>            :     // @Path: ../libraries/AP_BoardConfig/AP_BoardConfig.cpp</a>
+<a name="513"><span class="lineNum">     513 </span>            :     GOBJECT(BoardConfig,            &quot;BRD_&quot;,       AP_BoardConfig),</a>
+<a name="514"><span class="lineNum">     514 </span>            : </a>
+<a name="515"><span class="lineNum">     515 </span>            : #if HAL_MAX_CAN_PROTOCOL_DRIVERS</a>
+<a name="516"><span class="lineNum">     516 </span>            :     // @Group: CAN_</a>
+<a name="517"><span class="lineNum">     517 </span>            :     // @Path: ../libraries/AP_CANManager/AP_CANManager.cpp</a>
+<a name="518"><span class="lineNum">     518 </span>            :     GOBJECT(can_mgr,        &quot;CAN_&quot;,       AP_CANManager),</a>
+<a name="519"><span class="lineNum">     519 </span>            : #endif</a>
+<a name="520"><span class="lineNum">     520 </span>            : </a>
+<a name="521"><span class="lineNum">     521 </span>            : #if HAL_SPRAYER_ENABLED</a>
+<a name="522"><span class="lineNum">     522 </span>            :     // @Group: SPRAY_</a>
+<a name="523"><span class="lineNum">     523 </span>            :     // @Path: ../libraries/AC_Sprayer/AC_Sprayer.cpp</a>
+<a name="524"><span class="lineNum">     524 </span>            :     GOBJECT(sprayer,                &quot;SPRAY_&quot;,       AC_Sprayer),</a>
+<a name="525"><span class="lineNum">     525 </span>            : #endif</a>
+<a name="526"><span class="lineNum">     526 </span>            : </a>
+<a name="527"><span class="lineNum">     527 </span>            : #if AP_SIM_ENABLED</a>
+<a name="528"><span class="lineNum">     528 </span>            :     // @Group: SIM_</a>
+<a name="529"><span class="lineNum">     529 </span>            :     // @Path: ../libraries/SITL/SITL.cpp</a>
+<a name="530"><span class="lineNum">     530 </span>            :     GOBJECT(sitl, &quot;SIM_&quot;, SITL::SIM),</a>
+<a name="531"><span class="lineNum">     531 </span>            : #endif</a>
+<a name="532"><span class="lineNum">     532 </span>            : </a>
+<a name="533"><span class="lineNum">     533 </span>            :     // @Group: BARO</a>
+<a name="534"><span class="lineNum">     534 </span>            :     // @Path: ../libraries/AP_Baro/AP_Baro.cpp</a>
+<a name="535"><span class="lineNum">     535 </span>            :     GOBJECT(barometer, &quot;BARO&quot;, AP_Baro),</a>
+<a name="536"><span class="lineNum">     536 </span>            : </a>
+<a name="537"><span class="lineNum">     537 </span>            :     // GPS driver</a>
+<a name="538"><span class="lineNum">     538 </span>            :     // @Group: GPS</a>
+<a name="539"><span class="lineNum">     539 </span>            :     // @Path: ../libraries/AP_GPS/AP_GPS.cpp</a>
+<a name="540"><span class="lineNum">     540 </span>            :     GOBJECT(gps, &quot;GPS&quot;, AP_GPS),</a>
+<a name="541"><span class="lineNum">     541 </span>            : </a>
+<a name="542"><span class="lineNum">     542 </span>            :     // @Group: SCHED_</a>
+<a name="543"><span class="lineNum">     543 </span>            :     // @Path: ../libraries/AP_Scheduler/AP_Scheduler.cpp</a>
+<a name="544"><span class="lineNum">     544 </span>            :     GOBJECT(scheduler, &quot;SCHED_&quot;, AP_Scheduler),</a>
+<a name="545"><span class="lineNum">     545 </span>            : </a>
+<a name="546"><span class="lineNum">     546 </span>            :     // @Group: AVOID_</a>
+<a name="547"><span class="lineNum">     547 </span>            :     // @Path: ../libraries/AC_Avoidance/AC_Avoid.cpp</a>
+<a name="548"><span class="lineNum">     548 </span>            : #if AP_AVOIDANCE_ENABLED</a>
+<a name="549"><span class="lineNum">     549 </span>            :     GOBJECT(avoid,      &quot;AVOID_&quot;,   AC_Avoid),</a>
+<a name="550"><span class="lineNum">     550 </span>            : #endif</a>
+<a name="551"><span class="lineNum">     551 </span>            : </a>
+<a name="552"><span class="lineNum">     552 </span>            : #if HAL_RALLY_ENABLED</a>
+<a name="553"><span class="lineNum">     553 </span>            :     // @Group: RALLY_</a>
+<a name="554"><span class="lineNum">     554 </span>            :     // @Path: AP_Rally.cpp,../libraries/AP_Rally/AP_Rally.cpp</a>
+<a name="555"><span class="lineNum">     555 </span>            :     GOBJECT(rally,      &quot;RALLY_&quot;,   AP_Rally_Copter),</a>
+<a name="556"><span class="lineNum">     556 </span>            : #endif</a>
+<a name="557"><span class="lineNum">     557 </span>            : </a>
+<a name="558"><span class="lineNum">     558 </span>            : #if FRAME_CONFIG == HELI_FRAME</a>
+<a name="559"><span class="lineNum">     559 </span>            :     // @Group: H_</a>
+<a name="560"><span class="lineNum">     560 </span>            :     // @Path: ../libraries/AP_Motors/AP_MotorsHeli_Single.cpp,../libraries/AP_Motors/AP_MotorsHeli_Dual.cpp,../libraries/AP_Motors/AP_MotorsHeli.cpp</a>
+<a name="561"><span class="lineNum">     561 </span>            :     GOBJECTVARPTR(motors, &quot;H_&quot;,        &amp;copter.motors_var_info),</a>
+<a name="562"><span class="lineNum">     562 </span>            : #else</a>
+<a name="563"><span class="lineNum">     563 </span>            :     // @Group: MOT_</a>
+<a name="564"><span class="lineNum">     564 </span>            :     // @Path: ../libraries/AP_Motors/AP_MotorsMulticopter.cpp</a>
+<a name="565"><span class="lineNum">     565 </span>            :     GOBJECTVARPTR(motors, &quot;MOT_&quot;,      &amp;copter.motors_var_info),</a>
+<a name="566"><span class="lineNum">     566 </span>            : #endif</a>
+<a name="567"><span class="lineNum">     567 </span>            : </a>
+<a name="568"><span class="lineNum">     568 </span>            :     // @Group: RCMAP_</a>
+<a name="569"><span class="lineNum">     569 </span>            :     // @Path: ../libraries/AP_RCMapper/AP_RCMapper.cpp</a>
+<a name="570"><span class="lineNum">     570 </span>            :     GOBJECT(rcmap, &quot;RCMAP_&quot;,        RCMapper),</a>
+<a name="571"><span class="lineNum">     571 </span>            : </a>
+<a name="572"><span class="lineNum">     572 </span>            : #if HAL_NAVEKF2_AVAILABLE</a>
+<a name="573"><span class="lineNum">     573 </span>            :     // @Group: EK2_</a>
+<a name="574"><span class="lineNum">     574 </span>            :     // @Path: ../libraries/AP_NavEKF2/AP_NavEKF2.cpp</a>
+<a name="575"><span class="lineNum">     575 </span>            :     GOBJECTN(ahrs.EKF2, NavEKF2, &quot;EK2_&quot;, NavEKF2),</a>
+<a name="576"><span class="lineNum">     576 </span>            : #endif</a>
+<a name="577"><span class="lineNum">     577 </span>            : </a>
+<a name="578"><span class="lineNum">     578 </span>            : #if HAL_NAVEKF3_AVAILABLE</a>
+<a name="579"><span class="lineNum">     579 </span>            :     // @Group: EK3_</a>
+<a name="580"><span class="lineNum">     580 </span>            :     // @Path: ../libraries/AP_NavEKF3/AP_NavEKF3.cpp</a>
+<a name="581"><span class="lineNum">     581 </span>            :     GOBJECTN(ahrs.EKF3, NavEKF3, &quot;EK3_&quot;, NavEKF3),</a>
+<a name="582"><span class="lineNum">     582 </span>            : #endif</a>
+<a name="583"><span class="lineNum">     583 </span>            : </a>
+<a name="584"><span class="lineNum">     584 </span>            : #if MODE_AUTO_ENABLED</a>
+<a name="585"><span class="lineNum">     585 </span>            :     // @Group: MIS_</a>
+<a name="586"><span class="lineNum">     586 </span>            :     // @Path: ../libraries/AP_Mission/AP_Mission.cpp</a>
+<a name="587"><span class="lineNum">     587 </span>            :     GOBJECTN(mode_auto.mission, mission, &quot;MIS_&quot;, AP_Mission),</a>
+<a name="588"><span class="lineNum">     588 </span>            : #endif</a>
+<a name="589"><span class="lineNum">     589 </span>            : </a>
+<a name="590"><span class="lineNum">     590 </span>            : #if AP_RSSI_ENABLED</a>
+<a name="591"><span class="lineNum">     591 </span>            :     // @Group: RSSI_</a>
+<a name="592"><span class="lineNum">     592 </span>            :     // @Path: ../libraries/AP_RSSI/AP_RSSI.cpp</a>
+<a name="593"><span class="lineNum">     593 </span>            :     GOBJECT(rssi, &quot;RSSI_&quot;,  AP_RSSI),</a>
+<a name="594"><span class="lineNum">     594 </span>            : #endif</a>
+<a name="595"><span class="lineNum">     595 </span>            : </a>
+<a name="596"><span class="lineNum">     596 </span>            : #if AP_RANGEFINDER_ENABLED</a>
+<a name="597"><span class="lineNum">     597 </span>            :     // @Group: RNGFND</a>
+<a name="598"><span class="lineNum">     598 </span>            :     // @Path: ../libraries/AP_RangeFinder/AP_RangeFinder.cpp</a>
+<a name="599"><span class="lineNum">     599 </span>            :     GOBJECT(rangefinder,   &quot;RNGFND&quot;, RangeFinder),</a>
+<a name="600"><span class="lineNum">     600 </span>            : #endif</a>
+<a name="601"><span class="lineNum">     601 </span>            : </a>
+<a name="602"><span class="lineNum">     602 </span>            : #if AP_TERRAIN_AVAILABLE</a>
+<a name="603"><span class="lineNum">     603 </span>            :     // @Group: TERRAIN_</a>
+<a name="604"><span class="lineNum">     604 </span>            :     // @Path: ../libraries/AP_Terrain/AP_Terrain.cpp</a>
+<a name="605"><span class="lineNum">     605 </span>            :     GOBJECT(terrain,                &quot;TERRAIN_&quot;, AP_Terrain),</a>
+<a name="606"><span class="lineNum">     606 </span>            : #endif</a>
+<a name="607"><span class="lineNum">     607 </span>            : </a>
+<a name="608"><span class="lineNum">     608 </span>            : #if AP_OPTICALFLOW_ENABLED</a>
+<a name="609"><span class="lineNum">     609 </span>            :     // @Group: FLOW</a>
+<a name="610"><span class="lineNum">     610 </span>            :     // @Path: ../libraries/AP_OpticalFlow/AP_OpticalFlow.cpp</a>
+<a name="611"><span class="lineNum">     611 </span>            :     GOBJECT(optflow,   &quot;FLOW&quot;, AP_OpticalFlow),</a>
+<a name="612"><span class="lineNum">     612 </span>            : #endif</a>
+<a name="613"><span class="lineNum">     613 </span>            : </a>
+<a name="614"><span class="lineNum">     614 </span>            : #if AC_PRECLAND_ENABLED</a>
+<a name="615"><span class="lineNum">     615 </span>            :     // @Group: PLND_</a>
+<a name="616"><span class="lineNum">     616 </span>            :     // @Path: ../libraries/AC_PrecLand/AC_PrecLand.cpp</a>
+<a name="617"><span class="lineNum">     617 </span>            :     GOBJECT(precland, &quot;PLND_&quot;, AC_PrecLand),</a>
+<a name="618"><span class="lineNum">     618 </span>            : #endif</a>
+<a name="619"><span class="lineNum">     619 </span>            : </a>
+<a name="620"><span class="lineNum">     620 </span>            : #if HAL_ADSB_ENABLED</a>
+<a name="621"><span class="lineNum">     621 </span>            :     // @Group: ADSB_</a>
+<a name="622"><span class="lineNum">     622 </span>            :     // @Path: ../libraries/AP_ADSB/AP_ADSB.cpp</a>
+<a name="623"><span class="lineNum">     623 </span>            :     GOBJECT(adsb,                &quot;ADSB_&quot;, AP_ADSB),</a>
+<a name="624"><span class="lineNum">     624 </span>            : #endif  // HAL_ADSB_ENABLED</a>
+<a name="625"><span class="lineNum">     625 </span>            : </a>
+<a name="626"><span class="lineNum">     626 </span>            : #if AP_ADSB_AVOIDANCE_ENABLED</a>
+<a name="627"><span class="lineNum">     627 </span>            :     // @Group: AVD_</a>
+<a name="628"><span class="lineNum">     628 </span>            :     // @Path: ../libraries/AP_Avoidance/AP_Avoidance.cpp</a>
+<a name="629"><span class="lineNum">     629 </span>            :     GOBJECT(avoidance_adsb, &quot;AVD_&quot;, AP_Avoidance_Copter),</a>
+<a name="630"><span class="lineNum">     630 </span>            : #endif  // AP_ADSB_AVOIDANCE_ENABLED</a>
+<a name="631"><span class="lineNum">     631 </span>            : </a>
+<a name="632"><span class="lineNum">     632 </span>            :     // @Group: NTF_</a>
+<a name="633"><span class="lineNum">     633 </span>            :     // @Path: ../libraries/AP_Notify/AP_Notify.cpp</a>
+<a name="634"><span class="lineNum">     634 </span>            :     GOBJECT(notify, &quot;NTF_&quot;,  AP_Notify),</a>
+<a name="635"><span class="lineNum">     635 </span>            : </a>
+<a name="636"><span class="lineNum">     636 </span>            : #if MODE_THROW_ENABLED</a>
+<a name="637"><span class="lineNum">     637 </span>            :     // @Param: THROW_MOT_START</a>
+<a name="638"><span class="lineNum">     638 </span>            :     // @DisplayName: Start motors before throwing is detected</a>
+<a name="639"><span class="lineNum">     639 </span>            :     // @Description: Used by Throw mode. Controls whether motors will run at the speed set by MOT_SPIN_MIN or will be stopped when armed and waiting for the throw.</a>
+<a name="640"><span class="lineNum">     640 </span>            :     // @Values: 0:Stopped,1:Running</a>
+<a name="641"><span class="lineNum">     641 </span>            :     // @User: Standard</a>
+<a name="642"><span class="lineNum">     642 </span>            :     GSCALAR(throw_motor_start, &quot;THROW_MOT_START&quot;, (float)ModeThrow::PreThrowMotorState::STOPPED),</a>
+<a name="643"><span class="lineNum">     643 </span>            : </a>
+<a name="644"><span class="lineNum">     644 </span>            :     // @Param: THROW_ALT_MIN</a>
+<a name="645"><span class="lineNum">     645 </span>            :     // @DisplayName: Throw mode minimum altitude</a>
+<a name="646"><span class="lineNum">     646 </span>            :     // @Description: Minimum altitude above which Throw mode will detect a throw or a drop - 0 to disable the check</a>
+<a name="647"><span class="lineNum">     647 </span>            :     // @Units: m</a>
+<a name="648"><span class="lineNum">     648 </span>            :     // @User: Advanced</a>
+<a name="649"><span class="lineNum">     649 </span>            :     GSCALAR(throw_altitude_min, &quot;THROW_ALT_MIN&quot;, 0),</a>
+<a name="650"><span class="lineNum">     650 </span>            : </a>
+<a name="651"><span class="lineNum">     651 </span>            :     // @Param: THROW_ALT_MAX</a>
+<a name="652"><span class="lineNum">     652 </span>            :     // @DisplayName: Throw mode maximum altitude</a>
+<a name="653"><span class="lineNum">     653 </span>            :     // @Description: Maximum altitude under which Throw mode will detect a throw or a drop - 0 to disable the check</a>
+<a name="654"><span class="lineNum">     654 </span>            :     // @Units: m</a>
+<a name="655"><span class="lineNum">     655 </span>            :     // @User: Advanced</a>
+<a name="656"><span class="lineNum">     656 </span>            :     GSCALAR(throw_altitude_max, &quot;THROW_ALT_MAX&quot;, 0),</a>
+<a name="657"><span class="lineNum">     657 </span>            : </a>
+<a name="658"><span class="lineNum">     658 </span>            :     // @Param: THROW_ALT_DCSND</a>
+<a name="659"><span class="lineNum">     659 </span>            :     // @DisplayName: Throw mode target altitude to descend</a>
+<a name="660"><span class="lineNum">     660 </span>            :     // @Description: Target altitude to descend during a drop, (must be positive). This allows for rapidly clearing surrounding obstacles.</a>
+<a name="661"><span class="lineNum">     661 </span>            :     // @Units: m</a>
+<a name="662"><span class="lineNum">     662 </span>            :     // @User: Advanced</a>
+<a name="663"><span class="lineNum">     663 </span>            :     GSCALAR(throw_altitude_descend, &quot;THROW_ALT_DCSND&quot;, 1.0),</a>
+<a name="664"><span class="lineNum">     664 </span>            : </a>
+<a name="665"><span class="lineNum">     665 </span>            :     // @Param: THROW_ALT_ACSND</a>
+<a name="666"><span class="lineNum">     666 </span>            :     // @DisplayName: Throw mode target altitude to ascsend</a>
+<a name="667"><span class="lineNum">     667 </span>            :     // @Description: Target altitude to ascend during a throw upwards (must be positive). This allows for rapidly clearing surrounding obstacles.</a>
+<a name="668"><span class="lineNum">     668 </span>            :     // @Units: m</a>
+<a name="669"><span class="lineNum">     669 </span>            :     // @User: Advanced</a>
+<a name="670"><span class="lineNum">     670 </span>            :     GSCALAR(throw_altitude_ascend, &quot;THROW_ALT_ACSND&quot;, 3.0),</a>
+<a name="671"><span class="lineNum">     671 </span>            : #endif</a>
+<a name="672"><span class="lineNum">     672 </span>            : </a>
+<a name="673"><span class="lineNum">     673 </span>            : #if OSD_ENABLED || OSD_PARAM_ENABLED</a>
+<a name="674"><span class="lineNum">     674 </span>            :     // @Group: OSD</a>
+<a name="675"><span class="lineNum">     675 </span>            :     // @Path: ../libraries/AP_OSD/AP_OSD.cpp</a>
+<a name="676"><span class="lineNum">     676 </span>            :     GOBJECT(osd, &quot;OSD&quot;, AP_OSD),</a>
+<a name="677"><span class="lineNum">     677 </span>            : #endif</a>
+<a name="678"><span class="lineNum">     678 </span>            : </a>
+<a name="679"><span class="lineNum">     679 </span>            : #if AC_CUSTOMCONTROL_MULTI_ENABLED</a>
+<a name="680"><span class="lineNum">     680 </span>            :     // @Group: CC</a>
+<a name="681"><span class="lineNum">     681 </span>            :     // @Path: ../libraries/AC_CustomControl/AC_CustomControl.cpp</a>
+<a name="682"><span class="lineNum">     682 </span>            :     GOBJECT(custom_control, &quot;CC&quot;, AC_CustomControl),</a>
+<a name="683"><span class="lineNum">     683 </span>            : #endif</a>
+<a name="684"><span class="lineNum">     684 </span>            : </a>
+<a name="685"><span class="lineNum">     685 </span>            :     // @Group:</a>
+<a name="686"><span class="lineNum">     686 </span>            :     // @Path: Parameters.cpp</a>
+<a name="687"><span class="lineNum">     687 </span>            :     GOBJECT(g2, &quot;&quot;,  ParametersG2),</a>
+<a name="688"><span class="lineNum">     688 </span>            : </a>
+<a name="689"><span class="lineNum">     689 </span>            :     // @Group:</a>
+<a name="690"><span class="lineNum">     690 </span>            :     // @Path: ../libraries/AP_Vehicle/AP_Vehicle.cpp</a>
+<a name="691"><span class="lineNum">     691 </span>            :     PARAM_VEHICLE_INFO,</a>
+<a name="692"><span class="lineNum">     692 </span>            : </a>
+<a name="693"><span class="lineNum">     693 </span>            : #if HAL_GCS_ENABLED</a>
+<a name="694"><span class="lineNum">     694 </span>            :     // @Group: MAV</a>
+<a name="695"><span class="lineNum">     695 </span>            :     // @Path: ../libraries/GCS_MAVLink/GCS.cpp</a>
+<a name="696"><span class="lineNum">     696 </span>            :     GOBJECT(_gcs,           &quot;MAV&quot;,  GCS),</a>
+<a name="697"><span class="lineNum">     697 </span>            : #endif</a>
+<a name="698"><span class="lineNum">     698 </span>            : </a>
+<a name="699"><span class="lineNum">     699 </span>            :     AP_VAREND</a>
+<a name="700"><span class="lineNum">     700 </span>            : };</a>
+<a name="701"><span class="lineNum">     701 </span>            : </a>
+<a name="702"><span class="lineNum">     702 </span>            : /*</a>
+<a name="703"><span class="lineNum">     703 </span>            :   2nd group of parameters</a>
+<a name="704"><span class="lineNum">     704 </span>            :  */</a>
+<a name="705"><span class="lineNum">     705 </span>            : const AP_Param::GroupInfo ParametersG2::var_info[] = {</a>
+<a name="706"><span class="lineNum">     706 </span>            : </a>
+<a name="707"><span class="lineNum">     707 </span>            :     // @Param: WP_NAVALT_MIN</a>
+<a name="708"><span class="lineNum">     708 </span>            :     // @DisplayName: Waypoint navigation altitude minimum</a>
+<a name="709"><span class="lineNum">     709 </span>            :     // @Description: Altitude in meters above which navigation will begin during auto takeoff</a>
+<a name="710"><span class="lineNum">     710 </span>            :     // @Units: m</a>
+<a name="711"><span class="lineNum">     711 </span>            :     // @Range: 0 5</a>
+<a name="712"><span class="lineNum">     712 </span>            :     // @User: Standard</a>
+<a name="713"><span class="lineNum">     713 </span>            :     AP_GROUPINFO(&quot;WP_NAVALT_MIN&quot;, 1, ParametersG2, wp_navalt_min_m, 0),</a>
+<a name="714"><span class="lineNum">     714 </span>            : </a>
+<a name="715"><span class="lineNum">     715 </span>            : #if HAL_BUTTON_ENABLED</a>
+<a name="716"><span class="lineNum">     716 </span>            :     // @Group: BTN_</a>
+<a name="717"><span class="lineNum">     717 </span>            :     // @Path: ../libraries/AP_Button/AP_Button.cpp</a>
+<a name="718"><span class="lineNum">     718 </span>            :     AP_SUBGROUPPTR(button_ptr, &quot;BTN_&quot;, 2, ParametersG2, AP_Button),</a>
+<a name="719"><span class="lineNum">     719 </span>            : #endif</a>
+<a name="720"><span class="lineNum">     720 </span>            : </a>
+<a name="721"><span class="lineNum">     721 </span>            : #if MODE_THROW_ENABLED</a>
+<a name="722"><span class="lineNum">     722 </span>            :     // @Param: THROW_NEXTMODE</a>
+<a name="723"><span class="lineNum">     723 </span>            :     // @DisplayName: Throw mode's follow up mode</a>
+<a name="724"><span class="lineNum">     724 </span>            :     // @Description: Vehicle will switch to this mode after the throw is successfully completed.  Default is to stay in throw mode (18)</a>
+<a name="725"><span class="lineNum">     725 </span>            :     // @Values: 3:Auto,4:Guided,5:LOITER,6:RTL,9:Land,17:Brake,18:Throw</a>
+<a name="726"><span class="lineNum">     726 </span>            :     // @User: Standard</a>
+<a name="727"><span class="lineNum">     727 </span>            :     AP_GROUPINFO(&quot;THROW_NEXTMODE&quot;, 3, ParametersG2, throw_nextmode, 18),</a>
+<a name="728"><span class="lineNum">     728 </span>            : </a>
+<a name="729"><span class="lineNum">     729 </span>            :     // @Param: THROW_TYPE</a>
+<a name="730"><span class="lineNum">     730 </span>            :     // @DisplayName: Type of Type</a>
+<a name="731"><span class="lineNum">     731 </span>            :     // @Description: Used by Throw mode. Specifies whether Copter is thrown upward or dropped.</a>
+<a name="732"><span class="lineNum">     732 </span>            :     // @Values: 0:Upward Throw,1:Drop</a>
+<a name="733"><span class="lineNum">     733 </span>            :     // @User: Standard</a>
+<a name="734"><span class="lineNum">     734 </span>            :     AP_GROUPINFO(&quot;THROW_TYPE&quot;, 4, ParametersG2, throw_type, (float)ModeThrow::ThrowType::Upward),</a>
+<a name="735"><span class="lineNum">     735 </span>            : #endif</a>
+<a name="736"><span class="lineNum">     736 </span>            : </a>
+<a name="737"><span class="lineNum">     737 </span>            :     // @Param: GND_EFFECT_COMP</a>
+<a name="738"><span class="lineNum">     738 </span>            :     // @DisplayName: Ground Effect Compensation Enable/Disable</a>
+<a name="739"><span class="lineNum">     739 </span>            :     // @Description: Ground Effect Compensation Enable/Disable</a>
+<a name="740"><span class="lineNum">     740 </span>            :     // @Values: 0:Disabled,1:Enabled</a>
+<a name="741"><span class="lineNum">     741 </span>            :     // @User: Advanced</a>
+<a name="742"><span class="lineNum">     742 </span>            :     AP_GROUPINFO(&quot;GND_EFFECT_COMP&quot;, 5, ParametersG2, gndeffect_comp_enabled, 1),</a>
+<a name="743"><span class="lineNum">     743 </span>            : </a>
+<a name="744"><span class="lineNum">     744 </span>            : #if AP_COPTER_ADVANCED_FAILSAFE_ENABLED</a>
+<a name="745"><span class="lineNum">     745 </span>            :     // @Group: AFS_</a>
+<a name="746"><span class="lineNum">     746 </span>            :     // @Path: ../libraries/AP_AdvancedFailsafe/AP_AdvancedFailsafe.cpp</a>
+<a name="747"><span class="lineNum">     747 </span>            :     AP_SUBGROUPINFO(afs, &quot;AFS_&quot;, 6, ParametersG2, AP_AdvancedFailsafe),</a>
+<a name="748"><span class="lineNum">     748 </span>            : #endif</a>
+<a name="749"><span class="lineNum">     749 </span>            : </a>
+<a name="750"><span class="lineNum">     750 </span>            :     // @Param: DEV_OPTIONS</a>
+<a name="751"><span class="lineNum">     751 </span>            :     // @DisplayName: Development options</a>
+<a name="752"><span class="lineNum">     752 </span>            :     // @Description: Bitmask of developer options. The meanings of the bit fields in this parameter may vary at any time. Developers should check the source code for current meaning</a>
+<a name="753"><span class="lineNum">     753 </span>            :     // @Bitmask: 0:ADSBMavlinkProcessing,1:DevOptionVFR_HUDRelativeAlt</a>
+<a name="754"><span class="lineNum">     754 </span>            :     // @User: Advanced</a>
+<a name="755"><span class="lineNum">     755 </span>            :     AP_GROUPINFO(&quot;DEV_OPTIONS&quot;, 7, ParametersG2, dev_options, 0),</a>
+<a name="756"><span class="lineNum">     756 </span>            : </a>
+<a name="757"><span class="lineNum">     757 </span>            : #if AP_BEACON_ENABLED</a>
+<a name="758"><span class="lineNum">     758 </span>            :     // @Group: BCN</a>
+<a name="759"><span class="lineNum">     759 </span>            :     // @Path: ../libraries/AP_Beacon/AP_Beacon.cpp</a>
+<a name="760"><span class="lineNum">     760 </span>            :     AP_SUBGROUPINFO(beacon, &quot;BCN&quot;, 14, ParametersG2, AP_Beacon),</a>
+<a name="761"><span class="lineNum">     761 </span>            : #endif</a>
+<a name="762"><span class="lineNum">     762 </span>            : </a>
+<a name="763"><span class="lineNum">     763 </span>            : #if HAL_PROXIMITY_ENABLED</a>
+<a name="764"><span class="lineNum">     764 </span>            :     // @Group: PRX</a>
+<a name="765"><span class="lineNum">     765 </span>            :     // @Path: ../libraries/AP_Proximity/AP_Proximity.cpp</a>
+<a name="766"><span class="lineNum">     766 </span>            :     AP_SUBGROUPINFO(proximity, &quot;PRX&quot;, 8, ParametersG2, AP_Proximity),</a>
+<a name="767"><span class="lineNum">     767 </span>            : #endif</a>
+<a name="768"><span class="lineNum">     768 </span>            : </a>
+<a name="769"><span class="lineNum">     769 </span>            :     // ACRO_Y_EXPO (9) moved to Command Model Class</a>
+<a name="770"><span class="lineNum">     770 </span>            : </a>
+<a name="771"><span class="lineNum">     771 </span>            : #if MODE_ACRO_ENABLED</a>
+<a name="772"><span class="lineNum">     772 </span>            :     // @Param: ACRO_THR_MID</a>
+<a name="773"><span class="lineNum">     773 </span>            :     // @DisplayName: Acro Thr Mid</a>
+<a name="774"><span class="lineNum">     774 </span>            :     // @Description: Acro Throttle Mid</a>
+<a name="775"><span class="lineNum">     775 </span>            :     // @Range: 0 1</a>
+<a name="776"><span class="lineNum">     776 </span>            :     // @User: Advanced</a>
+<a name="777"><span class="lineNum">     777 </span>            :     AP_GROUPINFO(&quot;ACRO_THR_MID&quot;, 10, ParametersG2, acro_thr_mid, ACRO_THR_MID_DEFAULT),</a>
+<a name="778"><span class="lineNum">     778 </span>            : #endif</a>
+<a name="779"><span class="lineNum">     779 </span>            : </a>
+<a name="780"><span class="lineNum">     780 </span>            :     // 11 was SYSID_ENFORCE</a>
+<a name="781"><span class="lineNum">     781 </span>            : </a>
+<a name="782"><span class="lineNum">     782 </span>            :     // 12 was AP_Stats</a>
+<a name="783"><span class="lineNum">     783 </span>            : </a>
+<a name="784"><span class="lineNum">     784 </span>            :     // 13 was AP_Gripper</a>
+<a name="785"><span class="lineNum">     785 </span>            : </a>
+<a name="786"><span class="lineNum">     786 </span>            : //#ifndef FORCE_FRAME_CLASS</a>
+<a name="787"><span class="lineNum">     787 </span>            : // @Param: FRAME_CLASS</a>
+<a name="788"><span class="lineNum">     788 </span>            : // @DisplayName: Frame Class</a>
+<a name="789"><span class="lineNum">     789 </span>            : // @Description: Type of frame (e.g., Quad, Hexa, Octa)</a>
+<a name="790"><span class="lineNum">     790 </span>            : // @Values: 1:Quad</a>
+<a name="791"><span class="lineNum">     791 </span>            : // @User: Standard</a>
+<a name="792"><span class="lineNum">     792 </span>            : // @RebootRequired: True</a>
+<a name="793"><span class="lineNum">     793 </span>            : AP_GROUPINFO(&quot;FRAME_CLASS&quot;, 15, ParametersG2, frame_class, 2),</a>
+<a name="794"><span class="lineNum">     794 </span>            : //#endif</a>
+<a name="795"><span class="lineNum">     795 </span>            : </a>
+<a name="796"><span class="lineNum">     796 </span>            :     // @Group: SERVO</a>
+<a name="797"><span class="lineNum">     797 </span>            :     // @Path: ../libraries/SRV_Channel/SRV_Channels.cpp</a>
+<a name="798"><span class="lineNum">     798 </span>            :     AP_SUBGROUPINFO(servo_channels, &quot;SERVO&quot;, 16, ParametersG2, SRV_Channels),</a>
+<a name="799"><span class="lineNum">     799 </span>            : </a>
+<a name="800"><span class="lineNum">     800 </span>            :     // @Group: RC</a>
+<a name="801"><span class="lineNum">     801 </span>            :     // @Path: ../libraries/RC_Channel/RC_Channels_VarInfo.h</a>
+<a name="802"><span class="lineNum">     802 </span>            :     AP_SUBGROUPINFO(rc_channels, &quot;RC&quot;, 17, ParametersG2, RC_Channels_Copter),</a>
+<a name="803"><span class="lineNum">     803 </span>            : </a>
+<a name="804"><span class="lineNum">     804 </span>            :     // 18 was used by AP_VisualOdom</a>
+<a name="805"><span class="lineNum">     805 </span>            : </a>
+<a name="806"><span class="lineNum">     806 </span>            : #if AP_TEMPCALIBRATION_ENABLED</a>
+<a name="807"><span class="lineNum">     807 </span>            :     // @Group: TCAL</a>
+<a name="808"><span class="lineNum">     808 </span>            :     // @Path: ../libraries/AP_TempCalibration/AP_TempCalibration.cpp</a>
+<a name="809"><span class="lineNum">     809 </span>            :     AP_SUBGROUPINFO(temp_calibration, &quot;TCAL&quot;, 19, ParametersG2, AP_TempCalibration),</a>
+<a name="810"><span class="lineNum">     810 </span>            : #endif</a>
+<a name="811"><span class="lineNum">     811 </span>            : </a>
+<a name="812"><span class="lineNum">     812 </span>            : #if TOY_MODE_ENABLED</a>
+<a name="813"><span class="lineNum">     813 </span>            :     // @Group: TMODE</a>
+<a name="814"><span class="lineNum">     814 </span>            :     // @Path: toy_mode.cpp</a>
+<a name="815"><span class="lineNum">     815 </span>            :     AP_SUBGROUPINFO(toy_mode, &quot;TMODE&quot;, 20, ParametersG2, ToyMode),</a>
+<a name="816"><span class="lineNum">     816 </span>            : #endif</a>
+<a name="817"><span class="lineNum">     817 </span>            : </a>
+<a name="818"><span class="lineNum">     818 </span>            : #if MODE_SMARTRTL_ENABLED</a>
+<a name="819"><span class="lineNum">     819 </span>            :     // @Group: SRTL_</a>
+<a name="820"><span class="lineNum">     820 </span>            :     // @Path: ../libraries/AP_SmartRTL/AP_SmartRTL.cpp</a>
+<a name="821"><span class="lineNum">     821 </span>            :     AP_SUBGROUPINFO(smart_rtl, &quot;SRTL_&quot;, 21, ParametersG2, AP_SmartRTL),</a>
+<a name="822"><span class="lineNum">     822 </span>            : #endif</a>
+<a name="823"><span class="lineNum">     823 </span>            : </a>
+<a name="824"><span class="lineNum">     824 </span>            : #if AP_WINCH_ENABLED</a>
+<a name="825"><span class="lineNum">     825 </span>            :     // 22 was AP_WheelEncoder</a>
+<a name="826"><span class="lineNum">     826 </span>            : </a>
+<a name="827"><span class="lineNum">     827 </span>            :     // @Group: WINCH</a>
+<a name="828"><span class="lineNum">     828 </span>            :     // @Path: ../libraries/AP_Winch/AP_Winch.cpp</a>
+<a name="829"><span class="lineNum">     829 </span>            :     AP_SUBGROUPINFO(winch, &quot;WINCH&quot;, 23, ParametersG2, AP_Winch),</a>
+<a name="830"><span class="lineNum">     830 </span>            : #endif</a>
+<a name="831"><span class="lineNum">     831 </span>            : </a>
+<a name="832"><span class="lineNum">     832 </span>            :     // @Param: PILOT_SPEED_DN</a>
+<a name="833"><span class="lineNum">     833 </span>            :     // @DisplayName: Pilot maximum vertical speed descending</a>
+<a name="834"><span class="lineNum">     834 </span>            :     // @Description: The maximum vertical descending velocity the pilot may request in cm/s.  If 0 PILOT_SPEED_UP value is used.</a>
+<a name="835"><span class="lineNum">     835 </span>            :     // @Units: cm/s</a>
+<a name="836"><span class="lineNum">     836 </span>            :     // @Range: 0 500</a>
+<a name="837"><span class="lineNum">     837 </span>            :     // @Increment: 10</a>
+<a name="838"><span class="lineNum">     838 </span>            :     // @User: Standard</a>
+<a name="839"><span class="lineNum">     839 </span>            :     AP_GROUPINFO(&quot;PILOT_SPEED_DN&quot;, 24, ParametersG2, pilot_speed_dn_cms, 0),</a>
+<a name="840"><span class="lineNum">     840 </span>            : </a>
+<a name="841"><span class="lineNum">     841 </span>            :     // @Param: LAND_ALT_LOW</a>
+<a name="842"><span class="lineNum">     842 </span>            :     // @DisplayName: Land alt low</a>
+<a name="843"><span class="lineNum">     843 </span>            :     // @Description: Altitude during Landing at which vehicle slows to LAND_SPEED</a>
+<a name="844"><span class="lineNum">     844 </span>            :     // @Units: cm</a>
+<a name="845"><span class="lineNum">     845 </span>            :     // @Range: 100 10000</a>
+<a name="846"><span class="lineNum">     846 </span>            :     // @Increment: 10</a>
+<a name="847"><span class="lineNum">     847 </span>            :     // @User: Advanced</a>
+<a name="848"><span class="lineNum">     848 </span>            :     AP_GROUPINFO(&quot;LAND_ALT_LOW&quot;, 25, ParametersG2, land_alt_low_cm, 1000),</a>
+<a name="849"><span class="lineNum">     849 </span>            : </a>
+<a name="850"><span class="lineNum">     850 </span>            : #if MODE_FLOWHOLD_ENABLED</a>
+<a name="851"><span class="lineNum">     851 </span>            :     // @Group: FHLD</a>
+<a name="852"><span class="lineNum">     852 </span>            :     // @Path: mode_flowhold.cpp</a>
+<a name="853"><span class="lineNum">     853 </span>            :     AP_SUBGROUPPTR(mode_flowhold_ptr, &quot;FHLD&quot;, 26, ParametersG2, ModeFlowHold),</a>
+<a name="854"><span class="lineNum">     854 </span>            : #endif</a>
+<a name="855"><span class="lineNum">     855 </span>            : </a>
+<a name="856"><span class="lineNum">     856 </span>            : #if MODE_FOLLOW_ENABLED</a>
+<a name="857"><span class="lineNum">     857 </span>            :     // @Group: FOLL</a>
+<a name="858"><span class="lineNum">     858 </span>            :     // @Path: ../libraries/AP_Follow/AP_Follow.cpp</a>
+<a name="859"><span class="lineNum">     859 </span>            :     AP_SUBGROUPINFO(follow, &quot;FOLL&quot;, 27, ParametersG2, AP_Follow),</a>
+<a name="860"><span class="lineNum">     860 </span>            : #endif</a>
+<a name="861"><span class="lineNum">     861 </span>            : </a>
+<a name="862"><span class="lineNum">     862 </span>            : #if USER_PARAMS_ENABLED</a>
+<a name="863"><span class="lineNum">     863 </span>            :     AP_SUBGROUPINFO(user_parameters, &quot;USR&quot;, 28, ParametersG2, UserParameters),</a>
+<a name="864"><span class="lineNum">     864 </span>            : #endif</a>
+<a name="865"><span class="lineNum">     865 </span>            : </a>
+<a name="866"><span class="lineNum">     866 </span>            : #if AUTOTUNE_ENABLED</a>
+<a name="867"><span class="lineNum">     867 </span>            :     // @Group: AUTOTUNE_</a>
+<a name="868"><span class="lineNum">     868 </span>            :     // @Path: ../libraries/AC_AutoTune/AC_AutoTune_Multi.cpp,../libraries/AC_AutoTune/AC_AutoTune_Heli.cpp</a>
+<a name="869"><span class="lineNum">     869 </span>            :     AP_SUBGROUPPTR(autotune_ptr, &quot;AUTOTUNE_&quot;,  29, ParametersG2, AutoTune),</a>
+<a name="870"><span class="lineNum">     870 </span>            : #endif</a>
+<a name="871"><span class="lineNum">     871 </span>            : </a>
+<a name="872"><span class="lineNum">     872 </span>            :     // 30 was AP_Scripting</a>
+<a name="873"><span class="lineNum">     873 </span>            : </a>
+<a name="874"><span class="lineNum">     874 </span>            : #if AP_RC_TRANSMITTER_TUNING_ENABLED</a>
+<a name="875"><span class="lineNum">     875 </span>            :     // @Param: TUNE_MIN</a>
+<a name="876"><span class="lineNum">     876 </span>            :     // @DisplayName: Tuning minimum</a>
+<a name="877"><span class="lineNum">     877 </span>            :     // @Description: Transmitter Tuning minum value. The parameter being tuned will have its value set to this minimum value when the tuning knob is at its lowest position</a>
+<a name="878"><span class="lineNum">     878 </span>            :     // @User: Standard</a>
+<a name="879"><span class="lineNum">     879 </span>            :     AP_GROUPINFO(&quot;TUNE_MIN&quot;, 31, ParametersG2, rc_tuning_min, 0),</a>
+<a name="880"><span class="lineNum">     880 </span>            : </a>
+<a name="881"><span class="lineNum">     881 </span>            :     // @Param: TUNE_MAX</a>
+<a name="882"><span class="lineNum">     882 </span>            :     // @DisplayName: Tuning maximum</a>
+<a name="883"><span class="lineNum">     883 </span>            :     // @Description: Transmitter Tuning maximum value. The parameter being tuned will have its value set to this maximum value when the tuning knob is at its highest position</a>
+<a name="884"><span class="lineNum">     884 </span>            :     // @User: Standard</a>
+<a name="885"><span class="lineNum">     885 </span>            :     AP_GROUPINFO(&quot;TUNE_MAX&quot;, 32, ParametersG2, rc_tuning_max, 0),</a>
+<a name="886"><span class="lineNum">     886 </span>            : #endif  // AP_RC_TRANSMITTER_TUNING_ENABLED</a>
+<a name="887"><span class="lineNum">     887 </span>            : </a>
+<a name="888"><span class="lineNum">     888 </span>            : #if AP_OAPATHPLANNER_ENABLED</a>
+<a name="889"><span class="lineNum">     889 </span>            :     // @Group: OA_</a>
+<a name="890"><span class="lineNum">     890 </span>            :     // @Path: ../libraries/AC_Avoidance/AP_OAPathPlanner.cpp</a>
+<a name="891"><span class="lineNum">     891 </span>            :     AP_SUBGROUPINFO(oa, &quot;OA_&quot;, 33, ParametersG2, AP_OAPathPlanner),</a>
+<a name="892"><span class="lineNum">     892 </span>            : #endif</a>
+<a name="893"><span class="lineNum">     893 </span>            : </a>
+<a name="894"><span class="lineNum">     894 </span>            : #if MODE_SYSTEMID_ENABLED</a>
+<a name="895"><span class="lineNum">     895 </span>            :     // @Group: SID</a>
+<a name="896"><span class="lineNum">     896 </span>            :     // @Path: mode_systemid.cpp</a>
+<a name="897"><span class="lineNum">     897 </span>            :     AP_SUBGROUPPTR(mode_systemid_ptr, &quot;SID&quot;, 34, ParametersG2, ModeSystemId),</a>
+<a name="898"><span class="lineNum">     898 </span>            : #endif</a>
+<a name="899"><span class="lineNum">     899 </span>            : </a>
+<a name="900"><span class="lineNum">     900 </span>            :     // @Param: FS_VIBE_ENABLE</a>
+<a name="901"><span class="lineNum">     901 </span>            :     // @DisplayName: Vibration Failsafe enable</a>
+<a name="902"><span class="lineNum">     902 </span>            :     // @Description: This enables the vibration failsafe which will use modified altitude estimation and control during high vibrations</a>
+<a name="903"><span class="lineNum">     903 </span>            :     // @Values: 0:Disabled, 1:Enabled</a>
+<a name="904"><span class="lineNum">     904 </span>            :     // @User: Standard</a>
+<a name="905"><span class="lineNum">     905 </span>            :     AP_GROUPINFO(&quot;FS_VIBE_ENABLE&quot;, 35, ParametersG2, fs_vibe_enabled, 1),</a>
+<a name="906"><span class="lineNum">     906 </span>            : </a>
+<a name="907"><span class="lineNum">     907 </span>            :     // @Param: FS_OPTIONS</a>
+<a name="908"><span class="lineNum">     908 </span>            :     // @DisplayName: Failsafe options bitmask</a>
+<a name="909"><span class="lineNum">     909 </span>            :     // @Description: Bitmask of additional options for battery, radio, &amp; GCS failsafes. 0 (default) disables all options.</a>
+<a name="910"><span class="lineNum">     910 </span>            :     // @Bitmask: 0:Continue if in Auto on RC failsafe, 1:Continue if in Auto on GCS failsafe, 2:Continue if in Guided on RC failsafe, 3:Continue if landing on any failsafe, 4:Continue if in pilot controlled modes on GCS failsafe, 5:Release Gripper</a>
+<a name="911"><span class="lineNum">     911 </span>            :     // @User: Advanced</a>
+<a name="912"><span class="lineNum">     912 </span>            :     AP_GROUPINFO(&quot;FS_OPTIONS&quot;, 36, ParametersG2, fs_options, (float)Copter::FailsafeOption::GCS_CONTINUE_IF_PILOT_CONTROL),</a>
+<a name="913"><span class="lineNum">     913 </span>            : </a>
+<a name="914"><span class="lineNum">     914 </span>            : #if MODE_AUTOROTATE_ENABLED</a>
+<a name="915"><span class="lineNum">     915 </span>            :     // @Group: AROT_</a>
+<a name="916"><span class="lineNum">     916 </span>            :     // @Path: ../libraries/AC_Autorotation/AC_Autorotation.cpp</a>
+<a name="917"><span class="lineNum">     917 </span>            :     AP_SUBGROUPINFO(arot, &quot;AROT_&quot;, 37, ParametersG2, AC_Autorotation),</a>
+<a name="918"><span class="lineNum">     918 </span>            : #endif</a>
+<a name="919"><span class="lineNum">     919 </span>            : </a>
+<a name="920"><span class="lineNum">     920 </span>            : #if MODE_ZIGZAG_ENABLED</a>
+<a name="921"><span class="lineNum">     921 </span>            :     // @Group: ZIGZ_</a>
+<a name="922"><span class="lineNum">     922 </span>            :     // @Path: mode_zigzag.cpp</a>
+<a name="923"><span class="lineNum">     923 </span>            :     AP_SUBGROUPPTR(mode_zigzag_ptr, &quot;ZIGZ_&quot;, 38, ParametersG2, ModeZigZag),</a>
+<a name="924"><span class="lineNum">     924 </span>            : #endif</a>
+<a name="925"><span class="lineNum">     925 </span>            : </a>
+<a name="926"><span class="lineNum">     926 </span>            : #if MODE_ACRO_ENABLED</a>
+<a name="927"><span class="lineNum">     927 </span>            :     // @Param: ACRO_OPTIONS</a>
+<a name="928"><span class="lineNum">     928 </span>            :     // @DisplayName: Acro mode options</a>
+<a name="929"><span class="lineNum">     929 </span>            :     // @Description: A range of options that can be applied to change acro mode behaviour. Air-mode enables ATC_THR_MIX_MAN at all times (air-mode has no effect on helicopters). Rate Loop Only disables the use of angle stabilization and uses angular rate stabilization only.</a>
+<a name="930"><span class="lineNum">     930 </span>            :     // @Bitmask: 0:Air-mode,1:Rate Loop Only</a>
+<a name="931"><span class="lineNum">     931 </span>            :     // @User: Advanced</a>
+<a name="932"><span class="lineNum">     932 </span>            :     AP_GROUPINFO(&quot;ACRO_OPTIONS&quot;, 39, ParametersG2, acro_options, 0),</a>
+<a name="933"><span class="lineNum">     933 </span>            : #endif</a>
+<a name="934"><span class="lineNum">     934 </span>            : </a>
+<a name="935"><span class="lineNum">     935 </span>            : #if MODE_AUTO_ENABLED</a>
+<a name="936"><span class="lineNum">     936 </span>            :     // @Param: AUTO_OPTIONS</a>
+<a name="937"><span class="lineNum">     937 </span>            :     // @DisplayName: Auto mode options</a>
+<a name="938"><span class="lineNum">     938 </span>            :     // @Description: A range of options that can be applied to change auto mode behaviour. Allow Arming allows the copter to be armed in Auto. Allow Takeoff Without Raising Throttle allows takeoff without the pilot having to raise the throttle. Ignore pilot yaw overrides the pilot's yaw stick being used while in auto.</a>
+<a name="939"><span class="lineNum">     939 </span>            :     // @Bitmask: 0:Allow Arming,1:Allow Takeoff Without Raising Throttle,2:Ignore pilot yaw,7:Allow weathervaning</a>
+<a name="940"><span class="lineNum">     940 </span>            :     // @User: Advanced</a>
+<a name="941"><span class="lineNum">     941 </span>            :     AP_GROUPINFO(&quot;AUTO_OPTIONS&quot;, 40, ParametersG2, auto_options, 0),</a>
+<a name="942"><span class="lineNum">     942 </span>            : #endif</a>
+<a name="943"><span class="lineNum">     943 </span>            : </a>
+<a name="944"><span class="lineNum">     944 </span>            : #if MODE_GUIDED_ENABLED</a>
+<a name="945"><span class="lineNum">     945 </span>            :     // @Param: GUID_OPTIONS</a>
+<a name="946"><span class="lineNum">     946 </span>            :     // @DisplayName: Guided mode options</a>
+<a name="947"><span class="lineNum">     947 </span>            :     // @Description: Options that can be applied to change guided mode behaviour</a>
+<a name="948"><span class="lineNum">     948 </span>            :     // @Bitmask: 0:Allow Arming from Transmitter,2:Ignore pilot yaw,3:SetAttitudeTarget interprets Thrust As Thrust,4:Do not stabilize PositionXY,5:Do not stabilize VelocityXY,6:Waypoint navigation used for position targets,7:Allow weathervaning</a>
+<a name="949"><span class="lineNum">     949 </span>            :     // @User: Advanced</a>
+<a name="950"><span class="lineNum">     950 </span>            :     AP_GROUPINFO(&quot;GUID_OPTIONS&quot;, 41, ParametersG2, guided_options, 0),</a>
+<a name="951"><span class="lineNum">     951 </span>            : #endif</a>
+<a name="952"><span class="lineNum">     952 </span>            : </a>
+<a name="953"><span class="lineNum">     953 </span>            :     // @Param: FS_GCS_TIMEOUT</a>
+<a name="954"><span class="lineNum">     954 </span>            :     // @DisplayName: GCS failsafe timeout</a>
+<a name="955"><span class="lineNum">     955 </span>            :     // @Description: Timeout before triggering the GCS failsafe</a>
+<a name="956"><span class="lineNum">     956 </span>            :     // @Units: s</a>
+<a name="957"><span class="lineNum">     957 </span>            :     // @Range: 2 120</a>
+<a name="958"><span class="lineNum">     958 </span>            :     // @Increment: 1</a>
+<a name="959"><span class="lineNum">     959 </span>            :     // @User: Standard</a>
+<a name="960"><span class="lineNum">     960 </span>            :     AP_GROUPINFO(&quot;FS_GCS_TIMEOUT&quot;, 42, ParametersG2, fs_gcs_timeout, 5),</a>
+<a name="961"><span class="lineNum">     961 </span>            : </a>
+<a name="962"><span class="lineNum">     962 </span>            : #if MODE_RTL_ENABLED</a>
+<a name="963"><span class="lineNum">     963 </span>            :     // @Param: RTL_OPTIONS</a>
+<a name="964"><span class="lineNum">     964 </span>            :     // @DisplayName: RTL mode options</a>
+<a name="965"><span class="lineNum">     965 </span>            :     // @Description: Options that can be applied to change RTL mode behaviour</a>
+<a name="966"><span class="lineNum">     966 </span>            :     // @Bitmask: 2:Ignore pilot yaw</a>
+<a name="967"><span class="lineNum">     967 </span>            :     // @User: Advanced</a>
+<a name="968"><span class="lineNum">     968 </span>            :     AP_GROUPINFO(&quot;RTL_OPTIONS&quot;, 43, ParametersG2, rtl_options, 0),</a>
+<a name="969"><span class="lineNum">     969 </span>            : #endif</a>
+<a name="970"><span class="lineNum">     970 </span>            : </a>
+<a name="971"><span class="lineNum">     971 </span>            :     // @Param: FLIGHT_OPTIONS</a>
+<a name="972"><span class="lineNum">     972 </span>            :     // @DisplayName: Flight mode options</a>
+<a name="973"><span class="lineNum">     973 </span>            :     // @Description: Flight mode specific options</a>
+<a name="974"><span class="lineNum">     974 </span>            :     // @Bitmask: 0:Disable thrust loss check, 1:Disable yaw imbalance warning, 2:Release gripper on thrust loss</a>
+<a name="975"><span class="lineNum">     975 </span>            :     // @User: Advanced</a>
+<a name="976"><span class="lineNum">     976 </span>            :     AP_GROUPINFO(&quot;FLIGHT_OPTIONS&quot;, 44, ParametersG2, flight_options, 0),</a>
+<a name="977"><span class="lineNum">     977 </span>            : </a>
+<a name="978"><span class="lineNum">     978 </span>            : #if AP_RANGEFINDER_ENABLED</a>
+<a name="979"><span class="lineNum">     979 </span>            :     // @Param: RNGFND_FILT</a>
+<a name="980"><span class="lineNum">     980 </span>            :     // @DisplayName: Rangefinder filter</a>
+<a name="981"><span class="lineNum">     981 </span>            :     // @Description: Rangefinder filter to smooth distance.  Set to zero to disable filtering</a>
+<a name="982"><span class="lineNum">     982 </span>            :     // @Units: Hz</a>
+<a name="983"><span class="lineNum">     983 </span>            :     // @Range: 0 5</a>
+<a name="984"><span class="lineNum">     984 </span>            :     // @Increment: 0.05</a>
+<a name="985"><span class="lineNum">     985 </span>            :     // @User: Standard</a>
+<a name="986"><span class="lineNum">     986 </span>            :     // @RebootRequired: True</a>
+<a name="987"><span class="lineNum">     987 </span>            :     AP_GROUPINFO(&quot;RNGFND_FILT&quot;, 45, ParametersG2, rangefinder_filt, RANGEFINDER_FILT_DEFAULT),</a>
+<a name="988"><span class="lineNum">     988 </span>            : #endif</a>
+<a name="989"><span class="lineNum">     989 </span>            : </a>
+<a name="990"><span class="lineNum">     990 </span>            : #if MODE_GUIDED_ENABLED</a>
+<a name="991"><span class="lineNum">     991 </span>            :     // @Param: GUID_TIMEOUT</a>
+<a name="992"><span class="lineNum">     992 </span>            :     // @DisplayName: Guided mode timeout</a>
+<a name="993"><span class="lineNum">     993 </span>            :     // @Description: Guided mode timeout after which vehicle will stop or return to level if no updates are received from caller. Only applicable during any combination of velocity, acceleration, angle control, and/or angular rate control</a>
+<a name="994"><span class="lineNum">     994 </span>            :     // @Units: s</a>
+<a name="995"><span class="lineNum">     995 </span>            :     // @Range: 0.1 5</a>
+<a name="996"><span class="lineNum">     996 </span>            :     // @User: Advanced</a>
+<a name="997"><span class="lineNum">     997 </span>            :     AP_GROUPINFO(&quot;GUID_TIMEOUT&quot;, 46, ParametersG2, guided_timeout, 3.0),</a>
+<a name="998"><span class="lineNum">     998 </span>            : #endif</a>
+<a name="999"><span class="lineNum">     999 </span>            : </a>
+<a name="1000"><span class="lineNum">    1000 </span>            :     // ACRO_PR_RATE (47), ACRO_Y_RATE (48), PILOT_Y_RATE (49) and PILOT_Y_EXPO (50) moved to command model class</a>
+<a name="1001"><span class="lineNum">    1001 </span>            : </a>
+<a name="1002"><span class="lineNum">    1002 </span>            : #if AP_RANGEFINDER_ENABLED</a>
+<a name="1003"><span class="lineNum">    1003 </span>            :     // @Param: SURFTRAK_MODE</a>
+<a name="1004"><span class="lineNum">    1004 </span>            :     // @DisplayName: Surface Tracking Mode</a>
+<a name="1005"><span class="lineNum">    1005 </span>            :     // @Description: set which surface to track in surface tracking</a>
+<a name="1006"><span class="lineNum">    1006 </span>            :     // @Values: 0:Do not track, 1:Ground, 2:Ceiling</a>
+<a name="1007"><span class="lineNum">    1007 </span>            :     // @User: Advanced</a>
+<a name="1008"><span class="lineNum">    1008 </span>            :     // @RebootRequired: True</a>
+<a name="1009"><span class="lineNum">    1009 </span>            :     AP_GROUPINFO(&quot;SURFTRAK_MODE&quot;, 51, ParametersG2, surftrak_mode, (uint8_t)Copter::SurfaceTracking::Surface::GROUND),</a>
+<a name="1010"><span class="lineNum">    1010 </span>            : #endif</a>
+<a name="1011"><span class="lineNum">    1011 </span>            : </a>
+<a name="1012"><span class="lineNum">    1012 </span>            :     // @Param: FS_DR_ENABLE</a>
+<a name="1013"><span class="lineNum">    1013 </span>            :     // @DisplayName: DeadReckon Failsafe Action</a>
+<a name="1014"><span class="lineNum">    1014 </span>            :     // @Description: Failsafe action taken immediately as deadreckoning starts. Deadreckoning starts when EKF loses position and velocity source and relies only on wind estimates</a>
+<a name="1015"><span class="lineNum">    1015 </span>            :     // @Values: 0:Disabled/NoAction,1:Land, 2:RTL, 3:SmartRTL or RTL, 4:SmartRTL or Land, 6:Auto DO_LAND_START/DO_RETURN_PATH_START or RTL</a>
+<a name="1016"><span class="lineNum">    1016 </span>            :     // @User: Standard</a>
+<a name="1017"><span class="lineNum">    1017 </span>            :     AP_GROUPINFO(&quot;FS_DR_ENABLE&quot;, 52, ParametersG2, failsafe_dr_enable, (uint8_t)Copter::FailsafeAction::RTL),</a>
+<a name="1018"><span class="lineNum">    1018 </span>            : </a>
+<a name="1019"><span class="lineNum">    1019 </span>            :     // @Param: FS_DR_TIMEOUT</a>
+<a name="1020"><span class="lineNum">    1020 </span>            :     // @DisplayName: DeadReckon Failsafe Timeout</a>
+<a name="1021"><span class="lineNum">    1021 </span>            :     // @Description: DeadReckoning is available for this many seconds after losing position and/or velocity source.  After this timeout elapses the EKF failsafe will trigger in modes requiring a position estimate</a>
+<a name="1022"><span class="lineNum">    1022 </span>            :     // @Range: 0 120</a>
+<a name="1023"><span class="lineNum">    1023 </span>            :     // @User: Standard</a>
+<a name="1024"><span class="lineNum">    1024 </span>            :     AP_GROUPINFO(&quot;FS_DR_TIMEOUT&quot;, 53, ParametersG2, failsafe_dr_timeout, 30),</a>
+<a name="1025"><span class="lineNum">    1025 </span>            : </a>
+<a name="1026"><span class="lineNum">    1026 </span>            : #if MODE_ACRO_ENABLED || MODE_SPORT_ENABLED</a>
+<a name="1027"><span class="lineNum">    1027 </span>            :     // @Param: ACRO_RP_RATE</a>
+<a name="1028"><span class="lineNum">    1028 </span>            :     // @DisplayName: Acro Roll and Pitch Rate</a>
+<a name="1029"><span class="lineNum">    1029 </span>            :     // @Description: Acro mode maximum roll and pitch rate.  Higher values mean faster rate of rotation</a>
+<a name="1030"><span class="lineNum">    1030 </span>            :     // @Units: deg/s</a>
+<a name="1031"><span class="lineNum">    1031 </span>            :     // @Range: 1 1080</a>
+<a name="1032"><span class="lineNum">    1032 </span>            :     // @User: Standard</a>
+<a name="1033"><span class="lineNum">    1033 </span>            : </a>
+<a name="1034"><span class="lineNum">    1034 </span>            :     // @Param: ACRO_RP_EXPO</a>
+<a name="1035"><span class="lineNum">    1035 </span>            :     // @DisplayName: Acro Roll/Pitch Expo</a>
+<a name="1036"><span class="lineNum">    1036 </span>            :     // @Description: Acro roll/pitch Expo to allow faster rotation when stick at edges</a>
+<a name="1037"><span class="lineNum">    1037 </span>            :     // @Values: 0:Disabled,0.1:Very Low,0.2:Low,0.3:Medium,0.4:High,0.5:Very High</a>
+<a name="1038"><span class="lineNum">    1038 </span>            :     // @Range: -0.5 0.95</a>
+<a name="1039"><span class="lineNum">    1039 </span>            :     // @User: Advanced</a>
+<a name="1040"><span class="lineNum">    1040 </span>            : </a>
+<a name="1041"><span class="lineNum">    1041 </span>            :     // @Param: ACRO_RP_RATE_TC</a>
+<a name="1042"><span class="lineNum">    1042 </span>            :     // @DisplayName: Acro roll/pitch rate control input time constant</a>
+<a name="1043"><span class="lineNum">    1043 </span>            :     // @Description: Acro roll and pitch rate control input time constant.  Low numbers lead to sharper response, higher numbers to softer response</a>
+<a name="1044"><span class="lineNum">    1044 </span>            :     // @Units: s</a>
+<a name="1045"><span class="lineNum">    1045 </span>            :     // @Range: 0 1</a>
+<a name="1046"><span class="lineNum">    1046 </span>            :     // @Increment: 0.01</a>
+<a name="1047"><span class="lineNum">    1047 </span>            :     // @Values: 0.5:Very Soft, 0.2:Soft, 0.15:Medium, 0.1:Crisp, 0.05:Very Crisp</a>
+<a name="1048"><span class="lineNum">    1048 </span>            :     // @User: Standard</a>
+<a name="1049"><span class="lineNum">    1049 </span>            :     AP_SUBGROUPINFO(command_model_acro_rp, &quot;ACRO_RP_&quot;, 54, ParametersG2, AC_CommandModel),</a>
+<a name="1050"><span class="lineNum">    1050 </span>            : #endif</a>
+<a name="1051"><span class="lineNum">    1051 </span>            : </a>
+<a name="1052"><span class="lineNum">    1052 </span>            : #if MODE_ACRO_ENABLED || MODE_DRIFT_ENABLED</a>
+<a name="1053"><span class="lineNum">    1053 </span>            :     // @Param: ACRO_Y_RATE</a>
+<a name="1054"><span class="lineNum">    1054 </span>            :     // @DisplayName: Acro Yaw Rate</a>
+<a name="1055"><span class="lineNum">    1055 </span>            :     // @Description: Acro mode maximum yaw rate.  Higher value means faster rate of rotation</a>
+<a name="1056"><span class="lineNum">    1056 </span>            :     // @Units: deg/s</a>
+<a name="1057"><span class="lineNum">    1057 </span>            :     // @Range: 1 360</a>
+<a name="1058"><span class="lineNum">    1058 </span>            :     // @User: Standard</a>
+<a name="1059"><span class="lineNum">    1059 </span>            : </a>
+<a name="1060"><span class="lineNum">    1060 </span>            :     // @Param: ACRO_Y_EXPO</a>
+<a name="1061"><span class="lineNum">    1061 </span>            :     // @DisplayName: Acro Yaw Expo</a>
+<a name="1062"><span class="lineNum">    1062 </span>            :     // @Description: Acro yaw expo to allow faster rotation when stick at edges</a>
+<a name="1063"><span class="lineNum">    1063 </span>            :     // @Values: 0:Disabled,0.1:Very Low,0.2:Low,0.3:Medium,0.4:High,0.5:Very High</a>
+<a name="1064"><span class="lineNum">    1064 </span>            :     // @Range: -1.0 0.95</a>
+<a name="1065"><span class="lineNum">    1065 </span>            :     // @User: Advanced</a>
+<a name="1066"><span class="lineNum">    1066 </span>            : </a>
+<a name="1067"><span class="lineNum">    1067 </span>            :     // @Param: ACRO_Y_RATE_TC</a>
+<a name="1068"><span class="lineNum">    1068 </span>            :     // @DisplayName: Acro yaw rate control input time constant</a>
+<a name="1069"><span class="lineNum">    1069 </span>            :     // @Description: Acro yaw rate control input time constant.  Low numbers lead to sharper response, higher numbers to softer response</a>
+<a name="1070"><span class="lineNum">    1070 </span>            :     // @Units: s</a>
+<a name="1071"><span class="lineNum">    1071 </span>            :     // @Range: 0 1</a>
+<a name="1072"><span class="lineNum">    1072 </span>            :     // @Increment: 0.01</a>
+<a name="1073"><span class="lineNum">    1073 </span>            :     // @Values: 0.5:Very Soft, 0.2:Soft, 0.15:Medium, 0.1:Crisp, 0.05:Very Crisp</a>
+<a name="1074"><span class="lineNum">    1074 </span>            :     // @User: Standard</a>
+<a name="1075"><span class="lineNum">    1075 </span>            :     AP_SUBGROUPINFO(command_model_acro_y, &quot;ACRO_Y_&quot;, 55, ParametersG2, AC_CommandModel),</a>
+<a name="1076"><span class="lineNum">    1076 </span>            : #endif</a>
+<a name="1077"><span class="lineNum">    1077 </span>            : </a>
+<a name="1078"><span class="lineNum">    1078 </span>            :     // @Param: PILOT_Y_RATE</a>
+<a name="1079"><span class="lineNum">    1079 </span>            :     // @DisplayName: Pilot controlled yaw rate</a>
+<a name="1080"><span class="lineNum">    1080 </span>            :     // @Description: Pilot controlled yaw rate max.  Used in all pilot controlled modes except Acro</a>
+<a name="1081"><span class="lineNum">    1081 </span>            :     // @Units: deg/s</a>
+<a name="1082"><span class="lineNum">    1082 </span>            :     // @Range: 1 360</a>
+<a name="1083"><span class="lineNum">    1083 </span>            :     // @User: Standard</a>
+<a name="1084"><span class="lineNum">    1084 </span>            : </a>
+<a name="1085"><span class="lineNum">    1085 </span>            :     // @Param: PILOT_Y_EXPO</a>
+<a name="1086"><span class="lineNum">    1086 </span>            :     // @DisplayName: Pilot controlled yaw expo</a>
+<a name="1087"><span class="lineNum">    1087 </span>            :     // @Description: Pilot controlled yaw expo to allow faster rotation when stick at edges</a>
+<a name="1088"><span class="lineNum">    1088 </span>            :     // @Values: 0:Disabled,0.1:Very Low,0.2:Low,0.3:Medium,0.4:High,0.5:Very High</a>
+<a name="1089"><span class="lineNum">    1089 </span>            :     // @Range: -0.5 1.0</a>
+<a name="1090"><span class="lineNum">    1090 </span>            :     // @User: Advanced</a>
+<a name="1091"><span class="lineNum">    1091 </span>            : </a>
+<a name="1092"><span class="lineNum">    1092 </span>            :     // @Param: PILOT_Y_RATE_TC</a>
+<a name="1093"><span class="lineNum">    1093 </span>            :     // @DisplayName: Pilot yaw rate control input time constant</a>
+<a name="1094"><span class="lineNum">    1094 </span>            :     // @Description: Pilot yaw rate control input time constant.  Low numbers lead to sharper response, higher numbers to softer response</a>
+<a name="1095"><span class="lineNum">    1095 </span>            :     // @Units: s</a>
+<a name="1096"><span class="lineNum">    1096 </span>            :     // @Range: 0 1</a>
+<a name="1097"><span class="lineNum">    1097 </span>            :     // @Increment: 0.01</a>
+<a name="1098"><span class="lineNum">    1098 </span>            :     // @Values: 0.5:Very Soft, 0.2:Soft, 0.15:Medium, 0.1:Crisp, 0.05:Very Crisp</a>
+<a name="1099"><span class="lineNum">    1099 </span>            :     // @User: Standard</a>
+<a name="1100"><span class="lineNum">    1100 </span>            :     AP_SUBGROUPINFO(command_model_pilot_y, &quot;PILOT_Y_&quot;, 56, ParametersG2, AC_CommandModel),</a>
+<a name="1101"><span class="lineNum">    1101 </span>            : </a>
+<a name="1102"><span class="lineNum">    1102 </span>            :     // @Param: TKOFF_SLEW_TIME</a>
+<a name="1103"><span class="lineNum">    1103 </span>            :     // @DisplayName: Slew time of throttle during take-off</a>
+<a name="1104"><span class="lineNum">    1104 </span>            :     // @Description: Time to slew the throttle from minimum to maximum while checking for a successful takeoff.</a>
+<a name="1105"><span class="lineNum">    1105 </span>            :     // @Units: s</a>
+<a name="1106"><span class="lineNum">    1106 </span>            :     // @Range: 0.25 5.0</a>
+<a name="1107"><span class="lineNum">    1107 </span>            :     // @User: Standard</a>
+<a name="1108"><span class="lineNum">    1108 </span>            :     AP_GROUPINFO(&quot;TKOFF_SLEW_TIME&quot;, 57, ParametersG2, takeoff_throttle_slew_time, 2.0),</a>
+<a name="1109"><span class="lineNum">    1109 </span>            : </a>
+<a name="1110"><span class="lineNum">    1110 </span>            : #if HAL_WITH_ESC_TELEM &amp;&amp; FRAME_CONFIG != HELI_FRAME</a>
+<a name="1111"><span class="lineNum">    1111 </span>            :     // @Param: TKOFF_RPM_MIN</a>
+<a name="1112"><span class="lineNum">    1112 </span>            :     // @DisplayName: Takeoff Check RPM minimum</a>
+<a name="1113"><span class="lineNum">    1113 </span>            :     // @Description: Takeoff is not permitted until motors report at least this RPM.  Set to zero to disable check</a>
+<a name="1114"><span class="lineNum">    1114 </span>            :     // @Range: 0 10000</a>
+<a name="1115"><span class="lineNum">    1115 </span>            :     // @User: Standard</a>
+<a name="1116"><span class="lineNum">    1116 </span>            :     AP_GROUPINFO(&quot;TKOFF_RPM_MIN&quot;, 58, ParametersG2, takeoff_rpm_min, 0),</a>
+<a name="1117"><span class="lineNum">    1117 </span>            : #endif</a>
+<a name="1118"><span class="lineNum">    1118 </span>            : </a>
+<a name="1119"><span class="lineNum">    1119 </span>            : #if WEATHERVANE_ENABLED</a>
+<a name="1120"><span class="lineNum">    1120 </span>            :     // @Group: WVANE_</a>
+<a name="1121"><span class="lineNum">    1121 </span>            :     // @Path: ../libraries/AC_AttitudeControl/AC_WeatherVane.cpp</a>
+<a name="1122"><span class="lineNum">    1122 </span>            :     AP_SUBGROUPINFO(weathervane, &quot;WVANE_&quot;, 59, ParametersG2, AC_WeatherVane),</a>
+<a name="1123"><span class="lineNum">    1123 </span>            : #endif</a>
+<a name="1124"><span class="lineNum">    1124 </span>            : </a>
+<a name="1125"><span class="lineNum">    1125 </span>            :     // ID 60 is reserved for the SHIP_OPS</a>
+<a name="1126"><span class="lineNum">    1126 </span>            : </a>
+<a name="1127"><span class="lineNum">    1127 </span>            :     // extend to a new group</a>
+<a name="1128"><span class="lineNum">    1128 </span>            :     AP_SUBGROUPEXTENSION(&quot;&quot;, 61, ParametersG2, var_info2),</a>
+<a name="1129"><span class="lineNum">    1129 </span>            : </a>
+<a name="1130"><span class="lineNum">    1130 </span>            :     // ID 62 is reserved for the SHOW_... parameters from the Skybrush fork at</a>
+<a name="1131"><span class="lineNum">    1131 </span>            :     // https://github.com/skybrush-io/ardupilot</a>
+<a name="1132"><span class="lineNum">    1132 </span>            : </a>
+<a name="1133"><span class="lineNum">    1133 </span>            :     AP_GROUPEND</a>
+<a name="1134"><span class="lineNum">    1134 </span>            : };</a>
+<a name="1135"><span class="lineNum">    1135 </span>            : </a>
+<a name="1136"><span class="lineNum">    1136 </span>            : /*</a>
+<a name="1137"><span class="lineNum">    1137 </span>            :   extension to g2 parameters</a>
+<a name="1138"><span class="lineNum">    1138 </span>            :  */</a>
+<a name="1139"><span class="lineNum">    1139 </span>            : const AP_Param::GroupInfo ParametersG2::var_info2[] = {</a>
+<a name="1140"><span class="lineNum">    1140 </span>            : </a>
+<a name="1141"><span class="lineNum">    1141 </span>            :     // @Param: PLDP_THRESH</a>
+<a name="1142"><span class="lineNum">    1142 </span>            :     // @DisplayName: Payload Place thrust ratio threshold</a>
+<a name="1143"><span class="lineNum">    1143 </span>            :     // @Description: Ratio of vertical thrust during decent below which payload touchdown will trigger.</a>
+<a name="1144"><span class="lineNum">    1144 </span>            :     // @Range: 0.5 0.9</a>
+<a name="1145"><span class="lineNum">    1145 </span>            :     // @User: Standard</a>
+<a name="1146"><span class="lineNum">    1146 </span>            :     AP_GROUPINFO(&quot;PLDP_THRESH&quot;, 1, ParametersG2, pldp_thrust_placed_fraction, 0.9),</a>
+<a name="1147"><span class="lineNum">    1147 </span>            : </a>
+<a name="1148"><span class="lineNum">    1148 </span>            :     // @Param: PLDP_RNG_MAX</a>
+<a name="1149"><span class="lineNum">    1149 </span>            :     // @DisplayName: Payload Place maximum range finder altitude</a>
+<a name="1150"><span class="lineNum">    1150 </span>            :     // @Description: Maximum range finder altitude in m to trigger payload touchdown, set to zero to disable.</a>
+<a name="1151"><span class="lineNum">    1151 </span>            :     // @Units: m</a>
+<a name="1152"><span class="lineNum">    1152 </span>            :     // @Range: 0 100</a>
+<a name="1153"><span class="lineNum">    1153 </span>            :     // @User: Standard</a>
+<a name="1154"><span class="lineNum">    1154 </span>            :     AP_GROUPINFO(&quot;PLDP_RNG_MAX&quot;, 2, ParametersG2, pldp_range_finder_maximum_m, 0.0),</a>
+<a name="1155"><span class="lineNum">    1155 </span>            : </a>
+<a name="1156"><span class="lineNum">    1156 </span>            :     // @Param: PLDP_DELAY</a>
+<a name="1157"><span class="lineNum">    1157 </span>            :     // @DisplayName: Payload Place climb delay</a>
+<a name="1158"><span class="lineNum">    1158 </span>            :     // @Description: Delay after release, in seconds, before aircraft starts to climb back to starting altitude.</a>
+<a name="1159"><span class="lineNum">    1159 </span>            :     // @Units: s</a>
+<a name="1160"><span class="lineNum">    1160 </span>            :     // @Range: 0 120</a>
+<a name="1161"><span class="lineNum">    1161 </span>            :     // @User: Standard</a>
+<a name="1162"><span class="lineNum">    1162 </span>            :     AP_GROUPINFO(&quot;PLDP_DELAY&quot;, 3, ParametersG2, pldp_delay_s, 0.0),</a>
+<a name="1163"><span class="lineNum">    1163 </span>            : </a>
+<a name="1164"><span class="lineNum">    1164 </span>            :     // @Param: PLDP_SPEED_DN</a>
+<a name="1165"><span class="lineNum">    1165 </span>            :     // @DisplayName: Payload Place decent speed</a>
+<a name="1166"><span class="lineNum">    1166 </span>            :     // @Description: The maximum vertical decent velocity in m/s. If 0 LAND_SPEED value is used.</a>
+<a name="1167"><span class="lineNum">    1167 </span>            :     // @Units: m/s</a>
+<a name="1168"><span class="lineNum">    1168 </span>            :     // @Range: 0 5</a>
+<a name="1169"><span class="lineNum">    1169 </span>            :     // @User: Standard</a>
+<a name="1170"><span class="lineNum">    1170 </span>            :     AP_GROUPINFO(&quot;PLDP_SPEED_DN&quot;, 4, ParametersG2, pldp_descent_speed_ms, 0.0),</a>
+<a name="1171"><span class="lineNum">    1171 </span>            : </a>
+<a name="1172"><span class="lineNum">    1172 </span>            :     // @Param: SURFTRAK_TC</a>
+<a name="1173"><span class="lineNum">    1173 </span>            :     // @DisplayName: Surface Tracking Filter Time Constant</a>
+<a name="1174"><span class="lineNum">    1174 </span>            :     // @Description: Time to achieve 63.2% of the surface altitude measurement change.  If 0 filtering is disabled</a>
+<a name="1175"><span class="lineNum">    1175 </span>            :     // @Units: s</a>
+<a name="1176"><span class="lineNum">    1176 </span>            :     // @Range: 0 5</a>
+<a name="1177"><span class="lineNum">    1177 </span>            :     // @User: Advanced</a>
+<a name="1178"><span class="lineNum">    1178 </span>            :     AP_GROUPINFO(&quot;SURFTRAK_TC&quot;, 5, ParametersG2, surftrak_tc, 1.0),</a>
+<a name="1179"><span class="lineNum">    1179 </span>            : </a>
+<a name="1180"><span class="lineNum">    1180 </span>            :     // @Param: TKOFF_THR_MAX</a>
+<a name="1181"><span class="lineNum">    1181 </span>            :     // @DisplayName: Takeoff maximum throttle during take-off ramp up</a>
+<a name="1182"><span class="lineNum">    1182 </span>            :     // @Description: Takeoff maximum throttle allowed before controllers assume the aircraft is airborne during the takeoff process.</a>
+<a name="1183"><span class="lineNum">    1183 </span>            :     // @Range: 0.0 0.9</a>
+<a name="1184"><span class="lineNum">    1184 </span>            :     // @User: Advanced</a>
+<a name="1185"><span class="lineNum">    1185 </span>            :     AP_GROUPINFO(&quot;TKOFF_THR_MAX&quot;, 6, ParametersG2, takeoff_throttle_max, 0.9),</a>
+<a name="1186"><span class="lineNum">    1186 </span>            : </a>
+<a name="1187"><span class="lineNum">    1187 </span>            : #if HAL_WITH_ESC_TELEM &amp;&amp; FRAME_CONFIG != HELI_FRAME</a>
+<a name="1188"><span class="lineNum">    1188 </span>            :     // @Param: TKOFF_RPM_MAX</a>
+<a name="1189"><span class="lineNum">    1189 </span>            :     // @DisplayName: Takeoff Check RPM maximum</a>
+<a name="1190"><span class="lineNum">    1190 </span>            :     // @Description: Takeoff is not permitted until motors report no more than this RPM.  Set to zero to disable check</a>
+<a name="1191"><span class="lineNum">    1191 </span>            :     // @Range: 0 10000</a>
+<a name="1192"><span class="lineNum">    1192 </span>            :     // @User: Standard</a>
+<a name="1193"><span class="lineNum">    1193 </span>            :     AP_GROUPINFO(&quot;TKOFF_RPM_MAX&quot;, 7, ParametersG2, takeoff_rpm_max, 0),</a>
+<a name="1194"><span class="lineNum">    1194 </span>            : #endif</a>
+<a name="1195"><span class="lineNum">    1195 </span>            : </a>
+<a name="1196"><span class="lineNum">    1196 </span>            :     // @Param: FS_EKF_FILT</a>
+<a name="1197"><span class="lineNum">    1197 </span>            :     // @DisplayName: EKF Failsafe filter cutoff</a>
+<a name="1198"><span class="lineNum">    1198 </span>            :     // @Description: EKF Failsafe filter cutoff frequency. EKF variances are filtered using this value to avoid spurious failsafes from transient high variances. A higher value means the failsafe is more likely to trigger.</a>
+<a name="1199"><span class="lineNum">    1199 </span>            :     // @Range: 0 10</a>
+<a name="1200"><span class="lineNum">    1200 </span>            :     // @Units: Hz</a>
+<a name="1201"><span class="lineNum">    1201 </span>            :     // @User: Advanced</a>
+<a name="1202"><span class="lineNum">    1202 </span>            :     AP_GROUPINFO(&quot;FS_EKF_FILT&quot;, 8, ParametersG2, fs_ekf_filt_hz, FS_EKF_FILT_DEFAULT),</a>
+<a name="1203"><span class="lineNum">    1203 </span>            : </a>
+<a name="1204"><span class="lineNum">    1204 </span>            : #if AP_INERTIALSENSOR_FAST_SAMPLE_WINDOW_ENABLED</a>
+<a name="1205"><span class="lineNum">    1205 </span>            :     // @Param: FSTRATE_ENABLE</a>
+<a name="1206"><span class="lineNum">    1206 </span>            :     // @DisplayName: Enable the fast Rate thread</a>
+<a name="1207"><span class="lineNum">    1207 </span>            :     // @Description: Enable the fast Rate thread. In the default case the fast rate divisor, which controls the update frequency of the thread, is dynamically scaled from FSTRATE_DIV to avoid overrun in the gyro sample buffer and main loop slow-downs. Other values can be selected to fix the divisor to FSTRATE_DIV on arming or always.</a>
+<a name="1208"><span class="lineNum">    1208 </span>            :     // @User: Advanced</a>
+<a name="1209"><span class="lineNum">    1209 </span>            :     // @Values: 0:Disabled,1:Enabled-Dynamic,2:Enabled-FixedWhenArmed,3:Enabled-Fixed</a>
+<a name="1210"><span class="lineNum">    1210 </span>            :     AP_GROUPINFO(&quot;FSTRATE_ENABLE&quot;, 9, ParametersG2, att_enable, 0),</a>
+<a name="1211"><span class="lineNum">    1211 </span>            : </a>
+<a name="1212"><span class="lineNum">    1212 </span>            :     // @Param: FSTRATE_DIV</a>
+<a name="1213"><span class="lineNum">    1213 </span>            :     // @DisplayName: Fast rate thread divisor</a>
+<a name="1214"><span class="lineNum">    1214 </span>            :     // @Description: Fast rate thread divisor used to control the maximum fast rate update rate. The actual rate is the gyro rate in Hz divided by this value. This value is scaled depending on the configuration of FSTRATE_ENABLE.</a>
+<a name="1215"><span class="lineNum">    1215 </span>            :     // @User: Advanced</a>
+<a name="1216"><span class="lineNum">    1216 </span>            :     // @Range: 1 10</a>
+<a name="1217"><span class="lineNum">    1217 </span>            :     AP_GROUPINFO(&quot;FSTRATE_DIV&quot;, 10, ParametersG2, att_decimation, 1),</a>
+<a name="1218"><span class="lineNum">    1218 </span>            : #endif</a>
+<a name="1219"><span class="lineNum">    1219 </span>            : </a>
+<a name="1220"><span class="lineNum">    1220 </span>            : #if AP_RC_TRANSMITTER_TUNING_ENABLED</a>
+<a name="1221"><span class="lineNum">    1221 </span>            :     // @Param: TUNE2_MIN</a>
+<a name="1222"><span class="lineNum">    1222 </span>            :     // @DisplayName: Tuning minimum</a>
+<a name="1223"><span class="lineNum">    1223 </span>            :     // @Description: Minimum value that the parameter currently being tuned with the transmitter's TRANSMITTER_TUNING2 knob will be set to</a>
+<a name="1224"><span class="lineNum">    1224 </span>            :     // @User: Standard</a>
+<a name="1225"><span class="lineNum">    1225 </span>            :     AP_GROUPINFO(&quot;TUNE2_MIN&quot;, 11, ParametersG2, rc_tuning2_min, 0),</a>
+<a name="1226"><span class="lineNum">    1226 </span>            : </a>
+<a name="1227"><span class="lineNum">    1227 </span>            :     // @Param: TUNE2_MAX</a>
+<a name="1228"><span class="lineNum">    1228 </span>            :     // @DisplayName: Tuning maximum</a>
+<a name="1229"><span class="lineNum">    1229 </span>            :     // @Description: Maximum value that the parameter currently being tuned with the transmitter's TRANSMITTER2_TUNING knob will be set to</a>
+<a name="1230"><span class="lineNum">    1230 </span>            :     // @User: Standard</a>
+<a name="1231"><span class="lineNum">    1231 </span>            :     AP_GROUPINFO(&quot;TUNE2_MAX&quot;, 12, ParametersG2, rc_tuning2_max, 0),</a>
+<a name="1232"><span class="lineNum">    1232 </span>            : </a>
+<a name="1233"><span class="lineNum">    1233 </span>            :     // @Param: TUNE2</a>
+<a name="1234"><span class="lineNum">    1234 </span>            :     // @CopyFieldsFrom: TUNE</a>
+<a name="1235"><span class="lineNum">    1235 </span>            :     // @DisplayName: Tuning Parameter for TRANSMITTER_TUNE2</a>
+<a name="1236"><span class="lineNum">    1236 </span>            :     // @Description: Selects parameter (normally a PID gain) that is being tuned with an RC transmitter's knob. The RC input channel used is assigned by setting RCx_OPTION to 220.</a>
+<a name="1237"><span class="lineNum">    1237 </span>            :     AP_GROUPINFO(&quot;TUNE2&quot;, 13, ParametersG2, rc_tuning2_param, 0),</a>
+<a name="1238"><span class="lineNum">    1238 </span>            : #endif  // AP_RC_TRANSMITTER_TUNING_ENABLED</a>
+<a name="1239"><span class="lineNum">    1239 </span>            : </a>
+<a name="1240"><span class="lineNum">    1240 </span>            :     // ID 62 is reserved for the AP_SUBGROUPEXTENSION</a>
+<a name="1241"><span class="lineNum">    1241 </span>            : </a>
+<a name="1242"><span class="lineNum">    1242 </span>            :     AP_GROUPEND</a>
+<a name="1243"><span class="lineNum">    1243 </span>            : };</a>
+<a name="1244"><span class="lineNum">    1244 </span>            : </a>
+<a name="1245"><span class="lineNum">    1245 </span>            : /*</a>
+<a name="1246"><span class="lineNum">    1246 </span>            :   constructor for g2 object</a>
+<a name="1247"><span class="lineNum">    1247 </span>            :  */</a>
+<a name="1248"><span class="lineNum">    1248 </span><span class="lineCov">        848 : ParametersG2::ParametersG2(void) :</span></a>
+<a name="1249"><span class="lineNum">    1249 </span>            :     unused_integer{17}</a>
+<a name="1250"><span class="lineNum">    1250 </span>            : #if HAL_BUTTON_ENABLED</a>
+<a name="1251"><span class="lineNum">    1251 </span>            :     ,button_ptr(&amp;copter.button)</a>
+<a name="1252"><span class="lineNum">    1252 </span>            : #endif</a>
+<a name="1253"><span class="lineNum">    1253 </span>            : #if AP_TEMPCALIBRATION_ENABLED</a>
+<a name="1254"><span class="lineNum">    1254 </span>            :     , temp_calibration()</a>
+<a name="1255"><span class="lineNum">    1255 </span>            : #endif</a>
+<a name="1256"><span class="lineNum">    1256 </span>            : #if AP_BEACON_ENABLED</a>
+<a name="1257"><span class="lineNum">    1257 </span>            :     , beacon()</a>
+<a name="1258"><span class="lineNum">    1258 </span>            : #endif</a>
+<a name="1259"><span class="lineNum">    1259 </span>            : #if HAL_PROXIMITY_ENABLED</a>
+<a name="1260"><span class="lineNum">    1260 </span>            :     , proximity()</a>
+<a name="1261"><span class="lineNum">    1261 </span>            : #endif</a>
+<a name="1262"><span class="lineNum">    1262 </span>            : #if AP_COPTER_ADVANCED_FAILSAFE_ENABLED</a>
+<a name="1263"><span class="lineNum">    1263 </span>            :     ,afs()</a>
+<a name="1264"><span class="lineNum">    1264 </span>            : #endif</a>
+<a name="1265"><span class="lineNum">    1265 </span>            : #if MODE_SMARTRTL_ENABLED</a>
+<a name="1266"><span class="lineNum">    1266 </span>            :     ,smart_rtl()</a>
+<a name="1267"><span class="lineNum">    1267 </span>            : #endif</a>
+<a name="1268"><span class="lineNum">    1268 </span>            : #if USER_PARAMS_ENABLED</a>
+<a name="1269"><span class="lineNum">    1269 </span>            :     ,user_parameters()</a>
+<a name="1270"><span class="lineNum">    1270 </span>            : #endif</a>
+<a name="1271"><span class="lineNum">    1271 </span>            : #if MODE_FLOWHOLD_ENABLED</a>
+<a name="1272"><span class="lineNum">    1272 </span>            :     ,mode_flowhold_ptr(&amp;copter.mode_flowhold)</a>
+<a name="1273"><span class="lineNum">    1273 </span>            : #endif</a>
+<a name="1274"><span class="lineNum">    1274 </span>            : #if MODE_FOLLOW_ENABLED</a>
+<a name="1275"><span class="lineNum">    1275 </span>            :     ,follow()</a>
+<a name="1276"><span class="lineNum">    1276 </span>            : #endif</a>
+<a name="1277"><span class="lineNum">    1277 </span>            : #if AUTOTUNE_ENABLED</a>
+<a name="1278"><span class="lineNum">    1278 </span>            :     ,autotune_ptr(&amp;copter.mode_autotune.autotune)</a>
+<a name="1279"><span class="lineNum">    1279 </span>            : #endif</a>
+<a name="1280"><span class="lineNum">    1280 </span>            : #if MODE_SYSTEMID_ENABLED</a>
+<a name="1281"><span class="lineNum">    1281 </span>            :     ,mode_systemid_ptr(&amp;copter.mode_systemid)</a>
+<a name="1282"><span class="lineNum">    1282 </span>            : #endif</a>
+<a name="1283"><span class="lineNum">    1283 </span>            : #if MODE_AUTOROTATE_ENABLED</a>
+<a name="1284"><span class="lineNum">    1284 </span>            :     ,arot(copter.motors, copter.attitude_control)</a>
+<a name="1285"><span class="lineNum">    1285 </span>            : #endif</a>
+<a name="1286"><span class="lineNum">    1286 </span>            : #if MODE_ZIGZAG_ENABLED</a>
+<a name="1287"><span class="lineNum">    1287 </span>            :     ,mode_zigzag_ptr(&amp;copter.mode_zigzag)</a>
+<a name="1288"><span class="lineNum">    1288 </span>            : #endif</a>
+<a name="1289"><span class="lineNum">    1289 </span>            : #if MODE_ACRO_ENABLED || MODE_SPORT_ENABLED</a>
+<a name="1290"><span class="lineNum">    1290 </span>            :     ,command_model_acro_rp(ACRO_RP_RATE_DEFAULT, ACRO_RP_EXPO_DEFAULT, 0.0f)</a>
+<a name="1291"><span class="lineNum">    1291 </span>            : #endif</a>
+<a name="1292"><span class="lineNum">    1292 </span>            : </a>
+<a name="1293"><span class="lineNum">    1293 </span>            : #if MODE_ACRO_ENABLED || MODE_DRIFT_ENABLED</a>
+<a name="1294"><span class="lineNum">    1294 </span>            :     ,command_model_acro_y(ACRO_Y_RATE_DEFAULT, ACRO_Y_EXPO_DEFAULT, 0.0f)</a>
+<a name="1295"><span class="lineNum">    1295 </span>            : #endif</a>
+<a name="1296"><span class="lineNum">    1296 </span>            : </a>
+<a name="1297"><span class="lineNum">    1297 </span>            :     ,command_model_pilot_y(PILOT_Y_RATE_DEFAULT, PILOT_Y_EXPO_DEFAULT, 0.0f)</a>
+<a name="1298"><span class="lineNum">    1298 </span>            : </a>
+<a name="1299"><span class="lineNum">    1299 </span>            : #if WEATHERVANE_ENABLED</a>
+<a name="1300"><span class="lineNum">    1300 </span><span class="lineCov">        848 :     ,weathervane()</span></a>
+<a name="1301"><span class="lineNum">    1301 </span>            : #endif</a>
+<a name="1302"><span class="lineNum">    1302 </span>            : {</a>
+<a name="1303"><span class="lineNum">    1303 </span><span class="lineCov">        848 :     AP_Param::setup_object_defaults(this, var_info);</span></a>
+<a name="1304"><span class="lineNum">    1304 </span><span class="lineCov">        848 :     AP_Param::setup_object_defaults(this, var_info2);</span></a>
+<a name="1305"><span class="lineNum">    1305 </span><span class="lineCov">        848 : }</span></a>
+<a name="1306"><span class="lineNum">    1306 </span>            : </a>
+<a name="1307"><span class="lineNum">    1307 </span><span class="lineCov">        848 : void Copter::load_parameters(void)</span></a>
+<a name="1308"><span class="lineNum">    1308 </span>            : {</a>
+<a name="1309"><span class="lineNum">    1309 </span><span class="lineCov">        848 :     AP_Vehicle::load_parameters(g.format_version, Parameters::k_format_version);</span></a>
+<a name="1310"><span class="lineNum">    1310 </span>            : </a>
+<a name="1311"><span class="lineNum">    1311 </span>            : #if MODE_RTL_ENABLED</a>
+<a name="1312"><span class="lineNum">    1312 </span>            :     // PARAMETER_CONVERSION - Added: Sep-2021</a>
+<a name="1313"><span class="lineNum">    1313 </span><span class="lineCov">        848 :     g.rtl_altitude_cm.convert_parameter_width(AP_PARAM_INT16);</span></a>
+<a name="1314"><span class="lineNum">    1314 </span>            : #endif</a>
+<a name="1315"><span class="lineNum">    1315 </span>            : </a>
+<a name="1316"><span class="lineNum">    1316 </span>            :     // PARAMETER_CONVERSION - Added: Mar-2022</a>
+<a name="1317"><span class="lineNum">    1317 </span>            : #if AP_FENCE_ENABLED</a>
+<a name="1318"><span class="lineNum">    1318 </span><span class="lineCov">        848 :     AP_Param::convert_class(g.k_param_fence_old, &amp;fence, fence.var_info, 0, true);</span></a>
+<a name="1319"><span class="lineNum">    1319 </span>            : #endif</a>
+<a name="1320"><span class="lineNum">    1320 </span>            : </a>
+<a name="1321"><span class="lineNum">    1321 </span>            :     // PARAMETER_CONVERSION - Added: July-2025 for ArduPilot-4.7</a>
+<a name="1322"><span class="lineNum">    1322 </span>            : #if AP_RPM_ENABLED</a>
+<a name="1323"><span class="lineNum">    1323 </span><span class="lineCov">        848 :     AP_Param::convert_class(g.k_param_rpm_sensor_old, &amp;rpm_sensor, rpm_sensor.var_info, 0, true, true);</span></a>
+<a name="1324"><span class="lineNum">    1324 </span>            : #endif</a>
+<a name="1325"><span class="lineNum">    1325 </span>            : </a>
+<a name="1326"><span class="lineNum">    1326 </span>            :     static const AP_Param::G2ObjectConversion g2_conversions[] {</a>
+<a name="1327"><span class="lineNum">    1327 </span>            : #if AP_STATS_ENABLED</a>
+<a name="1328"><span class="lineNum">    1328 </span>            :     // PARAMETER_CONVERSION - Added: Jan-2024 for Copter-4.6</a>
+<a name="1329"><span class="lineNum">    1329 </span><span class="lineCov">        848 :         { &amp;stats, stats.var_info, 12 },</span></a>
+<a name="1330"><span class="lineNum">    1330 </span>            : #endif</a>
+<a name="1331"><span class="lineNum">    1331 </span>            : #if AP_SCRIPTING_ENABLED</a>
+<a name="1332"><span class="lineNum">    1332 </span>            :     // PARAMETER_CONVERSION - Added: Jan-2024 for Copter-4.6</a>
+<a name="1333"><span class="lineNum">    1333 </span><span class="lineCov">        848 :         { &amp;scripting, scripting.var_info, 30 },</span></a>
+<a name="1334"><span class="lineNum">    1334 </span>            : #endif</a>
+<a name="1335"><span class="lineNum">    1335 </span>            : #if AP_GRIPPER_ENABLED</a>
+<a name="1336"><span class="lineNum">    1336 </span>            :     // PARAMETER_CONVERSION - Added: Feb-2024 for Copter-4.6</a>
+<a name="1337"><span class="lineNum">    1337 </span><span class="lineCov">        848 :         { &amp;gripper, gripper.var_info, 13 },</span></a>
+<a name="1338"><span class="lineNum">    1338 </span>            : #endif</a>
+<a name="1339"><span class="lineNum">    1339 </span><span class="lineCov">        848 :     };</span></a>
+<a name="1340"><span class="lineNum">    1340 </span>            : </a>
+<a name="1341"><span class="lineNum">    1341 </span><span class="lineCov">        848 :     AP_Param::convert_g2_objects(&amp;g2, g2_conversions, ARRAY_SIZE(g2_conversions));</span></a>
+<a name="1342"><span class="lineNum">    1342 </span>            : </a>
+<a name="1343"><span class="lineNum">    1343 </span>            :     // PARAMETER_CONVERSION - Added: Feb-2024 for Copter-4.6</a>
+<a name="1344"><span class="lineNum">    1344 </span>            : #if HAL_LOGGING_ENABLED</a>
+<a name="1345"><span class="lineNum">    1345 </span><span class="lineCov">        848 :     AP_Param::convert_class(g.k_param_logger, &amp;logger, logger.var_info, 0, true);</span></a>
+<a name="1346"><span class="lineNum">    1346 </span>            : #endif</a>
+<a name="1347"><span class="lineNum">    1347 </span>            : </a>
+<a name="1348"><span class="lineNum">    1348 </span>            :     static const AP_Param::TopLevelObjectConversion toplevel_conversions[] {</a>
+<a name="1349"><span class="lineNum">    1349 </span>            : #if AP_SERIALMANAGER_ENABLED</a>
+<a name="1350"><span class="lineNum">    1350 </span>            :         // PARAMETER_CONVERSION - Added: Feb-2024 for Copter-4.6</a>
+<a name="1351"><span class="lineNum">    1351 </span><span class="lineCov">        848 :         { &amp;serial_manager, serial_manager.var_info, Parameters::k_param_serial_manager_old },</span></a>
+<a name="1352"><span class="lineNum">    1352 </span>            : #endif</a>
+<a name="1353"><span class="lineNum">    1353 </span><span class="lineCov">        848 :     };</span></a>
+<a name="1354"><span class="lineNum">    1354 </span>            : </a>
+<a name="1355"><span class="lineNum">    1355 </span><span class="lineCov">        848 :     AP_Param::convert_toplevel_objects(toplevel_conversions, ARRAY_SIZE(toplevel_conversions));</span></a>
+<a name="1356"><span class="lineNum">    1356 </span>            : </a>
+<a name="1357"><span class="lineNum">    1357 </span>            : #if HAL_GCS_ENABLED</a>
+<a name="1358"><span class="lineNum">    1358 </span>            :     // Move parameters into new MAV_ parameter namespace</a>
+<a name="1359"><span class="lineNum">    1359 </span>            :     // PARAMETER_CONVERSION - Added: Mar-2025 for ArduPilot-4.7</a>
+<a name="1360"><span class="lineNum">    1360 </span>            :     {</a>
+<a name="1361"><span class="lineNum">    1361 </span><span class="lineCov">        848 :         const AP_Param::ConversionInfo gcs_conversion_info[] {</span></a>
+<a name="1362"><span class="lineNum">    1362 </span>            :             { Parameters::k_param_sysid_this_mav_old, 0, AP_PARAM_INT16,  &quot;MAV_SYSID&quot; },</a>
+<a name="1363"><span class="lineNum">    1363 </span>            :             { Parameters::k_param_sysid_my_gcs_old, 0, AP_PARAM_INT16, &quot;MAV_GCS_SYSID&quot; },</a>
+<a name="1364"><span class="lineNum">    1364 </span>            :             { Parameters::k_param_g2,  11, AP_PARAM_INT8, &quot;MAV_OPTIONS&quot; },</a>
+<a name="1365"><span class="lineNum">    1365 </span>            :             { Parameters::k_param_telem_delay_old,  0, AP_PARAM_INT8, &quot;MAV_TELEM_DELAY&quot; },</a>
+<a name="1366"><span class="lineNum">    1366 </span>            :         };</a>
+<a name="1367"><span class="lineNum">    1367 </span><span class="lineCov">        848 :         AP_Param::convert_old_parameters(&amp;gcs_conversion_info[0], ARRAY_SIZE(gcs_conversion_info));</span></a>
+<a name="1368"><span class="lineNum">    1368 </span>            :     }</a>
+<a name="1369"><span class="lineNum">    1369 </span>            : #endif  // HAL_GCS_ENABLED</a>
+<a name="1370"><span class="lineNum">    1370 </span>            : </a>
+<a name="1371"><span class="lineNum">    1371 </span>            :     // setup AP_Param frame type flags</a>
+<a name="1372"><span class="lineNum">    1372 </span><span class="lineCov">        848 :     AP_Param::set_frame_type_flags(AP_PARAM_FRAME_COPTER);</span></a>
+<a name="1373"><span class="lineNum">    1373 </span>            : // === Enforce Hexa-X params on boot and send to GCS ===</a>
+<a name="1374"><span class="lineNum">    1374 </span>            : #if defined(FORCE_FRAME_CLASS)</a>
+<a name="1375"><span class="lineNum">    1375 </span><span class="lineCov">        848 :     g2.frame_class.set_and_save(FORCE_FRAME_CLASS);</span></a>
+<a name="1376"><span class="lineNum">    1376 </span><span class="lineCov">        848 :     g2.frame_class.notify();</span></a>
+<a name="1377"><span class="lineNum">    1377 </span>            : #endif</a>
+<a name="1378"><span class="lineNum">    1378 </span>            : #if defined(FORCE_FRAME_TYPE)</a>
+<a name="1379"><span class="lineNum">    1379 </span><span class="lineCov">        848 :     g.frame_type.set_and_save(FORCE_FRAME_TYPE);</span></a>
+<a name="1380"><span class="lineNum">    1380 </span><span class="lineCov">        848 :     g.frame_type.notify();</span></a>
+<a name="1381"><span class="lineNum">    1381 </span>            : #endif</a>
+<a name="1382"><span class="lineNum">    1382 </span><span class="lineCov">        848 : }</span></a>
+<a name="1383"><span class="lineNum">    1383 </span>            : </a>
+<a name="1384"><span class="lineNum">    1384 </span>            : // handle conversion of PID gains</a>
+<a name="1385"><span class="lineNum">    1385 </span><span class="lineCov">        848 : void Copter::convert_pid_parameters(void)</span></a>
+<a name="1386"><span class="lineNum">    1386 </span>            : {</a>
+<a name="1387"><span class="lineNum">    1387 </span><span class="lineCov">        848 :     const AP_Param::ConversionInfo angle_and_filt_conversion_info[] = {</span></a>
+<a name="1388"><span class="lineNum">    1388 </span>            :         // PARAMETER_CONVERSION - Added: Aug-2021</a>
+<a name="1389"><span class="lineNum">    1389 </span>            :         { Parameters::k_param_pi_vel_xy, 3, AP_PARAM_FLOAT, &quot;PSC_VELXY_FLTE&quot; },</a>
+<a name="1390"><span class="lineNum">    1390 </span>            :     };</a>
+<a name="1391"><span class="lineNum">    1391 </span>            : </a>
+<a name="1392"><span class="lineNum">    1392 </span>            :     // convert angle controller gain and filter without scaling</a>
+<a name="1393"><span class="lineNum">    1393 </span><span class="lineCov">       1696 :     for (const auto &amp;info : angle_and_filt_conversion_info) {</span></a>
+<a name="1394"><span class="lineNum">    1394 </span><span class="lineCov">        848 :         AP_Param::convert_old_parameter(&amp;info, 1.0f);</span></a>
+<a name="1395"><span class="lineNum">    1395 </span>            :     }</a>
+<a name="1396"><span class="lineNum">    1396 </span>            : </a>
+<a name="1397"><span class="lineNum">    1397 </span>            :     // TradHeli default parameters</a>
+<a name="1398"><span class="lineNum">    1398 </span>            : #if FRAME_CONFIG == HELI_FRAME</a>
+<a name="1399"><span class="lineNum">    1399 </span>            :     static const struct AP_Param::defaults_table_struct heli_defaults_table[] = {</a>
+<a name="1400"><span class="lineNum">    1400 </span>            :         { &quot;LOIT_ACC_MAX&quot;, 500.0f },</a>
+<a name="1401"><span class="lineNum">    1401 </span>            :         { &quot;LOIT_BRK_ACCEL&quot;, 125.0f },</a>
+<a name="1402"><span class="lineNum">    1402 </span>            :         { &quot;LOIT_BRK_DELAY&quot;, 1.0f },</a>
+<a name="1403"><span class="lineNum">    1403 </span>            :         { &quot;LOIT_BRK_JERK&quot;, 250.0f },</a>
+<a name="1404"><span class="lineNum">    1404 </span>            :         { &quot;LOIT_SPEED&quot;, 3000.0f },</a>
+<a name="1405"><span class="lineNum">    1405 </span>            :         { &quot;PHLD_BRAKE_ANGLE&quot;, 800.0f },</a>
+<a name="1406"><span class="lineNum">    1406 </span>            :         { &quot;PHLD_BRAKE_RATE&quot;, 4.0f },</a>
+<a name="1407"><span class="lineNum">    1407 </span>            :         { &quot;PSC_ACCZ_P&quot;, 0.28f },</a>
+<a name="1408"><span class="lineNum">    1408 </span>            :         { &quot;PSC_VELXY_D&quot;, 0.0f },</a>
+<a name="1409"><span class="lineNum">    1409 </span>            :         { &quot;PSC_VELXY_I&quot;, 0.5f },</a>
+<a name="1410"><span class="lineNum">    1410 </span>            :         { &quot;PSC_VELXY_P&quot;, 1.0f },</a>
+<a name="1411"><span class="lineNum">    1411 </span>            :         { &quot;RC8_OPTION&quot;, 32 },</a>
+<a name="1412"><span class="lineNum">    1412 </span>            :         { &quot;RC_OPTIONS&quot;, 0 },</a>
+<a name="1413"><span class="lineNum">    1413 </span>            :         { &quot;ATC_RAT_RLL_ILMI&quot;, 0.05},</a>
+<a name="1414"><span class="lineNum">    1414 </span>            :         { &quot;ATC_RAT_PIT_ILMI&quot;, 0.05},</a>
+<a name="1415"><span class="lineNum">    1415 </span>            :     };</a>
+<a name="1416"><span class="lineNum">    1416 </span>            :     AP_Param::set_defaults_from_table(heli_defaults_table, ARRAY_SIZE(heli_defaults_table));</a>
+<a name="1417"><span class="lineNum">    1417 </span>            : #endif  // FRAME_CONFIG == HELI_FRAME</a>
+<a name="1418"><span class="lineNum">    1418 </span>            : </a>
+<a name="1419"><span class="lineNum">    1419 </span>            : #if AP_INERTIALSENSOR_HARMONICNOTCH_ENABLED</a>
+<a name="1420"><span class="lineNum">    1420 </span>            : #if HAL_INS_NUM_HARMONIC_NOTCH_FILTERS &gt; 1</a>
+<a name="1421"><span class="lineNum">    1421 </span><span class="lineCov">        848 :     if (!ins.harmonic_notches[1].params.enabled()) {</span></a>
+<a name="1422"><span class="lineNum">    1422 </span>            :         // notch filter parameter conversions (moved to INS_HNTC2) for 4.2.x, converted from fixed notch</a>
+<a name="1423"><span class="lineNum">    1423 </span><span class="lineCov">        843 :         const AP_Param::ConversionInfo notchfilt_conversion_info[] {</span></a>
+<a name="1424"><span class="lineNum">    1424 </span>            :             // PARAMETER_CONVERSION - Added: Apr 2022</a>
+<a name="1425"><span class="lineNum">    1425 </span>            :             { Parameters::k_param_ins, 101, AP_PARAM_INT8,  &quot;INS_HNTC2_ENABLE&quot; },</a>
+<a name="1426"><span class="lineNum">    1426 </span>            :             { Parameters::k_param_ins, 293, AP_PARAM_FLOAT, &quot;INS_HNTC2_ATT&quot; },</a>
+<a name="1427"><span class="lineNum">    1427 </span>            :             { Parameters::k_param_ins, 357, AP_PARAM_FLOAT, &quot;INS_HNTC2_FREQ&quot; },</a>
+<a name="1428"><span class="lineNum">    1428 </span>            :             { Parameters::k_param_ins, 421, AP_PARAM_FLOAT, &quot;INS_HNTC2_BW&quot; },</a>
+<a name="1429"><span class="lineNum">    1429 </span>            :         };</a>
+<a name="1430"><span class="lineNum">    1430 </span><span class="lineCov">        843 :         AP_Param::convert_old_parameters(&amp;notchfilt_conversion_info[0], ARRAY_SIZE(notchfilt_conversion_info));</span></a>
+<a name="1431"><span class="lineNum">    1431 </span><span class="lineCov">        843 :         AP_Param::set_default_by_name(&quot;INS_HNTC2_MODE&quot;, 0);</span></a>
+<a name="1432"><span class="lineNum">    1432 </span><span class="lineCov">        843 :         AP_Param::set_default_by_name(&quot;INS_HNTC2_HMNCS&quot;, 1);</span></a>
+<a name="1433"><span class="lineNum">    1433 </span>            :     }</a>
+<a name="1434"><span class="lineNum">    1434 </span>            : #endif</a>
+<a name="1435"><span class="lineNum">    1435 </span>            : #endif  // AP_INERTIALSENSOR_HARMONICNOTCH_ENABLED</a>
+<a name="1436"><span class="lineNum">    1436 </span>            : </a>
+<a name="1437"><span class="lineNum">    1437 </span>            :     // ACRO_RP_P and ACRO_Y_P replaced with ACRO_RP_RATE and ACRO_Y_RATE for Copter-4.2</a>
+<a name="1438"><span class="lineNum">    1438 </span>            :     // PARAMETER_CONVERSION - Added: Sep-2021</a>
+<a name="1439"><span class="lineNum">    1439 </span><span class="lineCov">        848 :     const AP_Param::ConversionInfo acro_rpy_conversion_info[] = {</span></a>
+<a name="1440"><span class="lineNum">    1440 </span>            :         { Parameters::k_param_acro_rp_p, 0, AP_PARAM_FLOAT, &quot;ACRO_RP_RATE&quot; },</a>
+<a name="1441"><span class="lineNum">    1441 </span>            :         { Parameters::k_param_acro_yaw_p,  0, AP_PARAM_FLOAT, &quot;ACRO_Y_RATE&quot; }</a>
+<a name="1442"><span class="lineNum">    1442 </span>            :     };</a>
+<a name="1443"><span class="lineNum">    1443 </span><span class="lineCov">       2544 :     for (const auto &amp;info : acro_rpy_conversion_info) {</span></a>
+<a name="1444"><span class="lineNum">    1444 </span><span class="lineCov">       1696 :         AP_Param::convert_old_parameter(&amp;info, 45.0);</span></a>
+<a name="1445"><span class="lineNum">    1445 </span>            :     }</a>
+<a name="1446"><span class="lineNum">    1446 </span>            : </a>
+<a name="1447"><span class="lineNum">    1447 </span>            :     // convert rate and expo command model parameters for Copter-4.3</a>
+<a name="1448"><span class="lineNum">    1448 </span>            :     // PARAMETER_CONVERSION - Added: June-2022</a>
+<a name="1449"><span class="lineNum">    1449 </span><span class="lineCov">        848 :     const AP_Param::ConversionInfo cmd_mdl_conversion_info[] = {</span></a>
+<a name="1450"><span class="lineNum">    1450 </span>            :         { Parameters::k_param_g2, 47, AP_PARAM_FLOAT, &quot;ACRO_RP_RATE&quot; },</a>
+<a name="1451"><span class="lineNum">    1451 </span>            :         { Parameters::k_param_acro_rp_expo,  0, AP_PARAM_FLOAT, &quot;ACRO_RP_EXPO&quot; },</a>
+<a name="1452"><span class="lineNum">    1452 </span>            :         { Parameters::k_param_g2,  48, AP_PARAM_FLOAT, &quot;ACRO_Y_RATE&quot; },</a>
+<a name="1453"><span class="lineNum">    1453 </span>            :         { Parameters::k_param_g2,  9, AP_PARAM_FLOAT, &quot;ACRO_Y_EXPO&quot; },</a>
+<a name="1454"><span class="lineNum">    1454 </span>            :         { Parameters::k_param_g2,  49, AP_PARAM_FLOAT, &quot;PILOT_Y_RATE&quot; },</a>
+<a name="1455"><span class="lineNum">    1455 </span>            :         { Parameters::k_param_g2,  50, AP_PARAM_FLOAT, &quot;PILOT_Y_EXPO&quot; },</a>
+<a name="1456"><span class="lineNum">    1456 </span>            :     };</a>
+<a name="1457"><span class="lineNum">    1457 </span><span class="lineCov">       5936 :     for (const auto &amp;info : cmd_mdl_conversion_info) {</span></a>
+<a name="1458"><span class="lineNum">    1458 </span><span class="lineCov">       5088 :         AP_Param::convert_old_parameter(&amp;info, 1.0);</span></a>
+<a name="1459"><span class="lineNum">    1459 </span>            :     }</a>
+<a name="1460"><span class="lineNum">    1460 </span>            : </a>
+<a name="1461"><span class="lineNum">    1461 </span>            :     // make any SRV_Channel upgrades needed</a>
+<a name="1462"><span class="lineNum">    1462 </span><span class="lineCov">        848 :     SRV_Channels::upgrade_parameters();</span></a>
+<a name="1463"><span class="lineNum">    1463 </span><span class="lineCov">        848 : }</span></a>
+<a name="1464"><span class="lineNum">    1464 </span>            : </a>
+<a name="1465"><span class="lineNum">    1465 </span>            : #if HAL_PROXIMITY_ENABLED</a>
+<a name="1466"><span class="lineNum">    1466 </span><span class="lineCov">        848 : void Copter::convert_prx_parameters()</span></a>
+<a name="1467"><span class="lineNum">    1467 </span>            : {</a>
+<a name="1468"><span class="lineNum">    1468 </span>            :     // convert PRX to PRX1_ parameters for Copter-4.3</a>
+<a name="1469"><span class="lineNum">    1469 </span>            :     // PARAMETER_CONVERSION - Added: Aug-2022</a>
+<a name="1470"><span class="lineNum">    1470 </span>            :     static const AP_Param::ConversionInfo prx_conversion_info[] = {</a>
+<a name="1471"><span class="lineNum">    1471 </span>            :         { Parameters::k_param_g2, 72, AP_PARAM_INT8, &quot;PRX1_TYPE&quot; },</a>
+<a name="1472"><span class="lineNum">    1472 </span>            :         { Parameters::k_param_g2, 136, AP_PARAM_INT8, &quot;PRX1_ORIENT&quot; },</a>
+<a name="1473"><span class="lineNum">    1473 </span>            :         { Parameters::k_param_g2, 200, AP_PARAM_INT16, &quot;PRX1_YAW_CORR&quot; },</a>
+<a name="1474"><span class="lineNum">    1474 </span>            :         { Parameters::k_param_g2, 264, AP_PARAM_INT16, &quot;PRX1_IGN_ANG1&quot; },</a>
+<a name="1475"><span class="lineNum">    1475 </span>            :         { Parameters::k_param_g2, 328, AP_PARAM_INT8, &quot;PRX1_IGN_WID1&quot; },</a>
+<a name="1476"><span class="lineNum">    1476 </span>            :         { Parameters::k_param_g2, 392, AP_PARAM_INT16, &quot;PRX1_IGN_ANG2&quot; },</a>
+<a name="1477"><span class="lineNum">    1477 </span>            :         { Parameters::k_param_g2, 456, AP_PARAM_INT8, &quot;PRX1_IGN_WID2&quot; },</a>
+<a name="1478"><span class="lineNum">    1478 </span>            :         { Parameters::k_param_g2, 520, AP_PARAM_INT16, &quot;PRX1_IGN_ANG3&quot; },</a>
+<a name="1479"><span class="lineNum">    1479 </span>            :         { Parameters::k_param_g2, 584, AP_PARAM_INT8, &quot;PRX1_IGN_WID3&quot; },</a>
+<a name="1480"><span class="lineNum">    1480 </span>            :         { Parameters::k_param_g2, 648, AP_PARAM_INT16, &quot;PRX1_IGN_ANG4&quot; },</a>
+<a name="1481"><span class="lineNum">    1481 </span>            :         { Parameters::k_param_g2, 712, AP_PARAM_INT8, &quot;PRX1_IGN_WID4&quot; },</a>
+<a name="1482"><span class="lineNum">    1482 </span>            :         { Parameters::k_param_g2, 1224, AP_PARAM_FLOAT, &quot;PRX1_MIN&quot; },</a>
+<a name="1483"><span class="lineNum">    1483 </span>            :         { Parameters::k_param_g2, 1288, AP_PARAM_FLOAT, &quot;PRX1_MAX&quot; },</a>
+<a name="1484"><span class="lineNum">    1484 </span>            :     };</a>
+<a name="1485"><span class="lineNum">    1485 </span><span class="lineCov">      11872 :     for (const auto &amp;info : prx_conversion_info) {</span></a>
+<a name="1486"><span class="lineNum">    1486 </span><span class="lineCov">      11024 :         AP_Param::convert_old_parameter(&amp;info, 1.0);</span></a>
+<a name="1487"><span class="lineNum">    1487 </span>            :     }</a>
+<a name="1488"><span class="lineNum">    1488 </span><span class="lineCov">        848 : }</span></a>
+<a name="1489"><span class="lineNum">    1489 </span>            : #endif</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

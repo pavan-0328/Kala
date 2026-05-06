@@ -1,0 +1,438 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_Airspeed/AP_Airspeed_AUAV.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_Airspeed</a> - AP_Airspeed_AUAV.cpp<span style="font-size: 80%;"> (source / <a href="AP_Airspeed_AUAV.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">172</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : </a>
+<a name="16"><span class="lineNum">      16 </span>            : /*</a>
+<a name="17"><span class="lineNum">      17 </span>            :   backend driver for airspeed from a I2C AUAV sensor</a>
+<a name="18"><span class="lineNum">      18 </span>            :  */</a>
+<a name="19"><span class="lineNum">      19 </span>            : #include &quot;AP_Airspeed_AUAV.h&quot;</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : #if AP_AIRSPEED_AUAV_ENABLED</a>
+<a name="22"><span class="lineNum">      22 </span>            : </a>
+<a name="23"><span class="lineNum">      23 </span>            : #define AUAV_AIRSPEED_I2C_ADDR 0x26</a>
+<a name="24"><span class="lineNum">      24 </span>            : #define MEASUREMENT_TIMEOUT_MS 200</a>
+<a name="25"><span class="lineNum">      25 </span>            : </a>
+<a name="26"><span class="lineNum">      26 </span>            : #include &lt;AP_Common/AP_Common.h&gt;</a>
+<a name="27"><span class="lineNum">      27 </span>            : #include &lt;AP_HAL/AP_HAL.h&gt;</a>
+<a name="28"><span class="lineNum">      28 </span>            : #include &lt;AP_HAL/I2CDevice.h&gt;</a>
+<a name="29"><span class="lineNum">      29 </span>            : #include &lt;AP_Math/AP_Math.h&gt;</a>
+<a name="30"><span class="lineNum">      30 </span>            : #include &lt;GCS_MAVLink/GCS.h&gt;</a>
+<a name="31"><span class="lineNum">      31 </span>            : </a>
+<a name="32"><span class="lineNum">      32 </span>            : extern const AP_HAL::HAL &amp;hal;</a>
+<a name="33"><span class="lineNum">      33 </span>            : </a>
+<a name="34"><span class="lineNum">      34 </span><span class="lineNoCov">          0 : AUAV_Pressure_sensor::AUAV_Pressure_sensor(AP_HAL::I2CDevice *&amp;_dev, Type _type) :</span></a>
+<a name="35"><span class="lineNum">      35 </span>            :     dev(_dev),</a>
+<a name="36"><span class="lineNum">      36 </span><span class="lineNoCov">          0 :     type(_type)</span></a>
+<a name="37"><span class="lineNum">      37 </span>            : {</a>
+<a name="38"><span class="lineNum">      38 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="39"><span class="lineNum">      39 </span>            : </a>
+<a name="40"><span class="lineNum">      40 </span><span class="lineNoCov">          0 : AP_Airspeed_AUAV::AP_Airspeed_AUAV(AP_Airspeed &amp;_frontend, uint8_t _instance, const float _range_inH2O) :</span></a>
+<a name="41"><span class="lineNum">      41 </span>            :     AP_Airspeed_Backend(_frontend, _instance),</a>
+<a name="42"><span class="lineNum">      42 </span><span class="lineNoCov">          0 :     range_inH2O(_range_inH2O)</span></a>
+<a name="43"><span class="lineNum">      43 </span>            : {</a>
+<a name="44"><span class="lineNum">      44 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="45"><span class="lineNum">      45 </span>            : </a>
+<a name="46"><span class="lineNum">      46 </span>            : // probe for a sensor</a>
+<a name="47"><span class="lineNum">      47 </span><span class="lineNoCov">          0 : bool AP_Airspeed_AUAV::probe(uint8_t bus, uint8_t address)</span></a>
+<a name="48"><span class="lineNum">      48 </span>            : {</a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineNoCov">          0 :     _dev = hal.i2c_mgr-&gt;get_device_ptr(bus, address);</span></a>
+<a name="50"><span class="lineNum">      50 </span><span class="lineNoCov">          0 :     if (!_dev) {</span></a>
+<a name="51"><span class="lineNum">      51 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="52"><span class="lineNum">      52 </span>            :     }</a>
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineNoCov">          0 :     WITH_SEMAPHORE(_dev-&gt;get_semaphore());</span></a>
+<a name="55"><span class="lineNum">      55 </span>            : </a>
+<a name="56"><span class="lineNum">      56 </span><span class="lineNoCov">          0 :     _dev-&gt;set_retries(10);</span></a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineNoCov">          0 :     if (!sensor.measure()) {</span></a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="59"><span class="lineNum">      59 </span>            :     }</a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineNoCov">          0 :     hal.scheduler-&gt;delay(20);</span></a>
+<a name="61"><span class="lineNum">      61 </span>            : </a>
+<a name="62"><span class="lineNum">      62 </span>            :     // Don't fill in values yet as the compensation coefficients are not configured</a>
+<a name="63"><span class="lineNum">      63 </span>            :     float PComp, temperature;</a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :     return sensor.collect(PComp, temperature) == AUAV_Pressure_sensor::Status::Normal;</span></a>
+<a name="65"><span class="lineNum">      65 </span>            : }</a>
+<a name="66"><span class="lineNum">      66 </span>            : </a>
+<a name="67"><span class="lineNum">      67 </span>            : // probe and initialise the sensor</a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 : bool AP_Airspeed_AUAV::init()</span></a>
+<a name="69"><span class="lineNum">      69 </span>            : {</a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :     const auto bus = get_bus();</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :     if (!probe(bus, AUAV_AIRSPEED_I2C_ADDR)) {</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :         GCS_SEND_TEXT(MAV_SEVERITY_ERROR, &quot;AUAV AIRSPEED[%u]: no sensor found on bus %u&quot;, get_instance(), bus);</span></a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="74"><span class="lineNum">      74 </span>            :     }</a>
+<a name="75"><span class="lineNum">      75 </span>            : </a>
+<a name="76"><span class="lineNum">      76 </span><span class="lineNoCov">          0 :     _dev-&gt;set_device_type(uint8_t(DevType::AUAV));</span></a>
+<a name="77"><span class="lineNum">      77 </span><span class="lineNoCov">          0 :     set_bus_id(_dev-&gt;get_bus_id());</span></a>
+<a name="78"><span class="lineNum">      78 </span>            : </a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineNoCov">          0 :     GCS_SEND_TEXT(MAV_SEVERITY_INFO, &quot;AUAV AIRSPEED[%u]: Found bus %u addr 0x%02x&quot;, get_instance(), _dev-&gt;bus_num(), _dev-&gt;get_bus_address());</span></a>
+<a name="80"><span class="lineNum">      80 </span>            : </a>
+<a name="81"><span class="lineNum">      81 </span>            :     // drop to 2 retries for runtime</a>
+<a name="82"><span class="lineNum">      82 </span><span class="lineNoCov">          0 :     _dev-&gt;register_periodic_callback(20000,</span></a>
+<a name="83"><span class="lineNum">      83 </span><span class="lineNoCov">          0 :                                      FUNCTOR_BIND_MEMBER(&amp;AP_Airspeed_AUAV::_timer, void));</span></a>
+<a name="84"><span class="lineNum">      84 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="85"><span class="lineNum">      85 </span>            : }</a>
+<a name="86"><span class="lineNum">      86 </span>            : </a>
+<a name="87"><span class="lineNum">      87 </span>            : // start a measurement</a>
+<a name="88"><span class="lineNum">      88 </span><span class="lineNoCov">          0 : bool AUAV_Pressure_sensor::measure()</span></a>
+<a name="89"><span class="lineNum">      89 </span>            : {</a>
+<a name="90"><span class="lineNum">      90 </span><span class="lineNoCov">          0 :     uint8_t cmd = 0xAE; // start average8</span></a>
+<a name="91"><span class="lineNum">      91 </span>            :     // Differential: max 16.2ms measurement time </a>
+<a name="92"><span class="lineNum">      92 </span>            :     // Absolute: 37ms</a>
+<a name="93"><span class="lineNum">      93 </span><span class="lineNoCov">          0 :     if (dev-&gt;transfer(&amp;cmd, 1, nullptr, 0)) {</span></a>
+<a name="94"><span class="lineNum">      94 </span><span class="lineNoCov">          0 :         return true;</span></a>
+<a name="95"><span class="lineNum">      95 </span>            :     }</a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineNoCov">          0 :     return false;</span></a>
+<a name="97"><span class="lineNum">      97 </span>            : }</a>
+<a name="98"><span class="lineNum">      98 </span>            : </a>
+<a name="99"><span class="lineNum">      99 </span>            : // read the values from the sensor</a>
+<a name="100"><span class="lineNum">     100 </span>            : // Return true if successful</a>
+<a name="101"><span class="lineNum">     101 </span>            : // pressure corrected but not scaled to the correct units</a>
+<a name="102"><span class="lineNum">     102 </span>            : // temperature in degrees centigrade</a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 : AUAV_Pressure_sensor::Status AUAV_Pressure_sensor::collect(float &amp;PComp, float &amp;temperature)</span></a>
+<a name="104"><span class="lineNum">     104 </span>            : {</a>
+<a name="105"><span class="lineNum">     105 </span>            :     uint8_t inbuf[7];</a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineNoCov">          0 :     if (!dev-&gt;read((uint8_t *)&amp;inbuf, sizeof(inbuf))) {</span></a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 :         return Status::Fault;</span></a>
+<a name="108"><span class="lineNum">     108 </span>            :     }</a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 :     const uint8_t status = inbuf[0];</span></a>
+<a name="110"><span class="lineNum">     110 </span>            : </a>
+<a name="111"><span class="lineNum">     111 </span>            :     // power on, not busy, reading normal, not out of range</a>
+<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 :     const uint8_t healthy_status = type == Type::Differential ? 0x50 :  0x40;</span></a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 :     if (status != healthy_status) {</span></a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineNoCov">          0 :         if ((status &amp; (1U &lt;&lt; 5)) != 0) {</span></a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineNoCov">          0 :             return Status::Busy;</span></a>
+<a name="116"><span class="lineNum">     116 </span>            :         }</a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 :         return Status::Fault;</span></a>
+<a name="118"><span class="lineNum">     118 </span>            :     }</a>
+<a name="119"><span class="lineNum">     119 </span><span class="lineNoCov">          0 :     const int32_t Tref_Counts = 7576807; // temperature counts at 25C</span></a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 :     const float TC50Scale = 100.0f * 100.0f * 167772.2f; // scale TC50 to 1.0% FS0</span></a>
+<a name="121"><span class="lineNum">     121 </span>            :     float Pdiff, TC50;</a>
+<a name="122"><span class="lineNum">     122 </span>            : </a>
+<a name="123"><span class="lineNum">     123 </span>            :     // Convert unsigned 24-bit pressure value to signed +/- 23-bit:</a>
+<a name="124"><span class="lineNum">     124 </span><span class="lineNoCov">          0 :     const int32_t iPraw = (inbuf[1]&lt;&lt;16) + (inbuf[2]&lt;&lt;8) + inbuf[3] - 0x800000;</span></a>
+<a name="125"><span class="lineNum">     125 </span>            : </a>
+<a name="126"><span class="lineNum">     126 </span>            :     // Convert signed 23-bit value to float, normalized to +/- 1.0:</a>
+<a name="127"><span class="lineNum">     127 </span><span class="lineNoCov">          0 :     const float Pnorm = float(iPraw) / float(0x7FFFFF);</span></a>
+<a name="128"><span class="lineNum">     128 </span><span class="lineNoCov">          0 :     const float AP3 = LIN_A * Pnorm * Pnorm * Pnorm; // A*Pout^3</span></a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineNoCov">          0 :     const float BP2 = LIN_B * Pnorm * Pnorm; // B*Pout^2</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :     const float CP = LIN_C * Pnorm; // C*POut</span></a>
+<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 :     const float Corr = AP3 + BP2 + CP + LIN_D; // Linearity correction term</span></a>
+<a name="132"><span class="lineNum">     132 </span><span class="lineNoCov">          0 :     const float Pcorr = Pnorm + Corr; // Corrected P, range +/-1.0.</span></a>
+<a name="133"><span class="lineNum">     133 </span>            : </a>
+<a name="134"><span class="lineNum">     134 </span>            :     // Compute difference from reference temperature, in sensor counts:</a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineNoCov">          0 :     const int32_t iTemp = (inbuf[4]&lt;&lt;16) + (inbuf[5]&lt;&lt;8) + inbuf[6]; // 24-bit temperature</span></a>
+<a name="136"><span class="lineNum">     136 </span>            : </a>
+<a name="137"><span class="lineNum">     137 </span>            :     // get temperature in degrees C</a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineNoCov">          0 :     temperature = (iTemp * 155) / float(1U&lt;&lt;24) - 45;</span></a>
+<a name="139"><span class="lineNum">     139 </span>            : </a>
+<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :     const int32_t Tdiff = iTemp - Tref_Counts; // see constant defined above.</span></a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineNoCov">          0 :     const float Pnfso = (Pcorr + 1.0f) * 0.5;</span></a>
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<a name="143"><span class="lineNum">     143 </span>            :     //TC50: Select High/Low, based on current temp above/below 25C:</a>
+<a name="144"><span class="lineNum">     144 </span><span class="lineNoCov">          0 :     if (Tdiff &gt; 0) {</span></a>
+<a name="145"><span class="lineNum">     145 </span><span class="lineNoCov">          0 :         TC50 = TC50H;</span></a>
+<a name="146"><span class="lineNum">     146 </span>            :     } else {</a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineNoCov">          0 :         TC50 = TC50L;</span></a>
+<a name="148"><span class="lineNum">     148 </span>            :     }</a>
+<a name="149"><span class="lineNum">     149 </span>            : </a>
+<a name="150"><span class="lineNum">     150 </span>            :     // Find absolute difference between midrange and reading (abs(Pnfso-0.5)):</a>
+<a name="151"><span class="lineNum">     151 </span><span class="lineNoCov">          0 :     if (Pnfso &gt; 0.5) {</span></a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineNoCov">          0 :         Pdiff = Pnfso - 0.5;</span></a>
+<a name="153"><span class="lineNum">     153 </span>            :     } else {</a>
+<a name="154"><span class="lineNum">     154 </span><span class="lineNoCov">          0 :         Pdiff = 0.5f - Pnfso;</span></a>
+<a name="155"><span class="lineNum">     155 </span>            :     }</a>
+<a name="156"><span class="lineNum">     156 </span>            : </a>
+<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 :     const float Tcorr = (1.0f - (Es * 2.5f * Pdiff)) * Tdiff * TC50 / TC50Scale;</span></a>
+<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :     const float PCorrt = Pnfso - Tcorr; // corrected P: float, [0 to +1.0)</span></a>
+<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 :     PComp = PCorrt * (float)0xFFFFFF;</span></a>
+<a name="160"><span class="lineNum">     160 </span>            : </a>
+<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 :     return Status::Normal;</span></a>
+<a name="162"><span class="lineNum">     162 </span>            : }</a>
+<a name="163"><span class="lineNum">     163 </span>            : </a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineNoCov">          0 : bool AUAV_Pressure_sensor::read_register(uint8_t cmd, uint16_t &amp;result)</span></a>
+<a name="165"><span class="lineNum">     165 </span>            : {</a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :     switch (coefficient_step) {</span></a>
+<a name="167"><span class="lineNum">     167 </span><span class="lineNoCov">          0 :         case CoefficientStep::request: {</span></a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :             if (dev-&gt;transfer(&amp;cmd, sizeof(cmd), nullptr, 0)) {</span></a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :                 coefficient_step = CoefficientStep::read;</span></a>
+<a name="170"><span class="lineNum">     170 </span>            :             }</a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineNoCov">          0 :             return false;</span></a>
+<a name="172"><span class="lineNum">     172 </span>            :         }</a>
+<a name="173"><span class="lineNum">     173 </span>            : </a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineNoCov">          0 :         case CoefficientStep::read: {</span></a>
+<a name="175"><span class="lineNum">     175 </span>            :             // Next step is always another request, either for the next coefficient or a re-request if this read fails</a>
+<a name="176"><span class="lineNum">     176 </span><span class="lineNoCov">          0 :             coefficient_step = CoefficientStep::request;</span></a>
+<a name="177"><span class="lineNum">     177 </span>            : </a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineNoCov">          0 :             const uint8_t healthy_status = type == Type::Differential ? 0x50 :  0x40;</span></a>
+<a name="179"><span class="lineNum">     179 </span>            :             uint8_t raw_bytes[3];</a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineNoCov">          0 :             if (!dev-&gt;read((uint8_t *)&amp;raw_bytes, sizeof(raw_bytes))) {</span></a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineNoCov">          0 :                 return false;</span></a>
+<a name="182"><span class="lineNum">     182 </span>            :             }</a>
+<a name="183"><span class="lineNum">     183 </span><span class="lineNoCov">          0 :             if (raw_bytes[0] != healthy_status) {</span></a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineNoCov">          0 :                 return false;</span></a>
+<a name="185"><span class="lineNum">     185 </span>            :             }</a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :             result = ((uint16_t)raw_bytes[1] &lt;&lt; 8) | (uint16_t)raw_bytes[2];</span></a>
+<a name="187"><span class="lineNum">     187 </span><span class="lineNoCov">          0 :             return true;</span></a>
+<a name="188"><span class="lineNum">     188 </span>            :         }</a>
+<a name="189"><span class="lineNum">     189 </span>            :     }</a>
+<a name="190"><span class="lineNum">     190 </span>            : </a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineNoCov">          0 :     return false;</span></a>
+<a name="192"><span class="lineNum">     192 </span>            : </a>
+<a name="193"><span class="lineNum">     193 </span>            : }</a>
+<a name="194"><span class="lineNum">     194 </span>            : </a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 : void AUAV_Pressure_sensor::read_coefficients()</span></a>
+<a name="196"><span class="lineNum">     196 </span>            : {</a>
+<a name="197"><span class="lineNum">     197 </span><span class="lineNoCov">          0 :     const uint8_t cmd_start = type == Type::Differential ? 0x2B : 0x2F;</span></a>
+<a name="198"><span class="lineNum">     198 </span>            : </a>
+<a name="199"><span class="lineNum">     199 </span>            :     // Differential can happily run through these in one call, Absolute gets stuck, no idea why.</a>
+<a name="200"><span class="lineNum">     200 </span>            :     // Space them out anyway to be inline with the spec</a>
+<a name="201"><span class="lineNum">     201 </span>            : </a>
+<a name="202"><span class="lineNum">     202 </span><span class="lineNoCov">          0 :     switch (stage) {</span></a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineNoCov">          0 :     case CoefficientStage::A_high: {</span></a>
+<a name="204"><span class="lineNum">     204 </span>            :         uint16_t high;</a>
+<a name="205"><span class="lineNum">     205 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 0, high)) {</span></a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="207"><span class="lineNum">     207 </span>            :         }</a>
+<a name="208"><span class="lineNum">     208 </span><span class="lineNoCov">          0 :         LIN_A = (float)(high &lt;&lt; 16)/(float)(0x7FFFFFFF);</span></a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::A_low;</span></a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="211"><span class="lineNum">     211 </span>            :     }</a>
+<a name="212"><span class="lineNum">     212 </span>            : </a>
+<a name="213"><span class="lineNum">     213 </span><span class="lineNoCov">          0 :     case CoefficientStage::A_low: {</span></a>
+<a name="214"><span class="lineNum">     214 </span>            :         uint16_t low;</a>
+<a name="215"><span class="lineNum">     215 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 1, low)) {</span></a>
+<a name="216"><span class="lineNum">     216 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="217"><span class="lineNum">     217 </span>            :         }</a>
+<a name="218"><span class="lineNum">     218 </span><span class="lineNoCov">          0 :         LIN_A += (float)(low)/(float)(0x7FFFFFFF);</span></a>
+<a name="219"><span class="lineNum">     219 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::B_high;</span></a>
+<a name="220"><span class="lineNum">     220 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="221"><span class="lineNum">     221 </span>            :     }</a>
+<a name="222"><span class="lineNum">     222 </span>            : </a>
+<a name="223"><span class="lineNum">     223 </span><span class="lineNoCov">          0 :     case CoefficientStage::B_high: {</span></a>
+<a name="224"><span class="lineNum">     224 </span>            :         uint16_t high;</a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 2, high)) {</span></a>
+<a name="226"><span class="lineNum">     226 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="227"><span class="lineNum">     227 </span>            :         }</a>
+<a name="228"><span class="lineNum">     228 </span><span class="lineNoCov">          0 :         LIN_B = (float)(high &lt;&lt; 16)/(float)(0x7FFFFFFF);</span></a>
+<a name="229"><span class="lineNum">     229 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::B_low;</span></a>
+<a name="230"><span class="lineNum">     230 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="231"><span class="lineNum">     231 </span>            :     }</a>
+<a name="232"><span class="lineNum">     232 </span>            : </a>
+<a name="233"><span class="lineNum">     233 </span><span class="lineNoCov">          0 :     case CoefficientStage::B_low: {</span></a>
+<a name="234"><span class="lineNum">     234 </span>            :         uint16_t low;</a>
+<a name="235"><span class="lineNum">     235 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 3, low)) {</span></a>
+<a name="236"><span class="lineNum">     236 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="237"><span class="lineNum">     237 </span>            :         }</a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineNoCov">          0 :         LIN_B += (float)(low)/(float)(0x7FFFFFFF);</span></a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::C_high;</span></a>
+<a name="240"><span class="lineNum">     240 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="241"><span class="lineNum">     241 </span>            :     }</a>
+<a name="242"><span class="lineNum">     242 </span>            : </a>
+<a name="243"><span class="lineNum">     243 </span><span class="lineNoCov">          0 :     case CoefficientStage::C_high: {</span></a>
+<a name="244"><span class="lineNum">     244 </span>            :         uint16_t high;</a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 4, high)) {</span></a>
+<a name="246"><span class="lineNum">     246 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="247"><span class="lineNum">     247 </span>            :         }</a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineNoCov">          0 :         LIN_C = (float)(high &lt;&lt; 16)/(float)(0x7FFFFFFF);</span></a>
+<a name="249"><span class="lineNum">     249 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::C_low;</span></a>
+<a name="250"><span class="lineNum">     250 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="251"><span class="lineNum">     251 </span>            :     }</a>
+<a name="252"><span class="lineNum">     252 </span>            : </a>
+<a name="253"><span class="lineNum">     253 </span><span class="lineNoCov">          0 :     case CoefficientStage::C_low: {</span></a>
+<a name="254"><span class="lineNum">     254 </span>            :         uint16_t low;</a>
+<a name="255"><span class="lineNum">     255 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 5, low)) {</span></a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="257"><span class="lineNum">     257 </span>            :         }</a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineNoCov">          0 :         LIN_C += (float)(low)/(float)(0x7FFFFFFF);</span></a>
+<a name="259"><span class="lineNum">     259 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::D_high;</span></a>
+<a name="260"><span class="lineNum">     260 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="261"><span class="lineNum">     261 </span>            :     }</a>
+<a name="262"><span class="lineNum">     262 </span>            : </a>
+<a name="263"><span class="lineNum">     263 </span><span class="lineNoCov">          0 :     case CoefficientStage::D_high: {</span></a>
+<a name="264"><span class="lineNum">     264 </span>            :         uint16_t high;</a>
+<a name="265"><span class="lineNum">     265 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 6, high)) {</span></a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="267"><span class="lineNum">     267 </span>            :         }</a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineNoCov">          0 :         LIN_D = (float)(high &lt;&lt; 16)/(float)(0x7FFFFFFF);</span></a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::D_low;</span></a>
+<a name="270"><span class="lineNum">     270 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="271"><span class="lineNum">     271 </span>            :     }</a>
+<a name="272"><span class="lineNum">     272 </span>            : </a>
+<a name="273"><span class="lineNum">     273 </span><span class="lineNoCov">          0 :     case CoefficientStage::D_low: {</span></a>
+<a name="274"><span class="lineNum">     274 </span>            :         uint16_t low;</a>
+<a name="275"><span class="lineNum">     275 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 7, low)) {</span></a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="277"><span class="lineNum">     277 </span>            :         }</a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 :         LIN_D += (float)(low)/(float)(0x7FFFFFFF);</span></a>
+<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::E_high;</span></a>
+<a name="280"><span class="lineNum">     280 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="281"><span class="lineNum">     281 </span>            :     }</a>
+<a name="282"><span class="lineNum">     282 </span>            : </a>
+<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 :     case CoefficientStage::E_high: {</span></a>
+<a name="284"><span class="lineNum">     284 </span>            :         uint16_t TC50HL;</a>
+<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 8, TC50HL)) {</span></a>
+<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="287"><span class="lineNum">     287 </span>            :         }</a>
+<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 :         const int8_t i8TC50H = (TC50HL &gt;&gt; 8) &amp; 0xFF;</span></a>
+<a name="289"><span class="lineNum">     289 </span><span class="lineNoCov">          0 :         const int8_t i8TC50L = TC50HL &amp; 0xFF;</span></a>
+<a name="290"><span class="lineNum">     290 </span><span class="lineNoCov">          0 :         TC50H = (float)(i8TC50H)/(float)(0x7F);</span></a>
+<a name="291"><span class="lineNum">     291 </span><span class="lineNoCov">          0 :         TC50L = (float)(i8TC50L)/(float)(0x7F);</span></a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::E_low;</span></a>
+<a name="293"><span class="lineNum">     293 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="294"><span class="lineNum">     294 </span>            :     }</a>
+<a name="295"><span class="lineNum">     295 </span>            : </a>
+<a name="296"><span class="lineNum">     296 </span><span class="lineNoCov">          0 :     case CoefficientStage::E_low: {</span></a>
+<a name="297"><span class="lineNum">     297 </span>            :         uint16_t es;</a>
+<a name="298"><span class="lineNum">     298 </span><span class="lineNoCov">          0 :         if (!read_register(cmd_start + 9, es)) {</span></a>
+<a name="299"><span class="lineNum">     299 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="300"><span class="lineNum">     300 </span>            :         }</a>
+<a name="301"><span class="lineNum">     301 </span><span class="lineNoCov">          0 :         Es = (float)(es &amp; 0xFF)/(float)(0x7F);</span></a>
+<a name="302"><span class="lineNum">     302 </span><span class="lineNoCov">          0 :         stage = CoefficientStage::Done;</span></a>
+<a name="303"><span class="lineNum">     303 </span>            : </a>
+<a name="304"><span class="lineNum">     304 </span>            :         // Drop to 2 retry's for runtime</a>
+<a name="305"><span class="lineNum">     305 </span><span class="lineNoCov">          0 :         dev-&gt;set_retries(2);</span></a>
+<a name="306"><span class="lineNum">     306 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="307"><span class="lineNum">     307 </span>            :     }</a>
+<a name="308"><span class="lineNum">     308 </span>            : </a>
+<a name="309"><span class="lineNum">     309 </span><span class="lineNoCov">          0 :     case CoefficientStage::Done:</span></a>
+<a name="310"><span class="lineNum">     310 </span><span class="lineNoCov">          0 :         break;</span></a>
+<a name="311"><span class="lineNum">     311 </span>            :     }</a>
+<a name="312"><span class="lineNum">     312 </span>            : }</a>
+<a name="313"><span class="lineNum">     313 </span>            : </a>
+<a name="314"><span class="lineNum">     314 </span><span class="lineNoCov">          0 : void AP_Airspeed_AUAV::_timer()</span></a>
+<a name="315"><span class="lineNum">     315 </span>            : {</a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineNoCov">          0 :     if (sensor.stage != AUAV_Pressure_sensor::CoefficientStage::Done) {</span></a>
+<a name="317"><span class="lineNum">     317 </span><span class="lineNoCov">          0 :         sensor.read_coefficients();</span></a>
+<a name="318"><span class="lineNum">     318 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="319"><span class="lineNum">     319 </span>            :     }</a>
+<a name="320"><span class="lineNum">     320 </span>            : </a>
+<a name="321"><span class="lineNum">     321 </span><span class="lineNoCov">          0 :     if (measurement_requested) {</span></a>
+<a name="322"><span class="lineNum">     322 </span>            :         // Read in result of last measurement</a>
+<a name="323"><span class="lineNum">     323 </span>            :         float Pcomp;</a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineNoCov">          0 :         switch (sensor.collect(Pcomp, temp_C)) {</span></a>
+<a name="325"><span class="lineNum">     325 </span><span class="lineNoCov">          0 :         case AUAV_Pressure_sensor::Status::Normal:</span></a>
+<a name="326"><span class="lineNum">     326 </span>            :             // Calculate pressure and update last read time</a>
+<a name="327"><span class="lineNum">     327 </span><span class="lineNoCov">          0 :             last_sample_time_ms = AP_HAL::millis();</span></a>
+<a name="328"><span class="lineNum">     328 </span>            : </a>
+<a name="329"><span class="lineNum">     329 </span>            :             // Convert to correct units and apply range</a>
+<a name="330"><span class="lineNum">     330 </span><span class="lineNoCov">          0 :             pressure = 248.8f*1.25f*((Pcomp-8388608)/16777216.0f) * 2 * range_inH2O;</span></a>
+<a name="331"><span class="lineNum">     331 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="332"><span class="lineNum">     332 </span>            : </a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineNoCov">          0 :         case AUAV_Pressure_sensor::Status::Busy:</span></a>
+<a name="334"><span class="lineNum">     334 </span>            :             // Don't request a new measurement</a>
+<a name="335"><span class="lineNum">     335 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="336"><span class="lineNum">     336 </span>            : </a>
+<a name="337"><span class="lineNum">     337 </span><span class="lineNoCov">          0 :         case AUAV_Pressure_sensor::Status::Fault:</span></a>
+<a name="338"><span class="lineNum">     338 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="339"><span class="lineNum">     339 </span>            :         }</a>
+<a name="340"><span class="lineNum">     340 </span>            :     }</a>
+<a name="341"><span class="lineNum">     341 </span>            : </a>
+<a name="342"><span class="lineNum">     342 </span>            :     // Request a new measurement</a>
+<a name="343"><span class="lineNum">     343 </span><span class="lineNoCov">          0 :     measurement_requested = sensor.measure();</span></a>
+<a name="344"><span class="lineNum">     344 </span>            : }</a>
+<a name="345"><span class="lineNum">     345 </span>            : </a>
+<a name="346"><span class="lineNum">     346 </span>            : // return the current differential_pressure in Pascal</a>
+<a name="347"><span class="lineNum">     347 </span><span class="lineNoCov">          0 : bool AP_Airspeed_AUAV::get_differential_pressure(float &amp;_pressure)</span></a>
+<a name="348"><span class="lineNum">     348 </span>            : {</a>
+<a name="349"><span class="lineNum">     349 </span><span class="lineNoCov">          0 :     WITH_SEMAPHORE(sem);</span></a>
+<a name="350"><span class="lineNum">     350 </span><span class="lineNoCov">          0 :     _pressure = pressure;</span></a>
+<a name="351"><span class="lineNum">     351 </span><span class="lineNoCov">          0 :     return AP_HAL::millis() - last_sample_time_ms &lt; MEASUREMENT_TIMEOUT_MS;</span></a>
+<a name="352"><span class="lineNum">     352 </span>            : }</a>
+<a name="353"><span class="lineNum">     353 </span>            : </a>
+<a name="354"><span class="lineNum">     354 </span>            : // return the current temperature in degrees C, if available</a>
+<a name="355"><span class="lineNum">     355 </span><span class="lineNoCov">          0 : bool AP_Airspeed_AUAV::get_temperature(float &amp;_temperature)</span></a>
+<a name="356"><span class="lineNum">     356 </span>            : {</a>
+<a name="357"><span class="lineNum">     357 </span><span class="lineNoCov">          0 :     WITH_SEMAPHORE(sem);</span></a>
+<a name="358"><span class="lineNum">     358 </span><span class="lineNoCov">          0 :     _temperature = temp_C;</span></a>
+<a name="359"><span class="lineNum">     359 </span><span class="lineNoCov">          0 :     return AP_HAL::millis() - last_sample_time_ms &lt; MEASUREMENT_TIMEOUT_MS;</span></a>
+<a name="360"><span class="lineNum">     360 </span>            : }</a>
+<a name="361"><span class="lineNum">     361 </span>            : </a>
+<a name="362"><span class="lineNum">     362 </span>            : #endif  // AP_AIRSPEED_AUAV_ENABLED</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_NavEKF2/AP_NavEKF2.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_NavEKF2</a> - AP_NavEKF2.h<span style="font-size: 80%;"> (source / <a href="AP_NavEKF2.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryMed">83.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryMed">75.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :   24 state EKF based on the derivation in https://github.com/priseborough/</a>
+<a name="3"><span class="lineNum">       3 </span>            :   InertialNav/blob/master/derivations/RotationVectorAttitudeParameterisation/</a>
+<a name="4"><span class="lineNum">       4 </span>            :   GenerateNavFilterEquations.m</a>
+<a name="5"><span class="lineNum">       5 </span>            : </a>
+<a name="6"><span class="lineNum">       6 </span>            :   Converted from Matlab to C++ by Paul Riseborough</a>
+<a name="7"><span class="lineNum">       7 </span>            : </a>
+<a name="8"><span class="lineNum">       8 </span>            :   EKF Tuning parameters refactored by Tom Cauchois</a>
+<a name="9"><span class="lineNum">       9 </span>            : </a>
+<a name="10"><span class="lineNum">      10 </span>            :   This program is free software: you can redistribute it and/or modify</a>
+<a name="11"><span class="lineNum">      11 </span>            :   it under the terms of the GNU General Public License as published by</a>
+<a name="12"><span class="lineNum">      12 </span>            :   the Free Software Foundation, either version 3 of the License, or</a>
+<a name="13"><span class="lineNum">      13 </span>            :   (at your option) any later version.</a>
+<a name="14"><span class="lineNum">      14 </span>            : </a>
+<a name="15"><span class="lineNum">      15 </span>            :   This program is distributed in the hope that it will be useful,</a>
+<a name="16"><span class="lineNum">      16 </span>            :   but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="17"><span class="lineNum">      17 </span>            :   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="18"><span class="lineNum">      18 </span>            :   GNU General Public License for more details.</a>
+<a name="19"><span class="lineNum">      19 </span>            : </a>
+<a name="20"><span class="lineNum">      20 </span>            :   You should have received a copy of the GNU General Public License</a>
+<a name="21"><span class="lineNum">      21 </span>            :   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="22"><span class="lineNum">      22 </span>            :  */</a>
+<a name="23"><span class="lineNum">      23 </span>            : #pragma once</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            : #include &lt;AP_Common/Location.h&gt;</a>
+<a name="26"><span class="lineNum">      26 </span>            : #include &lt;AP_Math/AP_Math.h&gt;</a>
+<a name="27"><span class="lineNum">      27 </span>            : #include &lt;AP_Param/AP_Param.h&gt;</a>
+<a name="28"><span class="lineNum">      28 </span>            : #include &lt;AP_NavEKF/AP_Nav_Common.h&gt;</a>
+<a name="29"><span class="lineNum">      29 </span>            : </a>
+<a name="30"><span class="lineNum">      30 </span>            : class NavEKF2_core;</a>
+<a name="31"><span class="lineNum">      31 </span>            : class EKFGSF_yaw;</a>
+<a name="32"><span class="lineNum">      32 </span>            : </a>
+<a name="33"><span class="lineNum">      33 </span>            : class NavEKF2 {</a>
+<a name="34"><span class="lineNum">      34 </span>            :     friend class NavEKF2_core;</a>
+<a name="35"><span class="lineNum">      35 </span>            : </a>
+<a name="36"><span class="lineNum">      36 </span>            : public:</a>
+<a name="37"><span class="lineNum">      37 </span>            :     NavEKF2();</a>
+<a name="38"><span class="lineNum">      38 </span>            : </a>
+<a name="39"><span class="lineNum">      39 </span>            :     /* Do not allow copies */</a>
+<a name="40"><span class="lineNum">      40 </span>            :     CLASS_NO_COPY(NavEKF2);</a>
+<a name="41"><span class="lineNum">      41 </span>            : </a>
+<a name="42"><span class="lineNum">      42 </span>            :     static const struct AP_Param::GroupInfo var_info[];</a>
+<a name="43"><span class="lineNum">      43 </span>            : </a>
+<a name="44"><span class="lineNum">      44 </span>            :     // allow logging to determine the number of active cores</a>
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">     715019 :     uint8_t activeCores(void) const {</span></a>
+<a name="46"><span class="lineNum">      46 </span><span class="lineCov">     715019 :         return num_cores;</span></a>
+<a name="47"><span class="lineNum">      47 </span>            :     }</a>
+<a name="48"><span class="lineNum">      48 </span>            : </a>
+<a name="49"><span class="lineNum">      49 </span>            :     // Initialise the filter</a>
+<a name="50"><span class="lineNum">      50 </span>            :     bool InitialiseFilter(void);</a>
+<a name="51"><span class="lineNum">      51 </span>            : </a>
+<a name="52"><span class="lineNum">      52 </span>            :     // Update Filter States - this should be called whenever new IMU data is available</a>
+<a name="53"><span class="lineNum">      53 </span>            :     void UpdateFilter(void);</a>
+<a name="54"><span class="lineNum">      54 </span>            : </a>
+<a name="55"><span class="lineNum">      55 </span>            :     // Check basic filter health metrics and return a consolidated health status</a>
+<a name="56"><span class="lineNum">      56 </span>            :     bool healthy(void) const;</a>
+<a name="57"><span class="lineNum">      57 </span>            : </a>
+<a name="58"><span class="lineNum">      58 </span>            :     // returns false if we fail arming checks, in which case the buffer will be populated with a failure message</a>
+<a name="59"><span class="lineNum">      59 </span>            :     bool pre_arm_check(char *failure_msg, uint8_t failure_msg_len) const;</a>
+<a name="60"><span class="lineNum">      60 </span>            : </a>
+<a name="61"><span class="lineNum">      61 </span>            :     // returns the index of the primary core</a>
+<a name="62"><span class="lineNum">      62 </span>            :     // return -1 if no primary core selected</a>
+<a name="63"><span class="lineNum">      63 </span>            :     int8_t getPrimaryCoreIndex(void) const;</a>
+<a name="64"><span class="lineNum">      64 </span>            : </a>
+<a name="65"><span class="lineNum">      65 </span>            :     // returns the index of the IMU of the primary core</a>
+<a name="66"><span class="lineNum">      66 </span>            :     // return -1 if no primary core selected</a>
+<a name="67"><span class="lineNum">      67 </span>            :     int8_t getPrimaryCoreIMUIndex(void) const;</a>
+<a name="68"><span class="lineNum">      68 </span>            :     </a>
+<a name="69"><span class="lineNum">      69 </span>            :     // Write the last calculated NE position relative to the reference point (m)</a>
+<a name="70"><span class="lineNum">      70 </span>            :     // If a calculated solution is not available, use the best available data and return false</a>
+<a name="71"><span class="lineNum">      71 </span>            :     // If false returned, do not use for flight control</a>
+<a name="72"><span class="lineNum">      72 </span>            :     bool getPosNE(Vector2p &amp;posNE) const;</a>
+<a name="73"><span class="lineNum">      73 </span>            : </a>
+<a name="74"><span class="lineNum">      74 </span>            :     // Write the last calculated D position relative to the reference point (m)</a>
+<a name="75"><span class="lineNum">      75 </span>            :     // If a calculated solution is not available, use the best available data and return false</a>
+<a name="76"><span class="lineNum">      76 </span>            :     // If false returned, do not use for flight control</a>
+<a name="77"><span class="lineNum">      77 </span>            :     bool getPosD(postype_t &amp;posD) const;</a>
+<a name="78"><span class="lineNum">      78 </span>            : </a>
+<a name="79"><span class="lineNum">      79 </span>            :     // return NED velocity in m/s</a>
+<a name="80"><span class="lineNum">      80 </span>            :     void getVelNED(Vector3f &amp;vel) const;</a>
+<a name="81"><span class="lineNum">      81 </span>            : </a>
+<a name="82"><span class="lineNum">      82 </span>            :     // return estimate of true airspeed vector in body frame in m/s</a>
+<a name="83"><span class="lineNum">      83 </span>            :     // returns false if estimate is unavailable</a>
+<a name="84"><span class="lineNum">      84 </span>            :     bool getAirSpdVec(Vector3f &amp;vel) const;</a>
+<a name="85"><span class="lineNum">      85 </span>            : </a>
+<a name="86"><span class="lineNum">      86 </span>            :     // Return the rate of change of vertical position in the down direction (dPosD/dt) in m/s</a>
+<a name="87"><span class="lineNum">      87 </span>            :     // This can be different to the z component of the EKF velocity state because it will fluctuate with height errors and corrections in the EKF</a>
+<a name="88"><span class="lineNum">      88 </span>            :     // but will always be kinematically consistent with the z component of the EKF position state</a>
+<a name="89"><span class="lineNum">      89 </span>            :     float getPosDownDerivative() const;</a>
+<a name="90"><span class="lineNum">      90 </span>            : </a>
+<a name="91"><span class="lineNum">      91 </span>            :     // return body axis gyro bias estimates in rad/sec</a>
+<a name="92"><span class="lineNum">      92 </span>            :     void getGyroBias(Vector3f &amp;gyroBias) const;</a>
+<a name="93"><span class="lineNum">      93 </span>            : </a>
+<a name="94"><span class="lineNum">      94 </span>            :     // reset body axis gyro bias estimates</a>
+<a name="95"><span class="lineNum">      95 </span>            :     void resetGyroBias(void);</a>
+<a name="96"><span class="lineNum">      96 </span>            : </a>
+<a name="97"><span class="lineNum">      97 </span>            :     // Resets the baro so that it reads zero at the current height</a>
+<a name="98"><span class="lineNum">      98 </span>            :     // Resets the EKF height to zero</a>
+<a name="99"><span class="lineNum">      99 </span>            :     // Adjusts the EKf origin height so that the EKF height + origin height is the same as before</a>
+<a name="100"><span class="lineNum">     100 </span>            :     // Returns true if the height datum reset has been performed</a>
+<a name="101"><span class="lineNum">     101 </span>            :     // If using a range finder for height no reset is performed and it returns false</a>
+<a name="102"><span class="lineNum">     102 </span>            :     bool resetHeightDatum(void);</a>
+<a name="103"><span class="lineNum">     103 </span>            : </a>
+<a name="104"><span class="lineNum">     104 </span>            :     // return the horizontal speed limit in m/s set by optical flow sensor limits</a>
+<a name="105"><span class="lineNum">     105 </span>            :     // return the scale factor to be applied to navigation velocity gains to compensate for increase in velocity noise with height when using optical flow</a>
+<a name="106"><span class="lineNum">     106 </span>            :     void getEkfControlLimits(float &amp;ekfGndSpdLimit, float &amp;ekfNavVelGainScaler) const;</a>
+<a name="107"><span class="lineNum">     107 </span>            : </a>
+<a name="108"><span class="lineNum">     108 </span>            :     // return the Z-accel bias estimate in m/s^2 for the specified instance</a>
+<a name="109"><span class="lineNum">     109 </span>            :     // An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="110"><span class="lineNum">     110 </span>            :     void getAccelZBias(float &amp;zbias) const;</a>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<a name="112"><span class="lineNum">     112 </span>            :     // return the NED wind speed estimates in m/s (positive is air moving in the direction of the axis)</a>
+<a name="113"><span class="lineNum">     113 </span>            :     // An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="114"><span class="lineNum">     114 </span>            :     void getWind(Vector3f &amp;wind) const;</a>
+<a name="115"><span class="lineNum">     115 </span>            : </a>
+<a name="116"><span class="lineNum">     116 </span>            :     // return earth magnetic field estimates in measurement units / 1000 for the specified instance</a>
+<a name="117"><span class="lineNum">     117 </span>            :     // An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="118"><span class="lineNum">     118 </span>            :     void getMagNED(Vector3f &amp;magNED) const;</a>
+<a name="119"><span class="lineNum">     119 </span>            : </a>
+<a name="120"><span class="lineNum">     120 </span>            :     // return body magnetic field estimates in measurement units / 1000 for the specified instance</a>
+<a name="121"><span class="lineNum">     121 </span>            :     // An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="122"><span class="lineNum">     122 </span>            :     void getMagXYZ(Vector3f &amp;magXYZ) const;</a>
+<a name="123"><span class="lineNum">     123 </span>            : </a>
+<a name="124"><span class="lineNum">     124 </span>            :     // Return estimated magnetometer offsets</a>
+<a name="125"><span class="lineNum">     125 </span>            :     // Return true if magnetometer offsets are valid</a>
+<a name="126"><span class="lineNum">     126 </span>            :     bool getMagOffsets(uint8_t mag_idx, Vector3f &amp;magOffsets) const;</a>
+<a name="127"><span class="lineNum">     127 </span>            : </a>
+<a name="128"><span class="lineNum">     128 </span>            :     // Return the last calculated latitude, longitude and height in WGS-84</a>
+<a name="129"><span class="lineNum">     129 </span>            :     // If a calculated location isn't available, return a raw GPS measurement</a>
+<a name="130"><span class="lineNum">     130 </span>            :     // The status will return true if a calculation or raw measurement is available</a>
+<a name="131"><span class="lineNum">     131 </span>            :     // The getFilterStatus() function provides a more detailed description of data health and must be checked if data is to be used for flight control</a>
+<a name="132"><span class="lineNum">     132 </span>            :     bool getLLH(Location &amp;loc) const;</a>
+<a name="133"><span class="lineNum">     133 </span>            : </a>
+<a name="134"><span class="lineNum">     134 </span>            :     // Return the latitude and longitude and height used to set the NED origin for the specified instance</a>
+<a name="135"><span class="lineNum">     135 </span>            :     // An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="136"><span class="lineNum">     136 </span>            :     // All NED positions calculated by the filter are relative to this location</a>
+<a name="137"><span class="lineNum">     137 </span>            :     // Returns false if the origin has not been set</a>
+<a name="138"><span class="lineNum">     138 </span>            :     bool getOriginLLH(Location &amp;loc) const;</a>
+<a name="139"><span class="lineNum">     139 </span>            : </a>
+<a name="140"><span class="lineNum">     140 </span>            :     // set the latitude and longitude and height used to set the NED origin</a>
+<a name="141"><span class="lineNum">     141 </span>            :     // All NED positions calculated by the filter will be relative to this location</a>
+<a name="142"><span class="lineNum">     142 </span>            :     // The origin cannot be set if the filter is in a flight mode (eg vehicle armed)</a>
+<a name="143"><span class="lineNum">     143 </span>            :     // Returns false if the filter has rejected the attempt to set the origin</a>
+<a name="144"><span class="lineNum">     144 </span>            :     bool setOriginLLH(const Location &amp;loc);</a>
+<a name="145"><span class="lineNum">     145 </span>            : </a>
+<a name="146"><span class="lineNum">     146 </span>            :     // return estimated height above ground level</a>
+<a name="147"><span class="lineNum">     147 </span>            :     // return false if ground height is not being estimated.</a>
+<a name="148"><span class="lineNum">     148 </span>            :     bool getHAGL(float &amp;HAGL) const;</a>
+<a name="149"><span class="lineNum">     149 </span>            : </a>
+<a name="150"><span class="lineNum">     150 </span>            :     // return the Euler roll, pitch and yaw angle in radians for the specified instance</a>
+<a name="151"><span class="lineNum">     151 </span>            :     // An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="152"><span class="lineNum">     152 </span>            :     void getEulerAngles(Vector3f &amp;eulers) const;</a>
+<a name="153"><span class="lineNum">     153 </span>            : </a>
+<a name="154"><span class="lineNum">     154 </span>            :     // return the transformation matrix from XYZ (body) to NED axes</a>
+<a name="155"><span class="lineNum">     155 </span>            :     void getRotationBodyToNED(Matrix3f &amp;mat) const;</a>
+<a name="156"><span class="lineNum">     156 </span>            : </a>
+<a name="157"><span class="lineNum">     157 </span>            :     // return the transformation matrix from XYZ (body) to NED axes</a>
+<a name="158"><span class="lineNum">     158 </span>            :     void getQuaternionBodyToNED(int8_t instance, Quaternion &amp;quat) const;</a>
+<a name="159"><span class="lineNum">     159 </span>            : </a>
+<a name="160"><span class="lineNum">     160 </span>            :     // return the quaternions defining the rotation from NED to autopilot axes</a>
+<a name="161"><span class="lineNum">     161 </span>            :     void getQuaternion(Quaternion &amp;quat) const;</a>
+<a name="162"><span class="lineNum">     162 </span>            : </a>
+<a name="163"><span class="lineNum">     163 </span>            :     // return the innovations for the specified instance</a>
+<a name="164"><span class="lineNum">     164 </span>            :     // An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="165"><span class="lineNum">     165 </span>            :     bool getInnovations(Vector3f &amp;velInnov, Vector3f &amp;posInnov, Vector3f &amp;magInnov, float &amp;tasInnov, float &amp;yawInnov) const;</a>
+<a name="166"><span class="lineNum">     166 </span>            : </a>
+<a name="167"><span class="lineNum">     167 </span>            :     // return the innovation consistency test ratios for the specified instance</a>
+<a name="168"><span class="lineNum">     168 </span>            :     // An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="169"><span class="lineNum">     169 </span>            :     bool getVariances(float &amp;velVar, float &amp;posVar, float &amp;hgtVar, Vector3f &amp;magVar, float &amp;tasVar, Vector2f &amp;offset) const;</a>
+<a name="170"><span class="lineNum">     170 </span>            : </a>
+<a name="171"><span class="lineNum">     171 </span>            :     // should we use the compass? This is public so it can be used for</a>
+<a name="172"><span class="lineNum">     172 </span>            :     // reporting via ahrs.use_compass()</a>
+<a name="173"><span class="lineNum">     173 </span>            :     bool use_compass(void) const;</a>
+<a name="174"><span class="lineNum">     174 </span>            : </a>
+<a name="175"><span class="lineNum">     175 </span>            :     // write the raw optical flow measurements</a>
+<a name="176"><span class="lineNum">     176 </span>            :     // rawFlowQuality is a measured of quality between 0 and 255, with 255 being the best quality</a>
+<a name="177"><span class="lineNum">     177 </span>            :     // rawFlowRates are the optical flow rates in rad/sec about the X and Y sensor axes.</a>
+<a name="178"><span class="lineNum">     178 </span>            :     // rawGyroRates are the sensor rotation rates in rad/sec measured by the sensors internal gyro</a>
+<a name="179"><span class="lineNum">     179 </span>            :     // The sign convention is that a RH physical rotation of the sensor about an axis produces both a positive flow and gyro rate</a>
+<a name="180"><span class="lineNum">     180 </span>            :     // msecFlowMeas is the scheduler time in msec when the optical flow data was received from the sensor.</a>
+<a name="181"><span class="lineNum">     181 </span>            :     // posOffset is the XYZ flow sensor position in the body frame in m</a>
+<a name="182"><span class="lineNum">     182 </span>            :     // heightOverride is the fixed height of the sensor above ground in m, when on rover vehicles. 0 if not used</a>
+<a name="183"><span class="lineNum">     183 </span>            :     void  writeOptFlowMeas(const uint8_t rawFlowQuality, const Vector2f &amp;rawFlowRates, const Vector2f &amp;rawGyroRates, const uint32_t msecFlowMeas, const Vector3f &amp;posOffset, float heightOverride);</a>
+<a name="184"><span class="lineNum">     184 </span>            : </a>
+<a name="185"><span class="lineNum">     185 </span>            :     // Set to true if the terrain underneath is stable enough to be used as a height reference</a>
+<a name="186"><span class="lineNum">     186 </span>            :     // in combination with a range finder. Set to false if the terrain underneath the vehicle</a>
+<a name="187"><span class="lineNum">     187 </span>            :     // cannot be used as a height reference. Use to prevent range finder operation otherwise</a>
+<a name="188"><span class="lineNum">     188 </span>            :     // enabled by the combination of EK2_RNG_AID_HGT and EK2_RNG_USE_SPD parameters.</a>
+<a name="189"><span class="lineNum">     189 </span>            :     void setTerrainHgtStable(bool val);</a>
+<a name="190"><span class="lineNum">     190 </span>            : </a>
+<a name="191"><span class="lineNum">     191 </span>            :     /*</a>
+<a name="192"><span class="lineNum">     192 </span>            :     return the filter fault status as a bitmasked integer for the specified instance</a>
+<a name="193"><span class="lineNum">     193 </span>            :     An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="194"><span class="lineNum">     194 </span>            :      0 = quaternions are NaN</a>
+<a name="195"><span class="lineNum">     195 </span>            :      1 = velocities are NaN</a>
+<a name="196"><span class="lineNum">     196 </span>            :      2 = badly conditioned X magnetometer fusion</a>
+<a name="197"><span class="lineNum">     197 </span>            :      3 = badly conditioned Y magnetometer fusion</a>
+<a name="198"><span class="lineNum">     198 </span>            :      4 = badly conditioned Z magnetometer fusion</a>
+<a name="199"><span class="lineNum">     199 </span>            :      5 = badly conditioned airspeed fusion</a>
+<a name="200"><span class="lineNum">     200 </span>            :      6 = badly conditioned synthetic sideslip fusion</a>
+<a name="201"><span class="lineNum">     201 </span>            :      7 = filter is not initialised</a>
+<a name="202"><span class="lineNum">     202 </span>            :     */</a>
+<a name="203"><span class="lineNum">     203 </span>            :     void  getFilterFaults(uint16_t &amp;faults) const;</a>
+<a name="204"><span class="lineNum">     204 </span>            : </a>
+<a name="205"><span class="lineNum">     205 </span>            :     /*</a>
+<a name="206"><span class="lineNum">     206 </span>            :     return filter gps quality check status for the specified instance</a>
+<a name="207"><span class="lineNum">     207 </span>            :     An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="208"><span class="lineNum">     208 </span>            :     */</a>
+<a name="209"><span class="lineNum">     209 </span>            :     void  getFilterGpsStatus(nav_gps_status &amp;faults) const;</a>
+<a name="210"><span class="lineNum">     210 </span>            : </a>
+<a name="211"><span class="lineNum">     211 </span>            :     /*</a>
+<a name="212"><span class="lineNum">     212 </span>            :     return filter status flags for the specified instance</a>
+<a name="213"><span class="lineNum">     213 </span>            :     An out of range instance (eg -1) returns data for the primary instance</a>
+<a name="214"><span class="lineNum">     214 </span>            :     */</a>
+<a name="215"><span class="lineNum">     215 </span>            :     void  getFilterStatus(nav_filter_status &amp;status) const;</a>
+<a name="216"><span class="lineNum">     216 </span>            : </a>
+<a name="217"><span class="lineNum">     217 </span>            :     // send an EKF_STATUS_REPORT message to GCS</a>
+<a name="218"><span class="lineNum">     218 </span>            :     void send_status_report(class GCS_MAVLINK &amp;link) const;</a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span>            :     // provides the height limit to be observed by the control loops</a>
+<a name="221"><span class="lineNum">     221 </span>            :     // returns false if no height limiting is required</a>
+<a name="222"><span class="lineNum">     222 </span>            :     // this is needed to ensure the vehicle does not fly too high when using optical flow navigation</a>
+<a name="223"><span class="lineNum">     223 </span>            :     bool getHeightControlLimit(float &amp;height) const;</a>
+<a name="224"><span class="lineNum">     224 </span>            : </a>
+<a name="225"><span class="lineNum">     225 </span>            :     // return the amount of yaw angle change (in radians) due to the last yaw angle reset or core selection switch</a>
+<a name="226"><span class="lineNum">     226 </span>            :     // returns the time of the last yaw angle reset or 0 if no reset has ever occurred</a>
+<a name="227"><span class="lineNum">     227 </span>            :     uint32_t getLastYawResetAngle(float &amp;yawAngDelta);</a>
+<a name="228"><span class="lineNum">     228 </span>            : </a>
+<a name="229"><span class="lineNum">     229 </span>            :     // return the amount of NE position change due to the last position reset in metres</a>
+<a name="230"><span class="lineNum">     230 </span>            :     // returns the time of the last reset or 0 if no reset has ever occurred</a>
+<a name="231"><span class="lineNum">     231 </span>            :     uint32_t getLastPosNorthEastReset(Vector2f &amp;posDelta);</a>
+<a name="232"><span class="lineNum">     232 </span>            : </a>
+<a name="233"><span class="lineNum">     233 </span>            :     // return the amount of NE velocity change due to the last velocity reset in metres/sec</a>
+<a name="234"><span class="lineNum">     234 </span>            :     // returns the time of the last reset or 0 if no reset has ever occurred</a>
+<a name="235"><span class="lineNum">     235 </span>            :     uint32_t getLastVelNorthEastReset(Vector2f &amp;vel) const;</a>
+<a name="236"><span class="lineNum">     236 </span>            : </a>
+<a name="237"><span class="lineNum">     237 </span>            :     // return the amount of vertical position change due to the last reset in metres</a>
+<a name="238"><span class="lineNum">     238 </span>            :     // returns the time of the last reset or 0 if no reset has ever occurred</a>
+<a name="239"><span class="lineNum">     239 </span>            :     uint32_t getLastPosDownReset(float &amp;posDelta);</a>
+<a name="240"><span class="lineNum">     240 </span>            : </a>
+<a name="241"><span class="lineNum">     241 </span>            :     // set and save the _baroAltNoise parameter</a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :     void set_baro_alt_noise(float noise) { _baroAltNoise.set_and_save(noise); };</span></a>
+<a name="243"><span class="lineNum">     243 </span>            : </a>
+<a name="244"><span class="lineNum">     244 </span>            :     // allow the enable flag to be set by Replay</a>
+<a name="245"><span class="lineNum">     245 </span>            :     void set_enable(bool enable) { _enable.set_enable(enable); }</a>
+<a name="246"><span class="lineNum">     246 </span>            : </a>
+<a name="247"><span class="lineNum">     247 </span>            :     // get the enable parameter</a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineCov">          1 :     bool get_enable(void) const { return bool(_enable.get()); }</span></a>
+<a name="249"><span class="lineNum">     249 </span>            :     </a>
+<a name="250"><span class="lineNum">     250 </span>            :     /*</a>
+<a name="251"><span class="lineNum">     251 </span>            :      * Write position and quaternion data from an external navigation system</a>
+<a name="252"><span class="lineNum">     252 </span>            :      *</a>
+<a name="253"><span class="lineNum">     253 </span>            :      * pos        : position in the RH navigation frame. Frame is assumed to be NED (m)</a>
+<a name="254"><span class="lineNum">     254 </span>            :      * quat       : quaternion desribing the rotation from navigation frame to body frame</a>
+<a name="255"><span class="lineNum">     255 </span>            :      * posErr     : 1-sigma spherical position error (m)</a>
+<a name="256"><span class="lineNum">     256 </span>            :      * angErr     : 1-sigma spherical angle error (rad)</a>
+<a name="257"><span class="lineNum">     257 </span>            :      * timeStamp_ms : system time the measurement was taken, not the time it was received (mSec)</a>
+<a name="258"><span class="lineNum">     258 </span>            :      * delay_ms   : average delay of external nav system measurements relative to inertial measurements</a>
+<a name="259"><span class="lineNum">     259 </span>            :      * resetTime_ms : system time of the last position reset request (mSec)</a>
+<a name="260"><span class="lineNum">     260 </span>            :      *</a>
+<a name="261"><span class="lineNum">     261 </span>            :      * Sensor offsets are pulled directly from the AP_VisualOdom library</a>
+<a name="262"><span class="lineNum">     262 </span>            :      *</a>
+<a name="263"><span class="lineNum">     263 </span>            :     */</a>
+<a name="264"><span class="lineNum">     264 </span>            :     void writeExtNavData(const Vector3f &amp;pos, const Quaternion &amp;quat, float posErr, float angErr, uint32_t timeStamp_ms, uint16_t delay_ms, uint32_t resetTime_ms);</a>
+<a name="265"><span class="lineNum">     265 </span>            : </a>
+<a name="266"><span class="lineNum">     266 </span>            :     /*</a>
+<a name="267"><span class="lineNum">     267 </span>            :      * Write velocity data from an external navigation system</a>
+<a name="268"><span class="lineNum">     268 </span>            :      * vel : velocity in NED (m)</a>
+<a name="269"><span class="lineNum">     269 </span>            :      * err : velocity error (m/s)</a>
+<a name="270"><span class="lineNum">     270 </span>            :      * timeStamp_ms : system time the measurement was taken, not the time it was received (mSec)</a>
+<a name="271"><span class="lineNum">     271 </span>            :      * delay_ms   : average delay of external nav system measurements relative to inertial measurements</a>
+<a name="272"><span class="lineNum">     272 </span>            :      */</a>
+<a name="273"><span class="lineNum">     273 </span>            :     void writeExtNavVelData(const Vector3f &amp;vel, float err, uint32_t timeStamp_ms, uint16_t delay_ms);</a>
+<a name="274"><span class="lineNum">     274 </span>            : </a>
+<a name="275"><span class="lineNum">     275 </span>            :     /*</a>
+<a name="276"><span class="lineNum">     276 </span>            :       check if switching lanes will reduce the normalised</a>
+<a name="277"><span class="lineNum">     277 </span>            :       innovations. This is called when the vehicle code is about to</a>
+<a name="278"><span class="lineNum">     278 </span>            :       trigger an EKF failsafe, and it would like to avoid that by</a>
+<a name="279"><span class="lineNum">     279 </span>            :       using a different EKF lane</a>
+<a name="280"><span class="lineNum">     280 </span>            :      */</a>
+<a name="281"><span class="lineNum">     281 </span>            :     void checkLaneSwitch(void);</a>
+<a name="282"><span class="lineNum">     282 </span>            : </a>
+<a name="283"><span class="lineNum">     283 </span>            :     /*</a>
+<a name="284"><span class="lineNum">     284 </span>            :       Request a reset of the EKF yaw. This is called when the vehicle code is about to</a>
+<a name="285"><span class="lineNum">     285 </span>            :       trigger an EKF failsafe, and it would like to avoid that.</a>
+<a name="286"><span class="lineNum">     286 </span>            :      */</a>
+<a name="287"><span class="lineNum">     287 </span>            :     void requestYawReset(void);</a>
+<a name="288"><span class="lineNum">     288 </span>            : </a>
+<a name="289"><span class="lineNum">     289 </span>            :     // write EKF information to on-board logs</a>
+<a name="290"><span class="lineNum">     290 </span>            :     void Log_Write();</a>
+<a name="291"><span class="lineNum">     291 </span>            : </a>
+<a name="292"><span class="lineNum">     292 </span>            :     // check if external navigation is being used for yaw observation</a>
+<a name="293"><span class="lineNum">     293 </span>            :     bool isExtNavUsedForYaw(void) const;</a>
+<a name="294"><span class="lineNum">     294 </span>            : </a>
+<a name="295"><span class="lineNum">     295 </span>            :     // check if configured to use GPS for horizontal position estimation</a>
+<a name="296"><span class="lineNum">     296 </span>            :     bool configuredToUseGPSForPosXY(void) const;</a>
+<a name="297"><span class="lineNum">     297 </span>            : </a>
+<a name="298"><span class="lineNum">     298 </span>            :     // Writes the default equivalent airspeed in m/s to be used in forward flight if a measured airspeed is required and not available.</a>
+<a name="299"><span class="lineNum">     299 </span>            :     void writeDefaultAirSpeed(float airspeed);</a>
+<a name="300"><span class="lineNum">     300 </span>            : </a>
+<a name="301"><span class="lineNum">     301 </span>            :     // get a yaw estimator instance</a>
+<a name="302"><span class="lineNum">     302 </span>            :     const EKFGSF_yaw *get_yawEstimator(void) const;</a>
+<a name="303"><span class="lineNum">     303 </span>            :     </a>
+<a name="304"><span class="lineNum">     304 </span>            : private:</a>
+<a name="305"><span class="lineNum">     305 </span>            :     uint8_t num_cores; // number of allocated cores</a>
+<a name="306"><span class="lineNum">     306 </span>            :     uint8_t primary;   // current primary core</a>
+<a name="307"><span class="lineNum">     307 </span>            :     NavEKF2_core *core = nullptr;</a>
+<a name="308"><span class="lineNum">     308 </span>            :     bool core_malloc_failed;</a>
+<a name="309"><span class="lineNum">     309 </span>            : </a>
+<a name="310"><span class="lineNum">     310 </span>            :     uint32_t _frameTimeUsec;        // time per IMU frame</a>
+<a name="311"><span class="lineNum">     311 </span>            :     uint8_t  _framesPerPrediction;  // expected number of IMU frames per prediction</a>
+<a name="312"><span class="lineNum">     312 </span>            : </a>
+<a name="313"><span class="lineNum">     313 </span>            :     // EKF Mavlink Tuneable Parameters</a>
+<a name="314"><span class="lineNum">     314 </span>            :     AP_Int8  _enable;               // zero to disable EKF2</a>
+<a name="315"><span class="lineNum">     315 </span>            :     AP_Float _gpsHorizVelNoise;     // GPS horizontal velocity measurement noise : m/s</a>
+<a name="316"><span class="lineNum">     316 </span>            :     AP_Float _gpsVertVelNoise;      // GPS vertical velocity measurement noise : m/s</a>
+<a name="317"><span class="lineNum">     317 </span>            :     AP_Float _gpsHorizPosNoise;     // GPS horizontal position measurement noise m</a>
+<a name="318"><span class="lineNum">     318 </span>            :     AP_Float _baroAltNoise;         // Baro height measurement noise : m</a>
+<a name="319"><span class="lineNum">     319 </span>            :     AP_Float _magNoise;             // magnetometer measurement noise : gauss</a>
+<a name="320"><span class="lineNum">     320 </span>            :     AP_Float _easNoise;             // equivalent airspeed measurement noise : m/s</a>
+<a name="321"><span class="lineNum">     321 </span>            :     AP_Float _windVelProcessNoise;  // wind velocity state process noise : m/s^2</a>
+<a name="322"><span class="lineNum">     322 </span>            :     AP_Float _wndVarHgtRateScale;   // scale factor applied to wind process noise due to height rate</a>
+<a name="323"><span class="lineNum">     323 </span>            :     AP_Float _magEarthProcessNoise; // Earth magnetic field process noise : gauss/sec</a>
+<a name="324"><span class="lineNum">     324 </span>            :     AP_Float _magBodyProcessNoise;  // Body magnetic field process noise : gauss/sec</a>
+<a name="325"><span class="lineNum">     325 </span>            :     AP_Float _gyrNoise;             // gyro process noise : rad/s</a>
+<a name="326"><span class="lineNum">     326 </span>            :     AP_Float _accNoise;             // accelerometer process noise : m/s^2</a>
+<a name="327"><span class="lineNum">     327 </span>            :     AP_Float _gyroBiasProcessNoise; // gyro bias state process noise : rad/s</a>
+<a name="328"><span class="lineNum">     328 </span>            :     AP_Float _accelBiasProcessNoise;// accel bias state process noise : m/s^2</a>
+<a name="329"><span class="lineNum">     329 </span>            :     AP_Int16 _hgtDelay_ms;          // effective average delay of Height measurements relative to inertial measurements (msec)</a>
+<a name="330"><span class="lineNum">     330 </span>            :     AP_Int8  _fusionModeGPS;        // 0 = use 3D velocity, 1 = use 2D velocity, 2 = use no velocity, 3 = do not use GPS</a>
+<a name="331"><span class="lineNum">     331 </span>            :     AP_Int16  _gpsVelInnovGate;     // Percentage number of standard deviations applied to GPS velocity innovation consistency check</a>
+<a name="332"><span class="lineNum">     332 </span>            :     AP_Int16  _gpsPosInnovGate;     // Percentage number of standard deviations applied to GPS position innovation consistency check</a>
+<a name="333"><span class="lineNum">     333 </span>            :     AP_Int16  _hgtInnovGate;        // Percentage number of standard deviations applied to height innovation consistency check</a>
+<a name="334"><span class="lineNum">     334 </span>            :     AP_Int16  _magInnovGate;        // Percentage number of standard deviations applied to magnetometer innovation consistency check</a>
+<a name="335"><span class="lineNum">     335 </span>            :     AP_Int16  _tasInnovGate;        // Percentage number of standard deviations applied to true airspeed innovation consistency check</a>
+<a name="336"><span class="lineNum">     336 </span>            :     AP_Int8  _magCal;               // Sets activation condition for in-flight magnetometer calibration</a>
+<a name="337"><span class="lineNum">     337 </span>            :     AP_Int8 _gpsGlitchRadiusMax;    // Maximum allowed discrepancy between inertial and GPS Horizontal position before GPS glitch is declared : m</a>
+<a name="338"><span class="lineNum">     338 </span>            :     AP_Float _flowNoise;            // optical flow rate measurement noise</a>
+<a name="339"><span class="lineNum">     339 </span>            :     AP_Int16  _flowInnovGate;       // Percentage number of standard deviations applied to optical flow innovation consistency check</a>
+<a name="340"><span class="lineNum">     340 </span>            :     AP_Int8  _flowDelay_ms;         // effective average delay of optical flow measurements rel to IMU (msec)</a>
+<a name="341"><span class="lineNum">     341 </span>            :     AP_Int16  _rngInnovGate;        // Percentage number of standard deviations applied to range finder innovation consistency check</a>
+<a name="342"><span class="lineNum">     342 </span>            :     AP_Float _maxFlowRate;          // Maximum flow rate magnitude that will be accepted by the filter</a>
+<a name="343"><span class="lineNum">     343 </span>            :     AP_Int8 _altSource;             // Primary alt source during optical flow navigation. 0 = use Baro, 1 = use range finder, 2 = use GPS, 3 = use Range Beacon</a>
+<a name="344"><span class="lineNum">     344 </span>            :     AP_Float _gyroScaleProcessNoise;// gyro scale factor state process noise : 1/s</a>
+<a name="345"><span class="lineNum">     345 </span>            :     AP_Float _rngNoise;             // Range finder noise : m</a>
+<a name="346"><span class="lineNum">     346 </span>            :     AP_Int8 _gpsCheck;              // Bitmask controlling which preflight GPS checks are bypassed</a>
+<a name="347"><span class="lineNum">     347 </span>            :     AP_Int8 _imuMask;               // Bitmask of IMUs to instantiate EKF2 for</a>
+<a name="348"><span class="lineNum">     348 </span>            :     AP_Int16 _gpsCheckScaler;       // Percentage increase to be applied to GPS pre-flight accuracy and drift thresholds</a>
+<a name="349"><span class="lineNum">     349 </span>            :     AP_Float _noaidHorizNoise;      // horizontal position measurement noise assumed when synthesised zero position measurements are used to constrain attitude drift : m</a>
+<a name="350"><span class="lineNum">     350 </span>            :     AP_Float _yawNoise;             // magnetic yaw measurement noise : rad</a>
+<a name="351"><span class="lineNum">     351 </span>            :     AP_Int16 _yawInnovGate;         // Percentage number of standard deviations applied to magnetic yaw innovation consistency check</a>
+<a name="352"><span class="lineNum">     352 </span>            :     AP_Int8 _tauVelPosOutput;       // Time constant of output complementary filter : csec (centi-seconds)</a>
+<a name="353"><span class="lineNum">     353 </span>            :     AP_Int8 _useRngSwHgt;           // Maximum valid range of the range finder as a percentage of the maximum range specified by the sensor driver</a>
+<a name="354"><span class="lineNum">     354 </span>            :     AP_Float _terrGradMax;          // Maximum terrain gradient below the vehicle</a>
+<a name="355"><span class="lineNum">     355 </span>            :     AP_Float _rngBcnNoise;          // Range beacon measurement noise (m)</a>
+<a name="356"><span class="lineNum">     356 </span>            :     AP_Int16 _rngBcnInnovGate;      // Percentage number of standard deviations applied to range beacon innovation consistency check</a>
+<a name="357"><span class="lineNum">     357 </span>            :     AP_Int8  _rngBcnDelay_ms;       // effective average delay of range beacon measurements rel to IMU (msec)</a>
+<a name="358"><span class="lineNum">     358 </span>            :     AP_Float _useRngSwSpd;          // Maximum horizontal ground speed to use range finder as the primary height source (m/s)</a>
+<a name="359"><span class="lineNum">     359 </span>            :     AP_Int8 _magMask;               // Bitmask forcng specific EKF core instances to use simple heading magnetometer fusion.</a>
+<a name="360"><span class="lineNum">     360 </span>            :     AP_Int8 _originHgtMode;         // Bitmask controlling post alignment correction and reporting of the EKF origin height.</a>
+<a name="361"><span class="lineNum">     361 </span>            :     AP_Int8 _flowUse;               // Controls if the optical flow data is fused into the main navigation estimator and/or the terrain estimator.</a>
+<a name="362"><span class="lineNum">     362 </span>            :     AP_Int16 _mag_ef_limit;         // limit on difference between WMM tables and learned earth field.</a>
+<a name="363"><span class="lineNum">     363 </span>            :     AP_Float _hrt_filt_freq;        // frequency of output observer height rate complementary filter in Hz</a>
+<a name="364"><span class="lineNum">     364 </span>            :     AP_Int8 _gsfRunMask;            // mask controlling which EKF2 instances run a separate EKF-GSF yaw estimator</a>
+<a name="365"><span class="lineNum">     365 </span>            :     AP_Int8 _gsfUseMask;            // mask controlling which EKF2 instances will use EKF-GSF yaw estimator data to assit with yaw resets</a>
+<a name="366"><span class="lineNum">     366 </span>            :     AP_Int8 _gsfResetMaxCount;      // maximum number of times the EKF2 is allowed to reset it's yaw to the EKF-GSF estimate</a>
+<a name="367"><span class="lineNum">     367 </span>            :     AP_Int32 _options;              // optional behaviour bitmask</a>
+<a name="368"><span class="lineNum">     368 </span>            : </a>
+<a name="369"><span class="lineNum">     369 </span>            :     // enum for processing options</a>
+<a name="370"><span class="lineNum">     370 </span>            :     enum class Option {</a>
+<a name="371"><span class="lineNum">     371 </span>            :         DisableExternalNav     = (1U&lt;&lt;0),</a>
+<a name="372"><span class="lineNum">     372 </span>            :     };</a>
+<a name="373"><span class="lineNum">     373 </span>            : </a>
+<a name="374"><span class="lineNum">     374 </span>            :     // return true if an option is set</a>
+<a name="375"><span class="lineNum">     375 </span><span class="lineCov">      12993 :     bool option_is_set(Option option) const {</span></a>
+<a name="376"><span class="lineNum">     376 </span><span class="lineCov">      12993 :         return (uint32_t(option) &amp; uint32_t(_options)) != 0;</span></a>
+<a name="377"><span class="lineNum">     377 </span>            :     }</a>
+<a name="378"><span class="lineNum">     378 </span>            :     </a>
+<a name="379"><span class="lineNum">     379 </span>            : // Possible values for _flowUse</a>
+<a name="380"><span class="lineNum">     380 </span>            : #define FLOW_USE_NONE    0</a>
+<a name="381"><span class="lineNum">     381 </span>            : #define FLOW_USE_NAV     1</a>
+<a name="382"><span class="lineNum">     382 </span>            : #define FLOW_USE_TERRAIN 2</a>
+<a name="383"><span class="lineNum">     383 </span>            : </a>
+<a name="384"><span class="lineNum">     384 </span>            :     // Tuning parameters</a>
+<a name="385"><span class="lineNum">     385 </span>            :     const float gpsNEVelVarAccScale = 0.05f;       // Scale factor applied to NE velocity measurement variance due to manoeuvre acceleration</a>
+<a name="386"><span class="lineNum">     386 </span>            :     const float gpsDVelVarAccScale = 0.07f;        // Scale factor applied to vertical velocity measurement variance due to manoeuvre acceleration</a>
+<a name="387"><span class="lineNum">     387 </span>            :     const float extNavVelVarAccScale = 0.05f;      // Scale factor applied to ext nav velocity measurement variance due to manoeuvre acceleration</a>
+<a name="388"><span class="lineNum">     388 </span>            :     const float gpsPosVarAccScale = 0.05f;         // Scale factor applied to horizontal position measurement variance due to manoeuvre acceleration</a>
+<a name="389"><span class="lineNum">     389 </span>            :     const uint8_t magDelay_ms = 60;               // Magnetometer measurement delay (msec)</a>
+<a name="390"><span class="lineNum">     390 </span>            :     const uint8_t tasDelay_ms = 240;              // Airspeed measurement delay (msec)</a>
+<a name="391"><span class="lineNum">     391 </span>            :     const uint16_t tiltDriftTimeMax_ms = 15000;    // Maximum number of ms allowed without any form of tilt aiding (GPS, flow, TAS, etc)</a>
+<a name="392"><span class="lineNum">     392 </span>            :     const uint16_t posRetryTimeUseVel_ms = 10000;  // Position aiding retry time with velocity measurements (msec)</a>
+<a name="393"><span class="lineNum">     393 </span>            :     const uint16_t posRetryTimeNoVel_ms = 7000;    // Position aiding retry time without velocity measurements (msec)</a>
+<a name="394"><span class="lineNum">     394 </span>            :     const uint16_t hgtRetryTimeMode0_ms = 10000;   // Height retry time with vertical velocity measurement (msec)</a>
+<a name="395"><span class="lineNum">     395 </span>            :     const uint16_t hgtRetryTimeMode12_ms = 5000;   // Height retry time without vertical velocity measurement (msec)</a>
+<a name="396"><span class="lineNum">     396 </span>            :     const uint16_t tasRetryTime_ms = 5000;         // True airspeed timeout and retry interval (msec)</a>
+<a name="397"><span class="lineNum">     397 </span>            :     const uint16_t magFailTimeLimit_ms = 10000;    // number of msec before a magnetometer failing innovation consistency checks is declared failed (msec)</a>
+<a name="398"><span class="lineNum">     398 </span>            :     const float magVarRateScale = 0.005f;          // scale factor applied to magnetometer variance due to angular rate</a>
+<a name="399"><span class="lineNum">     399 </span>            :     const float gyroBiasNoiseScaler = 2.0f;        // scale factor applied to gyro bias state process noise when on ground</a>
+<a name="400"><span class="lineNum">     400 </span>            :     const uint8_t hgtAvg_ms = 100;                // average number of msec between height measurements</a>
+<a name="401"><span class="lineNum">     401 </span>            :     const uint8_t betaAvg_ms = 100;               // average number of msec between synthetic sideslip measurements</a>
+<a name="402"><span class="lineNum">     402 </span>            :     const float covTimeStepMax = 0.1f;             // maximum time (sec) between covariance prediction updates</a>
+<a name="403"><span class="lineNum">     403 </span>            :     const float covDelAngMax = 0.05f;              // maximum delta angle between covariance prediction updates</a>
+<a name="404"><span class="lineNum">     404 </span>            :     const float DCM33FlowMin = 0.71f;              // If Tbn(3,3) is less than this number, optical flow measurements will not be fused as tilt is too high.</a>
+<a name="405"><span class="lineNum">     405 </span>            :     const float fScaleFactorPnoise = 1e-10f;       // Process noise added to focal length scale factor state variance at each time step</a>
+<a name="406"><span class="lineNum">     406 </span>            :     const uint8_t flowTimeDeltaAvg_ms = 100;       // average interval between optical flow measurements (msec)</a>
+<a name="407"><span class="lineNum">     407 </span>            :     const uint8_t flowIntervalMax_ms = 100;       // maximum allowable time between flow fusion events</a>
+<a name="408"><span class="lineNum">     408 </span>            :     const float gndEffectBaroScaler = 4.0f;        // scaler applied to the barometer observation variance when ground effect mode is active</a>
+<a name="409"><span class="lineNum">     409 </span>            :     const uint8_t fusionTimeStep_ms = 10;          // The minimum time interval between covariance predictions and measurement fusions in msec</a>
+<a name="410"><span class="lineNum">     410 </span>            :     const float maxYawEstVelInnov = 2.0f;          // Maximum acceptable length of the velocity innovation returned by the EKF-GSF yaw estimator (m/s)</a>
+<a name="411"><span class="lineNum">     411 </span>            : </a>
+<a name="412"><span class="lineNum">     412 </span>            :     // origin set by one of the cores</a>
+<a name="413"><span class="lineNum">     413 </span>            :     Location common_EKF_origin;</a>
+<a name="414"><span class="lineNum">     414 </span>            :     bool common_origin_valid;</a>
+<a name="415"><span class="lineNum">     415 </span>            : </a>
+<a name="416"><span class="lineNum">     416 </span>            :     // time at start of current filter update</a>
+<a name="417"><span class="lineNum">     417 </span>            :     uint64_t imuSampleTime_us;</a>
+<a name="418"><span class="lineNum">     418 </span>            : </a>
+<a name="419"><span class="lineNum">     419 </span>            :     // last time of Log_Write</a>
+<a name="420"><span class="lineNum">     420 </span>            :     uint64_t lastLogWrite_us;</a>
+<a name="421"><span class="lineNum">     421 </span>            :     </a>
+<a name="422"><span class="lineNum">     422 </span>            :     struct {</a>
+<a name="423"><span class="lineNum">     423 </span>            :         uint32_t last_function_call;  // last time getLastYawResetAngle was called</a>
+<a name="424"><span class="lineNum">     424 </span>            :         bool core_changed;            // true when a core change happened and hasn't been consumed, false otherwise</a>
+<a name="425"><span class="lineNum">     425 </span>            :         uint32_t last_primary_change; // last time a primary has changed</a>
+<a name="426"><span class="lineNum">     426 </span>            :         float core_delta;             // the amount of yaw change between cores when a change happened</a>
+<a name="427"><span class="lineNum">     427 </span>            :     } yaw_reset_data;</a>
+<a name="428"><span class="lineNum">     428 </span>            : </a>
+<a name="429"><span class="lineNum">     429 </span>            :     struct {</a>
+<a name="430"><span class="lineNum">     430 </span>            :         uint32_t last_function_call;  // last time getLastPosNorthEastReset was called</a>
+<a name="431"><span class="lineNum">     431 </span>            :         bool core_changed;            // true when a core change happened and hasn't been consumed, false otherwise</a>
+<a name="432"><span class="lineNum">     432 </span>            :         uint32_t last_primary_change; // last time a primary has changed</a>
+<a name="433"><span class="lineNum">     433 </span>            :         Vector2f core_delta;          // the amount of NE position change between cores when a change happened</a>
+<a name="434"><span class="lineNum">     434 </span>            :     } pos_reset_data;</a>
+<a name="435"><span class="lineNum">     435 </span>            : </a>
+<a name="436"><span class="lineNum">     436 </span>            :     struct {</a>
+<a name="437"><span class="lineNum">     437 </span>            :         uint32_t last_function_call;  // last time getLastPosDownReset was called</a>
+<a name="438"><span class="lineNum">     438 </span>            :         bool core_changed;            // true when a core change happened and hasn't been consumed, false otherwise</a>
+<a name="439"><span class="lineNum">     439 </span>            :         uint32_t last_primary_change; // last time a primary has changed</a>
+<a name="440"><span class="lineNum">     440 </span>            :         float core_delta;             // the amount of D position change between cores when a change happened</a>
+<a name="441"><span class="lineNum">     441 </span>            :     } pos_down_reset_data;</a>
+<a name="442"><span class="lineNum">     442 </span>            : </a>
+<a name="443"><span class="lineNum">     443 </span>            :     bool runCoreSelection; // true when the primary core has stabilised and the core selection logic can be started</a>
+<a name="444"><span class="lineNum">     444 </span>            : </a>
+<a name="445"><span class="lineNum">     445 </span>            :     // time of last lane switch</a>
+<a name="446"><span class="lineNum">     446 </span>            :     uint32_t lastLaneSwitch_ms;</a>
+<a name="447"><span class="lineNum">     447 </span>            : </a>
+<a name="448"><span class="lineNum">     448 </span>            :     enum class InitFailures {</a>
+<a name="449"><span class="lineNum">     449 </span>            :         UNKNOWN,</a>
+<a name="450"><span class="lineNum">     450 </span>            :         NO_ENABLE, </a>
+<a name="451"><span class="lineNum">     451 </span>            :         NO_IMUS, </a>
+<a name="452"><span class="lineNum">     452 </span>            :         NO_MASK, </a>
+<a name="453"><span class="lineNum">     453 </span>            :         NO_MEM, </a>
+<a name="454"><span class="lineNum">     454 </span>            :         NO_SETUP,</a>
+<a name="455"><span class="lineNum">     455 </span>            :         NUM_INIT_FAILURES</a>
+<a name="456"><span class="lineNum">     456 </span>            :     };</a>
+<a name="457"><span class="lineNum">     457 </span>            :     InitFailures initFailure;</a>
+<a name="458"><span class="lineNum">     458 </span>            : </a>
+<a name="459"><span class="lineNum">     459 </span>            :     // update the yaw reset data to capture changes due to a lane switch</a>
+<a name="460"><span class="lineNum">     460 </span>            :     // new_primary - index of the ekf instance that we are about to switch to as the primary</a>
+<a name="461"><span class="lineNum">     461 </span>            :     // old_primary - index of the ekf instance that we are currently using as the primary</a>
+<a name="462"><span class="lineNum">     462 </span>            :     void updateLaneSwitchYawResetData(uint8_t new_primary, uint8_t old_primary);</a>
+<a name="463"><span class="lineNum">     463 </span>            : </a>
+<a name="464"><span class="lineNum">     464 </span>            :     // update the position reset data to capture changes due to a lane switch</a>
+<a name="465"><span class="lineNum">     465 </span>            :     // new_primary - index of the ekf instance that we are about to switch to as the primary</a>
+<a name="466"><span class="lineNum">     466 </span>            :     // old_primary - index of the ekf instance that we are currently using as the primary</a>
+<a name="467"><span class="lineNum">     467 </span>            :     void updateLaneSwitchPosResetData(uint8_t new_primary, uint8_t old_primary);</a>
+<a name="468"><span class="lineNum">     468 </span>            : </a>
+<a name="469"><span class="lineNum">     469 </span>            :     // update the position down reset data to capture changes due to a lane switch</a>
+<a name="470"><span class="lineNum">     470 </span>            :     // new_primary - index of the ekf instance that we are about to switch to as the primary</a>
+<a name="471"><span class="lineNum">     471 </span>            :     // old_primary - index of the ekf instance that we are currently using as the primary</a>
+<a name="472"><span class="lineNum">     472 </span>            :     void updateLaneSwitchPosDownResetData(uint8_t new_primary, uint8_t old_primary);</a>
+<a name="473"><span class="lineNum">     473 </span>            : </a>
+<a name="474"><span class="lineNum">     474 </span>            :     // return true if a new core has a better score than an existing core, including</a>
+<a name="475"><span class="lineNum">     475 </span>            :     // checks for alignment</a>
+<a name="476"><span class="lineNum">     476 </span>            :     bool coreBetterScore(uint8_t new_core, uint8_t current_core) const;</a>
+<a name="477"><span class="lineNum">     477 </span>            : };</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

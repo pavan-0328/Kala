@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AC_AttitudeControl/AC_PosControl_Logging.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AC_AttitudeControl</a> - AC_PosControl_Logging.cpp<span style="font-size: 80%;"> (source / <a href="AC_PosControl_Logging.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">30</td>
+            <td class="headerCovTableEntry">33</td>
+            <td class="headerCovTableEntryHi">90.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntryMed">88.9 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;AP_Logger/AP_Logger_config.h&gt;</a>
+<a name="2"><span class="lineNum">       2 </span>            : </a>
+<a name="3"><span class="lineNum">       3 </span>            : #if HAL_LOGGING_ENABLED</a>
+<a name="4"><span class="lineNum">       4 </span>            : </a>
+<a name="5"><span class="lineNum">       5 </span>            : #include &quot;AC_PosControl.h&quot;</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            : #include &lt;AP_Logger/AP_Logger.h&gt;</a>
+<a name="8"><span class="lineNum">       8 </span>            : #include &quot;LogStructure.h&quot;</a>
+<a name="9"><span class="lineNum">       9 </span>            : </a>
+<a name="10"><span class="lineNum">      10 </span>            : // Internal log writer for PSCx (North, East, Down tracking).</a>
+<a name="11"><span class="lineNum">      11 </span>            : // Reduces duplication between Write_PSCN, PSCE, and PSCD.</a>
+<a name="12"><span class="lineNum">      12 </span>            : // Used for logging desired/target/actual position, velocity, and acceleration per axis.</a>
+<a name="13"><span class="lineNum">      13 </span><span class="lineCov">     979615 : void AC_PosControl::Write_PSCx(LogMessages id, float pos_desired_m, float pos_target_m, float pos_m, float vel_desired_ms, float vel_target_ms, float vel_ms, float accel_desired_mss, float accel_target_mss, float accel_mss)</span></a>
+<a name="14"><span class="lineNum">      14 </span>            : {</a>
+<a name="15"><span class="lineNum">      15 </span><span class="lineCov">     979615 :     const struct log_PSCx pkt{</span></a>
+<a name="16"><span class="lineNum">      16 </span>            :         LOG_PACKET_HEADER_INIT(id),</a>
+<a name="17"><span class="lineNum">      17 </span><span class="lineCov">     979615 :             time_us         : AP_HAL::micros64(),</span></a>
+<a name="18"><span class="lineNum">      18 </span>            :             pos_desired   : pos_desired_m,</a>
+<a name="19"><span class="lineNum">      19 </span>            :             pos_target    : pos_target_m,</a>
+<a name="20"><span class="lineNum">      20 </span>            :             pos           : pos_m,</a>
+<a name="21"><span class="lineNum">      21 </span>            :             vel_desired   : vel_desired_ms,</a>
+<a name="22"><span class="lineNum">      22 </span>            :             vel_target    : vel_target_ms,</a>
+<a name="23"><span class="lineNum">      23 </span>            :             vel           : vel_ms,</a>
+<a name="24"><span class="lineNum">      24 </span>            :             accel_desired : accel_desired_mss,</a>
+<a name="25"><span class="lineNum">      25 </span>            :             accel_target  : accel_target_mss,</a>
+<a name="26"><span class="lineNum">      26 </span>            :             accel         : accel_mss</a>
+<a name="27"><span class="lineNum">      27 </span><span class="lineCov">     979615 :     };</span></a>
+<a name="28"><span class="lineNum">      28 </span><span class="lineCov">     979615 :     AP::logger().WriteBlock(&amp;pkt, sizeof(pkt));</span></a>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">     979615 : }</span></a>
+<a name="30"><span class="lineNum">      30 </span>            : </a>
+<a name="31"><span class="lineNum">      31 </span>            : // Logs position controller state along the North axis to PSCN..</a>
+<a name="32"><span class="lineNum">      32 </span>            : // Logs desired, target, and actual position [m], velocity [m/s], and acceleration [m/s²].</a>
+<a name="33"><span class="lineNum">      33 </span><span class="lineCov">     280502 : void AC_PosControl::Write_PSCN(float pos_desired_m, float pos_target_m, float pos_m, float vel_desired_ms, float vel_target_ms, float vel_ms, float accel_desired_mss, float accel_target_mss, float accel_mss)</span></a>
+<a name="34"><span class="lineNum">      34 </span>            : {</a>
+<a name="35"><span class="lineNum">      35 </span><span class="lineCov">     280502 :     Write_PSCx(LOG_PSCN_MSG, pos_desired_m, pos_target_m, pos_m, vel_desired_ms, vel_target_ms, vel_ms, accel_desired_mss, accel_target_mss, accel_mss);</span></a>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">     280502 : }</span></a>
+<a name="37"><span class="lineNum">      37 </span>            : </a>
+<a name="38"><span class="lineNum">      38 </span>            : // Logs position controller state along the East axis to PSCE.</a>
+<a name="39"><span class="lineNum">      39 </span>            : // Logs desired, target, and actual values for position [m], velocity [m/s], and acceleration [m/s²].</a>
+<a name="40"><span class="lineNum">      40 </span><span class="lineCov">     280502 : void AC_PosControl::Write_PSCE(float pos_desired_m, float pos_target_m, float pos_m, float vel_desired_ms, float vel_target_ms, float vel_ms, float accel_desired_mss, float accel_target_mss, float accel_mss)</span></a>
+<a name="41"><span class="lineNum">      41 </span>            : {</a>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">     280502 :     Write_PSCx(LOG_PSCE_MSG, pos_desired_m, pos_target_m, pos_m, vel_desired_ms, vel_target_ms, vel_ms, accel_desired_mss, accel_target_mss, accel_mss);</span></a>
+<a name="43"><span class="lineNum">      43 </span><span class="lineCov">     280502 : }</span></a>
+<a name="44"><span class="lineNum">      44 </span>            : </a>
+<a name="45"><span class="lineNum">      45 </span>            : // Logs position controller state along the Down (vertical) axis to PSCD.</a>
+<a name="46"><span class="lineNum">      46 </span>            : // Logs desired, target, and actual values for position [m], velocity [m/s], and acceleration [m/s²].</a>
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">     418611 : void AC_PosControl::Write_PSCD(float pos_desired_m, float pos_target_m, float pos_m, float vel_desired_ms, float vel_target_ms, float vel_ms, float accel_desired_mss, float accel_target_mss, float accel_mss)</span></a>
+<a name="48"><span class="lineNum">      48 </span>            : {</a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineCov">     418611 :     Write_PSCx(LOG_PSCD_MSG, pos_desired_m, pos_target_m, pos_m, vel_desired_ms, vel_target_ms, vel_ms, accel_desired_mss, accel_target_mss, accel_mss);</span></a>
+<a name="50"><span class="lineNum">      50 </span><span class="lineCov">     418611 : }</span></a>
+<a name="51"><span class="lineNum">      51 </span>            : </a>
+<a name="52"><span class="lineNum">      52 </span>            : // Internal log writer for PSOx (North, East, Down tracking).</a>
+<a name="53"><span class="lineNum">      53 </span>            : // Reduces duplication between Write_PSON, PSOE, and PSOD.</a>
+<a name="54"><span class="lineNum">      54 </span>            : // Used for logging desired/target/actual position, velocity, and acceleration per axis.</a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">       4005 : void AC_PosControl::Write_PSOx(LogMessages id, float pos_target_offset_m, float pos_offset_m,</span></a>
+<a name="56"><span class="lineNum">      56 </span>            :                                float vel_target_offset_ms, float vel_offset_ms,</a>
+<a name="57"><span class="lineNum">      57 </span>            :                                float accel_target_offset_mss, float accel_offset_mss)</a>
+<a name="58"><span class="lineNum">      58 </span>            : {</a>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">       4005 :     const struct log_PSOx pkt{</span></a>
+<a name="60"><span class="lineNum">      60 </span>            :         LOG_PACKET_HEADER_INIT(id),</a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">       4005 :             time_us             : AP_HAL::micros64(),</span></a>
+<a name="62"><span class="lineNum">      62 </span>            :             pos_target_offset   : pos_target_offset_m,</a>
+<a name="63"><span class="lineNum">      63 </span>            :             pos_offset          : pos_offset_m,</a>
+<a name="64"><span class="lineNum">      64 </span>            :             vel_target_offset   : vel_target_offset_ms,</a>
+<a name="65"><span class="lineNum">      65 </span>            :             vel_offset          : vel_offset_ms,</a>
+<a name="66"><span class="lineNum">      66 </span>            :             accel_target_offset : accel_target_offset_mss,</a>
+<a name="67"><span class="lineNum">      67 </span>            :             accel_offset        : accel_offset_mss,</a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">       4005 :     };</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">       4005 :     AP::logger().WriteBlock(&amp;pkt, sizeof(pkt));</span></a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineCov">       4005 : }</span></a>
+<a name="71"><span class="lineNum">      71 </span>            : </a>
+<a name="72"><span class="lineNum">      72 </span>            : // Logs offset tracking along the North axis to PSON.</a>
+<a name="73"><span class="lineNum">      73 </span>            : // Logs target and actual offset for position [m], velocity [m/s], and acceleration [m/s²].</a>
+<a name="74"><span class="lineNum">      74 </span><span class="lineCov">        249 : void AC_PosControl::Write_PSON(float pos_target_offset_m, float pos_offset_m,</span></a>
+<a name="75"><span class="lineNum">      75 </span>            :                                float vel_target_offset_ms, float vel_offset_ms,</a>
+<a name="76"><span class="lineNum">      76 </span>            :                                float accel_target_offset_mss, float accel_offset_mss)</a>
+<a name="77"><span class="lineNum">      77 </span>            : {</a>
+<a name="78"><span class="lineNum">      78 </span><span class="lineCov">        249 :     Write_PSOx(LOG_PSON_MSG, pos_target_offset_m, pos_offset_m, vel_target_offset_ms, vel_offset_ms, accel_target_offset_mss, accel_offset_mss);</span></a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineCov">        249 : }</span></a>
+<a name="80"><span class="lineNum">      80 </span>            : </a>
+<a name="81"><span class="lineNum">      81 </span>            : // Logs offset tracking along the East axis to PSOE.</a>
+<a name="82"><span class="lineNum">      82 </span>            : // Logs target and actual offset for position [m], velocity [m/s], and acceleration [m/s²].</a>
+<a name="83"><span class="lineNum">      83 </span><span class="lineCov">        249 : void AC_PosControl::Write_PSOE(float pos_target_offset_m, float pos_offset_m,</span></a>
+<a name="84"><span class="lineNum">      84 </span>            :                                float vel_target_offset_ms, float vel_offset_ms,</a>
+<a name="85"><span class="lineNum">      85 </span>            :                                float accel_target_offset_mss, float accel_offset_mss)</a>
+<a name="86"><span class="lineNum">      86 </span>            : {</a>
+<a name="87"><span class="lineNum">      87 </span><span class="lineCov">        249 :     Write_PSOx(LOG_PSOE_MSG, pos_target_offset_m, pos_offset_m, vel_target_offset_ms, vel_offset_ms, accel_target_offset_mss, accel_offset_mss);</span></a>
+<a name="88"><span class="lineNum">      88 </span><span class="lineCov">        249 : }</span></a>
+<a name="89"><span class="lineNum">      89 </span>            : </a>
+<a name="90"><span class="lineNum">      90 </span>            : // Logs offset tracking along the Down axis to PSOD.</a>
+<a name="91"><span class="lineNum">      91 </span>            : // Logs target and actual offset for position [m], velocity [m/s], and acceleration [m/s²].</a>
+<a name="92"><span class="lineNum">      92 </span><span class="lineNoCov">          0 : void AC_PosControl::Write_PSOD(float pos_target_offset_m, float pos_offset_m,</span></a>
+<a name="93"><span class="lineNum">      93 </span>            :                                float vel_target_offset_ms, float vel_offset_ms,</a>
+<a name="94"><span class="lineNum">      94 </span>            :                                float accel_target_offset_mss, float accel_offset_mss)</a>
+<a name="95"><span class="lineNum">      95 </span>            : {</a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineNoCov">          0 :     Write_PSOx(LOG_PSOD_MSG, pos_target_offset_m, pos_offset_m, vel_target_offset_ms, vel_offset_ms, accel_target_offset_mss, accel_offset_mss);</span></a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="98"><span class="lineNum">      98 </span>            : </a>
+<a name="99"><span class="lineNum">      99 </span>            : // Logs terrain-following offset tracking along the Down axis to PSOT.</a>
+<a name="100"><span class="lineNum">     100 </span>            : // Logs target and actual offset for position [m], velocity [m/s], and acceleration [m/s²].</a>
+<a name="101"><span class="lineNum">     101 </span><span class="lineCov">       3507 : void AC_PosControl::Write_PSOT(float pos_target_offset_m, float pos_offset_m,</span></a>
+<a name="102"><span class="lineNum">     102 </span>            :                                float vel_target_offset_ms, float vel_offset_ms,</a>
+<a name="103"><span class="lineNum">     103 </span>            :                                float accel_target_offset_mss, float accel_offset_mss)</a>
+<a name="104"><span class="lineNum">     104 </span>            : {</a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineCov">       3507 :     Write_PSOx(LOG_PSOT_MSG, pos_target_offset_m, pos_offset_m, vel_target_offset_ms, vel_offset_ms, accel_target_offset_mss, accel_offset_mss);</span></a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineCov">       3507 : }</span></a>
+<a name="107"><span class="lineNum">     107 </span>            : </a>
+<a name="108"><span class="lineNum">     108 </span>            : #endif  // HAL_LOGGING_ENABLED</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

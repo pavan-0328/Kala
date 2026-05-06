@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="2">
+    <cppcheck version="2.7"/>
+    <errors>
+        <error id="funcArgNamesDifferent" severity="style" msg="Function &apos;canardBroadcastObj&apos; argument 2 names different: declaration &apos;transfer&apos; definition &apos;transfer_object&apos;." verbose="Function &apos;canardBroadcastObj&apos; argument 2 names different: declaration &apos;transfer&apos; definition &apos;transfer_object&apos;." cwe="628" inconclusive="true" file0="modules/DroneCAN/libcanard/canard.c">
+            <location file="modules/DroneCAN/libcanard/canard.c" line="182" column="67"/>
+            <location file="modules/DroneCAN/libcanard/canard.h" line="521" column="46"/>
+        </error>
+        <error id="funcArgNamesDifferent" severity="style" msg="Function &apos;canardRequestOrRespondObj&apos; argument 3 names different: declaration &apos;transfer&apos; definition &apos;transfer_object&apos;." verbose="Function &apos;canardRequestOrRespondObj&apos; argument 3 names different: declaration &apos;transfer&apos; definition &apos;transfer_object&apos;." cwe="628" inconclusive="true" file0="modules/DroneCAN/libcanard/canard.c">
+            <location file="modules/DroneCAN/libcanard/canard.c" line="355" column="103"/>
+            <location file="modules/DroneCAN/libcanard/canard.h" line="562" column="53"/>
+        </error>
+        <error id="funcArgOrderDifferent" severity="warning" msg="Function &apos;isPriorityHigher&apos; argument order different: declaration &apos;id, rhs&apos; definition &apos;rhs, id&apos;" verbose="Function &apos;isPriorityHigher&apos; argument order different: declaration &apos;id, rhs&apos; definition &apos;rhs, id&apos;" cwe="683" file0="modules/DroneCAN/libcanard/canard.c">
+            <location file="modules/DroneCAN/libcanard/canard.c" line="1352" column="48"/>
+            <location file="modules/DroneCAN/libcanard/canard_internals.h" line="110" column="48"/>
+        </error>
+        <error id="ConfigurationNotChecked" severity="information" msg="Skipping configuration &apos;ARDUPILOT_BUILD=1;CANARD_64_BIT=1;AP_BARO_PROBE_EXTERNAL_I2C_BUSES=1;AP_CUSTOMCONTROL_ENABLED=1;AP_DDS_ENABLED=0;AP_SCRIPTING_CHECKS=1;CANARD_ALLOCATE_SEM=1;CANARD_ENABLE_ASSERTS=1;CANARD_ENABLE_CANFD=1;CANARD_ENABLE_DEADLINE=1;CANARD_IFACE_ALL=3;CANARD_MULTI_IFACE=1;CONFIG_HAL_BOARD=HAL_BOARD_SITL;CONFIG_HAL_BOARD_SUBTYPE=HAL_BOARD_SUBTYPE_NONE;DRONECAN_CXX_WRAPPERS=1;ENABLE_ONVIF=0;LUA_32BITS=1;USE_USER_HELPERS=1;BIG_ENDIAN;BYTE_ORDER&apos; since the value of &apos;BIG_ENDIAN&apos; is unknown. Use -D if you want to check it. You can use -U to skip it explicitly." verbose="Skipping configuration &apos;ARDUPILOT_BUILD=1;CANARD_64_BIT=1;AP_BARO_PROBE_EXTERNAL_I2C_BUSES=1;AP_CUSTOMCONTROL_ENABLED=1;AP_DDS_ENABLED=0;AP_SCRIPTING_CHECKS=1;CANARD_ALLOCATE_SEM=1;CANARD_ENABLE_ASSERTS=1;CANARD_ENABLE_CANFD=1;CANARD_ENABLE_DEADLINE=1;CANARD_IFACE_ALL=3;CANARD_MULTI_IFACE=1;CONFIG_HAL_BOARD=HAL_BOARD_SITL;CONFIG_HAL_BOARD_SUBTYPE=HAL_BOARD_SUBTYPE_NONE;DRONECAN_CXX_WRAPPERS=1;ENABLE_ONVIF=0;LUA_32BITS=1;USE_USER_HELPERS=1;BIG_ENDIAN;BYTE_ORDER&apos; since the value of &apos;BIG_ENDIAN&apos; is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.">
+            <location file="modules/DroneCAN/libcanard/canard.c" line="1811" column="0"/>
+        </error>
+        <error id="ConfigurationNotChecked" severity="information" msg="Skipping configuration &apos;ARDUPILOT_BUILD=1;CANARD_64_BIT=1;AP_BARO_PROBE_EXTERNAL_I2C_BUSES=1;AP_CUSTOMCONTROL_ENABLED=1;AP_DDS_ENABLED=0;AP_SCRIPTING_CHECKS=1;CANARD_ALLOCATE_SEM=1;CANARD_ENABLE_ASSERTS=1;CANARD_ENABLE_CANFD=1;CANARD_ENABLE_DEADLINE=1;CANARD_IFACE_ALL=3;CANARD_MULTI_IFACE=1;CONFIG_HAL_BOARD=HAL_BOARD_SITL;CONFIG_HAL_BOARD_SUBTYPE=HAL_BOARD_SUBTYPE_NONE;DRONECAN_CXX_WRAPPERS=1;ENABLE_ONVIF=0;LUA_32BITS=1;USE_USER_HELPERS=1;BIG_ENDIAN;BYTE_ORDER&apos; since the value of &apos;BYTE_ORDER&apos; is unknown. Use -D if you want to check it. You can use -U to skip it explicitly." verbose="Skipping configuration &apos;ARDUPILOT_BUILD=1;CANARD_64_BIT=1;AP_BARO_PROBE_EXTERNAL_I2C_BUSES=1;AP_CUSTOMCONTROL_ENABLED=1;AP_DDS_ENABLED=0;AP_SCRIPTING_CHECKS=1;CANARD_ALLOCATE_SEM=1;CANARD_ENABLE_ASSERTS=1;CANARD_ENABLE_CANFD=1;CANARD_ENABLE_DEADLINE=1;CANARD_IFACE_ALL=3;CANARD_MULTI_IFACE=1;CONFIG_HAL_BOARD=HAL_BOARD_SITL;CONFIG_HAL_BOARD_SUBTYPE=HAL_BOARD_SUBTYPE_NONE;DRONECAN_CXX_WRAPPERS=1;ENABLE_ONVIF=0;LUA_32BITS=1;USE_USER_HELPERS=1;BIG_ENDIAN;BYTE_ORDER&apos; since the value of &apos;BYTE_ORDER&apos; is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.">
+            <location file="modules/DroneCAN/libcanard/canard.c" line="1811" column="0"/>
+        </error>
+        <error id="memsetZeroBytes" severity="warning" msg="memset() called to fill 0 bytes." verbose="memset() called to fill 0 bytes. The second and third arguments might be inverted. The function memset ( void * ptr, int value, size_t num ) sets the first num bytes of the block of memory pointed by ptr to the specified value." cwe="687" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_req.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_req.c" line="16" column="5"/>
+        </error>
+        <error id="memsetZeroBytes" severity="warning" msg="memset() called to fill 0 bytes." verbose="memset() called to fill 0 bytes. The second and third arguments might be inverted. The function memset ( void * ptr, int value, size_t num ) sets the first num bytes of the block of memory pointed by ptr to the specified value." cwe="687" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_res.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_res.c" line="15" column="5"/>
+        </error>
+        <error id="memsetZeroBytes" severity="warning" msg="memset() called to fill 0 bytes." verbose="memset() called to fill 0 bytes. The second and third arguments might be inverted. The function memset ( void * ptr, int value, size_t num ) sets the first num bytes of the block of memory pointed by ptr to the specified value." cwe="687" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_req.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_req.c" line="16" column="5"/>
+        </error>
+        <error id="uninitvar" severity="error" msg="Uninitialized variable: msg" verbose="Uninitialized variable: msg" cwe="457" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_req.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetNodeInfo_req.c" line="62" column="12"/>
+        </error>
+        <error id="uninitvar" severity="error" msg="Uninitialized variable: msg" verbose="Uninitialized variable: msg" cwe="457" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_res.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SetBaud_res.c" line="61" column="12"/>
+        </error>
+        <error id="uninitvar" severity="error" msg="Uninitialized variable: msg" verbose="Uninitialized variable: msg" cwe="457" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_req.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/com.hobbywing.esc.SelfTest_req.c" line="62" column="12"/>
+        </error>
+        <error id="memsetZeroBytes" severity="warning" msg="memset() called to fill 0 bytes." verbose="memset() called to fill 0 bytes. The second and third arguments might be inverted. The function memset ( void * ptr, int value, size_t num ) sets the first num bytes of the block of memory pointed by ptr to the specified value." cwe="687" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_req.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_req.c" line="16" column="5"/>
+        </error>
+        <error id="uninitvar" severity="error" msg="Uninitialized variable: msg" verbose="Uninitialized variable: msg" cwe="457" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_req.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.GetTransportStats_req.c" line="62" column="12"/>
+        </error>
+        <error id="memsetZeroBytes" severity="warning" msg="memset() called to fill 0 bytes." verbose="memset() called to fill 0 bytes. The second and third arguments might be inverted. The function memset ( void * ptr, int value, size_t num ) sets the first num bytes of the block of memory pointed by ptr to the specified value." cwe="687" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Empty.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Empty.c" line="15" column="5"/>
+        </error>
+        <error id="uninitvar" severity="error" msg="Uninitialized variable: msg" verbose="Uninitialized variable: msg" cwe="457" file0="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Empty.c">
+            <location file="build/sitl/modules/DroneCAN/libcanard/dsdlc_generated/src/uavcan.protocol.param.Empty.c" line="61" column="12"/>
+        </error>
+    </errors>
+</results>

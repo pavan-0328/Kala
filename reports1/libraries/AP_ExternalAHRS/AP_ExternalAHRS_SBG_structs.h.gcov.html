@@ -1,0 +1,782 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_ExternalAHRS/AP_ExternalAHRS_SBG_structs.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_ExternalAHRS</a> - AP_ExternalAHRS_SBG_structs.h<span style="font-size: 80%;"> (source / <a href="AP_ExternalAHRS_SBG_structs.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : /*</a>
+<a name="16"><span class="lineNum">      16 </span>            :   support for serial connected SBG INS system</a>
+<a name="17"><span class="lineNum">      17 </span>            :  */</a>
+<a name="18"><span class="lineNum">      18 </span>            : </a>
+<a name="19"><span class="lineNum">      19 </span>            : #pragma once</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : #include &quot;AP_ExternalAHRS_config.h&quot;</a>
+<a name="22"><span class="lineNum">      22 </span>            : </a>
+<a name="23"><span class="lineNum">      23 </span>            : #if AP_EXTERNAL_AHRS_SBG_ENABLED</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            : /*!</a>
+<a name="26"><span class="lineNum">      26 </span>            :  * Clock status and UTC time status definitions.</a>
+<a name="27"><span class="lineNum">      27 </span>            :  */</a>
+<a name="28"><span class="lineNum">      28 </span>            : #define SBG_ECOM_CLOCK_STATUS_SHIFT                     (1u)                                    /*!&lt; Shift used to extract the clock status part. */</a>
+<a name="29"><span class="lineNum">      29 </span>            : #define SBG_ECOM_CLOCK_STATUS_MASK                      (0x000Fu)                               /*!&lt; Mask used to keep only the clock status part. */</a>
+<a name="30"><span class="lineNum">      30 </span>            : #define SBG_ECOM_CLOCK_UTC_STATUS_SHIFT         (6u)                                    /*!&lt; Shift used to extract the clock UTC status part. */</a>
+<a name="31"><span class="lineNum">      31 </span>            : #define SBG_ECOM_CLOCK_UTC_STATUS_MASK          (0x000Fu)                               /*!&lt; Mask used to keep only the clock UTC status part. */</a>
+<a name="32"><span class="lineNum">      32 </span>            : </a>
+<a name="33"><span class="lineNum">      33 </span>            : /*!</a>
+<a name="34"><span class="lineNum">      34 </span>            :  * Clock status enum.</a>
+<a name="35"><span class="lineNum">      35 </span>            :  */</a>
+<a name="36"><span class="lineNum">      36 </span>            : typedef enum _SbgEComClockStatus</a>
+<a name="37"><span class="lineNum">      37 </span>            : {</a>
+<a name="38"><span class="lineNum">      38 </span>            :         SBG_ECOM_CLOCK_ERROR                    = 0,                                                    /*!&lt; An error has occurred on the clock estimation. */</a>
+<a name="39"><span class="lineNum">      39 </span>            :         SBG_ECOM_CLOCK_FREE_RUNNING             = 1,                                                    /*!&lt; The clock is only based on the internal crystal. */</a>
+<a name="40"><span class="lineNum">      40 </span>            :         SBG_ECOM_CLOCK_STEERING                 = 2,                                                    /*!&lt; A PPS has been detected and the clock is converging to it. */</a>
+<a name="41"><span class="lineNum">      41 </span>            :         SBG_ECOM_CLOCK_VALID                    = 3                                                             /*!&lt; The clock has converged to the PPS and is within 500ns. */</a>
+<a name="42"><span class="lineNum">      42 </span>            : } SbgEComClockStatus;</a>
+<a name="43"><span class="lineNum">      43 </span>            : </a>
+<a name="44"><span class="lineNum">      44 </span>            : /*!</a>
+<a name="45"><span class="lineNum">      45 </span>            :  * Status for the UTC time data.</a>
+<a name="46"><span class="lineNum">      46 </span>            :  */</a>
+<a name="47"><span class="lineNum">      47 </span>            : typedef enum _SbgEComClockUtcStatus</a>
+<a name="48"><span class="lineNum">      48 </span>            : {</a>
+<a name="49"><span class="lineNum">      49 </span>            :         SBG_ECOM_UTC_INVALID                    = 0,                                                    /*!&lt; The UTC time is not known, we are just propagating the UTC time internally. */</a>
+<a name="50"><span class="lineNum">      50 </span>            :         SBG_ECOM_UTC_NO_LEAP_SEC                = 1,                                                    /*!&lt; We have received valid UTC time information but we don't have the leap seconds information. */</a>
+<a name="51"><span class="lineNum">      51 </span>            :         SBG_ECOM_UTC_VALID                              = 2                                                             /*!&lt; We have received valid UTC time data with valid leap seconds. */</a>
+<a name="52"><span class="lineNum">      52 </span>            : } SbgEComClockUtcStatus;</a>
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineNoCov">          0 : static inline SbgEComClockStatus sbgEComLogUtcGetClockStatus(uint16_t status) {</span></a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineNoCov">          0 :         return (SbgEComClockStatus)((status &gt;&gt; SBG_ECOM_CLOCK_STATUS_SHIFT) &amp; SBG_ECOM_CLOCK_STATUS_MASK);</span></a>
+<a name="56"><span class="lineNum">      56 </span>            : }</a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineNoCov">          0 : static inline SbgEComClockUtcStatus sbgEComLogUtcGetClockUtcStatus(uint16_t status) {</span></a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineNoCov">          0 :         return (SbgEComClockUtcStatus)((status &gt;&gt; SBG_ECOM_CLOCK_UTC_STATUS_SHIFT) &amp; SBG_ECOM_CLOCK_UTC_STATUS_MASK);</span></a>
+<a name="59"><span class="lineNum">      59 </span>            : }</a>
+<a name="60"><span class="lineNum">      60 </span>            : </a>
+<a name="61"><span class="lineNum">      61 </span>            : </a>
+<a name="62"><span class="lineNum">      62 </span>            : typedef struct PACKED _SbgLogUtcData</a>
+<a name="63"><span class="lineNum">      63 </span>            : {</a>
+<a name="64"><span class="lineNum">      64 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up. */</a>
+<a name="65"><span class="lineNum">      65 </span>            :         uint16_t        status;                                         /*!&lt; UTC time and clock status information */</a>
+<a name="66"><span class="lineNum">      66 </span>            :         uint16_t        year;                                           /*!&lt; Year for example: 2013. */</a>
+<a name="67"><span class="lineNum">      67 </span>            :         int8_t      month;                                              /*!&lt; Month in year [1 .. 12]. */</a>
+<a name="68"><span class="lineNum">      68 </span>            :         int8_t      day;                                                /*!&lt; Day in month [1 .. 31]. */</a>
+<a name="69"><span class="lineNum">      69 </span>            :         int8_t      hour;                                               /*!&lt; Hour in day [0 .. 23]. */</a>
+<a name="70"><span class="lineNum">      70 </span>            :         int8_t      minute;                                             /*!&lt; Minute in hour [0 .. 59]. */</a>
+<a name="71"><span class="lineNum">      71 </span>            :         int8_t      second;                                             /*!&lt; Second in minute [0 .. 60]. (60 is used only when a leap second is added) */</a>
+<a name="72"><span class="lineNum">      72 </span>            :         int32_t     nanoSecond;                                 /*!&lt; Nanosecond of current second in ns. */</a>
+<a name="73"><span class="lineNum">      73 </span>            :         uint32_t    gpsTimeOfWeek;                              /*!&lt; GPS time of week in ms. */</a>
+<a name="74"><span class="lineNum">      74 </span>            : } SbgLogUtcData;</a>
+<a name="75"><span class="lineNum">      75 </span>            : </a>
+<a name="76"><span class="lineNum">      76 </span>            : </a>
+<a name="77"><span class="lineNum">      77 </span>            : </a>
+<a name="78"><span class="lineNum">      78 </span>            : /*!</a>
+<a name="79"><span class="lineNum">      79 </span>            :  * Structure that stores data for the SBG_ECOM_LOG_GPS#_VEL message.</a>
+<a name="80"><span class="lineNum">      80 </span>            :  */</a>
+<a name="81"><span class="lineNum">      81 </span>            : typedef struct PACKED _SbgLogGpsVel</a>
+<a name="82"><span class="lineNum">      82 </span>            : {</a>
+<a name="83"><span class="lineNum">      83 </span>            :         uint32_t                timeStamp;                              /*!&lt; Time in us since the sensor power up. */</a>
+<a name="84"><span class="lineNum">      84 </span>            :         uint32_t                status;                                 /*!&lt; GPS velocity status, type and bitmask. */</a>
+<a name="85"><span class="lineNum">      85 </span>            :         uint32_t                timeOfWeek;                             /*!&lt; GPS time of week in ms. */</a>
+<a name="86"><span class="lineNum">      86 </span>            :         float                   velocity[3];                    /*!&lt; GPS North, East, Down velocity in m.s^-1. */</a>
+<a name="87"><span class="lineNum">      87 </span>            :         float                   velocityAcc[3];                 /*!&lt; GPS North, East, Down velocity 1 sigma accuracy in m.s^-1. */</a>
+<a name="88"><span class="lineNum">      88 </span>            :         float                   course;                                 /*!&lt; Track ground course in degrees. */</a>
+<a name="89"><span class="lineNum">      89 </span>            :         float                   courseAcc;                              /*!&lt; Course accuracy in degrees. */</a>
+<a name="90"><span class="lineNum">      90 </span>            : } SbgLogGpsVel;</a>
+<a name="91"><span class="lineNum">      91 </span>            : </a>
+<a name="92"><span class="lineNum">      92 </span>            : /*!</a>
+<a name="93"><span class="lineNum">      93 </span>            :  * Structure that stores data for the SBG_ECOM_LOG_GPS#_POS message.</a>
+<a name="94"><span class="lineNum">      94 </span>            :  */</a>
+<a name="95"><span class="lineNum">      95 </span>            : typedef struct PACKED _SbgLogGpsPos</a>
+<a name="96"><span class="lineNum">      96 </span>            : {</a>
+<a name="97"><span class="lineNum">      97 </span>            :         uint32_t                timeStamp;                              /*!&lt; Time in us since the sensor power up. */</a>
+<a name="98"><span class="lineNum">      98 </span>            :         uint32_t                status;                                 /*!&lt; GPS position status, type and bitmask. */</a>
+<a name="99"><span class="lineNum">      99 </span>            :         uint32_t                timeOfWeek;                             /*!&lt; GPS time of week in ms. */</a>
+<a name="100"><span class="lineNum">     100 </span>            :         double                  latitude;                               /*!&lt; Latitude in degrees, positive north. */</a>
+<a name="101"><span class="lineNum">     101 </span>            :         double                  longitude;                              /*!&lt; Longitude in degrees, positive east. */</a>
+<a name="102"><span class="lineNum">     102 </span>            :         double                  altitude;                               /*!&lt; Altitude above Mean Sea Level in meters. */</a>
+<a name="103"><span class="lineNum">     103 </span>            :         float                   undulation;                             /*!&lt; Altitude difference between the geoid and the Ellipsoid in meters (Height above Ellipsoid = altitude + undulation). */</a>
+<a name="104"><span class="lineNum">     104 </span>            :         float                   latitudeAccuracy;               /*!&lt; 1 sigma latitude accuracy in meters. */</a>
+<a name="105"><span class="lineNum">     105 </span>            :         float                   longitudeAccuracy;              /*!&lt; 1 sigma longitude accuracy in meters. */</a>
+<a name="106"><span class="lineNum">     106 </span>            :         float                   altitudeAccuracy;               /*!&lt; 1 sigma altitude accuracy in meters. */</a>
+<a name="107"><span class="lineNum">     107 </span>            :         uint8_t                 numSvUsed;                              /*!&lt; Number of space vehicles used to compute the solution (since version 1.4). */</a>
+<a name="108"><span class="lineNum">     108 </span>            :         uint16_t                baseStationId;                  /*!&lt; Base station id for differential corrections (0-4095). Set to 0xFFFF if differential corrections are not used (since version 1.4). */</a>
+<a name="109"><span class="lineNum">     109 </span>            :         uint16_t                differentialAge;                /*!&lt; Differential correction age in 0.01 seconds. Set to 0XFFFF if differential corrections are not used (since version 1.4). */</a>
+<a name="110"><span class="lineNum">     110 </span>            : } SbgLogGpsPos;</a>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<a name="112"><span class="lineNum">     112 </span>            : /*!</a>
+<a name="113"><span class="lineNum">     113 </span>            :  * Structure that stores data for the SBG_ECOM_LOG_GPS#_HDT message.</a>
+<a name="114"><span class="lineNum">     114 </span>            :  */</a>
+<a name="115"><span class="lineNum">     115 </span>            : typedef struct PACKED _SbgLogGpsHdt</a>
+<a name="116"><span class="lineNum">     116 </span>            : {</a>
+<a name="117"><span class="lineNum">     117 </span>            :         uint32_t                timeStamp;                              /*!&lt; Time in us since the sensor power up. */</a>
+<a name="118"><span class="lineNum">     118 </span>            :         uint16_t                status;                                 /*!&lt; GPS HDT status, type and bitmask. */</a>
+<a name="119"><span class="lineNum">     119 </span>            :         uint32_t                timeOfWeek;                             /*!&lt; GPS time of week in ms. */</a>
+<a name="120"><span class="lineNum">     120 </span>            :         float                   heading;                                /*!&lt; GPS true heading in degrees. */</a>
+<a name="121"><span class="lineNum">     121 </span>            :         float                   headingAccuracy;                /*!&lt; 1 sigma GPS true heading accuracy in degrees. */</a>
+<a name="122"><span class="lineNum">     122 </span>            :         float                   pitch;                                  /*!&lt; GPS pitch angle measured from the master to the rover in degrees. */</a>
+<a name="123"><span class="lineNum">     123 </span>            :         float                   pitchAccuracy;                  /*!&lt; 1 signa GPS pitch angle accuarcy in degrees. */</a>
+<a name="124"><span class="lineNum">     124 </span>            : } SbgLogGpsHdt;</a>
+<a name="125"><span class="lineNum">     125 </span>            : </a>
+<a name="126"><span class="lineNum">     126 </span>            : </a>
+<a name="127"><span class="lineNum">     127 </span>            : </a>
+<a name="128"><span class="lineNum">     128 </span>            : /*!</a>
+<a name="129"><span class="lineNum">     129 </span>            :  * Structure that stores data for the SBG_ECOM_LOG_IMU_DATA message.</a>
+<a name="130"><span class="lineNum">     130 </span>            :  */</a>
+<a name="131"><span class="lineNum">     131 </span>            : typedef struct PACKED _SbgLogImuData</a>
+<a name="132"><span class="lineNum">     132 </span>            : {</a>
+<a name="133"><span class="lineNum">     133 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up. */</a>
+<a name="134"><span class="lineNum">     134 </span>            :         uint16_t        status;                                         /*!&lt; IMU status bitmask. */</a>
+<a name="135"><span class="lineNum">     135 </span>            :         float           accelerometers[3];                      /*!&lt; X, Y, Z accelerometers in m.s^-2. */</a>
+<a name="136"><span class="lineNum">     136 </span>            :         float           gyroscopes[3];                          /*!&lt; X, Y, Z gyroscopes in rad.s^-1. */</a>
+<a name="137"><span class="lineNum">     137 </span>            :         float           temperature;                            /*!&lt; Internal temperature in C. */   </a>
+<a name="138"><span class="lineNum">     138 </span>            :         float           deltaVelocity[3];                       /*!&lt; X, Y, Z delta velocity in m.s^-2. */</a>
+<a name="139"><span class="lineNum">     139 </span>            :         float           deltaAngle[3];                          /*!&lt; X, Y, Z delta angle in rad.s^-1. */</a>
+<a name="140"><span class="lineNum">     140 </span>            : } SbgLogImuData;</a>
+<a name="141"><span class="lineNum">     141 </span>            : </a>
+<a name="142"><span class="lineNum">     142 </span>            : /*!</a>
+<a name="143"><span class="lineNum">     143 </span>            :  * Structure that stores the data for SBG_ECOM_LOG_FAST_IMU_DATA message</a>
+<a name="144"><span class="lineNum">     144 </span>            :  */</a>
+<a name="145"><span class="lineNum">     145 </span>            : typedef struct PACKED _SbgLogFastImuData</a>
+<a name="146"><span class="lineNum">     146 </span>            : {</a>
+<a name="147"><span class="lineNum">     147 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up. */</a>
+<a name="148"><span class="lineNum">     148 </span>            :         uint16_t        status;                                         /*!&lt; IMU status bitmask. */</a>
+<a name="149"><span class="lineNum">     149 </span>            :         float           accelerometers[3];                      /*!&lt; X, Y, Z accelerometers in m.s^-2. */</a>
+<a name="150"><span class="lineNum">     150 </span>            :         float           gyroscopes[3];                          /*!&lt; X, Y, Z gyroscopes in rad.s^-1. */</a>
+<a name="151"><span class="lineNum">     151 </span>            : } SbgLogFastImuData;</a>
+<a name="152"><span class="lineNum">     152 </span>            : </a>
+<a name="153"><span class="lineNum">     153 </span>            : /*!</a>
+<a name="154"><span class="lineNum">     154 </span>            :  * Log inertial data status mask definitions</a>
+<a name="155"><span class="lineNum">     155 </span>            :  */</a>
+<a name="156"><span class="lineNum">     156 </span>            : #define SBG_ECOM_IMU_COM_OK                 (0x00000001u &lt;&lt; 0)      /*!&lt; Set to 1 if the communication with the IMU is ok. */</a>
+<a name="157"><span class="lineNum">     157 </span>            : #define SBG_ECOM_IMU_STATUS_BIT             (0x00000001u &lt;&lt; 1)      /*!&lt; Set to 1 if the IMU passes general Built in Tests (calibration, CPU, ...). */</a>
+<a name="158"><span class="lineNum">     158 </span>            : </a>
+<a name="159"><span class="lineNum">     159 </span>            : #define SBG_ECOM_IMU_ACCEL_X_BIT            (0x00000001u &lt;&lt; 2)      /*!&lt; Set to 1 if the accelerometer X passes Built In Test. */</a>
+<a name="160"><span class="lineNum">     160 </span>            : #define SBG_ECOM_IMU_ACCEL_Y_BIT            (0x00000001u &lt;&lt; 3)      /*!&lt; Set to 1 if the accelerometer Y passes Built In Test. */</a>
+<a name="161"><span class="lineNum">     161 </span>            : #define SBG_ECOM_IMU_ACCEL_Z_BIT            (0x00000001u &lt;&lt; 4)      /*!&lt; Set to 1 if the accelerometer Z passes Built In Test. */</a>
+<a name="162"><span class="lineNum">     162 </span>            : </a>
+<a name="163"><span class="lineNum">     163 </span>            : #define SBG_ECOM_IMU_GYRO_X_BIT             (0x00000001u &lt;&lt; 5)      /*!&lt; Set to 1 if the gyroscope X passes Built In Test. */</a>
+<a name="164"><span class="lineNum">     164 </span>            : #define SBG_ECOM_IMU_GYRO_Y_BIT             (0x00000001u &lt;&lt; 6)      /*!&lt; Set to 1 if the gyroscope Y passes Built In Test. */</a>
+<a name="165"><span class="lineNum">     165 </span>            : #define SBG_ECOM_IMU_GYRO_Z_BIT             (0x00000001u &lt;&lt; 7)      /*!&lt; Set to 1 if the gyroscope Z passes Built In Test. */</a>
+<a name="166"><span class="lineNum">     166 </span>            : </a>
+<a name="167"><span class="lineNum">     167 </span>            : #define SBG_ECOM_IMU_ACCELS_IN_RANGE        (0x00000001u &lt;&lt; 8)      /*!&lt; Set to 1 if all accelerometers are within operating range. */</a>
+<a name="168"><span class="lineNum">     168 </span>            : #define SBG_ECOM_IMU_GYROS_IN_RANGE         (0x00000001u &lt;&lt; 9)      /*!&lt; Set to 1 if all gyroscopes are within operating range. */</a>
+<a name="169"><span class="lineNum">     169 </span>            : #define SBG_ECOM_IMU_GYROS_USE_HIGH_SCALE   (0x00000001u &lt;&lt; 10)     /*!&lt; Set if the gyroscope scale factor range is high. Applicable only for SBG_ECOM_LOG_IMU_SHORT logs. */</a>
+<a name="170"><span class="lineNum">     170 </span>            : </a>
+<a name="171"><span class="lineNum">     171 </span>            : /*!</a>
+<a name="172"><span class="lineNum">     172 </span>            :  * Standard gyroscope scale factor.</a>
+<a name="173"><span class="lineNum">     173 </span>            :  */</a>
+<a name="174"><span class="lineNum">     174 </span>            : #define SBG_ECOM_LOG_IMU_GYRO_SCALE_STD                     (67108864.0f)</a>
+<a name="175"><span class="lineNum">     175 </span>            : </a>
+<a name="176"><span class="lineNum">     176 </span>            : /*!</a>
+<a name="177"><span class="lineNum">     177 </span>            :  * High range gyroscope scale factor derived from 10000 degrees per second maximum range.</a>
+<a name="178"><span class="lineNum">     178 </span>            :  *</a>
+<a name="179"><span class="lineNum">     179 </span>            :  * Calculation: (2^31 - 1) / (10000 * π / 180)</a>
+<a name="180"><span class="lineNum">     180 </span>            :  */</a>
+<a name="181"><span class="lineNum">     181 </span>            : #define SBG_ECOM_LOG_IMU_GYRO_SCALE_HIGH                    (12304174.0f)</a>
+<a name="182"><span class="lineNum">     182 </span>            : </a>
+<a name="183"><span class="lineNum">     183 </span>            : /*!</a>
+<a name="184"><span class="lineNum">     184 </span>            :  * Maximum value for the standard scale factor, in radians per second.</a>
+<a name="185"><span class="lineNum">     185 </span>            :  *</a>
+<a name="186"><span class="lineNum">     186 </span>            :  * Approximately equivalent to 1833 °/s.</a>
+<a name="187"><span class="lineNum">     187 </span>            :  */</a>
+<a name="188"><span class="lineNum">     188 </span>            : #define SBG_ECOM_LOG_IMU_GYRO_SCALE_STD_MAX_RAD             ((float)INT32_MAX / SBG_ECOM_LOG_IMU_GYRO_SCALE_STD)</a>
+<a name="189"><span class="lineNum">     189 </span>            : </a>
+<a name="190"><span class="lineNum">     190 </span>            : /*!</a>
+<a name="191"><span class="lineNum">     191 </span>            :  * Standard accelerometer scale factor.</a>
+<a name="192"><span class="lineNum">     192 </span>            :  */</a>
+<a name="193"><span class="lineNum">     193 </span>            : #define SBG_ECOM_LOG_IMU_ACCEL_SCALE_STD                    (1048576.0f)</a>
+<a name="194"><span class="lineNum">     194 </span>            : </a>
+<a name="195"><span class="lineNum">     195 </span>            : /*!</a>
+<a name="196"><span class="lineNum">     196 </span>            :  * Standard temperature scale factor.</a>
+<a name="197"><span class="lineNum">     197 </span>            :  */</a>
+<a name="198"><span class="lineNum">     198 </span>            : #define SBG_ECOM_LOG_IMU_TEMP_SCALE_STD                     (256.0f)</a>
+<a name="199"><span class="lineNum">     199 </span>            : </a>
+<a name="200"><span class="lineNum">     200 </span>            : /*!</a>
+<a name="201"><span class="lineNum">     201 </span>            :  * Structure that stores data for the SBG_ECOM_LOG_IMU_SHORT message.</a>
+<a name="202"><span class="lineNum">     202 </span>            :  *</a>
+<a name="203"><span class="lineNum">     203 </span>            :  * This message is sent asynchronously and must be used for post processing.</a>
+<a name="204"><span class="lineNum">     204 </span>            :  *</a>
+<a name="205"><span class="lineNum">     205 </span>            :  * The delta angle values are scaled based on the gyroscopes output. If any output exceeds</a>
+<a name="206"><span class="lineNum">     206 </span>            :  * a predefined limit, the scale factor switches from standard to high range to prevent saturation.</a>
+<a name="207"><span class="lineNum">     207 </span>            :  */</a>
+<a name="208"><span class="lineNum">     208 </span>            : typedef struct PACKED _SbgEComLogImuShort</a>
+<a name="209"><span class="lineNum">     209 </span>            : {</a>
+<a name="210"><span class="lineNum">     210 </span>            :     uint32_t    timeStamp;                  /*!&lt; Time in us since the sensor power up. */</a>
+<a name="211"><span class="lineNum">     211 </span>            :     uint16_t    status;                     /*!&lt; IMU status bitmask. */</a>
+<a name="212"><span class="lineNum">     212 </span>            :     int32_t     deltaVelocity[3];           /*!&lt; X, Y, Z delta velocity. Unit is 1048576 LSB for 1 m.s^-2. */</a>
+<a name="213"><span class="lineNum">     213 </span>            :     int32_t     deltaAngle[3];              /*!&lt; X, Y, Z delta angle. Unit is either 67108864 LSB for 1 rad.s^-1 (standard) or 12304174 LSB for 1 rad.s^-1 (high range), managed automatically. */</a>
+<a name="214"><span class="lineNum">     214 </span>            :     int16_t     temperature;                /*!&lt; IMU average temperature. Unit is 256 LSB for 1°C. */</a>
+<a name="215"><span class="lineNum">     215 </span>            : } SbgEComLogImuShort;</a>
+<a name="216"><span class="lineNum">     216 </span>            : </a>
+<a name="217"><span class="lineNum">     217 </span>            : </a>
+<a name="218"><span class="lineNum">     218 </span>            : </a>
+<a name="219"><span class="lineNum">     219 </span>            : /*!</a>
+<a name="220"><span class="lineNum">     220 </span>            :  * EKF computed orientation using euler angles.</a>
+<a name="221"><span class="lineNum">     221 </span>            :  */</a>
+<a name="222"><span class="lineNum">     222 </span>            : typedef struct PACKED _SbgLogEkfEulerData</a>
+<a name="223"><span class="lineNum">     223 </span>            : {</a>
+<a name="224"><span class="lineNum">     224 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up. */</a>
+<a name="225"><span class="lineNum">     225 </span>            :         float           euler[3];                                       /*!&lt; Roll, Pitch and Yaw angles in rad. */</a>
+<a name="226"><span class="lineNum">     226 </span>            :         float           eulerStdDev[3];                         /*!&lt; Roll, Pitch and Yaw angles 1 sigma standard deviation in rad. */</a>
+<a name="227"><span class="lineNum">     227 </span>            :         uint32_t        status;                                         /*!&lt; EKF solution status bitmask and enum. */</a>
+<a name="228"><span class="lineNum">     228 </span>            : } SbgLogEkfEulerData;</a>
+<a name="229"><span class="lineNum">     229 </span>            : </a>
+<a name="230"><span class="lineNum">     230 </span>            : /*!</a>
+<a name="231"><span class="lineNum">     231 </span>            :  * EFK computed orientation using quaternion.</a>
+<a name="232"><span class="lineNum">     232 </span>            :  */</a>
+<a name="233"><span class="lineNum">     233 </span>            : typedef struct PACKED _SbgLogEkfQuatData</a>
+<a name="234"><span class="lineNum">     234 </span>            : {</a>
+<a name="235"><span class="lineNum">     235 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up. */</a>
+<a name="236"><span class="lineNum">     236 </span>            :         float           quaternion[4];                          /*!&lt; Orientation quaternion stored in W, X, Y, Z form. */</a>
+<a name="237"><span class="lineNum">     237 </span>            :         float           eulerStdDev[3];                         /*!&lt; Roll, Pitch and Yaw angles 1 sigma standard deviation in rad. */</a>
+<a name="238"><span class="lineNum">     238 </span>            :         uint32_t        status;                                         /*!&lt; EKF solution status bitmask and enum. */</a>
+<a name="239"><span class="lineNum">     239 </span>            : } SbgLogEkfQuatData;</a>
+<a name="240"><span class="lineNum">     240 </span>            : </a>
+<a name="241"><span class="lineNum">     241 </span>            : /*!</a>
+<a name="242"><span class="lineNum">     242 </span>            :  * EFK computed navigation data.</a>
+<a name="243"><span class="lineNum">     243 </span>            :  */</a>
+<a name="244"><span class="lineNum">     244 </span>            : typedef struct PACKED _SbgLogEkfNavData</a>
+<a name="245"><span class="lineNum">     245 </span>            : {</a>
+<a name="246"><span class="lineNum">     246 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up. */</a>
+<a name="247"><span class="lineNum">     247 </span>            :         float           velocity[3];                            /*!&lt; North, East, Down velocity in m.s^-1. */</a>
+<a name="248"><span class="lineNum">     248 </span>            :         float           velocityStdDev[3];                      /*!&lt; North, East, Down velocity 1 sigma standard deviation in m.s^-1. */</a>
+<a name="249"><span class="lineNum">     249 </span>            :         double          position[3];                            /*!&lt; Latitude, Longitude in degrees positive North and East.</a>
+<a name="250"><span class="lineNum">     250 </span>            :                                                                                         Altitude above Mean Sea Level in meters. */</a>
+<a name="251"><span class="lineNum">     251 </span>            :         float           undulation;                                     /*!&lt; Altitude difference between the geoid and the Ellipsoid in meters (Height above Ellipsoid = altitude + undulation). */</a>
+<a name="252"><span class="lineNum">     252 </span>            :         float           positionStdDev[3];                      /*!&lt; Latitude, longitude and altitude 1 sigma standard deviation in meters. */</a>
+<a name="253"><span class="lineNum">     253 </span>            :         uint32_t        status;                                         /*!&lt; EKF solution status bitmask and enum. */</a>
+<a name="254"><span class="lineNum">     254 </span>            : } SbgLogEkfNavData;</a>
+<a name="255"><span class="lineNum">     255 </span>            : </a>
+<a name="256"><span class="lineNum">     256 </span>            : //----------------------------------------------------------------------//</a>
+<a name="257"><span class="lineNum">     257 </span>            : //- Log Air Data status definitions                                    -//</a>
+<a name="258"><span class="lineNum">     258 </span>            : //----------------------------------------------------------------------//</a>
+<a name="259"><span class="lineNum">     259 </span>            : </a>
+<a name="260"><span class="lineNum">     260 </span>            : /*!</a>
+<a name="261"><span class="lineNum">     261 </span>            :  * Air Data sensor status mask definitions</a>
+<a name="262"><span class="lineNum">     262 </span>            :  */</a>
+<a name="263"><span class="lineNum">     263 </span>            : #define SBG_ECOM_AIR_DATA_TIME_IS_DELAY             (0x0001u &lt;&lt; 0)      /*!&lt; Set to 1 if the timeStamp field represents a delay instead of an absolute timestamp. */</a>
+<a name="264"><span class="lineNum">     264 </span>            : #define SBG_ECOM_AIR_DATA_PRESSURE_ABS_VALID        (0x0001u &lt;&lt; 1)      /*!&lt; Set to 1 if the pressure field is filled and valid. */</a>
+<a name="265"><span class="lineNum">     265 </span>            : #define SBG_ECOM_AIR_DATA_ALTITUDE_VALID            (0x0001u &lt;&lt; 2)      /*!&lt; Set to 1 if the barometric altitude field is filled and valid. */</a>
+<a name="266"><span class="lineNum">     266 </span>            : #define SBG_ECOM_AIR_DATA_PRESSURE_DIFF_VALID       (0x0001u &lt;&lt; 3)      /*!&lt; Set to 1 if the differential pressure field is filled and valid. */</a>
+<a name="267"><span class="lineNum">     267 </span>            : #define SBG_ECOM_AIR_DATA_AIRPSEED_VALID            (0x0001u &lt;&lt; 4)      /*!&lt; Set to 1 if the true airspeed field is filled and valid. */</a>
+<a name="268"><span class="lineNum">     268 </span>            : #define SBG_ECOM_AIR_DATA_TEMPERATURE_VALID         (0x0001u &lt;&lt; 5)      /*!&lt; Set to 1 if the output air temperature field is filled and valid. */</a>
+<a name="269"><span class="lineNum">     269 </span>            : </a>
+<a name="270"><span class="lineNum">     270 </span>            : /*!</a>
+<a name="271"><span class="lineNum">     271 </span>            :  * Log structure for AirData.</a>
+<a name="272"><span class="lineNum">     272 </span>            :  */</a>
+<a name="273"><span class="lineNum">     273 </span>            : typedef struct PACKED _SbgLogAirData</a>
+<a name="274"><span class="lineNum">     274 </span>            : {</a>
+<a name="275"><span class="lineNum">     275 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up OR measurement delay in us. */</a>
+<a name="276"><span class="lineNum">     276 </span>            :         uint16_t        status;                                         /*!&lt; Airdata sensor status bitmask. */</a>
+<a name="277"><span class="lineNum">     277 </span>            :         float           pressureAbs;                            /*!&lt; Raw absolute pressure measured by the barometer sensor in Pascals. */</a>
+<a name="278"><span class="lineNum">     278 </span>            :         float           altitude;                                       /*!&lt; Altitude computed from barometric altimeter in meters and positive upward. */</a>
+<a name="279"><span class="lineNum">     279 </span>            :         float           pressureDiff;                           /*!&lt; Raw differential pressure measured by the pitot tube in Pascal. */</a>
+<a name="280"><span class="lineNum">     280 </span>            :         float           trueAirspeed;                           /*!&lt; True airspeed measured by a pitot tube in m.s^-1 and positive forward. */</a>
+<a name="281"><span class="lineNum">     281 </span>            :         float           airTemperature;                         /*!&lt; Outside air temperature in C that could be used to compute true airspeed from differential pressure. */</a>
+<a name="282"><span class="lineNum">     282 </span>            : } SbgLogAirData;</a>
+<a name="283"><span class="lineNum">     283 </span>            : </a>
+<a name="284"><span class="lineNum">     284 </span>            : /*!</a>
+<a name="285"><span class="lineNum">     285 </span>            :  * Log magnetometer data status mask definitions</a>
+<a name="286"><span class="lineNum">     286 </span>            :  */</a>
+<a name="287"><span class="lineNum">     287 </span>            : #define SBG_ECOM_MAG_MAG_X_BIT          (0x00000001u &lt;&lt; 0)      /*!&lt; Set to 1 if the magnetometer X passes Built In Test. */</a>
+<a name="288"><span class="lineNum">     288 </span>            : #define SBG_ECOM_MAG_MAG_Y_BIT          (0x00000001u &lt;&lt; 1)      /*!&lt; Set to 1 if the magnetometer Y passes Built In Test. */</a>
+<a name="289"><span class="lineNum">     289 </span>            : #define SBG_ECOM_MAG_MAG_Z_BIT          (0x00000001u &lt;&lt; 2)      /*!&lt; Set to 1 if the magnetometer Z passes Built In Test. */</a>
+<a name="290"><span class="lineNum">     290 </span>            : </a>
+<a name="291"><span class="lineNum">     291 </span>            : #define SBG_ECOM_MAG_ACCEL_X_BIT        (0x00000001u &lt;&lt; 3)      /*!&lt; Set to 1 if the accelerometer X passes Built In Test. */</a>
+<a name="292"><span class="lineNum">     292 </span>            : #define SBG_ECOM_MAG_ACCEL_Y_BIT        (0x00000001u &lt;&lt; 4)      /*!&lt; Set to 1 if the accelerometer Y passes Built In Test. */</a>
+<a name="293"><span class="lineNum">     293 </span>            : #define SBG_ECOM_MAG_ACCEL_Z_BIT        (0x00000001u &lt;&lt; 5)      /*!&lt; Set to 1 if the accelerometer Z passes Built In Test. */</a>
+<a name="294"><span class="lineNum">     294 </span>            : </a>
+<a name="295"><span class="lineNum">     295 </span>            : #define SBG_ECOM_MAG_MAGS_IN_RANGE      (0x00000001u &lt;&lt; 6)      /*!&lt; Set to 1 if all magnetometers are within operating range. */</a>
+<a name="296"><span class="lineNum">     296 </span>            : #define SBG_ECOM_MAG_ACCELS_IN_RANGE    (0x00000001u &lt;&lt; 7)      /*!&lt; Set to 1 if all accelerometers are within operating range. */</a>
+<a name="297"><span class="lineNum">     297 </span>            : </a>
+<a name="298"><span class="lineNum">     298 </span>            : #define SBG_ECOM_MAG_CALIBRATION_OK     (0x00000001u &lt;&lt; 8)      /*!&lt; Set to 1 if the magnetometers seems to be calibrated. */</a>
+<a name="299"><span class="lineNum">     299 </span>            : </a>
+<a name="300"><span class="lineNum">     300 </span>            : /*!</a>
+<a name="301"><span class="lineNum">     301 </span>            :  * Structure that stores data for the SBG_ECOM_LOG_MAG message.</a>
+<a name="302"><span class="lineNum">     302 </span>            :  */</a>
+<a name="303"><span class="lineNum">     303 </span>            : typedef struct PACKED _SbgLogMag</a>
+<a name="304"><span class="lineNum">     304 </span>            : {</a>
+<a name="305"><span class="lineNum">     305 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up. */</a>
+<a name="306"><span class="lineNum">     306 </span>            :         uint16_t        status;                                         /*!&lt; Magnetometer status bitmask. */</a>
+<a name="307"><span class="lineNum">     307 </span>            :         float           magnetometers[3];                       /*!&lt; X, Y, Z magnetometer data in A.U. */</a>
+<a name="308"><span class="lineNum">     308 </span>            :         float           accelerometers[3];                      /*!&lt; X, Y, Z accelerometers in m.s^-2. */</a>
+<a name="309"><span class="lineNum">     309 </span>            : } SbgLogMag;</a>
+<a name="310"><span class="lineNum">     310 </span>            : </a>
+<a name="311"><span class="lineNum">     311 </span>            : /*!</a>
+<a name="312"><span class="lineNum">     312 </span>            :  * Structure that stores data for the SBG_ECOM_LOG_MAG_CALIB message.</a>
+<a name="313"><span class="lineNum">     313 </span>            :  */</a>
+<a name="314"><span class="lineNum">     314 </span>            : typedef struct PACKED _SbgLogMagCalib</a>
+<a name="315"><span class="lineNum">     315 </span>            : {</a>
+<a name="316"><span class="lineNum">     316 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up. */</a>
+<a name="317"><span class="lineNum">     317 </span>            :         uint16_t        reserved;                                       /*!&lt; Reserved for future use. */</a>
+<a name="318"><span class="lineNum">     318 </span>            :         uint8_t         magData[16];                            /*!&lt; Magnetometers calibration data. */</a>
+<a name="319"><span class="lineNum">     319 </span>            : } SbgLogMagCalib;</a>
+<a name="320"><span class="lineNum">     320 </span>            : </a>
+<a name="321"><span class="lineNum">     321 </span>            : </a>
+<a name="322"><span class="lineNum">     322 </span>            : typedef struct PACKED _SbgLogStatusData</a>
+<a name="323"><span class="lineNum">     323 </span>            : {</a>
+<a name="324"><span class="lineNum">     324 </span>            :         uint32_t        timeStamp;                                      /*!&lt; Time in us since the sensor power up. */</a>
+<a name="325"><span class="lineNum">     325 </span>            :         uint16_t        generalStatus;                          /*!&lt; General status bitmask and enums. */</a>
+<a name="326"><span class="lineNum">     326 </span>            :         uint16_t        reserved1;                                      /*!&lt; Reserved status field for future use */</a>
+<a name="327"><span class="lineNum">     327 </span>            :         uint32_t        comStatus;                                      /*!&lt; Communication status bitmask and enums. */</a>
+<a name="328"><span class="lineNum">     328 </span>            :         uint32_t        aidingStatus;                           /*!&lt; Aiding equipments status bitmask and enums. */</a>
+<a name="329"><span class="lineNum">     329 </span>            :         uint32_t        reserved2;                                      /*!&lt; Reserved status field for future use. */</a>
+<a name="330"><span class="lineNum">     330 </span>            :         uint16_t        reserved3;                                      /*!&lt; Reserved status field for future use. */</a>
+<a name="331"><span class="lineNum">     331 </span>            :         uint32_t        uptime;                                         /*!&lt; System uptime in seconds. */</a>
+<a name="332"><span class="lineNum">     332 </span>            : } SbgLogStatusData;</a>
+<a name="333"><span class="lineNum">     333 </span>            : </a>
+<a name="334"><span class="lineNum">     334 </span>            : /*!</a>
+<a name="335"><span class="lineNum">     335 </span>            :  * Helper structure to retrieve device info.</a>
+<a name="336"><span class="lineNum">     336 </span>            :  */</a>
+<a name="337"><span class="lineNum">     337 </span>            : #define SBG_ECOM_INFO_PRODUCT_CODE_LENGTH                       (32)</a>
+<a name="338"><span class="lineNum">     338 </span>            : typedef struct PACKED _SbgEComDeviceInfo</a>
+<a name="339"><span class="lineNum">     339 </span>            : {</a>
+<a name="340"><span class="lineNum">     340 </span>            :         uint8_t         productCode[SBG_ECOM_INFO_PRODUCT_CODE_LENGTH]; /*!&lt; Human readable Product Code. */</a>
+<a name="341"><span class="lineNum">     341 </span>            :         uint32_t        serialNumber;                           /*!&lt; Device serial number */</a>
+<a name="342"><span class="lineNum">     342 </span>            :         uint32_t        calibationRev;                          /*!&lt; Calibration data revision */</a>
+<a name="343"><span class="lineNum">     343 </span>            :         uint16_t        calibrationYear;                        /*!&lt; Device Calibration Year */</a>
+<a name="344"><span class="lineNum">     344 </span>            :         uint8_t         calibrationMonth;                       /*!&lt; Device Calibration Month */</a>
+<a name="345"><span class="lineNum">     345 </span>            :         uint8_t         calibrationDay;                         /*!&lt; Device Calibration Day */</a>
+<a name="346"><span class="lineNum">     346 </span>            :         uint32_t        hardwareRev;                            /*!&lt; Device hardware revision */</a>
+<a name="347"><span class="lineNum">     347 </span>            :         uint32_t        firmwareRev;                            /*!&lt; Firmware revision */</a>
+<a name="348"><span class="lineNum">     348 </span>            : } SbgEComDeviceInfo;</a>
+<a name="349"><span class="lineNum">     349 </span>            : </a>
+<a name="350"><span class="lineNum">     350 </span>            : </a>
+<a name="351"><span class="lineNum">     351 </span>            : </a>
+<a name="352"><span class="lineNum">     352 </span>            : /*!</a>
+<a name="353"><span class="lineNum">     353 </span>            :  *      Generic errors definitions for SBG Systems projects.</a>
+<a name="354"><span class="lineNum">     354 </span>            :  */</a>
+<a name="355"><span class="lineNum">     355 </span>            : typedef enum _SbgErrorCode : uint16_t</a>
+<a name="356"><span class="lineNum">     356 </span>            : {</a>
+<a name="357"><span class="lineNum">     357 </span>            :         SBG_NO_ERROR = 0,                                               /*!&lt; The operation was successfully executed. */</a>
+<a name="358"><span class="lineNum">     358 </span>            :         SBG_ERROR,                                                              /*!&lt; We have a generic error. */</a>
+<a name="359"><span class="lineNum">     359 </span>            :         SBG_NULL_POINTER,                                               /*!&lt; A pointer is null. */</a>
+<a name="360"><span class="lineNum">     360 </span>            :         SBG_INVALID_CRC,                                                /*!&lt; The received frame has an invalid CRC. */</a>
+<a name="361"><span class="lineNum">     361 </span>            :         SBG_INVALID_FRAME,                                              /*!&lt; The received frame is invalid &lt;br&gt; */</a>
+<a name="362"><span class="lineNum">     362 </span>            :                                                                                         /*!&lt; We have received an unexpected frame (not the cmd we are waiting for or with an invalid data size.&lt;br&gt; */</a>
+<a name="363"><span class="lineNum">     363 </span>            :                                                                                         /*!&lt; This could be caused by a desync between questions and answers.&lt;br&gt; */</a>
+<a name="364"><span class="lineNum">     364 </span>            :                                                                                         /*!&lt; You should flush the serial port to fix this. */</a>
+<a name="365"><span class="lineNum">     365 </span>            :         SBG_TIME_OUT,                                                   /*!&lt; We have started to receive a frame but not the end. */</a>
+<a name="366"><span class="lineNum">     366 </span>            :         SBG_WRITE_ERROR,                                                /*!&lt; All bytes hasn't been written. */</a>
+<a name="367"><span class="lineNum">     367 </span>            :         SBG_READ_ERROR,                                                 /*!&lt; All bytes hasn't been read. */</a>
+<a name="368"><span class="lineNum">     368 </span>            :         SBG_BUFFER_OVERFLOW,                                    /*!&lt; A buffer is too small to contain so much data. */</a>
+<a name="369"><span class="lineNum">     369 </span>            :         SBG_INVALID_PARAMETER,                                  /*!&lt; An invalid parameter has been found. */</a>
+<a name="370"><span class="lineNum">     370 </span>            :         SBG_NOT_READY,                                                  /*!&lt; A device isn't ready (Rx isn't ready for example). */</a>
+<a name="371"><span class="lineNum">     371 </span>            :         SBG_MALLOC_FAILED,                                              /*!&lt; Failed to allocate a buffer. */</a>
+<a name="372"><span class="lineNum">     372 </span>            :         SGB_CALIB_MAG_NOT_ENOUGH_POINTS,                /*!&lt; Not enough points were available to perform magnetometers calibration. */</a>
+<a name="373"><span class="lineNum">     373 </span>            :         SBG_CALIB_MAG_INVALID_TAKE,                             /*!&lt; The calibration procedure could not be properly executed due to insufficient precision. */</a>
+<a name="374"><span class="lineNum">     374 </span>            :         SBG_CALIB_MAG_SATURATION,                               /*!&lt; Saturation were detected when attempt to calibrate magnetos. */</a>
+<a name="375"><span class="lineNum">     375 </span>            :         SBG_CALIB_MAG_POINTS_NOT_IN_A_PLANE,    /*!&lt; 2D calibration procedure could not be performed. */</a>
+<a name="376"><span class="lineNum">     376 </span>            : </a>
+<a name="377"><span class="lineNum">     377 </span>            :         SBG_DEVICE_NOT_FOUND,                                   /*!&lt; A device couldn't be founded or opened PC only error code */</a>
+<a name="378"><span class="lineNum">     378 </span>            :         SBG_OPERATION_CANCELLED,                                /*!&lt; An operation was cancelled.  PC only error code*/</a>
+<a name="379"><span class="lineNum">     379 </span>            :         SBG_NOT_CONTINUOUS_FRAME,                               /*!&lt; We have received a frame that isn't a continuous one. PC only error code*/</a>
+<a name="380"><span class="lineNum">     380 </span>            : </a>
+<a name="381"><span class="lineNum">     381 </span>            :         SBG_INCOMPATIBLE_HARDWARE,                              /*!&lt; Hence valid; the command cannot be executed because of hardware incompatibility */</a>
+<a name="382"><span class="lineNum">     382 </span>            :         SBG_INVALID_VERSION                                             /*!&lt; Incompatible version */</a>
+<a name="383"><span class="lineNum">     383 </span>            : } SbgErrorCode;</a>
+<a name="384"><span class="lineNum">     384 </span>            : </a>
+<a name="385"><span class="lineNum">     385 </span>            : </a>
+<a name="386"><span class="lineNum">     386 </span>            : typedef struct PACKED _SbgEComACK</a>
+<a name="387"><span class="lineNum">     387 </span>            : {</a>
+<a name="388"><span class="lineNum">     388 </span>            :         uint8_t ackMsg;</a>
+<a name="389"><span class="lineNum">     389 </span>            :         uint8_t ackMsgClass;</a>
+<a name="390"><span class="lineNum">     390 </span>            :         SbgErrorCode ackErrorCode;</a>
+<a name="391"><span class="lineNum">     391 </span>            : } SbgEComAck;</a>
+<a name="392"><span class="lineNum">     392 </span>            : </a>
+<a name="393"><span class="lineNum">     393 </span>            : /*!</a>
+<a name="394"><span class="lineNum">     394 </span>            :  * Defintion of all the settings actions available.</a>
+<a name="395"><span class="lineNum">     395 </span>            :  */</a>
+<a name="396"><span class="lineNum">     396 </span>            : typedef enum _SbgEComSettingsAction</a>
+<a name="397"><span class="lineNum">     397 </span>            : {</a>
+<a name="398"><span class="lineNum">     398 </span>            :         SBG_ECOM_REBOOT_ONLY                            = 0,            /*!&lt; Only reboot the device. */</a>
+<a name="399"><span class="lineNum">     399 </span>            :         SBG_ECOM_SAVE_SETTINGS                          = 1,            /*!&lt; Save the settings to non-volatile memory and then reboot the device. */</a>
+<a name="400"><span class="lineNum">     400 </span>            :         SBG_ECOM_RESTORE_DEFAULT_SETTINGS       = 2                     /*!&lt; Restore default settings, save them to non-volatile memory and reboot the device. */</a>
+<a name="401"><span class="lineNum">     401 </span>            : } SbgEComSettingsAction;</a>
+<a name="402"><span class="lineNum">     402 </span>            : </a>
+<a name="403"><span class="lineNum">     403 </span>            : </a>
+<a name="404"><span class="lineNum">     404 </span>            : typedef enum _SbgEComGpsPosType</a>
+<a name="405"><span class="lineNum">     405 </span>            : {</a>
+<a name="406"><span class="lineNum">     406 </span>            :         SBG_ECOM_POS_NO_SOLUTION                = 0,                                                    /*!&lt; No valid solution available. */</a>
+<a name="407"><span class="lineNum">     407 </span>            :         SBG_ECOM_POS_UNKNOWN_TYPE               = 1,                                                    /*!&lt; An unknown solution type has been computed. */</a>
+<a name="408"><span class="lineNum">     408 </span>            :         SBG_ECOM_POS_SINGLE                             = 2,                                                    /*!&lt; Single point solution position. */</a>
+<a name="409"><span class="lineNum">     409 </span>            :         SBG_ECOM_POS_PSRDIFF                    = 3,                                                    /*!&lt; Standard Pseudorange Differential Solution (DGPS). */</a>
+<a name="410"><span class="lineNum">     410 </span>            :         SBG_ECOM_POS_SBAS                               = 4,                                                    /*!&lt; SBAS satellite used for differential corrections. */</a>
+<a name="411"><span class="lineNum">     411 </span>            :         SBG_ECOM_POS_OMNISTAR                   = 5,                                                    /*!&lt; Omnistar VBS Position (L1 sub-meter). */</a>
+<a name="412"><span class="lineNum">     412 </span>            :         SBG_ECOM_POS_RTK_FLOAT                  = 6,                                                    /*!&lt; Floating RTK ambiguity solution (20 cms RTK). */</a>
+<a name="413"><span class="lineNum">     413 </span>            :         SBG_ECOM_POS_RTK_INT                    = 7,                                                    /*!&lt; Integer RTK ambiguity solution (2 cms RTK). */</a>
+<a name="414"><span class="lineNum">     414 </span>            :         SBG_ECOM_POS_PPP_FLOAT                  = 8,                                                    /*!&lt; Precise Point Positioning with float ambiguities. */</a>
+<a name="415"><span class="lineNum">     415 </span>            :         SBG_ECOM_POS_PPP_INT                    = 9,                                                    /*!&lt; Precise Point Positioning with fixed ambiguities. */</a>
+<a name="416"><span class="lineNum">     416 </span>            :         SBG_ECOM_POS_FIXED                              = 10                                                    /*!&lt; Fixed location solution position. */</a>
+<a name="417"><span class="lineNum">     417 </span>            : } SbgEComGpsPosType;</a>
+<a name="418"><span class="lineNum">     418 </span>            : </a>
+<a name="419"><span class="lineNum">     419 </span>            : #define SBG_ECOM_GPS_POS_TYPE_SHIFT                     (6u)                                    /*!&lt; Shift used to extract the GPS position type part. */</a>
+<a name="420"><span class="lineNum">     420 </span>            : #define SBG_ECOM_GPS_POS_TYPE_MASK                      (0x0000003Fu)                   /*!&lt; Mask used to keep only the GPS position type part. */</a>
+<a name="421"><span class="lineNum">     421 </span>            : </a>
+<a name="422"><span class="lineNum">     422 </span>            : </a>
+<a name="423"><span class="lineNum">     423 </span>            : </a>
+<a name="424"><span class="lineNum">     424 </span>            : /*!</a>
+<a name="425"><span class="lineNum">     425 </span>            :  *      Define if the onboard magnetic calibration should acquiere points for a 3D or 2D calibration.</a>
+<a name="426"><span class="lineNum">     426 </span>            :  */</a>
+<a name="427"><span class="lineNum">     427 </span>            : typedef enum _SbgEComMagCalibMode</a>
+<a name="428"><span class="lineNum">     428 </span>            : {</a>
+<a name="429"><span class="lineNum">     429 </span>            :         SBG_ECOM_MAG_CALIB_MODE_2D                      = 1,                            /*!&lt; Tell the device that the magnetic calibration will be performed with limited motions.</a>
+<a name="430"><span class="lineNum">     430 </span>            :                                                                                                                                  This calibration mode is only designed to be used when roll and pitch motions are less than  5.</a>
+<a name="431"><span class="lineNum">     431 </span>            :                                                                                                                                  To work correctly, the device should be rotated through at least a full circle. */</a>
+<a name="432"><span class="lineNum">     432 </span>            :         SBG_ECOM_MAG_CALIB_MODE_3D                      = 2                                     /*!&lt; Tell the device to start a full 3D magnetic calibration procedure.</a>
+<a name="433"><span class="lineNum">     433 </span>            :                                                                                                                                  The 3D magnetic calibration offers the best accuracy but needs at least motion of  30 on the roll and pitch angles. */</a>
+<a name="434"><span class="lineNum">     434 </span>            : } SbgEComMagCalibMode;</a>
+<a name="435"><span class="lineNum">     435 </span>            : </a>
+<a name="436"><span class="lineNum">     436 </span>            : </a>
+<a name="437"><span class="lineNum">     437 </span>            : /*!</a>
+<a name="438"><span class="lineNum">     438 </span>            :  *      Used to select the expected dynamics during the magnetic calibration.</a>
+<a name="439"><span class="lineNum">     439 </span>            :  */</a>
+<a name="440"><span class="lineNum">     440 </span>            : typedef enum _SbgEComMagCalibBandwidth</a>
+<a name="441"><span class="lineNum">     441 </span>            : {</a>
+<a name="442"><span class="lineNum">     442 </span>            :         SBG_ECOM_MAG_CALIB_LOW_BW               = 0,                                    /*!&lt; Tell the device that low dynamics will be observed during the magnetic calibration process. */</a>
+<a name="443"><span class="lineNum">     443 </span>            :         SBG_ECOM_MAG_CALIB_MEDIUM_BW    = 1,                                    /*!&lt; Tell the device that normal dynamics will be observed during the magnetic calibration process. */</a>
+<a name="444"><span class="lineNum">     444 </span>            :         SBG_ECOM_MAG_CALIB_HIGH_BW              = 2                                             /*!&lt; Tell the device that high dynamics will be observed during the magnetic calibration process. */</a>
+<a name="445"><span class="lineNum">     445 </span>            : } SbgEComMagCalibBandwidth;</a>
+<a name="446"><span class="lineNum">     446 </span>            : </a>
+<a name="447"><span class="lineNum">     447 </span>            : /*!</a>
+<a name="448"><span class="lineNum">     448 </span>            :  *      General quality indicator of an onboard magnetic calibration.</a>
+<a name="449"><span class="lineNum">     449 </span>            :  */</a>
+<a name="450"><span class="lineNum">     450 </span>            : typedef enum _SbgEComMagCalibQuality</a>
+<a name="451"><span class="lineNum">     451 </span>            : {</a>
+<a name="452"><span class="lineNum">     452 </span>            :         SBG_ECOM_MAG_CALIB_QUAL_OPTIMAL = 0,                                    /*!&lt; All acquired points fit very well on a unit sphere after the calibration. */</a>
+<a name="453"><span class="lineNum">     453 </span>            :         SBG_ECOM_MAG_CALIB_QUAL_GOOD    = 1,                                    /*!&lt; Small deviations of the magnetic field norm have been detected. The magnetic calibration should although provide accurate heading. */</a>
+<a name="454"><span class="lineNum">     454 </span>            :         SBG_ECOM_MAG_CALIB_QUAL_POOR    = 2,                                    /*!&lt; Large deviations of the magnetic field norm have been detected. It may come from external magnetic distortions during the calibration. */</a>
+<a name="455"><span class="lineNum">     455 </span>            :         SBG_ECOM_MAG_CALIB_QUAL_INVALID = 3                                             /*!&lt; No valid magnetic calibration has been computed. It could comes from too much magnetic disturbances, insufficient or invalid motions. */</a>
+<a name="456"><span class="lineNum">     456 </span>            : } SbgEComMagCalibQuality;</a>
+<a name="457"><span class="lineNum">     457 </span>            : </a>
+<a name="458"><span class="lineNum">     458 </span>            : /*!</a>
+<a name="459"><span class="lineNum">     459 </span>            :  *      Confidence indicator on results of an onbard magnetic calibration.</a>
+<a name="460"><span class="lineNum">     460 </span>            :  */</a>
+<a name="461"><span class="lineNum">     461 </span>            : typedef enum _SbgEComMagCalibConfidence</a>
+<a name="462"><span class="lineNum">     462 </span>            : {</a>
+<a name="463"><span class="lineNum">     463 </span>            :         SBG_ECOM_MAG_CALIB_TRUST_HIGH   = 0,                                    /*!&lt; Reported quality indicator can be trusted as enough remarkable magnetic field points have been acquired. */</a>
+<a name="464"><span class="lineNum">     464 </span>            :         SBG_ECOM_MAG_CALIB_TRUST_MEDIUM = 1,                                    /*!&lt; Few remarkable magnetic field points have been used to compute the magnetic calibration leading to a medium confidence in reported quality indicators. */</a>
+<a name="465"><span class="lineNum">     465 </span>            :         SBG_ECOM_MAG_CALIB_TRUST_LOW    = 2                                             /*!&lt; Even if the quality indicator could report an excellent calibration,</a>
+<a name="466"><span class="lineNum">     466 </span>            :                                                                                                                                  The data set used to compute the magnetic calibration was not meaningful enough to compute meaningful quality indicators.</a>
+<a name="467"><span class="lineNum">     467 </span>            :                                                                                                                                  This calibration should be used carefully. */</a>
+<a name="468"><span class="lineNum">     468 </span>            : } SbgEComMagCalibConfidence;</a>
+<a name="469"><span class="lineNum">     469 </span>            : </a>
+<a name="470"><span class="lineNum">     470 </span>            : #define SBG_ECOM_MAG_CALIB_NOT_ENOUGH_POINTS    (0x0001u)       /*!&lt; Not enough valid magnetic points have been acquired. */</a>
+<a name="471"><span class="lineNum">     471 </span>            : #define SBG_ECOM_MAG_CALIB_TOO_MUCH_DISTORTIONS (0x0002u)       /*!&lt; Unable to compute a magnetic calibration due to magnetic interferences or incorrect data set distribution. */</a>
+<a name="472"><span class="lineNum">     472 </span>            : #define SBG_ECOM_MAG_CALIB_X_MOTION_ISSUE               (0x0004u)       /*!&lt; For a 3D calibration: not enough motion on X axis. For a 2D calibration; too much motion on X axis. */</a>
+<a name="473"><span class="lineNum">     473 </span>            : #define SBG_ECOM_MAG_CALIB_Y_MOTION_ISSUE               (0x0008u)       /*!&lt; For a 3D calibration: not enough motion on Y axis. For a 2D calibration; too much motion on Y axis. */</a>
+<a name="474"><span class="lineNum">     474 </span>            : #define SBG_ECOM_MAG_CALIB_Z_MOTION_ISSUE               (0x0010u)       /*!&lt; For a 3D or 2D calibration: not enough motion on Z axis. */</a>
+<a name="475"><span class="lineNum">     475 </span>            : #define SBG_ECOM_MAG_CALIB_ALIGNMENT_ISSUE              (0x0020u)       /*!&lt; For a 3D calibration: the alignment between the magnetometers and the inertial frame seems to be invalid. */ </a>
+<a name="476"><span class="lineNum">     476 </span>            : </a>
+<a name="477"><span class="lineNum">     477 </span>            : </a>
+<a name="478"><span class="lineNum">     478 </span>            : /*!</a>
+<a name="479"><span class="lineNum">     479 </span>            :  * Helper structure to retrieve onboard magnetic calibration results.</a>
+<a name="480"><span class="lineNum">     480 </span>            :  */</a>
+<a name="481"><span class="lineNum">     481 </span>            : typedef struct PACKED _SbgEComMagCalibResults</a>
+<a name="482"><span class="lineNum">     482 </span>            : {</a>
+<a name="483"><span class="lineNum">     483 </span>            :         SbgEComMagCalibQuality          quality;                                        /*!&lt; General magnetic calibration quality indicator. */</a>
+<a name="484"><span class="lineNum">     484 </span>            :         SbgEComMagCalibConfidence       confidence;                                     /*!&lt; Confidence indicator that should be read to interpret the quality indicator. */</a>
+<a name="485"><span class="lineNum">     485 </span>            :         uint16_t                                        advancedStatus;                         /*!&lt; Set of bit masks used to report advanced information on the magnetic calibration status.*/</a>
+<a name="486"><span class="lineNum">     486 </span>            : </a>
+<a name="487"><span class="lineNum">     487 </span>            :         float                                           beforeMeanError;                        /*!&lt; Mean magnetic field norm error observed before calibration. */</a>
+<a name="488"><span class="lineNum">     488 </span>            :         float                                           beforeStdError;                         /*!&lt; Standard deviation of the magnetic field norm error observed before calibration. */</a>
+<a name="489"><span class="lineNum">     489 </span>            :         float                                           beforeMaxError;                         /*!&lt; Maximum magnetic field norm error observed before calibration. */</a>
+<a name="490"><span class="lineNum">     490 </span>            : </a>
+<a name="491"><span class="lineNum">     491 </span>            :         float                                           afterMeanError;                         /*!&lt; Mean magnetic field norm error observed after calibration. */</a>
+<a name="492"><span class="lineNum">     492 </span>            :         float                                           afterStdError;                          /*!&lt; Standard deviation of the magnetic field norm error observed after calibration. */</a>
+<a name="493"><span class="lineNum">     493 </span>            :         float                                           afterMaxError;                          /*!&lt; Maximum magnetic field norm error observed after calibration. */</a>
+<a name="494"><span class="lineNum">     494 </span>            : </a>
+<a name="495"><span class="lineNum">     495 </span>            :         float                                           meanAccuracy;                           /*!&lt; Mean expected heading accuracy in radians. */</a>
+<a name="496"><span class="lineNum">     496 </span>            :         float                                           stdAccuracy;                            /*!&lt; Standard deviation of the expected heading accuracy in radians. */</a>
+<a name="497"><span class="lineNum">     497 </span>            :         float                                           maxAccuracy;                            /*!&lt; Maximum expected heading accuracy in radians. */</a>
+<a name="498"><span class="lineNum">     498 </span>            : </a>
+<a name="499"><span class="lineNum">     499 </span>            :         uint16_t                                        numPoints;                                      /*!&lt; Number of magnetic field points stored internally and used to compute the magnetic calibration. */</a>
+<a name="500"><span class="lineNum">     500 </span>            :         uint16_t                                        maxNumPoints;                           /*!&lt; Maximum number of magnetic field points that can be stored internally. */</a>
+<a name="501"><span class="lineNum">     501 </span>            :         float                                           offset[3];                                      /*!&lt; Computed Hard Iron correction vector offset. */</a>
+<a name="502"><span class="lineNum">     502 </span>            :         float                                           matrix[9];                                      /*!&lt; Computed Hard &amp; Soft Iron correction matrix. */</a>
+<a name="503"><span class="lineNum">     503 </span>            : } SbgEComMagCalibResults;</a>
+<a name="504"><span class="lineNum">     504 </span>            : </a>
+<a name="505"><span class="lineNum">     505 </span>            : </a>
+<a name="506"><span class="lineNum">     506 </span>            : typedef struct _SbgEComSetMagCal</a>
+<a name="507"><span class="lineNum">     507 </span>            : {</a>
+<a name="508"><span class="lineNum">     508 </span>            :         float                                           offset[3];                                      /*!&lt; Computed Hard Iron correction vector offset. */</a>
+<a name="509"><span class="lineNum">     509 </span>            :         float                                           matrix[9];                                      /*!&lt; Computed Hard &amp; Soft Iron correction matrix. */</a>
+<a name="510"><span class="lineNum">     510 </span>            : } SbgEComSetMagCal;</a>
+<a name="511"><span class="lineNum">     511 </span>            : </a>
+<a name="512"><span class="lineNum">     512 </span>            : </a>
+<a name="513"><span class="lineNum">     513 </span>            : /*!</a>
+<a name="514"><span class="lineNum">     514 </span>            :  * Enum that defines all the message classes available.</a>
+<a name="515"><span class="lineNum">     515 </span>            :  */</a>
+<a name="516"><span class="lineNum">     516 </span>            : typedef enum _SbgEComClass</a>
+<a name="517"><span class="lineNum">     517 </span>            : {</a>
+<a name="518"><span class="lineNum">     518 </span>            :         SBG_ECOM_CLASS_LOG_ECOM_0                       = 0x00,                 /*!&lt; Class that contains sbgECom protocol input/output log messages. */</a>
+<a name="519"><span class="lineNum">     519 </span>            : </a>
+<a name="520"><span class="lineNum">     520 </span>            :         SBG_ECOM_CLASS_LOG_ECOM_1                       = 0x01,                 /*!&lt; Class that contains special sbgECom output messages that handle high frequency output */</a>
+<a name="521"><span class="lineNum">     521 </span>            : </a>
+<a name="522"><span class="lineNum">     522 </span>            :         SBG_ECOM_CLASS_LOG_NMEA_0                       = 0x02,                 /*!&lt; Class that contains NMEA (and NMEA like) output logs. &lt;br&gt;</a>
+<a name="523"><span class="lineNum">     523 </span>            :                                                                                                                          Note: This class is only used for identification purpose and does not contain any sbgECom message. */</a>
+<a name="524"><span class="lineNum">     524 </span>            :         SBG_ECOM_CLASS_LOG_NMEA_1                       = 0x03,                 /*!&lt; Class that contains proprietary NMEA (and NMEA like) output logs. &lt;br&gt;</a>
+<a name="525"><span class="lineNum">     525 </span>            :                                                                                                                          Note: This class is only used for identification purpose and does not contain any sbgECom message. */</a>
+<a name="526"><span class="lineNum">     526 </span>            :         SBG_ECOM_CLASS_LOG_THIRD_PARTY_0        = 0x04,                 /*!&lt; Class that contains third party output logs.</a>
+<a name="527"><span class="lineNum">     527 </span>            :                                                                                                                         Note: This class is only used for identification purpose and does not contain any sbgECom message. */</a>
+<a name="528"><span class="lineNum">     528 </span>            :         SBG_ECOM_CLASS_LOG_CMD_0                        = 0x10                  /*!&lt; Class that contains sbgECom protocol commands */</a>
+<a name="529"><span class="lineNum">     529 </span>            : } SbgEComClass;</a>
+<a name="530"><span class="lineNum">     530 </span>            : </a>
+<a name="531"><span class="lineNum">     531 </span>            : //----------------------------------------------------------------------//</a>
+<a name="532"><span class="lineNum">     532 </span>            : //- Definition of all messages id for sbgECom                          -//</a>
+<a name="533"><span class="lineNum">     533 </span>            : //----------------------------------------------------------------------//</a>
+<a name="534"><span class="lineNum">     534 </span>            : </a>
+<a name="535"><span class="lineNum">     535 </span>            : /*!</a>
+<a name="536"><span class="lineNum">     536 </span>            :  * Enum that defines all the available ECom output logs from the sbgECom library.</a>
+<a name="537"><span class="lineNum">     537 </span>            :  */</a>
+<a name="538"><span class="lineNum">     538 </span>            : typedef enum _SbgEComLog</a>
+<a name="539"><span class="lineNum">     539 </span>            : {</a>
+<a name="540"><span class="lineNum">     540 </span>            :     SBG_ECOM_LOG_STATUS                     = 1,        /*!&lt; Status general, clock, com aiding, solution, heave */</a>
+<a name="541"><span class="lineNum">     541 </span>            : </a>
+<a name="542"><span class="lineNum">     542 </span>            :     SBG_ECOM_LOG_UTC_TIME                   = 2,        /*!&lt; Provides UTC time reference */</a>
+<a name="543"><span class="lineNum">     543 </span>            : </a>
+<a name="544"><span class="lineNum">     544 </span>            :     SBG_ECOM_LOG_IMU_DATA                   = 3,        /*!&lt; DEPRECATED: Synchronous IMU measurements (time aligned to UTC - NEVER use for Post Processing). */</a>
+<a name="545"><span class="lineNum">     545 </span>            : </a>
+<a name="546"><span class="lineNum">     546 </span>            :     SBG_ECOM_LOG_MAG                        = 4,        /*!&lt; Magnetic data with associated accelerometer on each axis */</a>
+<a name="547"><span class="lineNum">     547 </span>            :     SBG_ECOM_LOG_MAG_CALIB                  = 5,        /*!&lt; Magnetometer calibration data (raw buffer) */</a>
+<a name="548"><span class="lineNum">     548 </span>            : </a>
+<a name="549"><span class="lineNum">     549 </span>            :     SBG_ECOM_LOG_EKF_EULER                  = 6,        /*!&lt; Includes roll, pitch, yaw and their accuracies on each axis */</a>
+<a name="550"><span class="lineNum">     550 </span>            :     SBG_ECOM_LOG_EKF_QUAT                   = 7,        /*!&lt; Includes the 4 quaternions values */</a>
+<a name="551"><span class="lineNum">     551 </span>            :     SBG_ECOM_LOG_EKF_NAV                    = 8,        /*!&lt; Position and velocities in NED coordinates with the accuracies on each axis */</a>
+<a name="552"><span class="lineNum">     552 </span>            : </a>
+<a name="553"><span class="lineNum">     553 </span>            :     SBG_ECOM_LOG_SHIP_MOTION                = 9,        /*!&lt; Heave, surge and sway and accelerations on each axis. */</a>
+<a name="554"><span class="lineNum">     554 </span>            : </a>
+<a name="555"><span class="lineNum">     555 </span>            :     SBG_ECOM_LOG_GPS1_VEL                   = 13,       /*!&lt; GPS velocities from primary or secondary GPS receiver */</a>
+<a name="556"><span class="lineNum">     556 </span>            :     SBG_ECOM_LOG_GPS1_POS                   = 14,       /*!&lt; GPS positions from primary or secondary GPS receiver */</a>
+<a name="557"><span class="lineNum">     557 </span>            :     SBG_ECOM_LOG_GPS1_HDT                   = 15,       /*!&lt; GPS true heading from dual antenna system */</a>
+<a name="558"><span class="lineNum">     558 </span>            : </a>
+<a name="559"><span class="lineNum">     559 </span>            :     SBG_ECOM_LOG_GPS2_VEL                   = 16,       /*!&lt; GPS 2 velocity log data. */</a>
+<a name="560"><span class="lineNum">     560 </span>            :     SBG_ECOM_LOG_GPS2_POS                   = 17,       /*!&lt; GPS 2 position log data. */</a>
+<a name="561"><span class="lineNum">     561 </span>            :     SBG_ECOM_LOG_GPS2_HDT                   = 18,       /*!&lt; GPS 2 true heading log data. */</a>
+<a name="562"><span class="lineNum">     562 </span>            : </a>
+<a name="563"><span class="lineNum">     563 </span>            :     SBG_ECOM_LOG_ODO_VEL                    = 19,       /*!&lt; Provides odometer velocity */</a>
+<a name="564"><span class="lineNum">     564 </span>            : </a>
+<a name="565"><span class="lineNum">     565 </span>            :     SBG_ECOM_LOG_EVENT_A                    = 24,       /*!&lt; Event markers sent when events are detected on sync in A pin */</a>
+<a name="566"><span class="lineNum">     566 </span>            :     SBG_ECOM_LOG_EVENT_B                    = 25,       /*!&lt; Event markers sent when events are detected on sync in B pin */</a>
+<a name="567"><span class="lineNum">     567 </span>            :     SBG_ECOM_LOG_EVENT_C                    = 26,       /*!&lt; Event markers sent when events are detected on sync in C pin */</a>
+<a name="568"><span class="lineNum">     568 </span>            :     SBG_ECOM_LOG_EVENT_D                    = 27,       /*!&lt; Event markers sent when events are detected on sync in D pin */</a>
+<a name="569"><span class="lineNum">     569 </span>            :     SBG_ECOM_LOG_EVENT_E                    = 28,       /*!&lt; Event markers sent when events are detected on sync in E pin */</a>
+<a name="570"><span class="lineNum">     570 </span>            : </a>
+<a name="571"><span class="lineNum">     571 </span>            :     SBG_ECOM_LOG_DVL_BOTTOM_TRACK           = 29,       /*!&lt; Doppler Velocity Log for bottom tracking data. */</a>
+<a name="572"><span class="lineNum">     572 </span>            :     SBG_ECOM_LOG_DVL_WATER_TRACK            = 30,       /*!&lt; Doppler Velocity log for water layer data. */</a>
+<a name="573"><span class="lineNum">     573 </span>            : </a>
+<a name="574"><span class="lineNum">     574 </span>            :     SBG_ECOM_LOG_GPS1_RAW                   = 31,       /*!&lt; GPS 1 raw data for post processing. */</a>
+<a name="575"><span class="lineNum">     575 </span>            : </a>
+<a name="576"><span class="lineNum">     576 </span>            :     SBG_ECOM_LOG_SHIP_MOTION_HP             = 32,       /*!&lt; Return delayed ship motion such as surge, sway, heave. */</a>
+<a name="577"><span class="lineNum">     577 </span>            : </a>
+<a name="578"><span class="lineNum">     578 </span>            :     SBG_ECOM_LOG_AIR_DATA                   = 36,       /*!&lt; Air Data aiding such as barometric altimeter and true air speed. */</a>
+<a name="579"><span class="lineNum">     579 </span>            : </a>
+<a name="580"><span class="lineNum">     580 </span>            :     SBG_ECOM_LOG_USBL                       = 37,       /*!&lt; Raw USBL position data for sub-sea navigation. */</a>
+<a name="581"><span class="lineNum">     581 </span>            : </a>
+<a name="582"><span class="lineNum">     582 </span>            :     SBG_ECOM_LOG_GPS2_RAW                   = 38,       /*!&lt; GPS 2 raw data for post processing. */</a>
+<a name="583"><span class="lineNum">     583 </span>            : </a>
+<a name="584"><span class="lineNum">     584 </span>            : </a>
+<a name="585"><span class="lineNum">     585 </span>            :     SBG_ECOM_LOG_IMU_SHORT                  = 44,       /*!&lt; Asynchronous IMU measurements output at the IMU rate and to use for Post Processing with Qinertia. */</a>
+<a name="586"><span class="lineNum">     586 </span>            : </a>
+<a name="587"><span class="lineNum">     587 </span>            :     SBG_ECOM_LOG_EVENT_OUT_A                = 45,       /*!&lt; Event marker used to timestamp each generated Sync Out A signal. */</a>
+<a name="588"><span class="lineNum">     588 </span>            :     SBG_ECOM_LOG_EVENT_OUT_B                = 46,       /*!&lt; Event marker used to timestamp each generated Sync Out B signal. */</a>
+<a name="589"><span class="lineNum">     589 </span>            : </a>
+<a name="590"><span class="lineNum">     590 </span>            :     SBG_ECOM_LOG_DEPTH                      = 47,       /*!&lt; Depth sensor measurement log used for sub-sea navigation. */</a>
+<a name="591"><span class="lineNum">     591 </span>            :     SBG_ECOM_LOG_DIAG                       = 48,       /*!&lt; Diagnostic log. */</a>
+<a name="592"><span class="lineNum">     592 </span>            : </a>
+<a name="593"><span class="lineNum">     593 </span>            :     SBG_ECOM_LOG_RTCM_RAW                   = 49,       /*!&lt; RTCM raw data. */</a>
+<a name="594"><span class="lineNum">     594 </span>            : </a>
+<a name="595"><span class="lineNum">     595 </span>            :     SBG_ECOM_LOG_GPS1_SAT                   = 50,       /*!&lt; GPS 1 Satellite data. */</a>
+<a name="596"><span class="lineNum">     596 </span>            :     SBG_ECOM_LOG_GPS2_SAT                   = 51,       /*!&lt; GNSS2 Satellite data. */</a>
+<a name="597"><span class="lineNum">     597 </span>            : </a>
+<a name="598"><span class="lineNum">     598 </span>            :     SBG_ECOM_LOG_EKF_ROT_ACCEL_BODY         = 52,       /*!&lt; INS body rotation rate and lateral acceleration (bias, earth rotation and gravity free compensated). */</a>
+<a name="599"><span class="lineNum">     599 </span>            :     SBG_ECOM_LOG_EKF_ROT_ACCEL_NED          = 53,       /*!&lt; INS North/East/Down rotation rate and lateral acceleration (bias, earth rotation and gravity free compensated). */</a>
+<a name="600"><span class="lineNum">     600 </span>            :     SBG_ECOM_LOG_EKF_VEL_BODY               = 54,       /*!&lt; INS X,Y,Z body velocity and standard deviation. */</a>
+<a name="601"><span class="lineNum">     601 </span>            : </a>
+<a name="602"><span class="lineNum">     602 </span>            :     SBG_ECOM_LOG_SESSION_INFO               = 55,       /*!&lt; Session information, including device information and current settings. */</a>
+<a name="603"><span class="lineNum">     603 </span>            : </a>
+<a name="604"><span class="lineNum">     604 </span>            :     SBG_ECOM_LOG_EKF_DEBUG                  = 56,       /*!&lt; EKF debug data. */</a>
+<a name="605"><span class="lineNum">     605 </span>            : </a>
+<a name="606"><span class="lineNum">     606 </span>            :     SBG_ECOM_LOG_PTP_STATUS                 = 57,       /*!&lt; PTP status. */</a>
+<a name="607"><span class="lineNum">     607 </span>            : </a>
+<a name="608"><span class="lineNum">     608 </span>            :     SBG_ECOM_LOG_VELOCITY_1                 = 58,       /*!&lt; Generic velocity 1 log. */</a>
+<a name="609"><span class="lineNum">     609 </span>            : </a>
+<a name="610"><span class="lineNum">     610 </span>            :     SBG_ECOM_LOG_VIB_MON_FFT                = 59,       /*!&lt; Vibration monitoring FFT data for post processing. */</a>
+<a name="611"><span class="lineNum">     611 </span>            :     SBG_ECOM_LOG_VIB_MON_REPORT             = 60,       /*!&lt; Vibration monitoring report information. */</a>
+<a name="612"><span class="lineNum">     612 </span>            : </a>
+<a name="613"><span class="lineNum">     613 </span>            :     SBG_ECOM_LOG_ECOM_NUM_MESSAGES                      /*!&lt; Helper definition to know the number of ECom messages */</a>
+<a name="614"><span class="lineNum">     614 </span>            : } SbgEComLog;</a>
+<a name="615"><span class="lineNum">     615 </span>            : </a>
+<a name="616"><span class="lineNum">     616 </span>            : /*!</a>
+<a name="617"><span class="lineNum">     617 </span>            :  * Enum that defines all the available ECom output logs in the class SBG_ECOM_CLASS_LOG_ECOM_1</a>
+<a name="618"><span class="lineNum">     618 </span>            :  */</a>
+<a name="619"><span class="lineNum">     619 </span>            : typedef enum _SbgEComLog1MsgId</a>
+<a name="620"><span class="lineNum">     620 </span>            : {</a>
+<a name="621"><span class="lineNum">     621 </span>            :         SBG_ECOM_LOG_FAST_IMU_DATA                              = 0,            /*!&lt; Provides accelerometers, gyroscopes, time and status at 1KHz rate. */</a>
+<a name="622"><span class="lineNum">     622 </span>            :         SBG_ECOM_LOG_ECOM_1_NUM_MESSAGES                                        /*!&lt; Helper definition to know the number of ECom messages */</a>
+<a name="623"><span class="lineNum">     623 </span>            : } SbgEComLog1;</a>
+<a name="624"><span class="lineNum">     624 </span>            : </a>
+<a name="625"><span class="lineNum">     625 </span>            : </a>
+<a name="626"><span class="lineNum">     626 </span>            : /*!</a>
+<a name="627"><span class="lineNum">     627 </span>            :  * Enum that defines all the available commands for the sbgECom library.</a>
+<a name="628"><span class="lineNum">     628 </span>            :  */</a>
+<a name="629"><span class="lineNum">     629 </span>            : typedef enum _SbgEComCmd</a>
+<a name="630"><span class="lineNum">     630 </span>            : {</a>
+<a name="631"><span class="lineNum">     631 </span>            :         /* Acknowledge */</a>
+<a name="632"><span class="lineNum">     632 </span>            :         SBG_ECOM_CMD_ACK                                                = 0,            /*!&lt; Acknowledge */</a>
+<a name="633"><span class="lineNum">     633 </span>            : </a>
+<a name="634"><span class="lineNum">     634 </span>            :         /* Special settings commands */</a>
+<a name="635"><span class="lineNum">     635 </span>            :         SBG_ECOM_CMD_SETTINGS_ACTION                    = 1,            /*!&lt; Performs various settings actions */</a>
+<a name="636"><span class="lineNum">     636 </span>            :         SBG_ECOM_CMD_IMPORT_SETTINGS                    = 2,            /*!&lt; Imports a new settings structure to the sensor */</a>
+<a name="637"><span class="lineNum">     637 </span>            :         SBG_ECOM_CMD_EXPORT_SETTINGS                    = 3,            /*!&lt; Export the whole configuration from the sensor */</a>
+<a name="638"><span class="lineNum">     638 </span>            : </a>
+<a name="639"><span class="lineNum">     639 </span>            :         /* Device info */</a>
+<a name="640"><span class="lineNum">     640 </span>            :         SBG_ECOM_CMD_INFO                                               = 4,            /*!&lt; Get basic device information */</a>
+<a name="641"><span class="lineNum">     641 </span>            : </a>
+<a name="642"><span class="lineNum">     642 </span>            :         /* Sensor parameters */</a>
+<a name="643"><span class="lineNum">     643 </span>            :         SBG_ECOM_CMD_INIT_PARAMETERS                    = 5,            /*!&lt; Initial configuration */</a>
+<a name="644"><span class="lineNum">     644 </span>            :         SBG_ECOM_CMD_SET_MOTION_PROFILE                 = 6,            /*!&lt; Set a new motion profile */</a>
+<a name="645"><span class="lineNum">     645 </span>            :         SBG_ECOM_CMD_MOTION_PROFILE_ID                  = 7,            /*!&lt; Get motion profile information */</a>
+<a name="646"><span class="lineNum">     646 </span>            :         SBG_ECOM_CMD_IMU_ALIGNMENT_LEVER_ARM    = 8,            /*!&lt; Sensor alignment and lever arm on vehicle configuration */</a>
+<a name="647"><span class="lineNum">     647 </span>            :         SBG_ECOM_CMD_AIDING_ASSIGNMENT                  = 9,            /*!&lt; Aiding assignments such as RTCM / GPS / Odometer configuration */</a>
+<a name="648"><span class="lineNum">     648 </span>            : </a>
+<a name="649"><span class="lineNum">     649 </span>            :         /* Magnetometer configuration */</a>
+<a name="650"><span class="lineNum">     650 </span>            :         SBG_ECOM_CMD_MAGNETOMETER_SET_MODEL     = 10,           /*!&lt; Set a new magnetometer error model */</a>
+<a name="651"><span class="lineNum">     651 </span>            :         SBG_ECOM_CMD_MAGNETOMETER_MODEL_ID              = 11,           /*!&lt; Get magnetometer error model information */</a>
+<a name="652"><span class="lineNum">     652 </span>            :         SBG_ECOM_CMD_MAGNETOMETER_REJECT_MODE   = 12,           /*!&lt; Magnetometer aiding rejection mode */</a>
+<a name="653"><span class="lineNum">     653 </span>            :         SBG_ECOM_CMD_SET_MAG_CALIB                              = 13,           /*!&lt; Set magnetic soft and hard Iron calibration data */</a>
+<a name="654"><span class="lineNum">     654 </span>            : </a>
+<a name="655"><span class="lineNum">     655 </span>            :         /* Magnetometer onboard calibration */</a>
+<a name="656"><span class="lineNum">     656 </span>            :         SBG_ECOM_CMD_START_MAG_CALIB                    = 14,           /*!&lt; Start / reset internal magnetic field logging for calibration. */</a>
+<a name="657"><span class="lineNum">     657 </span>            :         SBG_ECOM_CMD_COMPUTE_MAG_CALIB                  = 15,           /*!&lt; Compute a magnetic calibration based on previously logged data. */</a>
+<a name="658"><span class="lineNum">     658 </span>            : </a>
+<a name="659"><span class="lineNum">     659 </span>            :         /* GNSS configuration */</a>
+<a name="660"><span class="lineNum">     660 </span>            :         SBG_ECOM_CMD_GNSS_1_SET_MODEL                   = 16,           /*!&lt; Set a new GNSS model */</a>
+<a name="661"><span class="lineNum">     661 </span>            :         SBG_ECOM_CMD_GNSS_1_MODEL_ID                    = 17,           /*!&lt; Get GNSS model information */</a>
+<a name="662"><span class="lineNum">     662 </span>            :         SBG_ECOM_CMD_GNSS_1_LEVER_ARM_ALIGNMENT = 18,           /*!&lt; GNSS installation configuration (lever arm, antenna alignments) */</a>
+<a name="663"><span class="lineNum">     663 </span>            :         SBG_ECOM_CMD_GNSS_1_REJECT_MODES                = 19,           /*!&lt; GNSS aiding rejection modes configuration. */</a>
+<a name="664"><span class="lineNum">     664 </span>            : </a>
+<a name="665"><span class="lineNum">     665 </span>            :         /* Odometer configuration */</a>
+<a name="666"><span class="lineNum">     666 </span>            :         SBG_ECOM_CMD_ODO_CONF                                   = 20,           /*!&lt; Odometer gain, direction configuration */</a>
+<a name="667"><span class="lineNum">     667 </span>            :         SBG_ECOM_CMD_ODO_LEVER_ARM                              = 21,           /*!&lt; Odometer installation configuration (lever arm) */</a>
+<a name="668"><span class="lineNum">     668 </span>            :         SBG_ECOM_CMD_ODO_REJECT_MODE                    = 22,           /*!&lt; Odometer aiding rejection mode configuration. */</a>
+<a name="669"><span class="lineNum">     669 </span>            : </a>
+<a name="670"><span class="lineNum">     670 </span>            :         /* Interfaces configuration */</a>
+<a name="671"><span class="lineNum">     671 </span>            :         SBG_ECOM_CMD_UART_CONF                                  = 23,           /*!&lt; UART interfaces configuration */</a>
+<a name="672"><span class="lineNum">     672 </span>            :         SBG_ECOM_CMD_CAN_BUS_CONF                               = 24,           /*!&lt; CAN bus interface configuration */</a>
+<a name="673"><span class="lineNum">     673 </span>            :         SBG_ECOM_CMD_CAN_OUTPUT_CONF                    = 25,           /*!&lt; CAN identifiers configuration */</a>
+<a name="674"><span class="lineNum">     674 </span>            :                 </a>
+<a name="675"><span class="lineNum">     675 </span>            :         /* Events configuration */</a>
+<a name="676"><span class="lineNum">     676 </span>            :         SBG_ECOM_CMD_SYNC_IN_CONF                               = 26,           /*!&lt; Synchronization inputs configuration */</a>
+<a name="677"><span class="lineNum">     677 </span>            :         SBG_ECOM_CMD_SYNC_OUT_CONF                              = 27,           /*!&lt; Synchronization outputs configuration */</a>
+<a name="678"><span class="lineNum">     678 </span>            : </a>
+<a name="679"><span class="lineNum">     679 </span>            :         /* Output configuration */</a>
+<a name="680"><span class="lineNum">     680 </span>            :         SBG_ECOM_CMD_NMEA_TALKER_ID                     = 29,           /*!&lt; NMEA talker ID configuration */</a>
+<a name="681"><span class="lineNum">     681 </span>            :         SBG_ECOM_CMD_OUTPUT_CONF                                = 30,           /*!&lt; Output configuration */</a>
+<a name="682"><span class="lineNum">     682 </span>            :         SBG_ECOM_CMD_LEGACY_CONT_OUTPUT_CONF    = 31,           /*!&lt; Legacy serial output mode configuration */</a>
+<a name="683"><span class="lineNum">     683 </span>            : </a>
+<a name="684"><span class="lineNum">     684 </span>            :         /* Avanced configuration */</a>
+<a name="685"><span class="lineNum">     685 </span>            :         SBG_ECOM_CMD_ADVANCED_CONF                              = 32,           /*!&lt; Advanced settings configuration */</a>
+<a name="686"><span class="lineNum">     686 </span>            : </a>
+<a name="687"><span class="lineNum">     687 </span>            :         /* Features related commands */</a>
+<a name="688"><span class="lineNum">     688 </span>            :         SBG_ECOM_CMD_FEATURES                                   = 33,           /*!&lt; Retrieve device features */</a>
+<a name="689"><span class="lineNum">     689 </span>            : </a>
+<a name="690"><span class="lineNum">     690 </span>            :         /* Licenses related commands */</a>
+<a name="691"><span class="lineNum">     691 </span>            :         SBG_ECOM_CMD_LICENSE_APPLY                              = 34,           /*!&lt; Upload and apply a new license */</a>
+<a name="692"><span class="lineNum">     692 </span>            :                 </a>
+<a name="693"><span class="lineNum">     693 </span>            :         /* Message class output switch */</a>
+<a name="694"><span class="lineNum">     694 </span>            :         SBG_ECOM_CMD_OUTPUT_CLASS_ENABLE                = 35,           /*!&lt; Enable/disable the output of an entire class */</a>
+<a name="695"><span class="lineNum">     695 </span>            : </a>
+<a name="696"><span class="lineNum">     696 </span>            :         /* Ethernet configuration */</a>
+<a name="697"><span class="lineNum">     697 </span>            :         SBG_ECOM_CMD_ETHERNET_CONF                              = 36,           /*!&lt; Set/get Ethernet configuration such as DHCP mode and IP address. */</a>
+<a name="698"><span class="lineNum">     698 </span>            :         SBG_ECOM_CMD_ETHERNET_INFO                              = 37,           /*!&lt; Return the current IP used by the device. */</a>
+<a name="699"><span class="lineNum">     699 </span>            : </a>
+<a name="700"><span class="lineNum">     700 </span>            :         /* Misc. */</a>
+<a name="701"><span class="lineNum">     701 </span>            :         SBG_ECOM_LOG_ECOM_NUM_CMDS                                                      /*!&lt; Helper definition to know the number of commands */</a>
+<a name="702"><span class="lineNum">     702 </span>            : } SbgEComCmd;</a>
+<a name="703"><span class="lineNum">     703 </span>            : </a>
+<a name="704"><span class="lineNum">     704 </span>            : </a>
+<a name="705"><span class="lineNum">     705 </span>            : #endif  // AP_EXTERNAL_AHRS_SBG_ENABLED</a>
+<a name="706"><span class="lineNum">     706 </span>            : </a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,659 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_BoardConfig/AP_BoardConfig.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_BoardConfig</a> - AP_BoardConfig.cpp<span style="font-size: 80%;"> (source / <a href="AP_BoardConfig.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">65</td>
+            <td class="headerCovTableEntryLo">29.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntryLo">55.6 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : /*</a>
+<a name="16"><span class="lineNum">      16 </span>            :  *   AP_BoardConfig - board specific configuration</a>
+<a name="17"><span class="lineNum">      17 </span>            :  */</a>
+<a name="18"><span class="lineNum">      18 </span>            : </a>
+<a name="19"><span class="lineNum">      19 </span>            : #include &quot;AP_BoardConfig.h&quot;</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : #include &lt;AP_Common/AP_Common.h&gt;</a>
+<a name="22"><span class="lineNum">      22 </span>            : #include &lt;AP_HAL/AP_HAL.h&gt;</a>
+<a name="23"><span class="lineNum">      23 </span>            : #include &lt;AP_Math/AP_Math.h&gt;</a>
+<a name="24"><span class="lineNum">      24 </span>            : #include &lt;AP_RTC/AP_RTC.h&gt;</a>
+<a name="25"><span class="lineNum">      25 </span>            : #include &lt;AP_Vehicle/AP_Vehicle_Type.h&gt;</a>
+<a name="26"><span class="lineNum">      26 </span>            : #include &lt;GCS_MAVLink/GCS.h&gt;</a>
+<a name="27"><span class="lineNum">      27 </span>            : #include &lt;AP_Filesystem/AP_Filesystem.h&gt;</a>
+<a name="28"><span class="lineNum">      28 </span>            : #include &lt;GCS_MAVLink/GCS.h&gt;</a>
+<a name="29"><span class="lineNum">      29 </span>            : #include &lt;GCS_MAVLink/GCS_MAVLink.h&gt;</a>
+<a name="30"><span class="lineNum">      30 </span>            : </a>
+<a name="31"><span class="lineNum">      31 </span>            : #include &lt;stdio.h&gt;</a>
+<a name="32"><span class="lineNum">      32 </span>            : </a>
+<a name="33"><span class="lineNum">      33 </span>            : #ifndef BOARD_TYPE_DEFAULT</a>
+<a name="34"><span class="lineNum">      34 </span>            : #define BOARD_TYPE_DEFAULT PX4_BOARD_AUTO</a>
+<a name="35"><span class="lineNum">      35 </span>            : #endif</a>
+<a name="36"><span class="lineNum">      36 </span>            : </a>
+<a name="37"><span class="lineNum">      37 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_CHIBIOS</a>
+<a name="38"><span class="lineNum">      38 </span>            : #ifndef BOARD_SER1_RTSCTS_DEFAULT</a>
+<a name="39"><span class="lineNum">      39 </span>            : # define BOARD_SER1_RTSCTS_DEFAULT 2</a>
+<a name="40"><span class="lineNum">      40 </span>            : #endif</a>
+<a name="41"><span class="lineNum">      41 </span>            : #ifndef BOARD_TYPE_DEFAULT</a>
+<a name="42"><span class="lineNum">      42 </span>            : # define BOARD_TYPE_DEFAULT PX4_BOARD_AUTO</a>
+<a name="43"><span class="lineNum">      43 </span>            : #endif</a>
+<a name="44"><span class="lineNum">      44 </span>            : #endif</a>
+<a name="45"><span class="lineNum">      45 </span>            : </a>
+<a name="46"><span class="lineNum">      46 </span>            : #ifndef BOARD_SAFETY_ENABLE_DEFAULT</a>
+<a name="47"><span class="lineNum">      47 </span>            : #if defined(HAL_GPIO_PIN_SAFETY_IN)</a>
+<a name="48"><span class="lineNum">      48 </span>            :   // have safety startup enabled if we have a safety pin</a>
+<a name="49"><span class="lineNum">      49 </span>            :   # define BOARD_SAFETY_ENABLE_DEFAULT 1</a>
+<a name="50"><span class="lineNum">      50 </span>            : #elif defined(HAL_WITH_IO_MCU)</a>
+<a name="51"><span class="lineNum">      51 </span>            :   // if we have an IOMCU then enable by default</a>
+<a name="52"><span class="lineNum">      52 </span>            :   # define BOARD_SAFETY_ENABLE_DEFAULT HAL_WITH_IO_MCU</a>
+<a name="53"><span class="lineNum">      53 </span>            : #else</a>
+<a name="54"><span class="lineNum">      54 </span>            :   # define BOARD_SAFETY_ENABLE_DEFAULT 0</a>
+<a name="55"><span class="lineNum">      55 </span>            : #endif</a>
+<a name="56"><span class="lineNum">      56 </span>            : #endif</a>
+<a name="57"><span class="lineNum">      57 </span>            : </a>
+<a name="58"><span class="lineNum">      58 </span>            : #ifndef HAL_IMU_TEMP_DEFAULT</a>
+<a name="59"><span class="lineNum">      59 </span>            : #define HAL_IMU_TEMP_DEFAULT       -1 // disabled</a>
+<a name="60"><span class="lineNum">      60 </span>            : #endif</a>
+<a name="61"><span class="lineNum">      61 </span>            : </a>
+<a name="62"><span class="lineNum">      62 </span>            : #ifndef HAL_IMU_TEMP_MARGIN_LOW_DEFAULT</a>
+<a name="63"><span class="lineNum">      63 </span>            : #define HAL_IMU_TEMP_MARGIN_LOW_DEFAULT 0 // disabled</a>
+<a name="64"><span class="lineNum">      64 </span>            : #endif</a>
+<a name="65"><span class="lineNum">      65 </span>            : </a>
+<a name="66"><span class="lineNum">      66 </span>            : #ifndef BOARD_SAFETY_OPTION_DEFAULT</a>
+<a name="67"><span class="lineNum">      67 </span>            : #  define BOARD_SAFETY_OPTION_DEFAULT (BOARD_SAFETY_OPTION_BUTTON_ACTIVE_SAFETY_OFF|BOARD_SAFETY_OPTION_BUTTON_ACTIVE_SAFETY_ON)</a>
+<a name="68"><span class="lineNum">      68 </span>            : #endif</a>
+<a name="69"><span class="lineNum">      69 </span>            : #ifndef BOARD_SAFETY_ENABLE</a>
+<a name="70"><span class="lineNum">      70 </span>            : #  define BOARD_SAFETY_ENABLE 1</a>
+<a name="71"><span class="lineNum">      71 </span>            : #endif</a>
+<a name="72"><span class="lineNum">      72 </span>            : </a>
+<a name="73"><span class="lineNum">      73 </span>            : #ifndef BOARD_CONFIG_BOARD_VOLTAGE_MIN</a>
+<a name="74"><span class="lineNum">      74 </span>            : #define BOARD_CONFIG_BOARD_VOLTAGE_MIN 4.3f</a>
+<a name="75"><span class="lineNum">      75 </span>            : #endif</a>
+<a name="76"><span class="lineNum">      76 </span>            : </a>
+<a name="77"><span class="lineNum">      77 </span>            : #ifndef HAL_BRD_OPTIONS_DEFAULT</a>
+<a name="78"><span class="lineNum">      78 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_CHIBIOS &amp;&amp; !APM_BUILD_TYPE(APM_BUILD_UNKNOWN) &amp;&amp; !APM_BUILD_TYPE(APM_BUILD_Replay)</a>
+<a name="79"><span class="lineNum">      79 </span>            : #ifdef HAL_DEBUG_BUILD</a>
+<a name="80"><span class="lineNum">      80 </span>            : #define HAL_BRD_OPTIONS_DEFAULT BOARD_OPTION_WATCHDOG | BOARD_OPTION_DEBUG_ENABLE</a>
+<a name="81"><span class="lineNum">      81 </span>            : #else</a>
+<a name="82"><span class="lineNum">      82 </span>            : #define HAL_BRD_OPTIONS_DEFAULT BOARD_OPTION_WATCHDOG</a>
+<a name="83"><span class="lineNum">      83 </span>            : #endif</a>
+<a name="84"><span class="lineNum">      84 </span>            : #else</a>
+<a name="85"><span class="lineNum">      85 </span>            : #define HAL_BRD_OPTIONS_DEFAULT 0</a>
+<a name="86"><span class="lineNum">      86 </span>            : #endif</a>
+<a name="87"><span class="lineNum">      87 </span>            : #endif</a>
+<a name="88"><span class="lineNum">      88 </span>            : </a>
+<a name="89"><span class="lineNum">      89 </span>            : #ifndef HAL_DEFAULT_BOOT_DELAY</a>
+<a name="90"><span class="lineNum">      90 </span>            : #define HAL_DEFAULT_BOOT_DELAY 0</a>
+<a name="91"><span class="lineNum">      91 </span>            : #endif</a>
+<a name="92"><span class="lineNum">      92 </span>            : </a>
+<a name="93"><span class="lineNum">      93 </span>            : extern const AP_HAL::HAL&amp; hal;</a>
+<a name="94"><span class="lineNum">      94 </span>            : AP_BoardConfig *AP_BoardConfig::_singleton;</a>
+<a name="95"><span class="lineNum">      95 </span>            : </a>
+<a name="96"><span class="lineNum">      96 </span>            : // constructor</a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineCov">        848 : AP_BoardConfig::AP_BoardConfig()</span></a>
+<a name="98"><span class="lineNum">      98 </span>            : #if HAL_HAVE_IMU_HEATER</a>
+<a name="99"><span class="lineNum">      99 </span>            :     // initialise heater PI controller. Note we do this in the cpp file</a>
+<a name="100"><span class="lineNum">     100 </span>            :     // for ccache efficiency</a>
+<a name="101"><span class="lineNum">     101 </span>            :     : heater{{HAL_IMUHEAT_P_DEFAULT, HAL_IMUHEAT_I_DEFAULT, 70},}</a>
+<a name="102"><span class="lineNum">     102 </span>            : #endif</a>
+<a name="103"><span class="lineNum">     103 </span>            : {</a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineCov">        848 :     _singleton = this;</span></a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineCov">        848 :     AP_Param::setup_object_defaults(this, var_info);</span></a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineCov">        848 : };</span></a>
+<a name="107"><span class="lineNum">     107 </span>            : </a>
+<a name="108"><span class="lineNum">     108 </span>            : // table of user settable parameters</a>
+<a name="109"><span class="lineNum">     109 </span>            : const AP_Param::GroupInfo AP_BoardConfig::var_info[] = {</a>
+<a name="110"><span class="lineNum">     110 </span>            : </a>
+<a name="111"><span class="lineNum">     111 </span>            :     // index 0 was used by PWM_COUNT</a>
+<a name="112"><span class="lineNum">     112 </span>            : </a>
+<a name="113"><span class="lineNum">     113 </span>            : #if AP_FEATURE_RTSCTS</a>
+<a name="114"><span class="lineNum">     114 </span>            : #ifdef HAL_HAVE_RTSCTS_SERIAL1</a>
+<a name="115"><span class="lineNum">     115 </span>            :     // @Param: SER1_RTSCTS</a>
+<a name="116"><span class="lineNum">     116 </span>            :     // @DisplayName: Serial 1 flow control</a>
+<a name="117"><span class="lineNum">     117 </span>            :     // @Description: Enable flow control on serial 1 (telemetry 1). You must have the RTS and CTS pins connected to your radio. The standard DF13 6 pin connector for a 3DR radio does have those pins connected. If this is set to 2 then flow control will be auto-detected by checking for the output buffer filling on startup. Note that the PX4v1 does not have hardware flow control pins on this port, so you should leave this disabled.</a>
+<a name="118"><span class="lineNum">     118 </span>            :     // @Values: 0:Disabled,1:Enabled,2:Auto,3:RS-485 Driver enable RTS pin</a>
+<a name="119"><span class="lineNum">     119 </span>            :     // @RebootRequired: True</a>
+<a name="120"><span class="lineNum">     120 </span>            :     // @User: Advanced</a>
+<a name="121"><span class="lineNum">     121 </span>            :     AP_GROUPINFO(&quot;SER1_RTSCTS&quot;,    1, AP_BoardConfig, state.ser_rtscts[1], BOARD_SER1_RTSCTS_DEFAULT),</a>
+<a name="122"><span class="lineNum">     122 </span>            : #endif</a>
+<a name="123"><span class="lineNum">     123 </span>            : </a>
+<a name="124"><span class="lineNum">     124 </span>            : #ifdef HAL_HAVE_RTSCTS_SERIAL2</a>
+<a name="125"><span class="lineNum">     125 </span>            :     // @Param: SER2_RTSCTS</a>
+<a name="126"><span class="lineNum">     126 </span>            :     // @CopyFieldsFrom: BRD_SER1_RTSCTS</a>
+<a name="127"><span class="lineNum">     127 </span>            :     // @DisplayName: Serial 2 flow control</a>
+<a name="128"><span class="lineNum">     128 </span>            :     // @Description: Enable flow control on serial 2 (telemetry 2). You must have the RTS and CTS pins connected to your radio. The standard DF13 6 pin connector for a 3DR radio does have those pins connected. If this is set to 2 then flow control will be auto-detected by checking for the output buffer filling on startup.</a>
+<a name="129"><span class="lineNum">     129 </span>            :     AP_GROUPINFO(&quot;SER2_RTSCTS&quot;,    2, AP_BoardConfig, state.ser_rtscts[2], 2),</a>
+<a name="130"><span class="lineNum">     130 </span>            : #endif</a>
+<a name="131"><span class="lineNum">     131 </span>            : </a>
+<a name="132"><span class="lineNum">     132 </span>            : #ifdef HAL_HAVE_RTSCTS_SERIAL3</a>
+<a name="133"><span class="lineNum">     133 </span>            :     // @Param: SER3_RTSCTS</a>
+<a name="134"><span class="lineNum">     134 </span>            :     // @CopyFieldsFrom: BRD_SER1_RTSCTS</a>
+<a name="135"><span class="lineNum">     135 </span>            :     // @DisplayName: Serial 3 flow control</a>
+<a name="136"><span class="lineNum">     136 </span>            :     // @Description: Enable flow control on serial 3. You must have the RTS and CTS pins connected to your radio. The standard DF13 6 pin connector for a 3DR radio does have those pins connected. If this is set to 2 then flow control will be auto-detected by checking for the output buffer filling on startup.</a>
+<a name="137"><span class="lineNum">     137 </span>            :     AP_GROUPINFO(&quot;SER3_RTSCTS&quot;,    26, AP_BoardConfig, state.ser_rtscts[3], 2),</a>
+<a name="138"><span class="lineNum">     138 </span>            : #endif</a>
+<a name="139"><span class="lineNum">     139 </span>            : </a>
+<a name="140"><span class="lineNum">     140 </span>            : #ifdef HAL_HAVE_RTSCTS_SERIAL4</a>
+<a name="141"><span class="lineNum">     141 </span>            :     // @Param: SER4_RTSCTS</a>
+<a name="142"><span class="lineNum">     142 </span>            :     // @CopyFieldsFrom: BRD_SER1_RTSCTS</a>
+<a name="143"><span class="lineNum">     143 </span>            :     // @DisplayName: Serial 4 flow control</a>
+<a name="144"><span class="lineNum">     144 </span>            :     // @Description: Enable flow control on serial 4. You must have the RTS and CTS pins connected to your radio. The standard DF13 6 pin connector for a 3DR radio does have those pins connected. If this is set to 2 then flow control will be auto-detected by checking for the output buffer filling on startup.</a>
+<a name="145"><span class="lineNum">     145 </span>            :     AP_GROUPINFO(&quot;SER4_RTSCTS&quot;,    27, AP_BoardConfig, state.ser_rtscts[4], 2),</a>
+<a name="146"><span class="lineNum">     146 </span>            : #endif</a>
+<a name="147"><span class="lineNum">     147 </span>            : </a>
+<a name="148"><span class="lineNum">     148 </span>            : #ifdef HAL_HAVE_RTSCTS_SERIAL5</a>
+<a name="149"><span class="lineNum">     149 </span>            :     // @Param: SER5_RTSCTS</a>
+<a name="150"><span class="lineNum">     150 </span>            :     // @CopyFieldsFrom: BRD_SER1_RTSCTS</a>
+<a name="151"><span class="lineNum">     151 </span>            :     // @DisplayName: Serial 5 flow control</a>
+<a name="152"><span class="lineNum">     152 </span>            :     // @Description: Enable flow control on serial 5. You must have the RTS and CTS pins connected to your radio. The standard DF13 6 pin connector for a 3DR radio does have those pins connected. If this is set to 2 then flow control will be auto-detected by checking for the output buffer filling on startup.</a>
+<a name="153"><span class="lineNum">     153 </span>            :     AP_GROUPINFO(&quot;SER5_RTSCTS&quot;,    25, AP_BoardConfig, state.ser_rtscts[5], 2),</a>
+<a name="154"><span class="lineNum">     154 </span>            : #endif</a>
+<a name="155"><span class="lineNum">     155 </span>            : </a>
+<a name="156"><span class="lineNum">     156 </span>            : #ifdef HAL_HAVE_RTSCTS_SERIAL6</a>
+<a name="157"><span class="lineNum">     157 </span>            :     // @Param: SER6_RTSCTS</a>
+<a name="158"><span class="lineNum">     158 </span>            :     // @CopyFieldsFrom: BRD_SER1_RTSCTS</a>
+<a name="159"><span class="lineNum">     159 </span>            :     // @DisplayName: Serial 6 flow control</a>
+<a name="160"><span class="lineNum">     160 </span>            :     // @Description: Enable flow control on serial 6. You must have the RTS and CTS pins connected to your radio. The standard DF13 6 pin connector for a 3DR radio does have those pins connected. If this is set to 2 then flow control will be auto-detected by checking for the output buffer filling on startup.</a>
+<a name="161"><span class="lineNum">     161 </span>            :     AP_GROUPINFO(&quot;SER6_RTSCTS&quot;,    30, AP_BoardConfig, state.ser_rtscts[6], 2),</a>
+<a name="162"><span class="lineNum">     162 </span>            : #endif</a>
+<a name="163"><span class="lineNum">     163 </span>            : </a>
+<a name="164"><span class="lineNum">     164 </span>            : #ifdef HAL_HAVE_RTSCTS_SERIAL7</a>
+<a name="165"><span class="lineNum">     165 </span>            :     // @Param: SER7_RTSCTS</a>
+<a name="166"><span class="lineNum">     166 </span>            :     // @CopyFieldsFrom: BRD_SER1_RTSCTS</a>
+<a name="167"><span class="lineNum">     167 </span>            :     // @DisplayName: Serial 7 flow control</a>
+<a name="168"><span class="lineNum">     168 </span>            :     // @Description: Enable flow control on serial 7. You must have the RTS and CTS pins connected to your radio. The standard DF13 6 pin connector for a 3DR radio does have those pins connected. If this is set to 2 then flow control will be auto-detected by checking for the output buffer filling on startup.</a>
+<a name="169"><span class="lineNum">     169 </span>            :     AP_GROUPINFO(&quot;SER7_RTSCTS&quot;,    31, AP_BoardConfig, state.ser_rtscts[7], 2),</a>
+<a name="170"><span class="lineNum">     170 </span>            : #endif</a>
+<a name="171"><span class="lineNum">     171 </span>            : </a>
+<a name="172"><span class="lineNum">     172 </span>            : #ifdef HAL_HAVE_RTSCTS_SERIAL8</a>
+<a name="173"><span class="lineNum">     173 </span>            :     // @Param: SER8_RTSCTS</a>
+<a name="174"><span class="lineNum">     174 </span>            :     // @CopyFieldsFrom: BRD_SER8_RTSCTS</a>
+<a name="175"><span class="lineNum">     175 </span>            :     // @DisplayName: Serial 8 flow control</a>
+<a name="176"><span class="lineNum">     176 </span>            :     // @Description: Enable flow control on serial 8. You must have the RTS and CTS pins connected to your radio. The standard DF13 6 pin connector for a 3DR radio does have those pins connected. If this is set to 2 then flow control will be auto-detected by checking for the output buffer filling on startup.</a>
+<a name="177"><span class="lineNum">     177 </span>            :     AP_GROUPINFO(&quot;SER8_RTSCTS&quot;,    32, AP_BoardConfig, state.ser_rtscts[8], 2),</a>
+<a name="178"><span class="lineNum">     178 </span>            : #endif</a>
+<a name="179"><span class="lineNum">     179 </span>            : #endif</a>
+<a name="180"><span class="lineNum">     180 </span>            : </a>
+<a name="181"><span class="lineNum">     181 </span>            :     // @Param: SAFETY_DEFLT</a>
+<a name="182"><span class="lineNum">     182 </span>            :     // @DisplayName: Sets default state of the safety switch</a>
+<a name="183"><span class="lineNum">     183 </span>            :     // @Description: This controls the default state of the safety switch at startup. When set to 1 the safety switch will start in the safe state (flashing) at boot. When set to zero the safety switch will start in the unsafe state (solid) at startup. Note that if a safety switch is fitted the user can still control the safety state after startup using the switch. The safety state can also be controlled in software using a MAVLink message.</a>
+<a name="184"><span class="lineNum">     184 </span>            :     // @Values: 0:Disabled,1:Enabled</a>
+<a name="185"><span class="lineNum">     185 </span>            :     // @RebootRequired: True</a>
+<a name="186"><span class="lineNum">     186 </span>            :     // @User: Standard</a>
+<a name="187"><span class="lineNum">     187 </span>            :     AP_GROUPINFO(&quot;SAFETY_DEFLT&quot;,   3, AP_BoardConfig, state.safety_enable, BOARD_SAFETY_ENABLE_DEFAULT),</a>
+<a name="188"><span class="lineNum">     188 </span>            : </a>
+<a name="189"><span class="lineNum">     189 </span>            : #if AP_FEATURE_SBUS_OUT</a>
+<a name="190"><span class="lineNum">     190 </span>            :     // @Param: SBUS_OUT</a>
+<a name="191"><span class="lineNum">     191 </span>            :     // @DisplayName:  SBUS output rate</a>
+<a name="192"><span class="lineNum">     192 </span>            :     // @Description: This sets the SBUS output frame rate in Hz</a>
+<a name="193"><span class="lineNum">     193 </span>            :     // @Values: 0:Disabled,1:50Hz,2:75Hz,3:100Hz,4:150Hz,5:200Hz,6:250Hz,7:300Hz</a>
+<a name="194"><span class="lineNum">     194 </span>            :     // @RebootRequired: True</a>
+<a name="195"><span class="lineNum">     195 </span>            :     // @User: Advanced</a>
+<a name="196"><span class="lineNum">     196 </span>            :     AP_GROUPINFO(&quot;SBUS_OUT&quot;,   4, AP_BoardConfig, state.sbus_out_rate, 0),</a>
+<a name="197"><span class="lineNum">     197 </span>            : #endif</a>
+<a name="198"><span class="lineNum">     198 </span>            : </a>
+<a name="199"><span class="lineNum">     199 </span>            :     // @Param: SERIAL_NUM</a>
+<a name="200"><span class="lineNum">     200 </span>            :     // @DisplayName: User-defined serial number</a>
+<a name="201"><span class="lineNum">     201 </span>            :     // @Description: User-defined serial number of this vehicle, it can be any arbitrary number you want and has no effect on the autopilot</a>
+<a name="202"><span class="lineNum">     202 </span>            :     // @Range: -8388608 8388607</a>
+<a name="203"><span class="lineNum">     203 </span>            :     // @User: Standard</a>
+<a name="204"><span class="lineNum">     204 </span>            :     AP_GROUPINFO(&quot;SERIAL_NUM&quot;, 5, AP_BoardConfig, vehicleSerialNumber, 0),</a>
+<a name="205"><span class="lineNum">     205 </span>            : </a>
+<a name="206"><span class="lineNum">     206 </span>            :     // @Param: SAFETY_MASK</a>
+<a name="207"><span class="lineNum">     207 </span>            :     // @DisplayName: Outputs which ignore the safety switch state</a>
+<a name="208"><span class="lineNum">     208 </span>            :     // @Description: A bitmask which controls what outputs can move while the safety switch has not been pressed</a>
+<a name="209"><span class="lineNum">     209 </span>            :     // @Bitmask: 0:Output1</a>
+<a name="210"><span class="lineNum">     210 </span>            :     // @Bitmask: 1:Output2</a>
+<a name="211"><span class="lineNum">     211 </span>            :     // @Bitmask: 2:Output3</a>
+<a name="212"><span class="lineNum">     212 </span>            :     // @Bitmask: 3:Output4</a>
+<a name="213"><span class="lineNum">     213 </span>            :     // @Bitmask: 4:Output5</a>
+<a name="214"><span class="lineNum">     214 </span>            :     // @Bitmask: 5:Output6</a>
+<a name="215"><span class="lineNum">     215 </span>            :     // @Bitmask: 6:Output7</a>
+<a name="216"><span class="lineNum">     216 </span>            :     // @Bitmask: 7:Output8</a>
+<a name="217"><span class="lineNum">     217 </span>            :     // @Bitmask: 8:Output9</a>
+<a name="218"><span class="lineNum">     218 </span>            :     // @Bitmask: 9:Output10</a>
+<a name="219"><span class="lineNum">     219 </span>            :     // @Bitmask: 10:Output11</a>
+<a name="220"><span class="lineNum">     220 </span>            :     // @Bitmask: 11:Output12</a>
+<a name="221"><span class="lineNum">     221 </span>            :     // @Bitmask: 12:Output13</a>
+<a name="222"><span class="lineNum">     222 </span>            :     // @Bitmask: 13:Output14</a>
+<a name="223"><span class="lineNum">     223 </span>            :     // @Bitmask: 14:Output15</a>
+<a name="224"><span class="lineNum">     224 </span>            :     // @Bitmask: 15:Output16</a>
+<a name="225"><span class="lineNum">     225 </span>            :     // @Bitmask: 16:Output17</a>
+<a name="226"><span class="lineNum">     226 </span>            :     // @Bitmask: 17:Output18</a>
+<a name="227"><span class="lineNum">     227 </span>            :     // @Bitmask: 18:Output19</a>
+<a name="228"><span class="lineNum">     228 </span>            :     // @Bitmask: 19:Output20</a>
+<a name="229"><span class="lineNum">     229 </span>            :     // @Bitmask: 20:Output21</a>
+<a name="230"><span class="lineNum">     230 </span>            :     // @Bitmask: 21:Output22</a>
+<a name="231"><span class="lineNum">     231 </span>            :     // @Bitmask: 22:Output23</a>
+<a name="232"><span class="lineNum">     232 </span>            :     // @Bitmask: 23:Output24</a>
+<a name="233"><span class="lineNum">     233 </span>            :     // @Bitmask: 24:Output25</a>
+<a name="234"><span class="lineNum">     234 </span>            :     // @Bitmask: 25:Output26</a>
+<a name="235"><span class="lineNum">     235 </span>            :     // @Bitmask: 26:Output27</a>
+<a name="236"><span class="lineNum">     236 </span>            :     // @Bitmask: 27:Output28</a>
+<a name="237"><span class="lineNum">     237 </span>            :     // @Bitmask: 28:Output29</a>
+<a name="238"><span class="lineNum">     238 </span>            :     // @Bitmask: 29:Output30</a>
+<a name="239"><span class="lineNum">     239 </span>            :     // @Bitmask: 30:Output31</a>
+<a name="240"><span class="lineNum">     240 </span>            :     // @Bitmask: 31:Output32</a>
+<a name="241"><span class="lineNum">     241 </span>            :     // @RebootRequired: True</a>
+<a name="242"><span class="lineNum">     242 </span>            :     // @User: Advanced</a>
+<a name="243"><span class="lineNum">     243 </span>            :     AP_GROUPINFO(&quot;SAFETY_MASK&quot;, 7, AP_BoardConfig, state.ignore_safety_channels, 0),</a>
+<a name="244"><span class="lineNum">     244 </span>            : </a>
+<a name="245"><span class="lineNum">     245 </span>            : #if HAL_HAVE_IMU_HEATER</a>
+<a name="246"><span class="lineNum">     246 </span>            :     // @Param: HEAT_TARG</a>
+<a name="247"><span class="lineNum">     247 </span>            :     // @DisplayName: Board heater temperature target</a>
+<a name="248"><span class="lineNum">     248 </span>            :     // @Description: Board heater target temperature for boards with controllable heating units. Set to -1 to disable the heater, please reboot after setting to -1.</a>
+<a name="249"><span class="lineNum">     249 </span>            :     // @Range: -1 80</a>
+<a name="250"><span class="lineNum">     250 </span>            :     // @Units: degC</a>
+<a name="251"><span class="lineNum">     251 </span>            :     // @User: Advanced</a>
+<a name="252"><span class="lineNum">     252 </span>            :     AP_GROUPINFO(&quot;HEAT_TARG&quot;, 8, AP_BoardConfig, heater.imu_target_temperature, HAL_IMU_TEMP_DEFAULT),</a>
+<a name="253"><span class="lineNum">     253 </span>            : #endif</a>
+<a name="254"><span class="lineNum">     254 </span>            : </a>
+<a name="255"><span class="lineNum">     255 </span>            : #if AP_FEATURE_BOARD_DETECT</a>
+<a name="256"><span class="lineNum">     256 </span>            :     // @Param: TYPE</a>
+<a name="257"><span class="lineNum">     257 </span>            :     // @DisplayName: Board type</a>
+<a name="258"><span class="lineNum">     258 </span>            :     // @Description: This allows selection of a PX4 or VRBRAIN board type. If set to zero then the board type is auto-detected (PX4)</a>
+<a name="259"><span class="lineNum">     259 </span>            :     // @Values: 0:AUTO,1:PX4V1,2:Pixhawk,3:Cube/Pixhawk2,5:PixhawkMini,6:Pixhawk2Slim,13:Intel Aero FC,14:Pixhawk Pro,20:AUAV2.1,22:MINDPXV2,24:CUAVv5/FMUV5,39:PX4 FMUV6,100:PX4 OLDDRIVERS</a>
+<a name="260"><span class="lineNum">     260 </span>            :     // @RebootRequired: True</a>
+<a name="261"><span class="lineNum">     261 </span>            :     // @User: Advanced</a>
+<a name="262"><span class="lineNum">     262 </span>            :     AP_GROUPINFO(&quot;TYPE&quot;, 9, AP_BoardConfig, state.board_type, BOARD_TYPE_DEFAULT),</a>
+<a name="263"><span class="lineNum">     263 </span>            : #endif</a>
+<a name="264"><span class="lineNum">     264 </span>            : </a>
+<a name="265"><span class="lineNum">     265 </span>            : #if HAL_WITH_IO_MCU</a>
+<a name="266"><span class="lineNum">     266 </span>            :     // @Param: IO_ENABLE</a>
+<a name="267"><span class="lineNum">     267 </span>            :     // @DisplayName: Enable IO co-processor</a>
+<a name="268"><span class="lineNum">     268 </span>            :     // @Description: This allows for the IO co-processor on boards with an IOMCU to be disabled. Setting to 2 will enable the IOMCU but not attempt to update firmware on startup</a>
+<a name="269"><span class="lineNum">     269 </span>            :     // @Values: 0:Disabled,1:Enabled,2:EnableNoFWUpdate</a>
+<a name="270"><span class="lineNum">     270 </span>            :     // @RebootRequired: True</a>
+<a name="271"><span class="lineNum">     271 </span>            :     // @User: Advanced</a>
+<a name="272"><span class="lineNum">     272 </span>            :     AP_GROUPINFO(&quot;IO_ENABLE&quot;, 10, AP_BoardConfig, state.io_enable, 1),</a>
+<a name="273"><span class="lineNum">     273 </span>            : #endif</a>
+<a name="274"><span class="lineNum">     274 </span>            : </a>
+<a name="275"><span class="lineNum">     275 </span>            : #if AP_RADIO_ENABLED</a>
+<a name="276"><span class="lineNum">     276 </span>            :     // @Group: RADIO</a>
+<a name="277"><span class="lineNum">     277 </span>            :     // @Path: ../AP_Radio/AP_Radio.cpp</a>
+<a name="278"><span class="lineNum">     278 </span>            :     AP_SUBGROUPINFO(_radio, &quot;RADIO&quot;, 11, AP_BoardConfig, AP_Radio),</a>
+<a name="279"><span class="lineNum">     279 </span>            : #endif</a>
+<a name="280"><span class="lineNum">     280 </span>            : </a>
+<a name="281"><span class="lineNum">     281 </span>            :     // @Param: SAFETYOPTION</a>
+<a name="282"><span class="lineNum">     282 </span>            :     // @DisplayName: Options for safety button behavior</a>
+<a name="283"><span class="lineNum">     283 </span>            :     // @Description: This controls the activation of the safety button. It allows you to control if the safety button can be used for safety enable and/or disable, and whether the button is only active when disarmed</a>
+<a name="284"><span class="lineNum">     284 </span>            :     // @Bitmask: 0:ActiveForSafetyDisable,1:ActiveForSafetyEnable,2:ActiveWhenArmed,3:Force safety on when the aircraft disarms</a>
+<a name="285"><span class="lineNum">     285 </span>            :     // @User: Standard</a>
+<a name="286"><span class="lineNum">     286 </span>            :     AP_GROUPINFO(&quot;SAFETYOPTION&quot;,   13, AP_BoardConfig, state.safety_option, BOARD_SAFETY_OPTION_DEFAULT),</a>
+<a name="287"><span class="lineNum">     287 </span>            : </a>
+<a name="288"><span class="lineNum">     288 </span>            : #if AP_RTC_ENABLED</a>
+<a name="289"><span class="lineNum">     289 </span>            :     // @Group: RTC</a>
+<a name="290"><span class="lineNum">     290 </span>            :     // @Path: ../AP_RTC/AP_RTC.cpp</a>
+<a name="291"><span class="lineNum">     291 </span>            :     AP_SUBGROUPINFO(rtc, &quot;RTC&quot;, 14, AP_BoardConfig, AP_RTC),</a>
+<a name="292"><span class="lineNum">     292 </span>            : #endif</a>
+<a name="293"><span class="lineNum">     293 </span>            : </a>
+<a name="294"><span class="lineNum">     294 </span>            : #if HAL_HAVE_BOARD_VOLTAGE</a>
+<a name="295"><span class="lineNum">     295 </span>            :     // @Param: VBUS_MIN</a>
+<a name="296"><span class="lineNum">     296 </span>            :     // @DisplayName: Autopilot board voltage requirement</a>
+<a name="297"><span class="lineNum">     297 </span>            :     // @Description: Minimum voltage on the autopilot power rail to allow the aircraft to arm. 0 to disable the check.</a>
+<a name="298"><span class="lineNum">     298 </span>            :     // @Units: V</a>
+<a name="299"><span class="lineNum">     299 </span>            :     // @Range: 4.0 5.5</a>
+<a name="300"><span class="lineNum">     300 </span>            :     // @Increment: 0.1</a>
+<a name="301"><span class="lineNum">     301 </span>            :     // @User: Advanced</a>
+<a name="302"><span class="lineNum">     302 </span>            :     AP_GROUPINFO(&quot;VBUS_MIN&quot;,    15,     AP_BoardConfig,  _vbus_min,  BOARD_CONFIG_BOARD_VOLTAGE_MIN),</a>
+<a name="303"><span class="lineNum">     303 </span>            : </a>
+<a name="304"><span class="lineNum">     304 </span>            : #endif</a>
+<a name="305"><span class="lineNum">     305 </span>            : </a>
+<a name="306"><span class="lineNum">     306 </span>            : #if HAL_HAVE_SERVO_VOLTAGE</a>
+<a name="307"><span class="lineNum">     307 </span>            :     // @Param: VSERVO_MIN</a>
+<a name="308"><span class="lineNum">     308 </span>            :     // @DisplayName: Servo voltage requirement</a>
+<a name="309"><span class="lineNum">     309 </span>            :     // @Description: Minimum voltage on the servo rail to allow the aircraft to arm. 0 to disable the check.</a>
+<a name="310"><span class="lineNum">     310 </span>            :     // @Units: V</a>
+<a name="311"><span class="lineNum">     311 </span>            :     // @Range: 3.3 12.0</a>
+<a name="312"><span class="lineNum">     312 </span>            :     // @Increment: 0.1</a>
+<a name="313"><span class="lineNum">     313 </span>            :     // @User: Advanced</a>
+<a name="314"><span class="lineNum">     314 </span>            :     AP_GROUPINFO(&quot;VSERVO_MIN&quot;,    16,     AP_BoardConfig, _vservo_min,  0),</a>
+<a name="315"><span class="lineNum">     315 </span>            : #endif</a>
+<a name="316"><span class="lineNum">     316 </span>            : </a>
+<a name="317"><span class="lineNum">     317 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_CHIBIOS</a>
+<a name="318"><span class="lineNum">     318 </span>            :     // @Param: SD_SLOWDOWN</a>
+<a name="319"><span class="lineNum">     319 </span>            :     // @DisplayName: microSD slowdown</a>
+<a name="320"><span class="lineNum">     320 </span>            :     // @Description: This is a scaling factor to slow down microSD operation. It can be used on flight board and microSD card combinations where full speed is not reliable. For normal full speed operation a value of 0 should be used.</a>
+<a name="321"><span class="lineNum">     321 </span>            :     // @Range: 0 32</a>
+<a name="322"><span class="lineNum">     322 </span>            :     // @Increment: 1</a>
+<a name="323"><span class="lineNum">     323 </span>            :     // @User: Advanced</a>
+<a name="324"><span class="lineNum">     324 </span>            :     AP_GROUPINFO(&quot;SD_SLOWDOWN&quot;,  17,     AP_BoardConfig, _sdcard_slowdown,  0),</a>
+<a name="325"><span class="lineNum">     325 </span>            : #endif</a>
+<a name="326"><span class="lineNum">     326 </span>            : </a>
+<a name="327"><span class="lineNum">     327 </span>            : #ifdef HAL_GPIO_PWM_VOLT_PIN</a>
+<a name="328"><span class="lineNum">     328 </span>            :     // @Param: PWM_VOLT_SEL</a>
+<a name="329"><span class="lineNum">     329 </span>            :     // @DisplayName: Set PWM Out Voltage</a>
+<a name="330"><span class="lineNum">     330 </span>            :     // @Description: This sets the voltage max for PWM output pulses. 0 for 3.3V and 1 for 5V output. On boards with an IOMCU that support this parameter this option only affects the 8 main outputs, not the 6 auxiliary outputs. Using 5V output can help to reduce the impact of ESC noise interference corrupting signals to the ESCs.</a>
+<a name="331"><span class="lineNum">     331 </span>            :     // @Values: 0:3.3V,1:5V</a>
+<a name="332"><span class="lineNum">     332 </span>            :     // @User: Advanced</a>
+<a name="333"><span class="lineNum">     333 </span>            :     AP_GROUPINFO(&quot;PWM_VOLT_SEL&quot;, 18, AP_BoardConfig, _pwm_volt_sel, 0),</a>
+<a name="334"><span class="lineNum">     334 </span>            : #endif</a>
+<a name="335"><span class="lineNum">     335 </span>            : </a>
+<a name="336"><span class="lineNum">     336 </span>            :     // @Param: OPTIONS</a>
+<a name="337"><span class="lineNum">     337 </span>            :     // @DisplayName: Board options</a>
+<a name="338"><span class="lineNum">     338 </span>            :     // @Description: Board specific option flags</a>
+<a name="339"><span class="lineNum">     339 </span>            :     // @Bitmask: 0:Enable hardware watchdog, 1:Disable MAVftp, 2:Enable set of internal parameters, 3:Enable Debug Pins, 4:Unlock flash on reboot, 5:Write protect firmware flash on reboot, 6:Write protect bootloader flash on reboot, 7:Skip board validation, 8:Disable board arming gpio output change on arm/disarm, 9:Use safety pins as profiled</a>
+<a name="340"><span class="lineNum">     340 </span>            :     // @User: Advanced</a>
+<a name="341"><span class="lineNum">     341 </span>            :     AP_GROUPINFO(&quot;OPTIONS&quot;, 19, AP_BoardConfig, _options, HAL_BRD_OPTIONS_DEFAULT),</a>
+<a name="342"><span class="lineNum">     342 </span>            : </a>
+<a name="343"><span class="lineNum">     343 </span>            :     // @Param: BOOT_DELAY</a>
+<a name="344"><span class="lineNum">     344 </span>            :     // @DisplayName: Boot delay</a>
+<a name="345"><span class="lineNum">     345 </span>            :     // @Description: This adds a delay in milliseconds to boot to ensure peripherals initialise fully</a>
+<a name="346"><span class="lineNum">     346 </span>            :     // @Range: 0 10000</a>
+<a name="347"><span class="lineNum">     347 </span>            :     // @Units: ms</a>
+<a name="348"><span class="lineNum">     348 </span>            :     // @User: Advanced</a>
+<a name="349"><span class="lineNum">     349 </span>            :     AP_GROUPINFO(&quot;BOOT_DELAY&quot;, 20, AP_BoardConfig, _boot_delay_ms, HAL_DEFAULT_BOOT_DELAY),</a>
+<a name="350"><span class="lineNum">     350 </span>            : </a>
+<a name="351"><span class="lineNum">     351 </span>            : #if HAL_HAVE_IMU_HEATER</a>
+<a name="352"><span class="lineNum">     352 </span>            :     // @Param: HEAT_P</a>
+<a name="353"><span class="lineNum">     353 </span>            :     // @DisplayName: Board Heater P gain</a>
+<a name="354"><span class="lineNum">     354 </span>            :     // @Description: Board Heater P gain</a>
+<a name="355"><span class="lineNum">     355 </span>            :     // @Range: 1 500</a>
+<a name="356"><span class="lineNum">     356 </span>            :     // @Increment: 1</a>
+<a name="357"><span class="lineNum">     357 </span>            :     // @User: Advanced</a>
+<a name="358"><span class="lineNum">     358 </span>            : </a>
+<a name="359"><span class="lineNum">     359 </span>            :     // @Param: HEAT_I</a>
+<a name="360"><span class="lineNum">     360 </span>            :     // @DisplayName: Board Heater I gain</a>
+<a name="361"><span class="lineNum">     361 </span>            :     // @Description: Board Heater integrator gain</a>
+<a name="362"><span class="lineNum">     362 </span>            :     // @Range: 0 1</a>
+<a name="363"><span class="lineNum">     363 </span>            :     // @Increment: 0.1</a>
+<a name="364"><span class="lineNum">     364 </span>            :     // @User: Advanced</a>
+<a name="365"><span class="lineNum">     365 </span>            : </a>
+<a name="366"><span class="lineNum">     366 </span>            :     // @Param: HEAT_IMAX</a>
+<a name="367"><span class="lineNum">     367 </span>            :     // @DisplayName: Board Heater IMAX</a>
+<a name="368"><span class="lineNum">     368 </span>            :     // @Description: Board Heater integrator maximum</a>
+<a name="369"><span class="lineNum">     369 </span>            :     // @Range: 0 100</a>
+<a name="370"><span class="lineNum">     370 </span>            :     // @Increment: 1</a>
+<a name="371"><span class="lineNum">     371 </span>            :     // @User: Advanced</a>
+<a name="372"><span class="lineNum">     372 </span>            :     AP_SUBGROUPINFO(heater.pi_controller, &quot;HEAT_&quot;,  21, AP_BoardConfig, AC_PI),</a>
+<a name="373"><span class="lineNum">     373 </span>            : #endif</a>
+<a name="374"><span class="lineNum">     374 </span>            : </a>
+<a name="375"><span class="lineNum">     375 </span>            : #ifdef HAL_PIN_ALT_CONFIG</a>
+<a name="376"><span class="lineNum">     376 </span>            :     // @Param: ALT_CONFIG</a>
+<a name="377"><span class="lineNum">     377 </span>            :     // @DisplayName: Alternative HW config</a>
+<a name="378"><span class="lineNum">     378 </span>            :     // @Description: Select an alternative hardware configuration. A value of zero selects the default configuration for this board. Other values are board specific. Please see the documentation for your board for details on any alternative configuration values that may be available.</a>
+<a name="379"><span class="lineNum">     379 </span>            :     // @Range: 0 10</a>
+<a name="380"><span class="lineNum">     380 </span>            :     // @Increment: 1</a>
+<a name="381"><span class="lineNum">     381 </span>            :     // @User: Advanced</a>
+<a name="382"><span class="lineNum">     382 </span>            :     // @RebootRequired: True</a>
+<a name="383"><span class="lineNum">     383 </span>            :     AP_GROUPINFO(&quot;ALT_CONFIG&quot;, 22, AP_BoardConfig, _alt_config, 0),</a>
+<a name="384"><span class="lineNum">     384 </span>            : #endif // HAL_PIN_ALT_CONFIG</a>
+<a name="385"><span class="lineNum">     385 </span>            : </a>
+<a name="386"><span class="lineNum">     386 </span>            : #if HAL_HAVE_IMU_HEATER</a>
+<a name="387"><span class="lineNum">     387 </span>            :     // @Param: HEAT_LOWMGN</a>
+<a name="388"><span class="lineNum">     388 </span>            :     // @DisplayName: Board heater temp lower margin</a>
+<a name="389"><span class="lineNum">     389 </span>            :     // @Description: Arming check will fail if temp is lower than this margin below BRD_HEAT_TARG. 0 disables the low temperature check</a>
+<a name="390"><span class="lineNum">     390 </span>            :     // @Range: 0 20</a>
+<a name="391"><span class="lineNum">     391 </span>            :     // @Units: degC</a>
+<a name="392"><span class="lineNum">     392 </span>            :     // @User: Advanced</a>
+<a name="393"><span class="lineNum">     393 </span>            :     AP_GROUPINFO(&quot;HEAT_LOWMGN&quot;, 23, AP_BoardConfig, heater.imu_arming_temperature_margin_low, HAL_IMU_TEMP_MARGIN_LOW_DEFAULT),</a>
+<a name="394"><span class="lineNum">     394 </span>            : #endif</a>
+<a name="395"><span class="lineNum">     395 </span>            : </a>
+<a name="396"><span class="lineNum">     396 </span>            : #if AP_SDCARD_STORAGE_ENABLED</a>
+<a name="397"><span class="lineNum">     397 </span>            :     // @Param: SD_MISSION</a>
+<a name="398"><span class="lineNum">     398 </span>            :     // @DisplayName:  SDCard Mission size</a>
+<a name="399"><span class="lineNum">     399 </span>            :     // @Description: This sets the amount of storage in kilobytes reserved on the microsd card in mission.stg for waypoint storage. Each waypoint uses 15 bytes.</a>
+<a name="400"><span class="lineNum">     400 </span>            :     // @Range: 0 64</a>
+<a name="401"><span class="lineNum">     401 </span>            :     // @RebootRequired: True</a>
+<a name="402"><span class="lineNum">     402 </span>            :     // @User: Advanced</a>
+<a name="403"><span class="lineNum">     403 </span>            :     AP_GROUPINFO(&quot;SD_MISSION&quot;, 24, AP_BoardConfig, sdcard_storage.mission_kb, 0),</a>
+<a name="404"><span class="lineNum">     404 </span>            : </a>
+<a name="405"><span class="lineNum">     405 </span>            :     // @Param: SD_FENCE</a>
+<a name="406"><span class="lineNum">     406 </span>            :     // @DisplayName:  SDCard Fence size</a>
+<a name="407"><span class="lineNum">     407 </span>            :     // @Description: This sets the amount of storage in kilobytes reserved on the microsd card in fence.stg for fence storage.</a>
+<a name="408"><span class="lineNum">     408 </span>            :     // @Range: 0 64</a>
+<a name="409"><span class="lineNum">     409 </span>            :     // @RebootRequired: True</a>
+<a name="410"><span class="lineNum">     410 </span>            :     // @User: Advanced</a>
+<a name="411"><span class="lineNum">     411 </span>            :     AP_GROUPINFO(&quot;SD_FENCE&quot;, 29, AP_BoardConfig, sdcard_storage.fence_kb, 0),</a>
+<a name="412"><span class="lineNum">     412 </span>            : #endif</a>
+<a name="413"><span class="lineNum">     413 </span>            : </a>
+<a name="414"><span class="lineNum">     414 </span>            :     // index 25 used by SER5_RTSCTS</a>
+<a name="415"><span class="lineNum">     415 </span>            :     // index 26 used by SER3_RTSCTS</a>
+<a name="416"><span class="lineNum">     416 </span>            :     // index 27 used by SER4_RTSCTS</a>
+<a name="417"><span class="lineNum">     417 </span>            : </a>
+<a name="418"><span class="lineNum">     418 </span>            :     </a>
+<a name="419"><span class="lineNum">     419 </span>            : #if HAL_WITH_IO_MCU_DSHOT</a>
+<a name="420"><span class="lineNum">     420 </span>            :     // @Param: IO_DSHOT</a>
+<a name="421"><span class="lineNum">     421 </span>            :     // @DisplayName: Load DShot FW on IO</a>
+<a name="422"><span class="lineNum">     422 </span>            :     // @Description: This loads the DShot firmware on the IO co-processor</a>
+<a name="423"><span class="lineNum">     423 </span>            :     // @Values: 0:StandardFW,1:DshotFW</a>
+<a name="424"><span class="lineNum">     424 </span>            :     // @RebootRequired: True</a>
+<a name="425"><span class="lineNum">     425 </span>            :     // @User: Advanced</a>
+<a name="426"><span class="lineNum">     426 </span>            :     AP_GROUPINFO(&quot;IO_DSHOT&quot;, 28, AP_BoardConfig, state.io_dshot, 0),</a>
+<a name="427"><span class="lineNum">     427 </span>            : #endif</a>
+<a name="428"><span class="lineNum">     428 </span>            : </a>
+<a name="429"><span class="lineNum">     429 </span>            :     // index 30 used by SER6_RTSCTS</a>
+<a name="430"><span class="lineNum">     430 </span>            :     // index 31 used by SER7_RTSCTS</a>
+<a name="431"><span class="lineNum">     431 </span>            :     // index 32 used by SER8_RTSCTS</a>
+<a name="432"><span class="lineNum">     432 </span>            :     AP_GROUPEND</a>
+<a name="433"><span class="lineNum">     433 </span>            : };</a>
+<a name="434"><span class="lineNum">     434 </span>            : </a>
+<a name="435"><span class="lineNum">     435 </span><span class="lineCov">        848 : void AP_BoardConfig::init()</span></a>
+<a name="436"><span class="lineNum">     436 </span>            : {</a>
+<a name="437"><span class="lineNum">     437 </span>            :     // PARAMETER_CONVERSION - Added: APR-2022</a>
+<a name="438"><span class="lineNum">     438 </span><span class="lineCov">        848 :     vehicleSerialNumber.convert_parameter_width(AP_PARAM_INT16);</span></a>
+<a name="439"><span class="lineNum">     439 </span>            : </a>
+<a name="440"><span class="lineNum">     440 </span><span class="lineCov">        848 :     board_setup();</span></a>
+<a name="441"><span class="lineNum">     441 </span>            : </a>
+<a name="442"><span class="lineNum">     442 </span>            : #if AP_RTC_ENABLED</a>
+<a name="443"><span class="lineNum">     443 </span><span class="lineCov">        848 :     AP::rtc().set_utc_usec(hal.util-&gt;get_hw_rtc(), AP_RTC::SOURCE_HW);</span></a>
+<a name="444"><span class="lineNum">     444 </span>            : #endif</a>
+<a name="445"><span class="lineNum">     445 </span>            : </a>
+<a name="446"><span class="lineNum">     446 </span><span class="lineCov">        848 :     if (_boot_delay_ms &gt; 0) {</span></a>
+<a name="447"><span class="lineNum">     447 </span><span class="lineNoCov">          0 :         uint16_t delay_ms = uint16_t(_boot_delay_ms.get());</span></a>
+<a name="448"><span class="lineNum">     448 </span><span class="lineNoCov">          0 :         if (hal.util-&gt;was_watchdog_armed() &amp;&amp; delay_ms &gt; 200) {</span></a>
+<a name="449"><span class="lineNum">     449 </span>            :             // don't delay a long time on watchdog reset, the pilot</a>
+<a name="450"><span class="lineNum">     450 </span>            :             // may be able to save the vehicle</a>
+<a name="451"><span class="lineNum">     451 </span><span class="lineNoCov">          0 :             delay_ms = 200;</span></a>
+<a name="452"><span class="lineNum">     452 </span>            :         }</a>
+<a name="453"><span class="lineNum">     453 </span><span class="lineNoCov">          0 :         hal.scheduler-&gt;delay(delay_ms);</span></a>
+<a name="454"><span class="lineNum">     454 </span>            :     }</a>
+<a name="455"><span class="lineNum">     455 </span>            :     </a>
+<a name="456"><span class="lineNum">     456 </span>            : #if CONFIG_HAL_BOARD == HAL_BOARD_CHIBIOS &amp;&amp; defined(USE_POSIX)</a>
+<a name="457"><span class="lineNum">     457 </span>            :     uint8_t slowdown = constrain_int16(_sdcard_slowdown.get(), 0, 32);</a>
+<a name="458"><span class="lineNum">     458 </span>            :     const uint8_t max_slowdown = 8;</a>
+<a name="459"><span class="lineNum">     459 </span>            :     do {</a>
+<a name="460"><span class="lineNum">     460 </span>            :         if (AP::FS().retry_mount()) {</a>
+<a name="461"><span class="lineNum">     461 </span>            :             break;</a>
+<a name="462"><span class="lineNum">     462 </span>            :         }</a>
+<a name="463"><span class="lineNum">     463 </span>            :         slowdown++;</a>
+<a name="464"><span class="lineNum">     464 </span>            :         hal.scheduler-&gt;delay(5);</a>
+<a name="465"><span class="lineNum">     465 </span>            :     } while (slowdown &lt; max_slowdown);</a>
+<a name="466"><span class="lineNum">     466 </span>            :     if (slowdown &lt; max_slowdown) {</a>
+<a name="467"><span class="lineNum">     467 </span>            :         _sdcard_slowdown.set(slowdown);</a>
+<a name="468"><span class="lineNum">     468 </span>            :     } else {</a>
+<a name="469"><span class="lineNum">     469 </span>            :         printf(&quot;SDCard failed to start\n&quot;);</a>
+<a name="470"><span class="lineNum">     470 </span>            :     }</a>
+<a name="471"><span class="lineNum">     471 </span>            : #endif</a>
+<a name="472"><span class="lineNum">     472 </span><span class="lineCov">        848 : }</span></a>
+<a name="473"><span class="lineNum">     473 </span>            : </a>
+<a name="474"><span class="lineNum">     474 </span>            : // set default value for BRD_SAFETY_MASK</a>
+<a name="475"><span class="lineNum">     475 </span><span class="lineCov">        848 : void AP_BoardConfig::set_default_safety_ignore_mask(uint32_t mask)</span></a>
+<a name="476"><span class="lineNum">     476 </span>            : {</a>
+<a name="477"><span class="lineNum">     477 </span><span class="lineCov">        848 :     state.ignore_safety_channels.set_default(mask);</span></a>
+<a name="478"><span class="lineNum">     478 </span><span class="lineCov">        848 : }</span></a>
+<a name="479"><span class="lineNum">     479 </span>            : </a>
+<a name="480"><span class="lineNum">     480 </span><span class="lineCov">        848 : void AP_BoardConfig::init_safety()</span></a>
+<a name="481"><span class="lineNum">     481 </span>            : {</a>
+<a name="482"><span class="lineNum">     482 </span><span class="lineCov">        848 :     board_init_safety();</span></a>
+<a name="483"><span class="lineNum">     483 </span><span class="lineCov">        848 :     board_init_debug();</span></a>
+<a name="484"><span class="lineNum">     484 </span><span class="lineCov">        848 : }</span></a>
+<a name="485"><span class="lineNum">     485 </span>            : </a>
+<a name="486"><span class="lineNum">     486 </span>            : /*</a>
+<a name="487"><span class="lineNum">     487 </span>            :   notify user of a fatal startup error related to available sensors. </a>
+<a name="488"><span class="lineNum">     488 </span>            : */</a>
+<a name="489"><span class="lineNum">     489 </span>            : bool AP_BoardConfig::_in_error_loop;</a>
+<a name="490"><span class="lineNum">     490 </span>            : </a>
+<a name="491"><span class="lineNum">     491 </span><span class="lineNoCov">          0 : void AP_BoardConfig::throw_error(const char *err_type, const char *fmt, va_list arg)</span></a>
+<a name="492"><span class="lineNum">     492 </span>            : {</a>
+<a name="493"><span class="lineNum">     493 </span><span class="lineNoCov">          0 :     _in_error_loop = true;</span></a>
+<a name="494"><span class="lineNum">     494 </span>            :     /*</a>
+<a name="495"><span class="lineNum">     495 </span>            :       to give the user the opportunity to connect to USB we keep</a>
+<a name="496"><span class="lineNum">     496 </span>            :       repeating the error.  The mavlink delay callback is initialised</a>
+<a name="497"><span class="lineNum">     497 </span>            :       before this, so the user can change parameters (and in</a>
+<a name="498"><span class="lineNum">     498 </span>            :       particular BRD_TYPE if needed)</a>
+<a name="499"><span class="lineNum">     499 </span>            :     */</a>
+<a name="500"><span class="lineNum">     500 </span><span class="lineNoCov">          0 :     uint32_t last_print_ms = 0;</span></a>
+<a name="501"><span class="lineNum">     501 </span>            :     while (true) {</a>
+<a name="502"><span class="lineNum">     502 </span><span class="lineNoCov">          0 :         uint32_t now = AP_HAL::millis();</span></a>
+<a name="503"><span class="lineNum">     503 </span><span class="lineNoCov">          0 :         if (now - last_print_ms &gt;= 5000) {</span></a>
+<a name="504"><span class="lineNum">     504 </span><span class="lineNoCov">          0 :             last_print_ms = now;</span></a>
+<a name="505"><span class="lineNum">     505 </span>            :             char printfmt[MAVLINK_MSG_STATUSTEXT_FIELD_TEXT_LEN+2];</a>
+<a name="506"><span class="lineNum">     506 </span><span class="lineNoCov">          0 :             hal.util-&gt;snprintf(printfmt, sizeof(printfmt), &quot;%s: %s\n&quot;, err_type, fmt);</span></a>
+<a name="507"><span class="lineNum">     507 </span>            :             {</a>
+<a name="508"><span class="lineNum">     508 </span>            :                 va_list arg_copy;</a>
+<a name="509"><span class="lineNum">     509 </span><span class="lineNoCov">          0 :                 va_copy(arg_copy, arg);</span></a>
+<a name="510"><span class="lineNum">     510 </span><span class="lineNoCov">          0 :                 vprintf(printfmt, arg_copy);</span></a>
+<a name="511"><span class="lineNum">     511 </span><span class="lineNoCov">          0 :                 va_end(arg_copy);</span></a>
+<a name="512"><span class="lineNum">     512 </span>            :             }</a>
+<a name="513"><span class="lineNum">     513 </span>            : #if HAL_GCS_ENABLED</a>
+<a name="514"><span class="lineNum">     514 </span><span class="lineNoCov">          0 :             hal.util-&gt;snprintf(printfmt, sizeof(printfmt), &quot;%s: %s&quot;, err_type, fmt);</span></a>
+<a name="515"><span class="lineNum">     515 </span>            :             {</a>
+<a name="516"><span class="lineNum">     516 </span>            :                 va_list arg_copy;</a>
+<a name="517"><span class="lineNum">     517 </span><span class="lineNoCov">          0 :                 va_copy(arg_copy, arg);</span></a>
+<a name="518"><span class="lineNum">     518 </span><span class="lineNoCov">          0 :                 gcs().send_textv(MAV_SEVERITY_CRITICAL, printfmt, arg_copy);</span></a>
+<a name="519"><span class="lineNum">     519 </span><span class="lineNoCov">          0 :                 va_end(arg_copy);</span></a>
+<a name="520"><span class="lineNum">     520 </span>            :             }</a>
+<a name="521"><span class="lineNum">     521 </span>            : #endif</a>
+<a name="522"><span class="lineNum">     522 </span>            :         }</a>
+<a name="523"><span class="lineNum">     523 </span>            : #if HAL_GCS_ENABLED</a>
+<a name="524"><span class="lineNum">     524 </span><span class="lineNoCov">          0 :         gcs().update_receive();</span></a>
+<a name="525"><span class="lineNum">     525 </span><span class="lineNoCov">          0 :         gcs().update_send();</span></a>
+<a name="526"><span class="lineNum">     526 </span>            : #endif</a>
+<a name="527"><span class="lineNum">     527 </span><span class="lineNoCov">          0 :         EXPECT_DELAY_MS(10);</span></a>
+<a name="528"><span class="lineNum">     528 </span><span class="lineNoCov">          0 :         hal.scheduler-&gt;delay(5);</span></a>
+<a name="529"><span class="lineNum">     529 </span><span class="lineNoCov">          0 :     }</span></a>
+<a name="530"><span class="lineNum">     530 </span>            : }</a>
+<a name="531"><span class="lineNum">     531 </span>            : </a>
+<a name="532"><span class="lineNum">     532 </span><span class="lineNoCov">          0 : void AP_BoardConfig::allocation_error(const char *fmt, ...)</span></a>
+<a name="533"><span class="lineNum">     533 </span>            : {</a>
+<a name="534"><span class="lineNum">     534 </span>            :     va_list arg_list;</a>
+<a name="535"><span class="lineNum">     535 </span><span class="lineNoCov">          0 :     va_start(arg_list, fmt);</span></a>
+<a name="536"><span class="lineNum">     536 </span><span class="lineNoCov">          0 :     char newfmt[64] {};</span></a>
+<a name="537"><span class="lineNum">     537 </span><span class="lineNoCov">          0 :     snprintf(newfmt, sizeof(newfmt), &quot;Unable to allocate %s&quot;, fmt);</span></a>
+<a name="538"><span class="lineNum">     538 </span><span class="lineNoCov">          0 :     throw_error(&quot;Allocation Error&quot;, newfmt, arg_list);</span></a>
+<a name="539"><span class="lineNum">     539 </span>            :     va_end(arg_list);</a>
+<a name="540"><span class="lineNum">     540 </span>            : }</a>
+<a name="541"><span class="lineNum">     541 </span>            : </a>
+<a name="542"><span class="lineNum">     542 </span><span class="lineNoCov">          0 : void AP_BoardConfig::config_error(const char *fmt, ...)</span></a>
+<a name="543"><span class="lineNum">     543 </span>            : {</a>
+<a name="544"><span class="lineNum">     544 </span>            :     va_list arg_list;</a>
+<a name="545"><span class="lineNum">     545 </span><span class="lineNoCov">          0 :     va_start(arg_list, fmt);</span></a>
+<a name="546"><span class="lineNum">     546 </span><span class="lineNoCov">          0 :     throw_error(&quot;Config Error&quot;, fmt, arg_list);</span></a>
+<a name="547"><span class="lineNum">     547 </span>            :     va_end(arg_list);</a>
+<a name="548"><span class="lineNum">     548 </span>            : }</a>
+<a name="549"><span class="lineNum">     549 </span>            : </a>
+<a name="550"><span class="lineNum">     550 </span>            : /*</a>
+<a name="551"><span class="lineNum">     551 </span>            :   handle logic for safety state button press. This should be called at</a>
+<a name="552"><span class="lineNum">     552 </span>            :   10Hz when the button is pressed. The button can either be directly</a>
+<a name="553"><span class="lineNum">     553 </span>            :   on a pin or on a UAVCAN device</a>
+<a name="554"><span class="lineNum">     554 </span>            :   This function returns true if the safety state should be toggled</a>
+<a name="555"><span class="lineNum">     555 </span>            :  */</a>
+<a name="556"><span class="lineNum">     556 </span><span class="lineNoCov">          0 : bool AP_BoardConfig::safety_button_handle_pressed(uint8_t press_count)</span></a>
+<a name="557"><span class="lineNum">     557 </span>            : {</a>
+<a name="558"><span class="lineNum">     558 </span><span class="lineNoCov">          0 :     if (press_count != 10) {</span></a>
+<a name="559"><span class="lineNum">     559 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="560"><span class="lineNum">     560 </span>            :     }</a>
+<a name="561"><span class="lineNum">     561 </span>            :     // get button options</a>
+<a name="562"><span class="lineNum">     562 </span><span class="lineNoCov">          0 :     uint16_t safety_options = get_safety_button_options();</span></a>
+<a name="563"><span class="lineNum">     563 </span><span class="lineNoCov">          0 :     if (!(safety_options &amp; BOARD_SAFETY_OPTION_BUTTON_ACTIVE_ARMED) &amp;&amp;</span></a>
+<a name="564"><span class="lineNum">     564 </span><span class="lineNoCov">          0 :         hal.util-&gt;get_soft_armed()) {</span></a>
+<a name="565"><span class="lineNum">     565 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="566"><span class="lineNum">     566 </span>            :     }</a>
+<a name="567"><span class="lineNum">     567 </span><span class="lineNoCov">          0 :     AP_HAL::Util::safety_state safety_state = hal.util-&gt;safety_switch_state();</span></a>
+<a name="568"><span class="lineNum">     568 </span><span class="lineNoCov">          0 :     if (safety_state == AP_HAL::Util::SAFETY_DISARMED &amp;&amp;</span></a>
+<a name="569"><span class="lineNum">     569 </span><span class="lineNoCov">          0 :         !(safety_options &amp; BOARD_SAFETY_OPTION_BUTTON_ACTIVE_SAFETY_OFF)) {</span></a>
+<a name="570"><span class="lineNum">     570 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="571"><span class="lineNum">     571 </span>            :     }</a>
+<a name="572"><span class="lineNum">     572 </span><span class="lineNoCov">          0 :     if (safety_state == AP_HAL::Util::SAFETY_ARMED &amp;&amp;</span></a>
+<a name="573"><span class="lineNum">     573 </span><span class="lineNoCov">          0 :         !(safety_options &amp; BOARD_SAFETY_OPTION_BUTTON_ACTIVE_SAFETY_ON)) {</span></a>
+<a name="574"><span class="lineNum">     574 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="575"><span class="lineNum">     575 </span>            :     }</a>
+<a name="576"><span class="lineNum">     576 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="577"><span class="lineNum">     577 </span>            : }</a>
+<a name="578"><span class="lineNum">     578 </span>            : </a>
+<a name="579"><span class="lineNum">     579 </span>            : namespace AP {</a>
+<a name="580"><span class="lineNum">     580 </span><span class="lineCov">       1696 :     AP_BoardConfig *boardConfig(void) {</span></a>
+<a name="581"><span class="lineNum">     581 </span><span class="lineCov">       1696 :         return AP_BoardConfig::get_singleton();</span></a>
+<a name="582"><span class="lineNum">     582 </span>            :     }</a>
+<a name="583"><span class="lineNum">     583 </span>            : };</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

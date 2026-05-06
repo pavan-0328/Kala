@@ -1,0 +1,548 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_RCProtocol/AP_RCProtocol_GHST.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_RCProtocol</a> - AP_RCProtocol_GHST.cpp<span style="font-size: 80%;"> (source / <a href="AP_RCProtocol_GHST.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">152</td>
+            <td class="headerCovTableEntryLo">9.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntryLo">31.2 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : /*</a>
+<a name="16"><span class="lineNum">      16 </span>            :   GHST protocol decoder based on betaflight implementation</a>
+<a name="17"><span class="lineNum">      17 </span>            :   Code by Andy Piper</a>
+<a name="18"><span class="lineNum">      18 </span>            :  */</a>
+<a name="19"><span class="lineNum">      19 </span>            : </a>
+<a name="20"><span class="lineNum">      20 </span>            : #include &quot;AP_RCProtocol_config.h&quot;</a>
+<a name="21"><span class="lineNum">      21 </span>            : </a>
+<a name="22"><span class="lineNum">      22 </span>            : #if AP_RCPROTOCOL_GHST_ENABLED</a>
+<a name="23"><span class="lineNum">      23 </span>            : </a>
+<a name="24"><span class="lineNum">      24 </span>            : #define CRSF_BAUDRATE      416666U</a>
+<a name="25"><span class="lineNum">      25 </span>            : </a>
+<a name="26"><span class="lineNum">      26 </span>            : #include &quot;AP_RCProtocol.h&quot;</a>
+<a name="27"><span class="lineNum">      27 </span>            : #include &quot;AP_RCProtocol_GHST.h&quot;</a>
+<a name="28"><span class="lineNum">      28 </span>            : #include &lt;AP_HAL/AP_HAL.h&gt;</a>
+<a name="29"><span class="lineNum">      29 </span>            : #include &lt;AP_Math/AP_Math.h&gt;</a>
+<a name="30"><span class="lineNum">      30 </span>            : #include &lt;AP_Math/crc.h&gt;</a>
+<a name="31"><span class="lineNum">      31 </span>            : #include &lt;AP_Vehicle/AP_Vehicle_Type.h&gt;</a>
+<a name="32"><span class="lineNum">      32 </span>            : #include &lt;AP_RCTelemetry/AP_GHST_Telem.h&gt;</a>
+<a name="33"><span class="lineNum">      33 </span>            : #include &lt;AP_SerialManager/AP_SerialManager.h&gt;</a>
+<a name="34"><span class="lineNum">      34 </span>            : </a>
+<a name="35"><span class="lineNum">      35 </span>            : /*</a>
+<a name="36"><span class="lineNum">      36 </span>            :  * GHST protocol</a>
+<a name="37"><span class="lineNum">      37 </span>            :  *</a>
+<a name="38"><span class="lineNum">      38 </span>            :  * GHST protocol uses a single wire half duplex uart connection.</a>
+<a name="39"><span class="lineNum">      39 </span>            :  *</a>
+<a name="40"><span class="lineNum">      40 </span>            :  * 420000 baud</a>
+<a name="41"><span class="lineNum">      41 </span>            :  * not inverted</a>
+<a name="42"><span class="lineNum">      42 </span>            :  * 8 Bit</a>
+<a name="43"><span class="lineNum">      43 </span>            :  * 1 Stop bit</a>
+<a name="44"><span class="lineNum">      44 </span>            :  * Big endian</a>
+<a name="45"><span class="lineNum">      45 </span>            :  * Max frame size is 14 bytes</a>
+<a name="46"><span class="lineNum">      46 </span>            :  *</a>
+<a name="47"><span class="lineNum">      47 </span>            :  * Every frame has the structure:</a>
+<a name="48"><span class="lineNum">      48 </span>            :  * &lt;Device address&gt;&lt;Frame length&gt;&lt;Type&gt;&lt;Payload&gt;&lt;CRC&gt;</a>
+<a name="49"><span class="lineNum">      49 </span>            :  *</a>
+<a name="50"><span class="lineNum">      50 </span>            :  * Device address: (uint8_t)</a>
+<a name="51"><span class="lineNum">      51 </span>            :  * Frame length:   length in  bytes including Type (uint8_t)</a>
+<a name="52"><span class="lineNum">      52 </span>            :  * Type:           (uint8_t)</a>
+<a name="53"><span class="lineNum">      53 </span>            :  * CRC:            (uint8_t)</a>
+<a name="54"><span class="lineNum">      54 </span>            :  *</a>
+<a name="55"><span class="lineNum">      55 </span>            :  */</a>
+<a name="56"><span class="lineNum">      56 </span>            : </a>
+<a name="57"><span class="lineNum">      57 </span>            : extern const AP_HAL::HAL&amp; hal;</a>
+<a name="58"><span class="lineNum">      58 </span>            : </a>
+<a name="59"><span class="lineNum">      59 </span>            : //#define GHST_DEBUG</a>
+<a name="60"><span class="lineNum">      60 </span>            : //#define GHST_DEBUG_CHARS</a>
+<a name="61"><span class="lineNum">      61 </span>            : #ifdef GHST_DEBUG</a>
+<a name="62"><span class="lineNum">      62 </span>            : # define debug(fmt, args...)    hal.console-&gt;printf(&quot;GHST: &quot; fmt &quot;\n&quot;, ##args)</a>
+<a name="63"><span class="lineNum">      63 </span>            : static const char* get_frame_type(uint8_t byte, uint8_t subtype = 0)</a>
+<a name="64"><span class="lineNum">      64 </span>            : {</a>
+<a name="65"><span class="lineNum">      65 </span>            :     switch(byte) {</a>
+<a name="66"><span class="lineNum">      66 </span>            :     case AP_RCProtocol_GHST::GHST_UL_RC_CHANS_HS4_5TO8:</a>
+<a name="67"><span class="lineNum">      67 </span>            :     case AP_RCProtocol_GHST::GHST_UL_RC_CHANS_HS4_12_5TO8:</a>
+<a name="68"><span class="lineNum">      68 </span>            :         return &quot;RC5_8&quot;;</a>
+<a name="69"><span class="lineNum">      69 </span>            :     case AP_RCProtocol_GHST::GHST_UL_RC_CHANS_HS4_9TO12:</a>
+<a name="70"><span class="lineNum">      70 </span>            :     case AP_RCProtocol_GHST::GHST_UL_RC_CHANS_HS4_12_9TO12:</a>
+<a name="71"><span class="lineNum">      71 </span>            :         return &quot;RC9_12&quot;;</a>
+<a name="72"><span class="lineNum">      72 </span>            :     case AP_RCProtocol_GHST::GHST_UL_RC_CHANS_HS4_13TO16:</a>
+<a name="73"><span class="lineNum">      73 </span>            :     case AP_RCProtocol_GHST::GHST_UL_RC_CHANS_HS4_12_13TO16:</a>
+<a name="74"><span class="lineNum">      74 </span>            :         return &quot;RC13_16&quot;;</a>
+<a name="75"><span class="lineNum">      75 </span>            :     case AP_RCProtocol_GHST::GHST_UL_RC_CHANS_RSSI:</a>
+<a name="76"><span class="lineNum">      76 </span>            :     case AP_RCProtocol_GHST::GHST_UL_RC_CHANS_12_RSSI:</a>
+<a name="77"><span class="lineNum">      77 </span>            :         return &quot;RSSI&quot;;</a>
+<a name="78"><span class="lineNum">      78 </span>            :     case AP_RCProtocol_GHST::GHST_UL_RC_VTX_CTRL:</a>
+<a name="79"><span class="lineNum">      79 </span>            :         return &quot;VTX_CTRL&quot;;</a>
+<a name="80"><span class="lineNum">      80 </span>            :     case AP_RCProtocol_GHST::GHST_UL_VTX_SETUP:</a>
+<a name="81"><span class="lineNum">      81 </span>            :         return &quot;VTX_SETUP&quot;;</a>
+<a name="82"><span class="lineNum">      82 </span>            :     }</a>
+<a name="83"><span class="lineNum">      83 </span>            :     return &quot;UNKNOWN&quot;;</a>
+<a name="84"><span class="lineNum">      84 </span>            : }</a>
+<a name="85"><span class="lineNum">      85 </span>            : #else</a>
+<a name="86"><span class="lineNum">      86 </span>            : # define debug(fmt, args...)    do {} while(0)</a>
+<a name="87"><span class="lineNum">      87 </span>            : #endif</a>
+<a name="88"><span class="lineNum">      88 </span>            : </a>
+<a name="89"><span class="lineNum">      89 </span>            : #define GHST_MAX_FRAME_TIME_US       500U // 14 bytes @ 420k = ~450us</a>
+<a name="90"><span class="lineNum">      90 </span>            : #define GHST_FRAME_TIMEOUT_US      10000U // 10ms to account for scheduling delays</a>
+<a name="91"><span class="lineNum">      91 </span>            : #define GHST_INTER_FRAME_TIME_US    2000U // At fastest, frames are sent by the transmitter every 2 ms, 500 Hz</a>
+<a name="92"><span class="lineNum">      92 </span>            : #define GHST_HEADER_TYPE_LEN     (GHST_HEADER_LEN + 1)           // header length including type</a>
+<a name="93"><span class="lineNum">      93 </span>            : </a>
+<a name="94"><span class="lineNum">      94 </span>            : const uint16_t AP_RCProtocol_GHST::RF_MODE_RATES[RFMode::RF_MODE_MAX_MODES] = {</a>
+<a name="95"><span class="lineNum">      95 </span>            :     55, 160, 250, 19, 250, 500, 150, 250,</a>
+<a name="96"><span class="lineNum">      96 </span>            : };</a>
+<a name="97"><span class="lineNum">      97 </span>            : </a>
+<a name="98"><span class="lineNum">      98 </span>            : AP_RCProtocol_GHST* AP_RCProtocol_GHST::_singleton;</a>
+<a name="99"><span class="lineNum">      99 </span>            : </a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineCov">        848 : AP_RCProtocol_GHST::AP_RCProtocol_GHST(AP_RCProtocol &amp;_frontend) : AP_RCProtocol_Backend(_frontend)</span></a>
+<a name="101"><span class="lineNum">     101 </span>            : {</a>
+<a name="102"><span class="lineNum">     102 </span>            : #if !APM_BUILD_TYPE(APM_BUILD_UNKNOWN)</a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineCov">        848 :     if (_singleton != nullptr) {</span></a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 :         AP_HAL::panic(&quot;Duplicate GHST handler&quot;);</span></a>
+<a name="105"><span class="lineNum">     105 </span>            :     }</a>
+<a name="106"><span class="lineNum">     106 </span>            : </a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineCov">        848 :     _singleton = this;</span></a>
+<a name="108"><span class="lineNum">     108 </span>            : #else</a>
+<a name="109"><span class="lineNum">     109 </span>            :     if (_singleton == nullptr) {</a>
+<a name="110"><span class="lineNum">     110 </span>            :         _singleton = this;</a>
+<a name="111"><span class="lineNum">     111 </span>            :     }</a>
+<a name="112"><span class="lineNum">     112 </span>            : #endif</a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineCov">        848 : }</span></a>
+<a name="114"><span class="lineNum">     114 </span>            : </a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineCov">        450 : AP_RCProtocol_GHST::~AP_RCProtocol_GHST() {</span></a>
+<a name="116"><span class="lineNum">     116 </span><span class="lineCov">        150 :     _singleton = nullptr;</span></a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineCov">        300 : }</span></a>
+<a name="118"><span class="lineNum">     118 </span>            : </a>
+<a name="119"><span class="lineNum">     119 </span>            : // get the protocol string</a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 : const char* AP_RCProtocol_GHST::get_protocol_string() const {</span></a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineNoCov">          0 :     return &quot;GHST&quot;;</span></a>
+<a name="122"><span class="lineNum">     122 </span>            : }</a>
+<a name="123"><span class="lineNum">     123 </span>            : </a>
+<a name="124"><span class="lineNum">     124 </span>            : // return the link rate as defined by the LinkStatistics</a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 : uint16_t AP_RCProtocol_GHST::get_link_rate() const {</span></a>
+<a name="126"><span class="lineNum">     126 </span><span class="lineNoCov">          0 :     return RF_MODE_RATES[_link_status.rf_mode - GHST_RF_MODE_NORMAL];</span></a>
+<a name="127"><span class="lineNum">     127 </span>            : }</a>
+<a name="128"><span class="lineNum">     128 </span>            : </a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineNoCov">          0 : void AP_RCProtocol_GHST::_process_byte(uint32_t timestamp_us, uint8_t byte)</span></a>
+<a name="130"><span class="lineNum">     130 </span>            : {</a>
+<a name="131"><span class="lineNum">     131 </span>            :     //debug(&quot;process_byte(0x%x)&quot;, byte);</a>
+<a name="132"><span class="lineNum">     132 </span>            :     // we took too long decoding, start again - the RX will only send complete frames so this is unlikely to fail,</a>
+<a name="133"><span class="lineNum">     133 </span>            :     // however thread scheduling can introduce longer delays even when the data has been received</a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :     if (_frame_ofs &gt; 0 &amp;&amp; (timestamp_us - _start_frame_time_us) &gt; GHST_FRAME_TIMEOUT_US) {</span></a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineNoCov">          0 :         _frame_ofs = 0;</span></a>
+<a name="136"><span class="lineNum">     136 </span>            :     }</a>
+<a name="137"><span class="lineNum">     137 </span>            : </a>
+<a name="138"><span class="lineNum">     138 </span>            :     // overflow check</a>
+<a name="139"><span class="lineNum">     139 </span><span class="lineNoCov">          0 :     if (_frame_ofs &gt;= GHST_FRAMELEN_MAX) {</span></a>
+<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :         _frame_ofs = 0;</span></a>
+<a name="141"><span class="lineNum">     141 </span>            :     }</a>
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<a name="143"><span class="lineNum">     143 </span>            :     // start of a new frame</a>
+<a name="144"><span class="lineNum">     144 </span><span class="lineNoCov">          0 :     if (_frame_ofs == 0) {</span></a>
+<a name="145"><span class="lineNum">     145 </span><span class="lineNoCov">          0 :         _start_frame_time_us = timestamp_us;</span></a>
+<a name="146"><span class="lineNum">     146 </span>            :     }</a>
+<a name="147"><span class="lineNum">     147 </span>            : </a>
+<a name="148"><span class="lineNum">     148 </span><span class="lineNoCov">          0 :     add_to_buffer(_frame_ofs++, byte);</span></a>
+<a name="149"><span class="lineNum">     149 </span>            : </a>
+<a name="150"><span class="lineNum">     150 </span>            :     // need a header to get the length</a>
+<a name="151"><span class="lineNum">     151 </span><span class="lineNoCov">          0 :     if (_frame_ofs &lt; GHST_HEADER_TYPE_LEN) {</span></a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="153"><span class="lineNum">     153 </span>            :     }</a>
+<a name="154"><span class="lineNum">     154 </span>            : </a>
+<a name="155"><span class="lineNum">     155 </span><span class="lineNoCov">          0 :     if (_frame.device_address != DeviceAddress::GHST_ADDRESS_FLIGHT_CONTROLLER) {</span></a>
+<a name="156"><span class="lineNum">     156 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="157"><span class="lineNum">     157 </span>            :     }</a>
+<a name="158"><span class="lineNum">     158 </span>            : </a>
+<a name="159"><span class="lineNum">     159 </span>            :     // parse the length</a>
+<a name="160"><span class="lineNum">     160 </span><span class="lineNoCov">          0 :     if (_frame_ofs == GHST_HEADER_TYPE_LEN) {</span></a>
+<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 :         _frame_crc = crc8_dvb_s2(0, _frame.type);</span></a>
+<a name="162"><span class="lineNum">     162 </span>            :         // check for garbage frame</a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineNoCov">          0 :         if (_frame.length &gt; GHST_FRAME_PAYLOAD_MAX) {</span></a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineNoCov">          0 :             _frame_ofs = 0;</span></a>
+<a name="165"><span class="lineNum">     165 </span>            :         }</a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="167"><span class="lineNum">     167 </span>            :     }</a>
+<a name="168"><span class="lineNum">     168 </span>            : </a>
+<a name="169"><span class="lineNum">     169 </span>            :     // update crc</a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :     if (_frame_ofs &lt; _frame.length + GHST_HEADER_LEN) {</span></a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineNoCov">          0 :         _frame_crc = crc8_dvb_s2(_frame_crc, byte);</span></a>
+<a name="172"><span class="lineNum">     172 </span>            :     }</a>
+<a name="173"><span class="lineNum">     173 </span>            : </a>
+<a name="174"><span class="lineNum">     174 </span>            :     // overflow check</a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 :     if (_frame_ofs &gt; _frame.length + GHST_HEADER_LEN) {</span></a>
+<a name="176"><span class="lineNum">     176 </span><span class="lineNoCov">          0 :         _frame_ofs = 0;</span></a>
+<a name="177"><span class="lineNum">     177 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="178"><span class="lineNum">     178 </span>            :     }</a>
+<a name="179"><span class="lineNum">     179 </span>            : </a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineNoCov">          0 :     if (_frame.length &lt; 2) {</span></a>
+<a name="181"><span class="lineNum">     181 </span>            :         // invalid length, we subtract 2 below</a>
+<a name="182"><span class="lineNum">     182 </span><span class="lineNoCov">          0 :         _frame_ofs = 0;</span></a>
+<a name="183"><span class="lineNum">     183 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="184"><span class="lineNum">     184 </span>            :     }</a>
+<a name="185"><span class="lineNum">     185 </span>            :     </a>
+<a name="186"><span class="lineNum">     186 </span>            :     // decode whatever we got and expect</a>
+<a name="187"><span class="lineNum">     187 </span><span class="lineNoCov">          0 :     if (_frame_ofs == _frame.length + GHST_HEADER_LEN) {</span></a>
+<a name="188"><span class="lineNum">     188 </span><span class="lineNoCov">          0 :         log_data(AP_RCProtocol::GHST, timestamp_us, (const uint8_t*)&amp;_frame, _frame_ofs - GHST_HEADER_LEN);</span></a>
+<a name="189"><span class="lineNum">     189 </span>            : </a>
+<a name="190"><span class="lineNum">     190 </span>            :         // we consumed the partial frame, reset</a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineNoCov">          0 :         _frame_ofs = 0;</span></a>
+<a name="192"><span class="lineNum">     192 </span>            : </a>
+<a name="193"><span class="lineNum">     193 </span>            :         // bad CRC (payload start is +1 from frame start, so need to subtract that from frame length to get index)</a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineNoCov">          0 :         if (_frame_crc != _frame.payload[_frame.length - 2]) {</span></a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="196"><span class="lineNum">     196 </span>            :         }</a>
+<a name="197"><span class="lineNum">     197 </span>            : </a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineNoCov">          0 :         _last_frame_time_us = _last_rx_frame_time_us = timestamp_us;</span></a>
+<a name="199"><span class="lineNum">     199 </span>            :         // decode here</a>
+<a name="200"><span class="lineNum">     200 </span><span class="lineNoCov">          0 :         if (decode_ghost_packet()) {</span></a>
+<a name="201"><span class="lineNum">     201 </span><span class="lineNoCov">          0 :             _last_tx_frame_time_us = timestamp_us;  // we have received a frame from the transmitter</span></a>
+<a name="202"><span class="lineNum">     202 </span><span class="lineNoCov">          0 :             add_input(MAX_CHANNELS, _channels, false, _link_status.rssi, _link_status.link_quality);</span></a>
+<a name="203"><span class="lineNum">     203 </span>            :         }</a>
+<a name="204"><span class="lineNum">     204 </span>            :     }</a>
+<a name="205"><span class="lineNum">     205 </span>            : }</a>
+<a name="206"><span class="lineNum">     206 </span>            : </a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineCov">   27717300 : void AP_RCProtocol_GHST::update(void)</span></a>
+<a name="208"><span class="lineNum">     208 </span>            : {</a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineCov">   27717300 : }</span></a>
+<a name="210"><span class="lineNum">     210 </span>            : </a>
+<a name="211"><span class="lineNum">     211 </span>            : // write out a frame of any type</a>
+<a name="212"><span class="lineNum">     212 </span><span class="lineNoCov">          0 : bool AP_RCProtocol_GHST::write_frame(Frame* frame)</span></a>
+<a name="213"><span class="lineNum">     213 </span>            : {</a>
+<a name="214"><span class="lineNum">     214 </span><span class="lineNoCov">          0 :     AP_HAL::UARTDriver *uart = get_current_UART();</span></a>
+<a name="215"><span class="lineNum">     215 </span>            : </a>
+<a name="216"><span class="lineNum">     216 </span><span class="lineNoCov">          0 :     if (!uart) {</span></a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="218"><span class="lineNum">     218 </span>            :     }</a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span>            :     // check that we haven't been too slow in responding to the new UART data. If we respond too late then we will</a>
+<a name="221"><span class="lineNum">     221 </span>            :     // corrupt the next incoming control frame. incoming packets at max 126bits @500Hz @420k baud gives total budget of 2ms</a>
+<a name="222"><span class="lineNum">     222 </span>            :     // per packet of which we need 300us to receive a packet. outgoing packets are 126bits which require 300us to send</a>
+<a name="223"><span class="lineNum">     223 </span>            :     // leaving at most 1.4ms of delay that can be tolerated</a>
+<a name="224"><span class="lineNum">     224 </span><span class="lineNoCov">          0 :     uint64_t tend = uart-&gt;receive_time_constraint_us(1);</span></a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineNoCov">          0 :     uint64_t now = AP_HAL::micros64();</span></a>
+<a name="226"><span class="lineNum">     226 </span><span class="lineNoCov">          0 :     uint64_t tdelay = now - tend;</span></a>
+<a name="227"><span class="lineNum">     227 </span><span class="lineNoCov">          0 :     if (tdelay &gt; 1000) {</span></a>
+<a name="228"><span class="lineNum">     228 </span>            :         // we've been too slow in responding</a>
+<a name="229"><span class="lineNum">     229 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="230"><span class="lineNum">     230 </span>            :     }</a>
+<a name="231"><span class="lineNum">     231 </span>            : </a>
+<a name="232"><span class="lineNum">     232 </span>            :     // calculate crc</a>
+<a name="233"><span class="lineNum">     233 </span><span class="lineNoCov">          0 :     uint8_t crc = crc8_dvb_s2(0, frame-&gt;type);</span></a>
+<a name="234"><span class="lineNum">     234 </span><span class="lineNoCov">          0 :     for (uint8_t i = 0; i &lt; frame-&gt;length - 2; i++) {</span></a>
+<a name="235"><span class="lineNum">     235 </span><span class="lineNoCov">          0 :         crc = crc8_dvb_s2(crc, frame-&gt;payload[i]);</span></a>
+<a name="236"><span class="lineNum">     236 </span>            :     }</a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 :     frame-&gt;payload[frame-&gt;length - 2] = crc;</span></a>
+<a name="238"><span class="lineNum">     238 </span>            : </a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineNoCov">          0 :     uart-&gt;write((uint8_t*)frame, frame-&gt;length + 2);</span></a>
+<a name="240"><span class="lineNum">     240 </span><span class="lineNoCov">          0 :     uart-&gt;flush();</span></a>
+<a name="241"><span class="lineNum">     241 </span>            : </a>
+<a name="242"><span class="lineNum">     242 </span>            : #ifdef GHST_DEBUG</a>
+<a name="243"><span class="lineNum">     243 </span>            :     hal.console-&gt;printf(&quot;GHST: writing %s:&quot;, get_frame_type(frame-&gt;type, frame-&gt;payload[0]));</a>
+<a name="244"><span class="lineNum">     244 </span>            :     for (uint8_t i = 0; i &lt; frame-&gt;length + 2; i++) {</a>
+<a name="245"><span class="lineNum">     245 </span>            :         uint8_t val = ((uint8_t*)frame)[i];</a>
+<a name="246"><span class="lineNum">     246 </span>            : #ifdef GHST_DEBUG_CHARS</a>
+<a name="247"><span class="lineNum">     247 </span>            :         if (val &gt;= 32 &amp;&amp; val &lt;= 126) {</a>
+<a name="248"><span class="lineNum">     248 </span>            :             hal.console-&gt;printf(&quot; 0x%x '%c'&quot;, val, (char)val);</a>
+<a name="249"><span class="lineNum">     249 </span>            :         } else {</a>
+<a name="250"><span class="lineNum">     250 </span>            : #endif</a>
+<a name="251"><span class="lineNum">     251 </span>            :             hal.console-&gt;printf(&quot; 0x%x&quot;, val);</a>
+<a name="252"><span class="lineNum">     252 </span>            : #ifdef GHST_DEBUG_CHARS</a>
+<a name="253"><span class="lineNum">     253 </span>            :         }</a>
+<a name="254"><span class="lineNum">     254 </span>            : #endif</a>
+<a name="255"><span class="lineNum">     255 </span>            :     }</a>
+<a name="256"><span class="lineNum">     256 </span>            :     hal.console-&gt;printf(&quot;\n&quot;);</a>
+<a name="257"><span class="lineNum">     257 </span>            : #endif</a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="259"><span class="lineNum">     259 </span>            : }</a>
+<a name="260"><span class="lineNum">     260 </span>            : </a>
+<a name="261"><span class="lineNum">     261 </span><span class="lineNoCov">          0 : bool AP_RCProtocol_GHST::decode_ghost_packet()</span></a>
+<a name="262"><span class="lineNum">     262 </span>            : {</a>
+<a name="263"><span class="lineNum">     263 </span>            : #ifdef GHST_DEBUG</a>
+<a name="264"><span class="lineNum">     264 </span>            :     hal.console-&gt;printf(&quot;GHST: received %s:&quot;, get_frame_type(_frame.type));</a>
+<a name="265"><span class="lineNum">     265 </span>            :     uint8_t* fptr = (uint8_t*)&amp;_frame;</a>
+<a name="266"><span class="lineNum">     266 </span>            :     for (uint8_t i = 0; i &lt; _frame.length + 2; i++) {</a>
+<a name="267"><span class="lineNum">     267 </span>            : #ifdef GHST_DEBUG_CHARS</a>
+<a name="268"><span class="lineNum">     268 </span>            :         if (fptr[i] &gt;= 32 &amp;&amp; fptr[i] &lt;= 126) {</a>
+<a name="269"><span class="lineNum">     269 </span>            :             hal.console-&gt;printf(&quot; 0x%x '%c'&quot;, fptr[i], (char)fptr[i]);</a>
+<a name="270"><span class="lineNum">     270 </span>            :         } else {</a>
+<a name="271"><span class="lineNum">     271 </span>            : #endif</a>
+<a name="272"><span class="lineNum">     272 </span>            :             hal.console-&gt;printf(&quot; 0x%x&quot;, fptr[i]);</a>
+<a name="273"><span class="lineNum">     273 </span>            : #ifdef GHST_DEBUG_CHARS</a>
+<a name="274"><span class="lineNum">     274 </span>            :         }</a>
+<a name="275"><span class="lineNum">     275 </span>            : #endif</a>
+<a name="276"><span class="lineNum">     276 </span>            :     }</a>
+<a name="277"><span class="lineNum">     277 </span>            :     hal.console-&gt;printf(&quot;\n&quot;);</a>
+<a name="278"><span class="lineNum">     278 </span>            : #endif</a>
+<a name="279"><span class="lineNum">     279 </span>            : </a>
+<a name="280"><span class="lineNum">     280 </span><span class="lineNoCov">          0 :     const RadioFrame* radio_frame = (const RadioFrame*)(&amp;_frame.payload);</span></a>
+<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :     const Channels12Bit_4Chan* channels = &amp;(radio_frame-&gt;channels);</span></a>
+<a name="282"><span class="lineNum">     282 </span><span class="lineNoCov">          0 :     const uint8_t* lowres_channels = radio_frame-&gt;lowres_channels;</span></a>
+<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 :     bool rc_frame = false;</span></a>
+<a name="284"><span class="lineNum">     284 </span>            : </a>
+<a name="285"><span class="lineNum">     285 </span>            :     // Scaling from Betaflight</a>
+<a name="286"><span class="lineNum">     286 </span>            :     // Scaling 12bit channels (8bit channels in brackets)</a>
+<a name="287"><span class="lineNum">     287 </span>            :     //      OpenTx          RC   PWM (BF)</a>
+<a name="288"><span class="lineNum">     288 </span>            :     // min  -1024        0(  0)     988us</a>
+<a name="289"><span class="lineNum">     289 </span>            :     // ctr      0     2048(128)    1500us</a>
+<a name="290"><span class="lineNum">     290 </span>            :     // max   1024     4096(256)    2012us</a>
+<a name="291"><span class="lineNum">     291 </span>            :     //</a>
+<a name="292"><span class="lineNum">     292 </span>            : </a>
+<a name="293"><span class="lineNum">     293 </span>            :     // Scaling legacy (nearly 10bit)</a>
+<a name="294"><span class="lineNum">     294 </span>            :     // derived from original SBus scaling, with slight correction for offset</a>
+<a name="295"><span class="lineNum">     295 </span>            :     // now symmetrical around OpenTx 0 value</a>
+<a name="296"><span class="lineNum">     296 </span>            :     // scaling is:</a>
+<a name="297"><span class="lineNum">     297 </span>            :     //      OpenTx         RC   PWM (BF)</a>
+<a name="298"><span class="lineNum">     298 </span>            :     // min  -1024     172( 22)     988us</a>
+<a name="299"><span class="lineNum">     299 </span>            :     // ctr      0     992(124)    1500us</a>
+<a name="300"><span class="lineNum">     300 </span>            :     // max   1024    1811(226)    2012us</a>
+<a name="301"><span class="lineNum">     301 </span>            : </a>
+<a name="302"><span class="lineNum">     302 </span>            : #define CHANNEL_RESCALE(x) (((5 * x) &gt;&gt; 2) - 430)</a>
+<a name="303"><span class="lineNum">     303 </span>            : #define CHANNEL_SCALE(x) (int32_t(x) / 4 + 988)</a>
+<a name="304"><span class="lineNum">     304 </span>            : #define CHANNEL_SCALE_LEGACY(x) CHANNEL_SCALE(CHANNEL_RESCALE(x))</a>
+<a name="305"><span class="lineNum">     305 </span>            : </a>
+<a name="306"><span class="lineNum">     306 </span>            :     // legacy scaling</a>
+<a name="307"><span class="lineNum">     307 </span><span class="lineNoCov">          0 :     if (_frame.type &gt;= GHST_UL_RC_CHANS_HS4_5TO8 &amp;&amp; _frame.type &lt;= GHST_UL_RC_CHANS_RSSI) {</span></a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineNoCov">          0 :         _channels[0] = CHANNEL_SCALE_LEGACY(channels-&gt;ch0);</span></a>
+<a name="309"><span class="lineNum">     309 </span><span class="lineNoCov">          0 :         _channels[1] = CHANNEL_SCALE_LEGACY(channels-&gt;ch1);</span></a>
+<a name="310"><span class="lineNum">     310 </span><span class="lineNoCov">          0 :         _channels[2] = CHANNEL_SCALE_LEGACY(channels-&gt;ch2);</span></a>
+<a name="311"><span class="lineNum">     311 </span><span class="lineNoCov">          0 :         _channels[3] = CHANNEL_SCALE_LEGACY(channels-&gt;ch3);</span></a>
+<a name="312"><span class="lineNum">     312 </span>            :     } else {</a>
+<a name="313"><span class="lineNum">     313 </span><span class="lineNoCov">          0 :         _channels[0] = CHANNEL_SCALE(channels-&gt;ch0);</span></a>
+<a name="314"><span class="lineNum">     314 </span><span class="lineNoCov">          0 :         _channels[1] = CHANNEL_SCALE(channels-&gt;ch1);</span></a>
+<a name="315"><span class="lineNum">     315 </span><span class="lineNoCov">          0 :         _channels[2] = CHANNEL_SCALE(channels-&gt;ch2);</span></a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineNoCov">          0 :         _channels[3] = CHANNEL_SCALE(channels-&gt;ch3);</span></a>
+<a name="317"><span class="lineNum">     317 </span>            :     }</a>
+<a name="318"><span class="lineNum">     318 </span>            : </a>
+<a name="319"><span class="lineNum">     319 </span>            : #define CHANNEL_LR_RESCALE(x) (5 * x - 108)</a>
+<a name="320"><span class="lineNum">     320 </span>            : #define CHANNEL_LR_SCALE(x) (int32_t(x) * 2 + 988)</a>
+<a name="321"><span class="lineNum">     321 </span>            : #define CHANNEL_LR_SCALE_LEGACY(x) (CHANNEL_LR_RESCALE(x) + 988)</a>
+<a name="322"><span class="lineNum">     322 </span>            : </a>
+<a name="323"><span class="lineNum">     323 </span><span class="lineNoCov">          0 :     switch (_frame.type) {</span></a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineNoCov">          0 :         case GHST_UL_RC_CHANS_HS4_5TO8:</span></a>
+<a name="325"><span class="lineNum">     325 </span>            :         case GHST_UL_RC_CHANS_HS4_9TO12:</a>
+<a name="326"><span class="lineNum">     326 </span>            :         case GHST_UL_RC_CHANS_HS4_13TO16: {</a>
+<a name="327"><span class="lineNum">     327 </span><span class="lineNoCov">          0 :             uint8_t offset = (_frame.type - GHST_UL_RC_CHANS_HS4_5TO8 + 1) * 4;</span></a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineNoCov">          0 :             _channels[offset++] = CHANNEL_LR_SCALE_LEGACY(lowres_channels[0]);</span></a>
+<a name="329"><span class="lineNum">     329 </span><span class="lineNoCov">          0 :             _channels[offset++] = CHANNEL_LR_SCALE_LEGACY(lowres_channels[1]);</span></a>
+<a name="330"><span class="lineNum">     330 </span><span class="lineNoCov">          0 :             _channels[offset++] = CHANNEL_LR_SCALE_LEGACY(lowres_channels[2]);</span></a>
+<a name="331"><span class="lineNum">     331 </span><span class="lineNoCov">          0 :             _channels[offset++] = CHANNEL_LR_SCALE_LEGACY(lowres_channels[3]);</span></a>
+<a name="332"><span class="lineNum">     332 </span><span class="lineNoCov">          0 :             rc_frame = true;</span></a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="334"><span class="lineNum">     334 </span>            :         }</a>
+<a name="335"><span class="lineNum">     335 </span><span class="lineNoCov">          0 :         case GHST_UL_RC_CHANS_HS4_12_5TO8:</span></a>
+<a name="336"><span class="lineNum">     336 </span>            :         case GHST_UL_RC_CHANS_HS4_12_9TO12:</a>
+<a name="337"><span class="lineNum">     337 </span>            :         case GHST_UL_RC_CHANS_HS4_12_13TO16: {</a>
+<a name="338"><span class="lineNum">     338 </span><span class="lineNoCov">          0 :             uint8_t offset = (_frame.type - GHST_UL_RC_CHANS_HS4_12_5TO8 + 1) * 4;</span></a>
+<a name="339"><span class="lineNum">     339 </span><span class="lineNoCov">          0 :             _channels[offset++] = CHANNEL_LR_SCALE(lowres_channels[0]);</span></a>
+<a name="340"><span class="lineNum">     340 </span><span class="lineNoCov">          0 :             _channels[offset++] = CHANNEL_LR_SCALE(lowres_channels[1]);</span></a>
+<a name="341"><span class="lineNum">     341 </span><span class="lineNoCov">          0 :             _channels[offset++] = CHANNEL_LR_SCALE(lowres_channels[2]);</span></a>
+<a name="342"><span class="lineNum">     342 </span><span class="lineNoCov">          0 :             _channels[offset++] = CHANNEL_LR_SCALE(lowres_channels[3]);</span></a>
+<a name="343"><span class="lineNum">     343 </span><span class="lineNoCov">          0 :             rc_frame = true;</span></a>
+<a name="344"><span class="lineNum">     344 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="345"><span class="lineNum">     345 </span>            :         }</a>
+<a name="346"><span class="lineNum">     346 </span><span class="lineNoCov">          0 :         case GHST_UL_RC_CHANS_RSSI:</span></a>
+<a name="347"><span class="lineNum">     347 </span>            :         case GHST_UL_RC_CHANS_12_RSSI:</a>
+<a name="348"><span class="lineNum">     348 </span><span class="lineNoCov">          0 :             process_link_stats_frame((uint8_t*)&amp;_frame.payload);</span></a>
+<a name="349"><span class="lineNum">     349 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="350"><span class="lineNum">     350 </span>            : </a>
+<a name="351"><span class="lineNum">     351 </span><span class="lineNoCov">          0 :         default:</span></a>
+<a name="352"><span class="lineNum">     352 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="353"><span class="lineNum">     353 </span>            :     }</a>
+<a name="354"><span class="lineNum">     354 </span>            : </a>
+<a name="355"><span class="lineNum">     355 </span>            : #if AP_GHST_TELEM_ENABLED</a>
+<a name="356"><span class="lineNum">     356 </span><span class="lineNoCov">          0 :     if (AP_GHST_Telem::process_frame(FrameType(_frame.type), (uint8_t*)&amp;_frame.payload)) {</span></a>
+<a name="357"><span class="lineNum">     357 </span><span class="lineNoCov">          0 :         process_telemetry();</span></a>
+<a name="358"><span class="lineNum">     358 </span>            :     }</a>
+<a name="359"><span class="lineNum">     359 </span>            : #endif</a>
+<a name="360"><span class="lineNum">     360 </span>            : </a>
+<a name="361"><span class="lineNum">     361 </span><span class="lineNoCov">          0 :     return rc_frame;</span></a>
+<a name="362"><span class="lineNum">     362 </span>            : }</a>
+<a name="363"><span class="lineNum">     363 </span>            : </a>
+<a name="364"><span class="lineNum">     364 </span>            : // send out telemetry</a>
+<a name="365"><span class="lineNum">     365 </span><span class="lineNoCov">          0 : bool AP_RCProtocol_GHST::process_telemetry(bool check_constraint)</span></a>
+<a name="366"><span class="lineNum">     366 </span>            : {</a>
+<a name="367"><span class="lineNum">     367 </span>            : </a>
+<a name="368"><span class="lineNum">     368 </span><span class="lineNoCov">          0 :     AP_HAL::UARTDriver *uart = get_current_UART();</span></a>
+<a name="369"><span class="lineNum">     369 </span><span class="lineNoCov">          0 :     if (!uart) {</span></a>
+<a name="370"><span class="lineNum">     370 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="371"><span class="lineNum">     371 </span>            :     }</a>
+<a name="372"><span class="lineNum">     372 </span>            : </a>
+<a name="373"><span class="lineNum">     373 </span><span class="lineNoCov">          0 :     if (!telem_available) {</span></a>
+<a name="374"><span class="lineNum">     374 </span>            : #if AP_GHST_TELEM_ENABLED</a>
+<a name="375"><span class="lineNum">     375 </span><span class="lineNoCov">          0 :         if (AP_GHST_Telem::get_telem_data(&amp;_telemetry_frame, is_tx_active())) {</span></a>
+<a name="376"><span class="lineNum">     376 </span><span class="lineNoCov">          0 :             telem_available = true;</span></a>
+<a name="377"><span class="lineNum">     377 </span>            :         } else {</a>
+<a name="378"><span class="lineNum">     378 </span><span class="lineNoCov">          0 :             return false;</span></a>
+<a name="379"><span class="lineNum">     379 </span>            :         }</a>
+<a name="380"><span class="lineNum">     380 </span>            : #else</a>
+<a name="381"><span class="lineNum">     381 </span>            :         return false;</a>
+<a name="382"><span class="lineNum">     382 </span>            : #endif</a>
+<a name="383"><span class="lineNum">     383 </span>            :     }</a>
+<a name="384"><span class="lineNum">     384 </span><span class="lineNoCov">          0 :     if (!write_frame(&amp;_telemetry_frame)) {</span></a>
+<a name="385"><span class="lineNum">     385 </span><span class="lineNoCov">          0 :         return false;</span></a>
+<a name="386"><span class="lineNum">     386 </span>            :     }</a>
+<a name="387"><span class="lineNum">     387 </span>            : </a>
+<a name="388"><span class="lineNum">     388 </span>            :     // get fresh telem_data in the next call</a>
+<a name="389"><span class="lineNum">     389 </span><span class="lineNoCov">          0 :     telem_available = false;</span></a>
+<a name="390"><span class="lineNum">     390 </span>            : </a>
+<a name="391"><span class="lineNum">     391 </span><span class="lineNoCov">          0 :     return true;</span></a>
+<a name="392"><span class="lineNum">     392 </span>            : }</a>
+<a name="393"><span class="lineNum">     393 </span>            : </a>
+<a name="394"><span class="lineNum">     394 </span>            : // process link statistics to get RSSI</a>
+<a name="395"><span class="lineNum">     395 </span><span class="lineNoCov">          0 : void AP_RCProtocol_GHST::process_link_stats_frame(const void* data)</span></a>
+<a name="396"><span class="lineNum">     396 </span>            : {</a>
+<a name="397"><span class="lineNum">     397 </span><span class="lineNoCov">          0 :     const LinkStatisticsFrame* link = (const LinkStatisticsFrame*)data;</span></a>
+<a name="398"><span class="lineNum">     398 </span>            : </a>
+<a name="399"><span class="lineNum">     399 </span>            :     uint8_t rssi_dbm;</a>
+<a name="400"><span class="lineNum">     400 </span><span class="lineNoCov">          0 :     rssi_dbm = link-&gt;rssi_dbm;</span></a>
+<a name="401"><span class="lineNum">     401 </span><span class="lineNoCov">          0 :     _link_status.link_quality = link-&gt;link_quality;</span></a>
+<a name="402"><span class="lineNum">     402 </span><span class="lineNoCov">          0 :     if (_use_lq_for_rssi) {</span></a>
+<a name="403"><span class="lineNum">     403 </span><span class="lineNoCov">          0 :         _link_status.rssi = derive_scaled_lq_value(link-&gt;link_quality);</span></a>
+<a name="404"><span class="lineNum">     404 </span>            :     } else{</a>
+<a name="405"><span class="lineNum">     405 </span>            :         // AP rssi: -1 for unknown, 0 for no link, 255 for maximum link</a>
+<a name="406"><span class="lineNum">     406 </span><span class="lineNoCov">          0 :         if (rssi_dbm &lt; 50) {</span></a>
+<a name="407"><span class="lineNum">     407 </span><span class="lineNoCov">          0 :             _link_status.rssi = 255;</span></a>
+<a name="408"><span class="lineNum">     408 </span><span class="lineNoCov">          0 :         } else if (rssi_dbm &gt; 120) {</span></a>
+<a name="409"><span class="lineNum">     409 </span><span class="lineNoCov">          0 :             _link_status.rssi = 0;</span></a>
+<a name="410"><span class="lineNum">     410 </span>            :         } else {</a>
+<a name="411"><span class="lineNum">     411 </span>            :             // this is an approximation recommended by Remo from TBS</a>
+<a name="412"><span class="lineNum">     412 </span><span class="lineNoCov">          0 :             _link_status.rssi = int16_t(roundf((1.0f - (rssi_dbm - 50.0f) / 70.0f) * 255.0f));</span></a>
+<a name="413"><span class="lineNum">     413 </span>            :         }</a>
+<a name="414"><span class="lineNum">     414 </span>            :     }</a>
+<a name="415"><span class="lineNum">     415 </span>            : </a>
+<a name="416"><span class="lineNum">     416 </span><span class="lineNoCov">          0 :     _link_status.rf_mode = link-&gt;protocol;</span></a>
+<a name="417"><span class="lineNum">     417 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="418"><span class="lineNum">     418 </span>            : </a>
+<a name="419"><span class="lineNum">     419 </span><span class="lineNoCov">          0 : bool AP_RCProtocol_GHST::is_telemetry_supported() const</span></a>
+<a name="420"><span class="lineNum">     420 </span>            : {</a>
+<a name="421"><span class="lineNum">     421 </span><span class="lineNoCov">          0 :     return _link_status.rf_mode == AP_RCProtocol_GHST::GHST_RF_MODE_NORMAL</span></a>
+<a name="422"><span class="lineNum">     422 </span><span class="lineNoCov">          0 :            || _link_status.rf_mode == AP_RCProtocol_GHST::GHST_RF_MODE_RACE</span></a>
+<a name="423"><span class="lineNum">     423 </span><span class="lineNoCov">          0 :            || _link_status.rf_mode == AP_RCProtocol_GHST::GHST_RF_MODE_LR</span></a>
+<a name="424"><span class="lineNum">     424 </span><span class="lineNoCov">          0 :            || _link_status.rf_mode == AP_RCProtocol_GHST::GHST_RF_MODE_RACE250;</span></a>
+<a name="425"><span class="lineNum">     425 </span>            : }</a>
+<a name="426"><span class="lineNum">     426 </span>            : </a>
+<a name="427"><span class="lineNum">     427 </span>            : // process a byte provided by a uart</a>
+<a name="428"><span class="lineNum">     428 </span><span class="lineNoCov">          0 : void AP_RCProtocol_GHST::process_byte(uint8_t byte, uint32_t baudrate)</span></a>
+<a name="429"><span class="lineNum">     429 </span>            : {</a>
+<a name="430"><span class="lineNum">     430 </span>            :     // reject RC data if we have been configured for standalone mode</a>
+<a name="431"><span class="lineNum">     431 </span><span class="lineNoCov">          0 :     if (baudrate != CRSF_BAUDRATE &amp;&amp; baudrate != GHST_BAUDRATE) {</span></a>
+<a name="432"><span class="lineNum">     432 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="433"><span class="lineNum">     433 </span>            :     }</a>
+<a name="434"><span class="lineNum">     434 </span><span class="lineNoCov">          0 :     _process_byte(AP_HAL::micros(), byte);</span></a>
+<a name="435"><span class="lineNum">     435 </span>            : }</a>
+<a name="436"><span class="lineNum">     436 </span>            : </a>
+<a name="437"><span class="lineNum">     437 </span>            : // change the bootstrap baud rate to Ghost standard if configured</a>
+<a name="438"><span class="lineNum">     438 </span><span class="lineCov">          4 : void AP_RCProtocol_GHST::process_handshake(uint32_t baudrate)</span></a>
+<a name="439"><span class="lineNum">     439 </span>            : {</a>
+<a name="440"><span class="lineNum">     440 </span><span class="lineCov">          4 :     AP_HAL::UARTDriver *uart = get_current_UART();</span></a>
+<a name="441"><span class="lineNum">     441 </span>            : </a>
+<a name="442"><span class="lineNum">     442 </span>            :     // only change the baudrate if we are specifically bootstrapping Ghost</a>
+<a name="443"><span class="lineNum">     443 </span><span class="lineCov">          4 :     if (uart == nullptr</span></a>
+<a name="444"><span class="lineNum">     444 </span><span class="lineCov">          4 :         || baudrate != CRSF_BAUDRATE</span></a>
+<a name="445"><span class="lineNum">     445 </span><span class="lineNoCov">          0 :         || baudrate == GHST_BAUDRATE</span></a>
+<a name="446"><span class="lineNum">     446 </span><span class="lineNoCov">          0 :         || uart-&gt;get_baud_rate() == GHST_BAUDRATE</span></a>
+<a name="447"><span class="lineNum">     447 </span><span class="lineCov">          8 :         || !protocol_enabled(AP_RCProtocol::GHST)) {</span></a>
+<a name="448"><span class="lineNum">     448 </span><span class="lineCov">          4 :         return;</span></a>
+<a name="449"><span class="lineNum">     449 </span>            :     }</a>
+<a name="450"><span class="lineNum">     450 </span>            : #if AP_RCPROTOCOL_CRSF_ENABLED</a>
+<a name="451"><span class="lineNum">     451 </span><span class="lineNoCov">          0 :     if (protocol_enabled(AP_RCProtocol::CRSF)) {</span></a>
+<a name="452"><span class="lineNum">     452 </span>            :         // don't fight CRSF</a>
+<a name="453"><span class="lineNum">     453 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="454"><span class="lineNum">     454 </span>            :     }</a>
+<a name="455"><span class="lineNum">     455 </span>            : #endif</a>
+<a name="456"><span class="lineNum">     456 </span>            : </a>
+<a name="457"><span class="lineNum">     457 </span><span class="lineNoCov">          0 :     uart-&gt;begin(GHST_BAUDRATE);</span></a>
+<a name="458"><span class="lineNum">     458 </span>            : }</a>
+<a name="459"><span class="lineNum">     459 </span>            : </a>
+<a name="460"><span class="lineNum">     460 </span>            : //returns uplink link quality on 0-255 scale</a>
+<a name="461"><span class="lineNum">     461 </span><span class="lineNoCov">          0 : int16_t AP_RCProtocol_GHST::derive_scaled_lq_value(uint8_t uplink_lq)</span></a>
+<a name="462"><span class="lineNum">     462 </span>            : {</a>
+<a name="463"><span class="lineNum">     463 </span><span class="lineNoCov">          0 :     return int16_t(roundf(constrain_float(uplink_lq*2.5f,0,255)));</span></a>
+<a name="464"><span class="lineNum">     464 </span>            : }</a>
+<a name="465"><span class="lineNum">     465 </span>            : </a>
+<a name="466"><span class="lineNum">     466 </span>            : namespace AP {</a>
+<a name="467"><span class="lineNum">     467 </span><span class="lineNoCov">          0 :     AP_RCProtocol_GHST* ghost() {</span></a>
+<a name="468"><span class="lineNum">     468 </span><span class="lineNoCov">          0 :         return AP_RCProtocol_GHST::get_singleton();</span></a>
+<a name="469"><span class="lineNum">     469 </span>            :     }</a>
+<a name="470"><span class="lineNum">     470 </span>            : };</a>
+<a name="471"><span class="lineNum">     471 </span>            : </a>
+<a name="472"><span class="lineNum">     472 </span>            : #endif  // AP_RCPROTOCOL_GHST_ENABLED</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

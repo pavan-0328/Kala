@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - libraries/AP_GPS/AP_GPS_NMEA.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">libraries/AP_GPS</a> - AP_GPS_NMEA.h<span style="font-size: 80%;"> (source / <a href="AP_GPS_NMEA.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2026-01-12 12:53:51</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :    This program is free software: you can redistribute it and/or modify</a>
+<a name="3"><span class="lineNum">       3 </span>            :    it under the terms of the GNU General Public License as published by</a>
+<a name="4"><span class="lineNum">       4 </span>            :    the Free Software Foundation, either version 3 of the License, or</a>
+<a name="5"><span class="lineNum">       5 </span>            :    (at your option) any later version.</a>
+<a name="6"><span class="lineNum">       6 </span>            : </a>
+<a name="7"><span class="lineNum">       7 </span>            :    This program is distributed in the hope that it will be useful,</a>
+<a name="8"><span class="lineNum">       8 </span>            :    but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<a name="9"><span class="lineNum">       9 </span>            :    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<a name="10"><span class="lineNum">      10 </span>            :    GNU General Public License for more details.</a>
+<a name="11"><span class="lineNum">      11 </span>            : </a>
+<a name="12"><span class="lineNum">      12 </span>            :    You should have received a copy of the GNU General Public License</a>
+<a name="13"><span class="lineNum">      13 </span>            :    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  */</a>
+<a name="15"><span class="lineNum">      15 </span>            : </a>
+<a name="16"><span class="lineNum">      16 </span>            : //</a>
+<a name="17"><span class="lineNum">      17 </span>            : // NMEA parser, adapted by Michael Smith from TinyGPS v9:</a>
+<a name="18"><span class="lineNum">      18 </span>            : //</a>
+<a name="19"><span class="lineNum">      19 </span>            : // TinyGPS - a small GPS library for Arduino providing basic NMEA parsing</a>
+<a name="20"><span class="lineNum">      20 </span>            : // Copyright (C) 2008-9 Mikal Hart</a>
+<a name="21"><span class="lineNum">      21 </span>            : // All rights reserved.</a>
+<a name="22"><span class="lineNum">      22 </span>            : //</a>
+<a name="23"><span class="lineNum">      23 </span>            : //</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            : /// @file       AP_GPS_NMEA.h</a>
+<a name="26"><span class="lineNum">      26 </span>            : /// @brief      NMEA protocol parser</a>
+<a name="27"><span class="lineNum">      27 </span>            : ///</a>
+<a name="28"><span class="lineNum">      28 </span>            : /// This is a lightweight NMEA parser, derived originally from the</a>
+<a name="29"><span class="lineNum">      29 </span>            : /// TinyGPS parser by Mikal Hart.  It is frugal in its use of memory</a>
+<a name="30"><span class="lineNum">      30 </span>            : /// and tries to avoid unnecessary arithmetic.</a>
+<a name="31"><span class="lineNum">      31 </span>            : ///</a>
+<a name="32"><span class="lineNum">      32 </span>            : /// The parser handles GPGGA, GPRMC and GPVTG messages, and attempts to be</a>
+<a name="33"><span class="lineNum">      33 </span>            : /// robust in the face of occasional corruption in the input stream.  It</a>
+<a name="34"><span class="lineNum">      34 </span>            : /// makes a basic effort to configure GPS' that are likely to be connected in</a>
+<a name="35"><span class="lineNum">      35 </span>            : /// NMEA mode (SiRF, MediaTek and ublox) to emit the correct message</a>
+<a name="36"><span class="lineNum">      36 </span>            : /// stream, but does not validate that the correct stream is being received.</a>
+<a name="37"><span class="lineNum">      37 </span>            : /// In particular, a unit emitting just GPRMC will show as having a fix</a>
+<a name="38"><span class="lineNum">      38 </span>            : /// even though no altitude data is being received.</a>
+<a name="39"><span class="lineNum">      39 </span>            : ///</a>
+<a name="40"><span class="lineNum">      40 </span>            : /// GPVTG data is parsed, but as the message may not contain the the</a>
+<a name="41"><span class="lineNum">      41 </span>            : /// qualifier field (this is common with e.g. older SiRF units) it is</a>
+<a name="42"><span class="lineNum">      42 </span>            : /// not considered a source of fix-valid information.</a>
+<a name="43"><span class="lineNum">      43 </span>            : ///</a>
+<a name="44"><span class="lineNum">      44 </span>            : #pragma once</a>
+<a name="45"><span class="lineNum">      45 </span>            : </a>
+<a name="46"><span class="lineNum">      46 </span>            : #include &quot;AP_GPS.h&quot;</a>
+<a name="47"><span class="lineNum">      47 </span>            : #include &quot;GPS_Backend.h&quot;</a>
+<a name="48"><span class="lineNum">      48 </span>            : </a>
+<a name="49"><span class="lineNum">      49 </span>            : #if AP_GPS_NMEA_ENABLED</a>
+<a name="50"><span class="lineNum">      50 </span>            : /// NMEA parser</a>
+<a name="51"><span class="lineNum">      51 </span>            : ///</a>
+<a name="52"><span class="lineNum">      52 </span>            : class AP_GPS_NMEA : public AP_GPS_Backend</a>
+<a name="53"><span class="lineNum">      53 </span>            : {</a>
+<a name="54"><span class="lineNum">      54 </span>            :     friend class AP_GPS_NMEA_Test;</a>
+<a name="55"><span class="lineNum">      55 </span>            : </a>
+<a name="56"><span class="lineNum">      56 </span>            : public:</a>
+<a name="57"><span class="lineNum">      57 </span>            : </a>
+<a name="58"><span class="lineNum">      58 </span>            :     using AP_GPS_Backend::AP_GPS_Backend;</a>
+<a name="59"><span class="lineNum">      59 </span>            : </a>
+<a name="60"><span class="lineNum">      60 </span>            :     /// Checks the serial receive buffer for characters,</a>
+<a name="61"><span class="lineNum">      61 </span>            :     /// attempts to parse NMEA data and updates internal state</a>
+<a name="62"><span class="lineNum">      62 </span>            :     /// accordingly.</a>
+<a name="63"><span class="lineNum">      63 </span>            :     bool        read() override;</a>
+<a name="64"><span class="lineNum">      64 </span>            : </a>
+<a name="65"><span class="lineNum">      65 </span>            :         static bool _detect(struct NMEA_detect_state &amp;state, uint8_t data);</a>
+<a name="66"><span class="lineNum">      66 </span>            : </a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">          2 :     const char *name() const override { return &quot;NMEA&quot;; }</span></a>
+<a name="68"><span class="lineNum">      68 </span>            : </a>
+<a name="69"><span class="lineNum">      69 </span>            :     // driver specific health, returns true if the driver is healthy</a>
+<a name="70"><span class="lineNum">      70 </span>            :     bool is_healthy(void) const override;</a>
+<a name="71"><span class="lineNum">      71 </span>            : </a>
+<a name="72"><span class="lineNum">      72 </span>            :     // get lag in seconds</a>
+<a name="73"><span class="lineNum">      73 </span>            :     bool get_lag(float &amp;lag_sec) const override;</a>
+<a name="74"><span class="lineNum">      74 </span>            : </a>
+<a name="75"><span class="lineNum">      75 </span>            : #if HAL_LOGGING_ENABLED</a>
+<a name="76"><span class="lineNum">      76 </span>            :     void Write_AP_Logger_Log_Startup_messages() const override;</a>
+<a name="77"><span class="lineNum">      77 </span>            : #endif</a>
+<a name="78"><span class="lineNum">      78 </span>            : </a>
+<a name="79"><span class="lineNum">      79 </span>            : private:</a>
+<a name="80"><span class="lineNum">      80 </span>            :     /// Coding for the GPS sentences that the parser handles</a>
+<a name="81"><span class="lineNum">      81 </span>            :     enum _sentence_types : uint16_t {      //there are some more than 10 fields in some sentences , thus we have to increase these value.</a>
+<a name="82"><span class="lineNum">      82 </span>            :         _GPS_SENTENCE_RMC = 32,</a>
+<a name="83"><span class="lineNum">      83 </span>            :         _GPS_SENTENCE_GGA = 64,</a>
+<a name="84"><span class="lineNum">      84 </span>            :         _GPS_SENTENCE_VTG = 96,</a>
+<a name="85"><span class="lineNum">      85 </span>            :         _GPS_SENTENCE_HDT = 128,</a>
+<a name="86"><span class="lineNum">      86 </span>            :         _GPS_SENTENCE_PHD = 138, // extension for AllyStar GPS modules</a>
+<a name="87"><span class="lineNum">      87 </span>            :         _GPS_SENTENCE_THS = 160, // True heading with quality indicator, available on Trimble MB-Two</a>
+<a name="88"><span class="lineNum">      88 </span>            :         _GPS_SENTENCE_KSXT = 170, // extension for Unicore, 21 fields</a>
+<a name="89"><span class="lineNum">      89 </span>            :         _GPS_SENTENCE_AGRICA = 193, // extension for Unicore, 65 fields</a>
+<a name="90"><span class="lineNum">      90 </span>            :         _GPS_SENTENCE_VERSIONA = 270, // extension for Unicore, version, 10 fields</a>
+<a name="91"><span class="lineNum">      91 </span>            :         _GPS_SENTENCE_UNIHEADINGA = 290, // extension for Unicore, uniheadinga, 20 fields</a>
+<a name="92"><span class="lineNum">      92 </span>            :         _GPS_SENTENCE_OTHER = 0</a>
+<a name="93"><span class="lineNum">      93 </span>            :     };</a>
+<a name="94"><span class="lineNum">      94 </span>            : </a>
+<a name="95"><span class="lineNum">      95 </span>            :     /// Update the decode state machine with a new character</a>
+<a name="96"><span class="lineNum">      96 </span>            :     ///</a>
+<a name="97"><span class="lineNum">      97 </span>            :     /// @param  c               The next character in the NMEA input stream</a>
+<a name="98"><span class="lineNum">      98 </span>            :     /// @returns                True if processing the character has resulted in</a>
+<a name="99"><span class="lineNum">      99 </span>            :     ///                                 an update to the GPS state</a>
+<a name="100"><span class="lineNum">     100 </span>            :     ///</a>
+<a name="101"><span class="lineNum">     101 </span>            :     bool                        _decode(char c);</a>
+<a name="102"><span class="lineNum">     102 </span>            : </a>
+<a name="103"><span class="lineNum">     103 </span>            :     /// Parses the @p as a NMEA-style decimal number with</a>
+<a name="104"><span class="lineNum">     104 </span>            :     /// up to 3 decimal digits.</a>
+<a name="105"><span class="lineNum">     105 </span>            :     ///</a>
+<a name="106"><span class="lineNum">     106 </span>            :     /// @returns                The value expressed by the string in @p,</a>
+<a name="107"><span class="lineNum">     107 </span>            :     ///                                 multiplied by 100.</a>
+<a name="108"><span class="lineNum">     108 </span>            :     ///</a>
+<a name="109"><span class="lineNum">     109 </span>            :     static int32_t _parse_decimal_100(const char *p);</a>
+<a name="110"><span class="lineNum">     110 </span>            : </a>
+<a name="111"><span class="lineNum">     111 </span>            :     /// Parses the current term as a NMEA-style degrees + minutes</a>
+<a name="112"><span class="lineNum">     112 </span>            :     /// value with up to four decimal digits.</a>
+<a name="113"><span class="lineNum">     113 </span>            :     ///</a>
+<a name="114"><span class="lineNum">     114 </span>            :     /// This gives a theoretical resolution limit of around 1cm.</a>
+<a name="115"><span class="lineNum">     115 </span>            :     ///</a>
+<a name="116"><span class="lineNum">     116 </span>            :     /// @returns                The value expressed by the string in _term,</a>
+<a name="117"><span class="lineNum">     117 </span>            :     ///                                 multiplied by 1e7.</a>
+<a name="118"><span class="lineNum">     118 </span>            :     ///</a>
+<a name="119"><span class="lineNum">     119 </span>            :     uint32_t    _parse_degrees();</a>
+<a name="120"><span class="lineNum">     120 </span>            : </a>
+<a name="121"><span class="lineNum">     121 </span>            :     /// Processes the current term when it has been deemed to be</a>
+<a name="122"><span class="lineNum">     122 </span>            :     /// complete.</a>
+<a name="123"><span class="lineNum">     123 </span>            :     ///</a>
+<a name="124"><span class="lineNum">     124 </span>            :     /// Each GPS message is broken up into terms separated by commas.</a>
+<a name="125"><span class="lineNum">     125 </span>            :     /// Each term is then processed by this function as it is received.</a>
+<a name="126"><span class="lineNum">     126 </span>            :     ///</a>
+<a name="127"><span class="lineNum">     127 </span>            :     /// @returns                True if completing the term has resulted in</a>
+<a name="128"><span class="lineNum">     128 </span>            :     ///                                 an update to the GPS state.</a>
+<a name="129"><span class="lineNum">     129 </span>            :     bool                        _term_complete();</a>
+<a name="130"><span class="lineNum">     130 </span>            : </a>
+<a name="131"><span class="lineNum">     131 </span>            :     /// return true if we have a new set of NMEA messages</a>
+<a name="132"><span class="lineNum">     132 </span>            :     bool _have_new_message(void);</a>
+<a name="133"><span class="lineNum">     133 </span>            : </a>
+<a name="134"><span class="lineNum">     134 </span>            : #if AP_GPS_NMEA_UNICORE_ENABLED</a>
+<a name="135"><span class="lineNum">     135 </span>            :     /*</a>
+<a name="136"><span class="lineNum">     136 </span>            :       parse an AGRICA field</a>
+<a name="137"><span class="lineNum">     137 </span>            :      */</a>
+<a name="138"><span class="lineNum">     138 </span>            :     void parse_agrica_field(uint16_t term_number, const char *term);</a>
+<a name="139"><span class="lineNum">     139 </span>            : </a>
+<a name="140"><span class="lineNum">     140 </span>            :     // parse VERSIONA field</a>
+<a name="141"><span class="lineNum">     141 </span>            :     void parse_versiona_field(uint16_t term_number, const char *term);</a>
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<a name="143"><span class="lineNum">     143 </span>            : #if GPS_MOVING_BASELINE</a>
+<a name="144"><span class="lineNum">     144 </span>            :     // parse UNIHEADINGA field</a>
+<a name="145"><span class="lineNum">     145 </span>            :     void parse_uniheadinga_field(uint16_t term_number, const char *term);</a>
+<a name="146"><span class="lineNum">     146 </span>            : #endif</a>
+<a name="147"><span class="lineNum">     147 </span>            : #endif</a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span>            : </a>
+<a name="150"><span class="lineNum">     150 </span>            :     uint8_t _parity;                                                    ///&lt; NMEA message checksum accumulator</a>
+<a name="151"><span class="lineNum">     151 </span>            :     uint32_t _crc32;                                            ///&lt; CRC for unicore messages</a>
+<a name="152"><span class="lineNum">     152 </span>            :     bool _is_checksum_term;                                     ///&lt; current term is the checksum</a>
+<a name="153"><span class="lineNum">     153 </span>            :     char _term[30];                                                     ///&lt; buffer for the current term within the current sentence</a>
+<a name="154"><span class="lineNum">     154 </span>            :     uint16_t _sentence_type;                                     ///&lt; the sentence type currently being processed</a>
+<a name="155"><span class="lineNum">     155 </span>            :     bool _is_unicore;                                           ///&lt; true if in a unicore '#' sentence</a>
+<a name="156"><span class="lineNum">     156 </span>            :     uint16_t _term_number;                                       ///&lt; term index within the current sentence</a>
+<a name="157"><span class="lineNum">     157 </span>            :     uint8_t _term_offset;                                       ///&lt; character offset with the term being received</a>
+<a name="158"><span class="lineNum">     158 </span>            :     uint16_t _sentence_length;</a>
+<a name="159"><span class="lineNum">     159 </span>            :     bool _sentence_done;                                        ///&lt; set when a sentence has been fully decoded</a>
+<a name="160"><span class="lineNum">     160 </span>            : </a>
+<a name="161"><span class="lineNum">     161 </span>            :     // The result of parsing terms within a message is stored temporarily until</a>
+<a name="162"><span class="lineNum">     162 </span>            :     // the message is completely processed and the checksum validated.</a>
+<a name="163"><span class="lineNum">     163 </span>            :     // This avoids the need to buffer the entire message.</a>
+<a name="164"><span class="lineNum">     164 </span>            :     int32_t _new_time;                                                  ///&lt; time parsed from a term</a>
+<a name="165"><span class="lineNum">     165 </span>            :     int32_t _new_date;                                                  ///&lt; date parsed from a term</a>
+<a name="166"><span class="lineNum">     166 </span>            :     int32_t _new_latitude;                                      ///&lt; latitude parsed from a term</a>
+<a name="167"><span class="lineNum">     167 </span>            :     int32_t _new_longitude;                                     ///&lt; longitude parsed from a term</a>
+<a name="168"><span class="lineNum">     168 </span>            :     int32_t _new_altitude;                                      ///&lt; altitude parsed from a term</a>
+<a name="169"><span class="lineNum">     169 </span>            :     int32_t _new_speed;                                                 ///&lt; speed parsed from a term</a>
+<a name="170"><span class="lineNum">     170 </span>            :     int32_t _new_course;                                        ///&lt; course parsed from a term</a>
+<a name="171"><span class="lineNum">     171 </span>            :     float   _new_gps_yaw;                                        ///&lt; yaw parsed from a term</a>
+<a name="172"><span class="lineNum">     172 </span>            :     uint16_t _new_hdop;                                                 ///&lt; HDOP parsed from a term</a>
+<a name="173"><span class="lineNum">     173 </span>            :     uint8_t _new_satellite_count;                       ///&lt; satellite count parsed from a term</a>
+<a name="174"><span class="lineNum">     174 </span>            :     uint8_t _new_quality_indicator;                                     ///&lt; GPS quality indicator parsed from a term</a>
+<a name="175"><span class="lineNum">     175 </span>            : </a>
+<a name="176"><span class="lineNum">     176 </span>            :     uint32_t _last_RMC_ms;</a>
+<a name="177"><span class="lineNum">     177 </span>            :     uint32_t _last_GGA_ms;</a>
+<a name="178"><span class="lineNum">     178 </span>            :     uint32_t _last_VTG_ms;</a>
+<a name="179"><span class="lineNum">     179 </span>            :     uint32_t _last_yaw_ms;</a>
+<a name="180"><span class="lineNum">     180 </span>            :     uint32_t _last_vvelocity_ms;</a>
+<a name="181"><span class="lineNum">     181 </span>            :     uint32_t _last_vaccuracy_ms;</a>
+<a name="182"><span class="lineNum">     182 </span>            :     uint32_t _last_3D_velocity_ms;</a>
+<a name="183"><span class="lineNum">     183 </span>            :     uint32_t _last_KSXT_pos_ms;</a>
+<a name="184"><span class="lineNum">     184 </span>            :     uint32_t _last_AGRICA_ms;</a>
+<a name="185"><span class="lineNum">     185 </span>            :     uint32_t _last_fix_ms;</a>
+<a name="186"><span class="lineNum">     186 </span>            : </a>
+<a name="187"><span class="lineNum">     187 </span>            :     /// @name   Init strings</a>
+<a name="188"><span class="lineNum">     188 </span>            :     ///                 In ::init, an attempt is made to configure the GPS</a>
+<a name="189"><span class="lineNum">     189 </span>            :     ///                 unit to send just the messages that we are interested</a>
+<a name="190"><span class="lineNum">     190 </span>            :     ///                 in using these strings</a>
+<a name="191"><span class="lineNum">     191 </span>            :     //@{</a>
+<a name="192"><span class="lineNum">     192 </span>            :     static const char _SiRF_init_string[];         ///&lt; init string for SiRF units</a>
+<a name="193"><span class="lineNum">     193 </span>            :     static const char _ublox_init_string[];        ///&lt; init string for ublox units</a>
+<a name="194"><span class="lineNum">     194 </span>            :     //@}</a>
+<a name="195"><span class="lineNum">     195 </span>            : </a>
+<a name="196"><span class="lineNum">     196 </span>            :     static const char _initialisation_blob[];</a>
+<a name="197"><span class="lineNum">     197 </span>            : </a>
+<a name="198"><span class="lineNum">     198 </span>            :     /*</a>
+<a name="199"><span class="lineNum">     199 </span>            :       the $PHD message is an extension from AllyStar that gives</a>
+<a name="200"><span class="lineNum">     200 </span>            :       vertical velocity and more accuracy estimates. It is designed as</a>
+<a name="201"><span class="lineNum">     201 </span>            :       a mapping from ublox UBX protocol messages to NMEA. So class 1,</a>
+<a name="202"><span class="lineNum">     202 </span>            :       message 12 is a mapping to NMEA of the NAV-VELNED UBX message</a>
+<a name="203"><span class="lineNum">     203 </span>            :       and contains the same fields. Class 1 message 26 is called</a>
+<a name="204"><span class="lineNum">     204 </span>            :       &quot;NAV-PVERR&quot;, but does not correspond to a UBX message</a>
+<a name="205"><span class="lineNum">     205 </span>            : </a>
+<a name="206"><span class="lineNum">     206 </span>            :       example:</a>
+<a name="207"><span class="lineNum">     207 </span>            :         $PHD,01,12,TIIITTITT,,245808000,0,0,0,0,0,10260304,0,0*27</a>
+<a name="208"><span class="lineNum">     208 </span>            :         $PHD,01,26,TTTTTTT,,245808000,877,864,1451,11,11,17*17</a>
+<a name="209"><span class="lineNum">     209 </span>            :      */</a>
+<a name="210"><span class="lineNum">     210 </span>            :     struct {</a>
+<a name="211"><span class="lineNum">     211 </span>            :         uint8_t msg_class;</a>
+<a name="212"><span class="lineNum">     212 </span>            :         uint8_t msg_id;</a>
+<a name="213"><span class="lineNum">     213 </span>            :         uint32_t itow;</a>
+<a name="214"><span class="lineNum">     214 </span>            :         int32_t fields[8];</a>
+<a name="215"><span class="lineNum">     215 </span>            :     } _phd;</a>
+<a name="216"><span class="lineNum">     216 </span>            : </a>
+<a name="217"><span class="lineNum">     217 </span>            :     /*</a>
+<a name="218"><span class="lineNum">     218 </span>            :       The KSXT message is an extension from Unicore that gives 3D velocity and yaw</a>
+<a name="219"><span class="lineNum">     219 </span>            :       example: $KSXT,20211016083433.00,116.31296102,39.95817066,49.4911,223.57,-11.32,330.19,0.024,,1,3,28,27,,,,-0.012,0.021,0.020,,*2D</a>
+<a name="220"><span class="lineNum">     220 </span>            :      */</a>
+<a name="221"><span class="lineNum">     221 </span>            :     struct {</a>
+<a name="222"><span class="lineNum">     222 </span>            :         double fields[21];</a>
+<a name="223"><span class="lineNum">     223 </span>            :     } _ksxt;</a>
+<a name="224"><span class="lineNum">     224 </span>            : </a>
+<a name="225"><span class="lineNum">     225 </span>            : #if AP_GPS_NMEA_UNICORE_ENABLED</a>
+<a name="226"><span class="lineNum">     226 </span>            :     /*</a>
+<a name="227"><span class="lineNum">     227 </span>            :       unicore AGRICA message parsing</a>
+<a name="228"><span class="lineNum">     228 </span>            :      */</a>
+<a name="229"><span class="lineNum">     229 </span>            :     struct {</a>
+<a name="230"><span class="lineNum">     230 </span>            :         uint32_t start_byte;</a>
+<a name="231"><span class="lineNum">     231 </span>            :         uint8_t rtk_status;</a>
+<a name="232"><span class="lineNum">     232 </span>            :         uint8_t heading_status;</a>
+<a name="233"><span class="lineNum">     233 </span>            :         Vector3f vel_NED;</a>
+<a name="234"><span class="lineNum">     234 </span>            :         Vector3f vel_stddev;</a>
+<a name="235"><span class="lineNum">     235 </span>            :         double lat, lng;</a>
+<a name="236"><span class="lineNum">     236 </span>            :         float alt;</a>
+<a name="237"><span class="lineNum">     237 </span>            :         uint32_t itow;</a>
+<a name="238"><span class="lineNum">     238 </span>            :         float undulation;</a>
+<a name="239"><span class="lineNum">     239 </span>            :         Vector3f pos_stddev;</a>
+<a name="240"><span class="lineNum">     240 </span>            :     } _agrica;</a>
+<a name="241"><span class="lineNum">     241 </span>            : </a>
+<a name="242"><span class="lineNum">     242 </span>            :     // unicore VERSIONA parsing</a>
+<a name="243"><span class="lineNum">     243 </span>            :     struct {</a>
+<a name="244"><span class="lineNum">     244 </span>            :         char type[10];</a>
+<a name="245"><span class="lineNum">     245 </span>            :         char version[20];</a>
+<a name="246"><span class="lineNum">     246 </span>            :         char build_date[13];</a>
+<a name="247"><span class="lineNum">     247 </span>            :     } _versiona;</a>
+<a name="248"><span class="lineNum">     248 </span>            :     bool _have_unicore_versiona;</a>
+<a name="249"><span class="lineNum">     249 </span>            : </a>
+<a name="250"><span class="lineNum">     250 </span>            : #if GPS_MOVING_BASELINE</a>
+<a name="251"><span class="lineNum">     251 </span>            :     // unicore UNIHEADINGA parsing</a>
+<a name="252"><span class="lineNum">     252 </span>            :     struct {</a>
+<a name="253"><span class="lineNum">     253 </span>            :         float baseline_length;</a>
+<a name="254"><span class="lineNum">     254 </span>            :         float heading;</a>
+<a name="255"><span class="lineNum">     255 </span>            :         float pitch;</a>
+<a name="256"><span class="lineNum">     256 </span>            :         float heading_sd;</a>
+<a name="257"><span class="lineNum">     257 </span>            :     } _uniheadinga;</a>
+<a name="258"><span class="lineNum">     258 </span>            : #endif</a>
+<a name="259"><span class="lineNum">     259 </span>            : #endif // AP_GPS_NMEA_UNICORE_ENABLED</a>
+<a name="260"><span class="lineNum">     260 </span>            :     bool _expect_agrica;</a>
+<a name="261"><span class="lineNum">     261 </span>            : </a>
+<a name="262"><span class="lineNum">     262 </span>            :     // last time we sent type specific config strings</a>
+<a name="263"><span class="lineNum">     263 </span>            :     uint32_t last_config_ms;</a>
+<a name="264"><span class="lineNum">     264 </span>            : </a>
+<a name="265"><span class="lineNum">     265 </span>            :     // send type specific config strings</a>
+<a name="266"><span class="lineNum">     266 </span>            :     void send_config(void);</a>
+<a name="267"><span class="lineNum">     267 </span>            : };</a>
+<a name="268"><span class="lineNum">     268 </span>            : </a>
+<a name="269"><span class="lineNum">     269 </span>            : #if AP_GPS_NMEA_UNICORE_ENABLED &amp;&amp; !defined(NMEA_UNICORE_SETUP)</a>
+<a name="270"><span class="lineNum">     270 </span>            : // we don't know what port the GPS may be using, so configure all 3. We need to get it sending</a>
+<a name="271"><span class="lineNum">     271 </span>            : // one message to allow the NMEA detector to run</a>
+<a name="272"><span class="lineNum">     272 </span>            : #define NMEA_UNICORE_SETUP &quot;CONFIG COM1 230400 8 n 1\r\nCONFIG COM2 230400 8 n 1\r\nCONFIG COM3 230400 8 n 1\r\nGPGGA 0.2\r\n&quot;</a>
+<a name="273"><span class="lineNum">     273 </span>            : #endif</a>
+<a name="274"><span class="lineNum">     274 </span>            : </a>
+<a name="275"><span class="lineNum">     275 </span>            : #endif // AP_GPS_NMEA_ENABLED</a>
+<a name="276"><span class="lineNum">     276 </span>            : </a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
