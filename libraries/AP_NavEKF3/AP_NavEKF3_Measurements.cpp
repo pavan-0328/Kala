@@ -208,7 +208,7 @@ void NavEKF3_core::writeOptFlowMeas(const uint8_t rawFlowQuality, const Vector2f
         // the sensor interface doesn't provide a z axis rate so use the rate from the nav sensor instead
         if (delTimeOF > 0.001f) {
             // first preference is to use the rate averaged over the same sampling period as the flow sensor
-            ofDataNew.bodyRadXYZ.z = delAngBodyOF.z / delTimeOF; //never becomes zero
+            ofDataNew.bodyRadXYZ.z = delAngBodyOF.z / max(delTimeOF, 0.001f); //never becomes zero
         } else if (imuDataNew.delAngDT > 0.001f){
             // second preference is to use most recent IMU data
             ofDataNew.bodyRadXYZ.z = imuDataNew.delAng.z / imuDataNew.delAngDT;
