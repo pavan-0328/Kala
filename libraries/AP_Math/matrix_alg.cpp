@@ -35,8 +35,12 @@
 template<typename T>
 static T* matrix_multiply(const T *A, const T *B, uint16_t n)
 {
-    T* ret = NEW_NOTHROW T[n*n];
-    memset(ret,0.0f,n*n*sizeof(T));
+    uint64_t size = static_cast<uint64_t>(n)* static_cast<uint64_t>(n); 
+    T* ret = NEW_NOTHROW T[size];
+    // if(ret == nullptr){
+    //     return nullptr;
+    // }
+    memset(ret,0,size*sizeof(T));
 
     for(uint16_t i = 0; i < n; i++) {
         for(uint16_t j = 0; j < n; j++) {
@@ -145,9 +149,10 @@ static void mat_back_sub(const T *U, T *out, uint16_t n)
 template<typename T>
 static void mat_LU_decompose(const T* A, T* L, T* U, T *P, uint16_t n)
 {
-    memset(L,0,n*n*sizeof(T));
-    memset(U,0,n*n*sizeof(T));
-    memset(P,0,n*n*sizeof(T));
+    uint64_t size = static_cast<uint64_t>(n)* static_cast<uint64_t>(n); 
+    memset(L,0,size*sizeof(T));
+    memset(U,0,size*sizeof(T));
+    memset(P,0,size*sizeof(T));
     mat_pivot(A,P,n);
 
     T *APrime = matrix_multiply(P,A,n);
@@ -186,20 +191,21 @@ static void mat_LU_decompose(const T* A, T* L, T* U, T *P, uint16_t n)
 template<typename T>
 static bool mat_inverseN(const T* A, T* inv, uint16_t n)
 {
+    uint64_t size = static_cast<uint64_t>(n)* static_cast<uint64_t>(n);     
     T *L, *U, *P;
     bool ret = true;
-    L = NEW_NOTHROW T[n*n];
-    U = NEW_NOTHROW T[n*n];
-    P = NEW_NOTHROW T[n*n];
+    L = NEW_NOTHROW T[size];
+    U = NEW_NOTHROW T[size];    
+    P = NEW_NOTHROW T[size];
     mat_LU_decompose(A,L,U,P,n);
 
-    T *L_inv = NEW_NOTHROW T[n*n];
-    T *U_inv = NEW_NOTHROW T[n*n];
+    T *L_inv = NEW_NOTHROW T[size];
+    T *U_inv = NEW_NOTHROW T[size];
 
-    memset(L_inv,0,n*n*sizeof(T));
+    memset(L_inv,0,size*sizeof(T));
     mat_forward_sub(L,L_inv,n);
 
-    memset(U_inv,0,n*n*sizeof(T));
+    memset(U_inv,0,size*sizeof(T));
     mat_back_sub(U,U_inv,n);
 
     // decomposed matrices no longer required
@@ -217,7 +223,7 @@ static bool mat_inverseN(const T* A, T* inv, uint16_t n)
             }
         }
     }
-    memcpy(inv,inv_pivoted,n*n*sizeof(T));
+    memcpy(inv,inv_pivoted,size*sizeof(T));
 
     //free memory
     delete[] inv_pivoted;
@@ -441,7 +447,8 @@ bool mat_inverse(const T x[], T y[], uint16_t dim)
 template <typename T>
 void mat_mul(const T *A, const T *B, T *C, uint16_t n)
 {
-    memset(C, 0, sizeof(T)*n*n);
+    uint64_t size = static_cast<uint64_t>(n)* static_cast<uint64_t>(n); 
+    memset(C, 0, sizeof(T)*size);
     for(uint16_t i = 0; i < n; i++) {
         for(uint16_t j = 0; j < n; j++) {
             for(uint16_t k = 0;k < n; k++) {
@@ -454,7 +461,8 @@ void mat_mul(const T *A, const T *B, T *C, uint16_t n)
 template <typename T>
 void mat_identity(T *A, uint16_t n)
 {
-    memset(A, 0, sizeof(T)*n*n);
+    uint64_t size = static_cast<uint64_t>(n)* static_cast<uint64_t>(n); 
+    memset(A, 0, sizeof(T)*size);
     for (uint16_t i=0; i<n; i++) {
         A[i*n+i] = 1;
     }
