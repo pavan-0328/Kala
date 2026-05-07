@@ -107,7 +107,7 @@ void AP_Hott_Telem::send_EAM(void)
         uint8_t electric_sec;        //#41
         uint16_t speed;               //#42 speed in km/h. Steps 1km/h
         uint8_t stop_byte = 0x7D;     //#44 stop
-    } msg {};
+    } msg = {0}; //to avoid uninitialized memory errors
 
 #if AP_BATTERY_ENABLED
     const AP_BattMonitor &battery = AP::battery();
@@ -234,7 +234,7 @@ void AP_Hott_Telem::send_GPS(void)
         uint8_t free_char3;           //#42 GPS fix character. display, 'D' = DGPS, '2' = 2D, '3' = 3D, '-' = no fix
         uint8_t version = 1;          //#43 0: GPS Graupner #33600, 1: ArduPilot
         uint8_t stop_byte = 0x7d;     //#44
-    } msg {};
+    } msg = {0}; //to avoid uninitialized memory errors
 
     AP_GPS &gps = AP::gps();
     Location loc;
@@ -326,7 +326,7 @@ void AP_Hott_Telem::send_Vario(void)
         uint8_t  yaw;                //#42 yaw in 2 degree units, 0 = north
         uint8_t  version = 1;        //#43 protocol version
         uint8_t  stop_byte = 0x7D;   //#44 stop
-    } msg {};
+    } msg = {0}; //to avoid uninitialized memory errors
 
     AP_AHRS &ahrs = AP::ahrs();
     Vector3f vel;
