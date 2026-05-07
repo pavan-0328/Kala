@@ -1609,8 +1609,9 @@ MAV_RESULT AP_InertialSensor::calibrate_trim()
         hal.scheduler->delay(update_dt_milliseconds);
         num_samples++;
     }
-    level_sample /= num_samples;
-
+    if(num_samples > 0){ // to prevent division by zero error. Though highly unlikely to happen.
+        level_sample /= num_samples;
+    }
     if (!_calculate_trim(level_sample, trim_rad)) {
         goto failed;
     }

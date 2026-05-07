@@ -77,7 +77,7 @@ float safe_sqrt(const T v)
     if (isgreaterequal(val, 0)) {
         return sqrtf(val);
     }
-    return 0;
+    return FLT_MIN;
 }
 
 template float safe_sqrt<int>(const int v);

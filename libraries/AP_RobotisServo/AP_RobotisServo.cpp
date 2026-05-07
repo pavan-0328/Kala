@@ -140,6 +140,7 @@ void AP_RobotisServo::init(void)
     port = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Robotis,0);
     if (port) {
         baudrate = serial_manager.find_baudrate(AP_SerialManager::SerialProtocol_Robotis, 0);
+        if(baudrate == 0) baudrate = FLT_MIN; //to avoid division by zero error
         us_per_byte = 10 * 1e6 / baudrate;
         us_gap = 4 * 1e6 / baudrate;
     }

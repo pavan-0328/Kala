@@ -231,7 +231,7 @@ uint8_t AP_Filesystem_Param::pack_param(const struct rfile &r, struct cursor &c,
      */
     if (type_len > 1) {
         const uint32_t ofs = c.token_ofs + sizeof(struct header) + packed_len;
-        const uint32_t ofs_mod = ofs % r.read_size;
+        const uint32_t ofs_mod = (r.read_size > 0) ? (ofs % r.read_size) : 0; //to fix division by zero error
         if (ofs_mod > 0 && ofs_mod < type_len) {
             const uint8_t pad = type_len - ofs_mod;
             memset(buf, 0, pad);

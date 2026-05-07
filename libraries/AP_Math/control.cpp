@@ -25,7 +25,7 @@
 #include <AP_InternalError/AP_InternalError.h>
 
 // control default definitions
-#define CORNER_ACCELERATION_RATIO   1.0/safe_sqrt(2.0)   // acceleration reduction to enable zero overshoot corners
+#define CORNER_ACCELERATION_RATIO   1.0/safe_sqrt(2.0) // acceleration reduction to enable zero overshoot corners
 
 // Projects velocity forward in time using acceleration, constrained by directional limit.
 // - If `limit` is non-zero, it defines a direction in which acceleration is constrained.
@@ -254,7 +254,8 @@ void shape_vel_accel_xy(const Vector2f& vel_input, const Vector2f& accel_input,
             // limiting the length of the vector will reduce the lateral acceleration below 1/sqrt(2)
             // limit the lateral acceleration to 1/sqrt(2) and retain as much of the remaining
             // acceleration as possible.
-            accel_cross.limit_length(CORNER_ACCELERATION_RATIO * accel_max);
+    
+            accel_cross.limit_length(CORNER_ACCELERATION_RATIO * accel_max); //error fixed in safe_sqrt it will not return 0
             float accel_max_dir = safe_sqrt(sq(accel_max) - accel_cross.length_squared());
             accel_dir = constrain_float(accel_dir, -accel_max_dir, accel_max_dir);
             accel_target = accel_cross + vel_input_unit * accel_dir;

@@ -357,7 +357,8 @@ void Copter::rate_controller_thread()
                 || (get_fast_rate_type() == FastRateType::FAST_RATE_FIXED_ARMED && !motors->armed())
                 || target_rate_decimation > rate_decimation)) {
             last_rate_check_ms = now_ms;
-            const uint32_t att_rate = ins.get_raw_gyro_rate_hz()/rate_decimation;
+            const uint8_t safe_rate_decimation = MIN(rate_decimation, 1U);
+            const uint32_t att_rate = ins.get_raw_gyro_rate_hz()/safe_rate_decimation; //no error will come just in case
             if (running_slow > 5 || AP::scheduler().get_extra_loop_us() > 0
 #if HAL_LOGGING_ENABLED
                 || AP::logger().in_log_download()

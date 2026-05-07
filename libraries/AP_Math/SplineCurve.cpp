@@ -194,9 +194,12 @@ void SplineCurve::calc_dt_speed_max(float time, float distance_delta, float &spl
         return;
     }
 
+    //already taking care of division by zero error
+
     if ((is_positive(accel_norm_max)) && is_positive(spline_accel_norm_length) && is_positive(spline_vel_length) &&
          ((spline_accel_norm_length/accel_norm_max) > sq(spline_vel_length/tangential_speed_max))) {
-        speed_max = spline_vel_length / safe_sqrt(spline_accel_norm_length/accel_norm_max);
+        speed_max = spline_vel_length / safe_sqrt(spline_accel_norm_length/accel_norm_max); //this executes only if accel_norm_max > 0
+        //will never cause division by zero error
     } else {
         speed_max = tangential_speed_max;
     }
@@ -212,7 +215,7 @@ void SplineCurve::calc_dt_speed_max(float time, float distance_delta, float &spl
         return;
     }
     const float dist = (_destination - target_pos).length();
-    speed_max = MIN(speed_max, safe_sqrt(2.0f * accel_max * (dist + sq(_destination_speed_max) / (2.0f*accel_max))));
+    speed_max = MIN(speed_max, safe_sqrt(2.0f * accel_max * (dist + sq(_destination_speed_max) / (2.0f*accel_max)))); //only if accel_max > 0 and the term inside sqrt is positive
 }
 
 // recalculate hermite_solution grid
