@@ -144,6 +144,7 @@ void AP_MotorsMatrix_6DoF_Scripting::output_armed_stabilizing()
     */
     float rpy_ratio = 1.0f;  // scale factor, output will be scaled by this ratio so it can all fit evenly
     float thrust[AP_MOTORS_MAX_NUM_MOTORS];
+    memset(thrust,0,sizeof(float) * AP_MOTORS_MAX_NUM_MOTORS);
     for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
         if (motor_enabled[i]) {
             thrust[i] =  roll_thrust * _roll_factor[i];

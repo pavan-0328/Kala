@@ -310,6 +310,8 @@ void AP_Motors6DOF::output_armed_stabilizing()
 
         float rpy_out[AP_MOTORS_MAX_NUM_MOTORS]; // buffer so we don't have to multiply coefficients multiple times.
         float linear_out[AP_MOTORS_MAX_NUM_MOTORS]; // 3 linear DOF mix for each motor
+        memset(rpy_out,0,sizeof(float) * AP_MOTORS_MAX_NUM_MOTORS); // to avoid uninitialized memory errors
+        memset(linear_out,0,sizeof(float) * AP_MOTORS_MAX_NUM_MOTORS); // to avoid uninitialized memory errors
 
         // initialize limits flags
         limit.set_all(false);
@@ -411,7 +413,9 @@ void AP_Motors6DOF::output_armed_stabilizing_vectored()
     lateral_thrust = _lateral_in;
 
     float rpy_out[AP_MOTORS_MAX_NUM_MOTORS]; // buffer so we don't have to multiply coefficients multiple times.
+    memset(rpy_out,0,sizeof(float) * AP_MOTORS_MAX_NUM_MOTORS); // to avoid uninitialized memory errors
     float linear_out[AP_MOTORS_MAX_NUM_MOTORS]; // 3 linear DOF mix for each motor
+    memset(linear_out,0,sizeof(float) * AP_MOTORS_MAX_NUM_MOTORS); // to avoid uninitialized memory errors
 
     // initialize limits flags
     limit.set_all(false);
@@ -495,6 +499,8 @@ void AP_Motors6DOF::output_armed_stabilizing_vectored_6dof()
     float yfl_out[AP_MOTORS_MAX_NUM_MOTORS]; // 3 linear DOF mix for each motor
     float rpt_max;
     float yfl_max;
+    memset(rpt_out,0,sizeof(float) * AP_MOTORS_MAX_NUM_MOTORS); // to avoid uninitialized memory errors
+    memset(yfl_out,0,sizeof(float) * AP_MOTORS_MAX_NUM_MOTORS); // to avoid uninitialized memory errors
 
     // initialize limits flags
     limit.set_all(false);

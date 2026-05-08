@@ -152,6 +152,7 @@ void AP_AIS::update()
                 const uint8_t parts = _incoming.num - 1;
 
                 uint8_t msg_parts[parts];
+                memset(msg_parts,0,sizeof(uint8_t) * parts); // to avoid uninitialized memory errors
                 for  (uint8_t i = 0; i < AIVDM_BUFFER_SIZE; i++) {
                     // look for the rest of the message from the start of the buffer
                     // we assume the message has be received in the correct order

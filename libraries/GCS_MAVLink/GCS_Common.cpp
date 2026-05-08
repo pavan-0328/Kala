@@ -6830,14 +6830,41 @@ void GCS_MAVLINK::initialise_message_intervals_for_stream(GCS_MAVLINK::streams i
 #if HAL_MAVLINK_INTERVALS_FROM_FILES_ENABLED
 // open and read contents of path, setting message intervals from each
 // line
-DefaultIntervalsFromFiles::DefaultIntervalsFromFiles(uint16_t max_num)
+// DefaultIntervalsFromFiles::DefaultIntervalsFromFiles(uint16_t max_num)
+// {
+//     if (max_num == 0) {
+//         return;
+//     }
+//     _intervals = NEW_NOTHROW from_file_default_interval[max_num];
+//     _max_intervals = max_num;
+// }
+
+DefaultIntervalsFromFiles::DefaultIntervalsFromFiles(uint16_t max_num) // for uninitilaized error on sitl
 {
+    _intervals = nullptr;
+    _num_intervals = 0;
+    _max_intervals = 0;
+
     if (max_num == 0) {
         return;
     }
+
     _intervals = NEW_NOTHROW from_file_default_interval[max_num];
     _max_intervals = max_num;
 }
+
+// DefaultIntervalsFromFiles::DefaultIntervalsFromFiles(uint16_t max_num) :
+//     _intervals(nullptr),
+//     _num_intervals(0),
+//     _max_intervals(0)
+// {
+//     if (max_num == 0) {
+//         return;
+//     }
+
+//     _intervals = NEW_NOTHROW from_file_default_interval[max_num];
+//     _max_intervals = max_num;
+// }
 
 DefaultIntervalsFromFiles::~DefaultIntervalsFromFiles()
 {

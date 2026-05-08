@@ -3044,7 +3044,7 @@ bool AP_Mission::calc_rewind_pos(Mission_Command& rewind_cmd)
         return false;
     }
 
-    Mission_Command temp_cmd;
+    Mission_Command temp_cmd = {}; // to avoid uninitialized memory errors
     float rewind_distance = _repeat_dist; //(m)
     uint16_t resume_index;
     Location prev_loc = _exit_position;

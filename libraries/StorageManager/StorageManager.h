@@ -130,13 +130,13 @@ private:
      */
     struct FileStorage {
         HAL_Semaphore sem;
-        int fd;
-        uint8_t *buffer;
-        uint32_t bufsize;
-        uint32_t last_clean_ms;
-        uint32_t last_io_fail_ms;
+        int fd = -1;
+        uint8_t *buffer = nullptr;
+        uint32_t bufsize = 0;
+        uint32_t last_clean_ms = 0;
+        uint32_t last_io_fail_ms = 0;
         // each bit of the dirty mask covers 1k of data
-        uint64_t dirty_mask;
+        uint64_t dirty_mask = 0;
     } *file;
 
     void flush_file(void);
