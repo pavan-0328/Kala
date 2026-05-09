@@ -138,13 +138,13 @@ void AP_TemperatureSensor_TSYS01::start_next_sample()
 
 float AP_TemperatureSensor_TSYS01::calculate(const uint32_t adc) const
 {
-    const float adc16 = adc/256;
+    const float adc16 = adc/256.0f; //typecast to avoid uninted integer division error
     const float temperature =
-        -2   * _k[4] * powf(10, -21) * powf(adc16, 4) +
-        4    * _k[3] * powf(10, -16) * powf(adc16, 3) +
-        -2   * _k[2] * powf(10, -11) * powf(adc16, 2) +
-        1    * _k[1] * powf(10, -6)  * adc16 +
-        -1.5 * _k[0] * powf(10, -2);
+        -2.0f   * _k[4] * powf(10.0f, -21.0f) * powf(adc16, 4.0f) +
+        4.0f    * _k[3] * powf(10.0f, -16.0f) * powf(adc16, 3.0f) +
+        -2.0f   * _k[2] * powf(10.0f, -11.0f) * powf(adc16, 2.0f) +
+        1.0f    * _k[1] * powf(10.0f, -6.0f)  * adc16 +
+        -1.5f * _k[0] * powf(10.0f, -2.0f);
 
     return temperature;
 }
