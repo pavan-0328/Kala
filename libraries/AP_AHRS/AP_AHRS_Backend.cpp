@@ -118,7 +118,7 @@ void AP_AHRS::calc_trig(const Matrix3f &rot,
         cp = 0;
         cr = 1.0f;
     } else {
-        cp = max(safe_sqrt(1 - cx2),FLT_MIN);
+        cp = fmax(safe_sqrt(1 - cx2),FLT_MIN);
         cr = rot.c.z / cp;
     }
     cp = constrain_float(cp, 0.0f, 1.0f); //this won't throw divide by zeror already being handled
