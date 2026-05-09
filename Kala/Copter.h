@@ -392,7 +392,7 @@ private:
         bool prec_land_active = false;               // 26 true if precland is active
     } ap;
 
-    AirMode air_mode = AirMode::OFF; // air mode is 0 = not-configured ; 1 = disabled; 2 = enabled;
+    AirMode air_mode = AirMode::AIRMODE_NONE; // air mode is 0 = not-configured ; 1 = disabled; 2 = enabled;
     bool force_flying = false; // force flying is enabled when true;
 
     // This is the state of the flight control system

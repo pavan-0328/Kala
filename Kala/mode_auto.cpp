@@ -42,7 +42,7 @@ bool ModeAuto::init(bool ignore_checks)
         wp_nav->wp_and_spline_init_m();
 
         // initialise desired speed overrides
-        desired_speed_override_ms = {0, 0, 0};
+        desired_speed_override_ms = {};
 
         // set flag to start mission
         waiting_to_start = true;
