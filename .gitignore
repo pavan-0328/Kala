@@ -4,6 +4,7 @@ kala.tgz
 cov-int/
 cppcheck_report/
 build/*
+build-periph/*
 .lock-waf*
 .waf*
 /Tools/autotest/aircraft/Rascal/reset.xml
