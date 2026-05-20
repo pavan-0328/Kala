@@ -477,9 +477,10 @@ public:
 
     // mission state enumeration
     enum mission_state {
-        MISSION_STOPPED=0,
-        MISSION_RUNNING=1,
-        MISSION_COMPLETE=2
+        MISSION_STATE_NONE = -1,
+        MISSION_STOPPED=1,
+        MISSION_RUNNING=2,
+        MISSION_COMPLETE=3
     };
 
     ///
@@ -789,18 +790,18 @@ private:
     static bool stored_in_location(uint16_t id);
 
     struct {
-        uint16_t age;   // a value of 0 means we have never seen a tag. Once a tag is seen, age will increment every time the mission index changes.
-        uint16_t tag;   // most recent tag that was successfully jumped to. Only valid if age > 0
+        uint16_t age=0;   // a value of 0 means we have never seen a tag. Once a tag is seen, age will increment every time the mission index changes.
+        uint16_t tag=0;   // most recent tag that was successfully jumped to. Only valid if age > 0
     } _jump_tag;
 
     struct Mission_Flags {
-        mission_state state;
-        bool nav_cmd_loaded;         // true if a "navigation" command has been loaded into _nav_cmd
-        bool do_cmd_loaded;          // true if a "do"/"conditional" command has been loaded into _do_cmd
-        bool do_cmd_all_done;        // true if all "do"/"conditional" commands have been completed (stops unnecessary searching through eeprom for do commands)
-        bool in_landing_sequence;   // true if the mission has jumped to a landing
-        bool resuming_mission;      // true if the mission is resuming and set false once the aircraft attains the interrupted WP
-        bool in_return_path;        // true if the mission has passed a DO_RETURN_PATH_START waypoint either in the course of the mission or via a `jump_to_closest_mission_leg` call
+        mission_state state=MISSION_STATE_NONE;
+        bool nav_cmd_loaded=false;         // true if a "navigation" command has been loaded into _nav_cmd
+        bool do_cmd_loaded=false;          // true if a "do"/"conditional" command has been loaded into _do_cmd
+        bool do_cmd_all_done=false;        // true if all "do"/"conditional" commands have been completed (stops unnecessary searching through eeprom for do commands)
+        bool in_landing_sequence=false;   // true if the mission has jumped to a landing
+        bool resuming_mission=false;      // true if the mission is resuming and set false once the aircraft attains the interrupted WP
+        bool in_return_path=false;        // true if the mission has passed a DO_RETURN_PATH_START waypoint either in the course of the mission or via a `jump_to_closest_mission_leg` call
     } _flags;
 
     // mission WP resume history
@@ -900,8 +901,8 @@ private:
     AP_Int8                 _restart;   // controls mission starting point when entering Auto mode (either restart from beginning of mission or resume from last command run)
 
     // internal variables
-    bool                    _force_resume;  // when set true it forces mission to resume irrespective of MIS_RESTART param.
-    uint16_t                _repeat_dist; // Distance to repeat on mission resume (m), can be set with MAV_CMD_DO_SET_RESUME_REPEAT_DIST
+    bool                    _force_resume = false;  // when set true it forces mission to resume irrespective of MIS_RESTART param.
+    uint16_t                _repeat_dist = 0; // Distance to repeat on mission resume (m), can be set with MAV_CMD_DO_SET_RESUME_REPEAT_DIST
     struct Mission_Command  _nav_cmd;   // current "navigation" command.  It's position in the command list is held in _nav_cmd.index
     struct Mission_Command  _do_cmd;    // current "do" command.  It's position in the command list is held in _do_cmd.index
     struct Mission_Command  _resume_cmd;  // virtual wp command that is used to resume mission if the mission needs to be rewound on resume.
@@ -912,27 +913,27 @@ private:
 
     // jump related variables
     struct jump_tracking_struct {
-        uint16_t index;                 // index of do-jump commands in mission
-        int16_t num_times_run;          // number of times this jump command has been run
+        uint16_t index=0;                 // index of do-jump commands in mission
+        int16_t num_times_run=0;          // number of times this jump command has been run
     } _jump_tracking[AP_MISSION_MAX_NUM_DO_JUMP_COMMANDS];
 
     // last time that mission changed
-    uint32_t _last_change_time_ms;
-    uint32_t _last_change_time_prev_ms;
+    uint32_t _last_change_time_ms=0;
+    uint32_t _last_change_time_prev_ms=0;
 
     // maximum number of commands that will fit in storage
-    uint16_t _commands_max;
+    uint16_t _commands_max=0;
 
 #if AP_SDCARD_STORAGE_ENABLED
-    bool _failed_sdcard_storage;
+    bool _failed_sdcard_storage=false;
 #endif
 
     // fast call to get command ID of a mission index
     uint16_t get_command_id(uint16_t index) const;
 
     // memoisation of contains-relative:
-    bool _contains_terrain_alt_items;  // true if the mission has terrain-relative items
-    uint32_t _last_contains_relative_calculated_ms;  // will be equal to _last_change_time_ms if _contains_terrain_alt_items is up-to-date
+    bool _contains_terrain_alt_items=false;  // true if the mission has terrain-relative items
+    uint32_t _last_contains_relative_calculated_ms=0;  // will be equal to _last_change_time_ms if _contains_terrain_alt_items is up-to-date
     bool calculate_contains_terrain_alt_items(void) const;
 
     // multi-thread support. This is static so it can be used from

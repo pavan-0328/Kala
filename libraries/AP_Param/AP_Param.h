@@ -1023,63 +1023,63 @@ public:
 #endif
 };
 
-/// Template class for non-scalar variables, intended for non-C types.
-///
-/// Objects of this type have an object value, and can be treated in many ways
-/// as though they were the value.
-///
-/// @tparam T			The scalar type of the variable
-/// @tparam PT			AP_PARAM_* type
-///
-template<typename T, ap_var_type PT>
-class AP_ParamV : public AP_Param
-{
-public:
-
-    static const ap_var_type        vtype = PT;
-
-    /// Value getter
+    /// Template class for non-scalar variables, intended for non-C types.
     ///
-    const T &get(void) const {
-        return _value;
-    }
-
-    /// Value setter
+    /// Objects of this type have an object value, and can be treated in many ways
+    /// as though they were the value.
     ///
-    void set(const T &v) {
-        _value = v;
-    }
-
-    /// Value setter - set value, tell GCS
+    /// @tparam T			The scalar type of the variable
+    /// @tparam PT			AP_PARAM_* type
     ///
-    void set_and_notify(const T &v);
+    template<typename T, ap_var_type PT>
+    class AP_ParamV : public AP_Param
+    {
+    public:
 
-    /// Combined set and save
-    ///
-    void set_and_save(const T &v);
+        static const ap_var_type        vtype = PT;
 
-    /// Combined set and save, but only does the save if the value is
-    /// different from the current ram value, thus saving us a
-    /// scan(). This should only be used where we have not set() the
-    /// value separately, as otherwise the value in EEPROM won't be
-    /// updated correctly.
-    void set_and_save_ifchanged(const T &v);
+        /// Value getter
+        ///
+        const T &get(void) const {
+            return _value;
+        }
+
+        /// Value setter
+        ///
+        void set(const T &v) {
+            _value = v;
+        }
+
+        /// Value setter - set value, tell GCS
+        ///
+        void set_and_notify(const T &v);
+
+        /// Combined set and save
+        ///
+        void set_and_save(const T &v);
+
+        /// Combined set and save, but only does the save if the value is
+        /// different from the current ram value, thus saving us a
+        /// scan(). This should only be used where we have not set() the
+        /// value separately, as otherwise the value in EEPROM won't be
+        /// updated correctly.
+        void set_and_save_ifchanged(const T &v);
 
 
-    /// Conversion to T returns a reference to the value. A reference is
-    /// necessary as some users expect to pass a reference around.
-    ///
-    /// This allows the class to be used in many situations where the value
-    /// would be legal. As T is a user-defined class and not a C type, we don't
-    /// have to worry about weird numeric conversions.
-    ///
-    operator const T &() const {
-        return _value;
-    }
+        /// Conversion to T returns a reference to the value. A reference is
+        /// necessary as some users expect to pass a reference around.
+        ///
+        /// This allows the class to be used in many situations where the value
+        /// would be legal. As T is a user-defined class and not a C type, we don't
+        /// have to worry about weird numeric conversions.
+        ///
+        operator const T &() const {
+            return _value;
+        }
 
-protected:
-    T        _value;
-};
+    protected:
+        T        _value;
+    };
 
 
 /// Convenience macro for defining instances of the AP_ParamT template.

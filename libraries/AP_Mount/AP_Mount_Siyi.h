@@ -183,7 +183,7 @@ private:
         ZR30,
         ZT6,
         ZT30
-    } _hardware_model;
+    } _hardware_model = HardwareModel::UNKNOWN;
 
     enum class HdrStatus : uint8_t {
         OFF = 0,
@@ -216,13 +216,13 @@ private:
 
     // Response message for "Acquire Gimbal Confuguration Information" (0x0A)
     typedef struct {
-        uint8_t _reserved1;
-        HdrStatus hdr_status;
-        uint8_t _reserved3;
-        RecordingStatus record_status;
-        GimbalMotionMode motion_mode;
-        GimbalMountingDirection mounting_dir;
-        VideoOutputStatus video_mode;
+        uint8_t _reserved1=0;
+        HdrStatus hdr_status=HdrStatus::OFF;
+        uint8_t _reserved3=0;
+        RecordingStatus record_status=RecordingStatus::OFF;
+        GimbalMotionMode motion_mode=GimbalMotionMode::LOCK;
+        GimbalMountingDirection mounting_dir=GimbalMountingDirection::UNDEFINED;
+        VideoOutputStatus video_mode=VideoOutputStatus::HDMI;
     } GimbalConfigInfo;
     static_assert(sizeof(GimbalConfigInfo) == 7, "GimbalConfigInfo must be 7 bytes");
 
@@ -240,15 +240,15 @@ private:
     };
 
     typedef struct {
-        uint8_t major;
-        uint8_t minor;
-        uint8_t patch;
+        uint8_t major=0;
+        uint8_t minor=0;
+        uint8_t patch=0;
     } Version;
     typedef struct {
         Version camera;
         Version gimbal;
         Version zoom;
-        bool received; // true once version information has been received
+        bool received=false; // true once version information has been received
     } FirmwareVersion;
 
     // reading incoming packets from gimbal and confirm they are of the correct format
@@ -314,50 +314,50 @@ private:
 #endif
 
     // internal variables
-    bool _got_hardware_id;                          // true once hardware id ha been received
+    bool _got_hardware_id=false;                          // true once hardware id ha been received
 
     FirmwareVersion _fw_version;                    // firmware version (for reporting for GCS)
 
     // buffer holding bytes from latest packet.  This is only used to calculate the crc
     uint8_t _msg_buff[AP_MOUNT_SIYI_PACKETLEN_MAX];
-    uint8_t _msg_buff_len;
+    uint8_t _msg_buff_len=0;
     const uint8_t _msg_buff_data_start = 8;         // data starts at this byte of _msg_buff
 
     // parser state and unpacked fields
     struct PACKED {
-        uint16_t data_len;                          // expected number of data bytes
-        uint8_t command_id;                         // command id
-        uint16_t data_bytes_received;               // number of data bytes received so far
-        uint16_t crc16;                             // latest message's crc
-        ParseState state;                           // state of incoming message processing
+        uint16_t data_len=0;                          // expected number of data bytes
+        uint8_t command_id=0;                         // command id
+        uint16_t data_bytes_received=0;               // number of data bytes received so far
+        uint16_t crc16=0;                             // latest message's crc
+        ParseState state=ParseState::WAITING_FOR_HEADER_LOW;                           // state of incoming message processing
     } _parsed_msg;
 
     // variables for sending packets to gimbal
-    uint32_t _last_send_ms;                         // system time (in milliseconds) of last packet sent to gimbal
-    uint16_t _last_seq;                             // last sequence number used (should be increment for each send)
+    uint32_t _last_send_ms=0;                         // system time (in milliseconds) of last packet sent to gimbal
+    uint16_t _last_seq=0;                             // last sequence number used (should be increment for each send)
 
     // actual attitude received from gimbal
-    Vector3f _current_angle_rad;                    // current angles in radians received from gimbal (x=roll, y=pitch, z=yaw)
-    Vector3f _current_rates_rads;                   // current angular rates in rad/s (x=roll, y=pitch, z=yaw)
-    uint32_t _last_current_angle_rad_ms;            // system time _current_angle_rad was updated
-    uint32_t _last_req_current_angle_rad_ms;        // system time that this driver last requested current angle
+    Vector3f _current_angle_rad {};                    // current angles in radians received from gimbal (x=roll, y=pitch, z=yaw)
+    Vector3f _current_rates_rads {};                   // current angular rates in rad/s (x=roll, y=pitch, z=yaw)
+    uint32_t _last_current_angle_rad_ms=0;            // system time _current_angle_rad was updated
+    uint32_t _last_req_current_angle_rad_ms=0;        // system time that this driver last requested current angle
 
     // absolute zoom control.  only used for A8 that does not support abs zoom control
-    ZoomType _zoom_type;                            // current zoom type
-    float _zoom_rate_target;                        // current zoom rate target
-    float _zoom_mult;                               // most recent actual zoom multiple received from camera
-    uint32_t _last_zoom_control_ms;                 // system time that zoom control was last run
+    ZoomType _zoom_type {};                            // current zoom type
+    float _zoom_rate_target {};                        // current zoom rate target
+    float _zoom_mult {};                               // most recent actual zoom multiple received from camera
+    uint32_t _last_zoom_control_ms {};                 // system time that zoom control was last run
 
     // Configuration info received from gimbal
     GimbalConfigInfo _config_info;
     
     // rangefinder variables
-    uint32_t _last_rangefinder_req_ms;              // system time of last request for rangefinder distance
-    uint32_t _last_rangefinder_dist_ms;             // system time of last successful read of rangefinder distance
-    float _rangefinder_dist_m;                      // distance received from rangefinder
+    uint32_t _last_rangefinder_req_ms{};              // system time of last request for rangefinder distance
+    uint32_t _last_rangefinder_dist_ms{};             // system time of last successful read of rangefinder distance
+    float _rangefinder_dist_m{};                      // distance received from rangefinder
 
     // sending of attitude and position to gimbal
-    uint32_t _last_attitude_send_ms;
+    uint32_t _last_attitude_send_ms{};
     void send_attitude_position(void);
 
     // hardware lookup table indexed by HardwareModel enum values (see above)
@@ -380,7 +380,7 @@ private:
 #endif
 
     // count of SET_TIME packets, we send 5 times to cope with packet loss
-    uint8_t sent_time_count;
+    uint8_t sent_time_count{};
 };
 
 #endif // HAL_MOUNT_SIYI_ENABLED
