@@ -147,10 +147,10 @@ protected:
 
     // motor failure handling
     float               _thrust_rpyt_out_filt[AP_MOTORS_MAX_NUM_MOTORS];    // filtered thrust outputs with 1 second time constant
-    uint8_t             _motor_lost_index;  // index number of the lost motor
+    uint8_t             _motor_lost_index{0};  // index number of the lost motor
 
-    motor_frame_class   _active_frame_class; // active frame class (i.e. quad, hexa, octa, etc)
-    motor_frame_type    _active_frame_type;  // active frame type (i.e. plus, x, v, etc)
+    motor_frame_class   _active_frame_class{0}; // active frame class (i.e. quad, hexa, octa, etc)
+    motor_frame_type    _active_frame_type{0};  // active frame type (i.e. plus, x, v, etc)
 
     const char*         _frame_class_string = ""; // string representation of frame class
     const char*         _frame_type_string = "";  //  string representation of frame type

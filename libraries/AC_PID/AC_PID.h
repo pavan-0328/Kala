@@ -185,23 +185,23 @@ protected:
 
     // flags
     struct ac_pid_flags {
-        bool _reset_filter :1;  // true if the input filter should be reset on the next call to update_all()
-        bool _I_set :1;         // true if the I term has been set externally, including zeroing
+        bool _reset_filter :1=false;  // true if the input filter should be reset on the next call to update_all()
+        bool _I_set :1=false;         // true if the I term has been set externally, including zeroing
     } _flags;
 
     // internal variables
-    float _integrator;        // integrator value
-    float _target;            // target value to enable filtering
-    float _error;             // error value to enable filtering
-    float _derivative;        // derivative value to enable filtering
-    int8_t _slew_limit_scale;
-    float _target_derivative; // target derivative value to enable dff
+    float _integrator{0.0f};        // integrator value
+    float _target{0.0f};            // target value to enable filtering
+    float _error{0.0f};             // error value to enable filtering
+    float _derivative{0.0f};        // derivative value to enable filtering
+    int8_t _slew_limit_scale{0};
+    float _target_derivative{0.0f}; // target derivative value to enable dff
 #if AP_FILTER_ENABLED
-    NotchFilterFloat* _target_notch;
-    NotchFilterFloat* _error_notch;
+    NotchFilterFloat* _target_notch{nullptr};
+    NotchFilterFloat* _error_notch{nullptr};
 #endif
 
-    AP_PIDInfo _pid_info;
+    AP_PIDInfo _pid_info{};
 
 private:
     const float default_kp;

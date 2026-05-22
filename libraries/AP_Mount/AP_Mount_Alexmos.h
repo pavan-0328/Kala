@@ -222,15 +222,15 @@ private:
         alexmos_angles_speed angle_speed;
     } _buffer,_current_parameters;
 
-    AP_HAL::UARTDriver *_port;
+    AP_HAL::UARTDriver *_port{nullptr};
     bool _initialised : 1;
 
     // result of the get_boardinfo
-    uint8_t _board_version;
-    float _current_firmware_version;
-    uint8_t _firmware_beta_version;
-    bool _gimbal_3axis : 1;
-    bool _gimbal_bat_monitoring : 1;
+    uint8_t _board_version{0};
+    float _current_firmware_version{0.0f};
+    uint8_t _firmware_beta_version{0};
+    bool _gimbal_3axis : 1=false;
+    bool _gimbal_bat_monitoring : 1=false;
 
     // keep the last _current_angle values
     Vector3f _current_angle;
@@ -239,13 +239,13 @@ private:
     bool _param_read_once : 1;
 
     // Serial Protocol Variables
-    uint8_t _checksum;
-    uint8_t _step;
-    uint8_t _command_id;
-    uint8_t _payload_length;
-    uint8_t _payload_counter;
+    uint8_t _checksum{0};
+    uint8_t _step{0};
+    uint8_t _command_id{0};
+    uint8_t _payload_length{0};
+    uint8_t _payload_counter{0};
 
     // confirmed that last command was ok
-    bool _last_command_confirmed : 1;
+    bool _last_command_confirmed : 1 =false;
 };
 #endif // HAL_MOUNT_ALEXMOS_ENABLED

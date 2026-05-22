@@ -222,10 +222,10 @@ public:
 
 protected:
     // key for a locked port
-    uint32_t lock_write_key;
-    uint32_t lock_read_key;
+    uint32_t lock_write_key{0};
+    uint32_t lock_read_key{0};
 
-    uint8_t parity;
+    uint8_t parity{0};
 
     /*
       backend begin method
@@ -269,11 +269,11 @@ protected:
 #endif
 
     // option bits for port
-    uint16_t _last_options;
+    uint16_t _last_options{0};
 
 private:
 
 #if AP_UART_MONITOR_ENABLED
-    ByteBuffer *_monitor_read_buffer;
+    ByteBuffer *_monitor_read_buffer{nullptr};
 #endif
 };
