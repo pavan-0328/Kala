@@ -28,25 +28,25 @@ private:
 
     static void _update_and_wrap_accumulator(float *accum, float val, uint8_t *count, const uint8_t max_count);
 
-    uint8_t _instance;
+    uint8_t _instance{0};
 
-    bool new_pressure;
-    float _pressure;
-    float _temperature;
-    uint8_t  _pressure_count;
-    HAL_Semaphore _sem_baro;
+    bool new_pressure{false};
+    float _pressure{0.0f};
+    float _temperature{0.0f};
+    uint8_t  _pressure_count{0};
+    HAL_Semaphore _sem_baro{};
 
-    AP_DroneCAN* _ap_dronecan;
-    uint8_t _node_id;
+    AP_DroneCAN* _ap_dronecan{nullptr};
+    uint8_t _node_id{0};
 
     // Module Detection Registry
     static struct DetectedModules {
-        AP_DroneCAN* ap_dronecan;
-        uint8_t node_id;
-        AP_Baro_DroneCAN* driver;
+        AP_DroneCAN* ap_dronecan{nullptr};
+        uint8_t node_id{0};
+        AP_Baro_DroneCAN* driver{nullptr};
     } _detected_modules[BARO_MAX_DRIVERS];
 
-    static HAL_Semaphore _sem_registry;
+    static HAL_Semaphore _sem_registry{};
 };
 
 #endif  // AP_BARO_DRONECAN_ENABLED

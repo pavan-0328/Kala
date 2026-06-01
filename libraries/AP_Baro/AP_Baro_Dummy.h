@@ -18,7 +18,7 @@ public:
     }
 
 private:
-    uint8_t _instance;
+    uint8_t _instance{0};
 };
 
 #endif  // AP_BARO_DUMMY_ENABLED
