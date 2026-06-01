@@ -31,7 +31,7 @@ private:
         uint32_t pulse_count;
         uint32_t total_us;
         uint32_t last_pulse_us;
-    } irq_state;
+    } irq_state{};
 
     int8_t last_pin = -1;
 };

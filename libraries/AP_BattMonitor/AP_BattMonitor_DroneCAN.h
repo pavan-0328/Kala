@@ -84,21 +84,21 @@ private:
     // Return false if state of charge should be calculated locally by counting mah.
     bool use_CAN_SoC() const;
 
-    AP_BattMonitor::BattMonitor_State _interim_state;
+    AP_BattMonitor::BattMonitor_State _interim_state{};
 
     HAL_Semaphore _sem_battmon;
 
-    AP_DroneCAN* _ap_dronecan;
-    uint8_t _soc;
-    uint8_t _node_id;
-    uint16_t _cycle_count;
-    float _remaining_capacity_wh;
-    float _full_charge_capacity_wh;
-    bool _has_temperature;
-    bool _has_cell_voltages;
-    bool _has_time_remaining;
-    bool _has_battery_info_aux;
-    uint8_t _instance;                  // instance of this battery monitor
+    AP_DroneCAN* _ap_dronecan{nullptr};
+    uint8_t _soc{0};
+    uint8_t _node_id{0};
+    uint16_t _cycle_count{0};
+    float _remaining_capacity_wh{0.0f};
+    float _full_charge_capacity_wh{0.0f};
+    bool _has_temperature{false};
+    bool _has_cell_voltages{false};
+    bool _has_time_remaining{false};
+    bool _has_battery_info_aux{false};
+    uint8_t _instance{0};                  // instance of this battery monitor
 
     AP_Float _curr_mult;                 // scaling multiplier applied to current reports for adjustment
     // MPPT variables
@@ -108,7 +108,7 @@ private:
         bool vehicle_armed_last;        // latest vehicle armed state. used to detect changes and power on/off MPPT board
         uint8_t fault_flags;            // bits holding fault flags
         uint32_t powered_state_remote_ms; // timestamp of when request was sent, zeroed on response. Used to retry
-    } _mppt;
+    } _mppt{};
 
     void handle_outputEnable_response(const CanardRxTransfer&, const mppt_OutputEnableResponse&);
 
