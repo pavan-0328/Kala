@@ -134,18 +134,18 @@ private:
     void request_packet(const MsgType_XP type);
 
     // timers for each out-bound packet
-    uint32_t        last_packet_initialize_ms;
-    uint32_t        last_packet_PreFlight_ms;
-    uint32_t        last_packet_GPS_ms;
-    uint32_t        last_packet_Operating_ms;
+    uint32_t        last_packet_initialize_ms{0};
+    uint32_t        last_packet_PreFlight_ms{0};
+    uint32_t        last_packet_GPS_ms{0};
+    uint32_t        last_packet_Operating_ms{0};
 
     // cached variables to compare against params so we can send msg on param change.
-    uint16_t        last_operating_squawk;
-    int32_t         last_operating_alt;
-    uint8_t         last_operating_rf_select;
+    uint16_t        last_operating_squawk{0};
+    int32_t         last_operating_alt{0};
+    uint8_t         last_operating_rf_select{0};
 
     // track status changes in acks
-    uint8_t         last_ack_transponder_mode;
+    uint8_t         last_ack_transponder_mode{0};
     Transponder_Type transponder_type = Transponder_Type::Unknown;
 };
 #endif // HAL_ADSB_SAGETECH_ENABLED
