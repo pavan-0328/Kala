@@ -69,21 +69,21 @@ public:
     HAL_Semaphore &get_sem_rx(void) { return _sem_rx; }
 
 private:
-    CanardInstance canard;
-    AP_HAL::CANIface* ifaces[HAL_NUM_CAN_IFACES];
+    CanardInstance canard{};
+    AP_HAL::CANIface* ifaces[HAL_NUM_CAN_IFACES]{};
 #if AP_TEST_DRONECAN_DRIVERS
     static CanardInterface* canard_ifaces[3];
     static CanardInterface test_iface;
 #endif
-    uint8_t num_ifaces;
+    uint8_t num_ifaces{0};
     HAL_BinarySemaphore sem_handle;
-    bool initialized;
+    bool initialized{false};
     HAL_Semaphore _sem_tx;
     HAL_Semaphore _sem_rx;
-    CanardTxTransfer tx_transfer;
-    dronecan_protocol_Stats protocol_stats;
+    CanardTxTransfer tx_transfer{};
+    dronecan_protocol_Stats protocol_stats{};
 
     // auxillary 11 bit CANSensor
-    CANSensor *aux_11bit_driver;
+    CANSensor *aux_11bit_driver{nullptr};
 };
 #endif // HAL_ENABLE_DRONECAN_DRIVERS
