@@ -118,65 +118,65 @@ private:
 
     bool _check_raw_temp(int16_t t2) __RAMFUNC__;
 
-    int16_t _raw_temp;
+    int16_t _raw_temp{0};
     
     float temp_sensitivity = 1.0f/340; // degC/LSB
     float temp_zero = 36.53f; // degC
     
-    float _temp_filtered;
-    float _accel_scale;
-    float _gyro_scale;
+    float _temp_filtered{0.0f};
+    float _accel_scale{0.0f};
+    float _gyro_scale{0.0f};
 
-    float _fifo_accel_scale;
-    float _fifo_gyro_scale;
+    float _fifo_accel_scale{0.0f};
+    float _fifo_gyro_scale{0.0f};
     LowPassFilter2pFloat _temp_filter;
-    uint32_t last_reset_ms;
-    uint8_t reset_count;
-    uint8_t fast_reset_count;
-    uint8_t last_fast_reset_count;
-    uint32_t last_fast_reset_count_report_ms;
+    uint32_t last_reset_ms{0};
+    uint8_t reset_count{0};
+    uint8_t fast_reset_count{0};
+    uint8_t last_fast_reset_count{0};
+    uint32_t last_fast_reset_count_report_ms{0};
 
     enum Rotation _rotation;
 
     // enable checking of unexpected resets of offsets
-    bool _enable_offset_checking;
+    bool _enable_offset_checking{false};
 
     // enable fast fifo reset instead of full fifo reset
-    bool _enable_fast_fifo_reset;
+    bool _enable_fast_fifo_reset{false};
 
     // ICM-20602 y offset register. See usage for explanation
-    uint8_t _saved_y_ofs_high;
+    uint8_t _saved_y_ofs_high{0};
 
-    AP_HAL::DigitalSource *_drdy_pin;
+    AP_HAL::DigitalSource *_drdy_pin{nullptr};
     AP_HAL::OwnPtr<AP_HAL::Device> _dev;
-    AP_Invensense_AuxiliaryBus *_auxiliary_bus;
+    AP_Invensense_AuxiliaryBus *_auxiliary_bus{nullptr};
 
     // which sensor type this is
     enum Invensense_Type _mpu_type;
 
     // are we doing more than 1kHz sampling?
-    bool _fast_sampling;
+    bool _fast_sampling{false};
 
     // what downsampling rate are we using from the FIFO for gyros?
-    uint8_t _gyro_fifo_downsample_rate;
+    uint8_t _gyro_fifo_downsample_rate{0};
 
     // what downsampling rate are we using from the FIFO for accels?
-    uint8_t _accel_fifo_downsample_rate;
+    uint8_t _accel_fifo_downsample_rate{0};
 
     // ratio of raw gyro to accel sample rate
-    uint8_t _gyro_to_accel_sample_ratio;
+    uint8_t _gyro_to_accel_sample_ratio{0};
 
     // what rate are we generating samples into the backend for gyros?
-    uint16_t _gyro_backend_rate_hz;
+    uint16_t _gyro_backend_rate_hz{0};
 
     // what rate are we generating samples into the backend for accels?
-    uint16_t _accel_backend_rate_hz;
+    uint16_t _accel_backend_rate_hz{0};
 
     // Last status from register user control
-    uint8_t _last_stat_user_ctrl;    
+    uint8_t _last_stat_user_ctrl{0};    
 
     // buffer for fifo read
-    uint8_t *_fifo_buffer;
+    uint8_t *_fifo_buffer{nullptr};
 
     /*
       accumulators for sensor_rate sampling

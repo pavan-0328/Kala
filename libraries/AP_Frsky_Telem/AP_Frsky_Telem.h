@@ -56,7 +56,7 @@ public:
 
 private:
 
-    AP_Frsky_Backend *_backend;
+    AP_Frsky_Backend *_backend{nullptr};
     AP_Frsky_Parameters* _frsky_parameters;
 
     // get next telemetry data for external consumers of SPort data (internal function)

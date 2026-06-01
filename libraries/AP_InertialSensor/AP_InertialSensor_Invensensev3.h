@@ -84,10 +84,10 @@ private:
     }
 
     // reset FIFO configure1 register
-    uint8_t fifo_config1;
+    uint8_t fifo_config1{0};
 
     // temp scaling for FIFO temperature
-    float temp_sensitivity;
+    float temp_sensitivity{0.0f};
     const float temp_zero = 25; // degC
     
     const enum Rotation rotation;
@@ -128,15 +128,15 @@ private:
     float gyro_scale = GYRO_SCALE_2000DPS;
 
     // are we doing more than 1kHz sampling?
-    bool fast_sampling;
+    bool fast_sampling{false};
 #if HAL_INS_HIGHRES_SAMPLE
-    bool highres_sampling;
+    bool highres_sampling{false};
 #endif
 
     // what rate are we generating samples into the backend for gyros and accels?
-    uint16_t backend_rate_hz;
+    uint16_t backend_rate_hz{0};
     // pre-calculated backend period
-    uint32_t backend_period_us;
+    uint32_t backend_period_us{0};
 
     AP_HAL::OwnPtr<AP_HAL::Device> dev;
     AP_HAL::Device::PeriodicHandle periodic_handle;
@@ -145,9 +145,9 @@ private:
     enum Invensensev3_Type inv3_type;
 
     // buffer for fifo read
-    void* fifo_buffer;
+    void* fifo_buffer{nullptr};
 
-    float temp_filtered;
+    float temp_filtered{0.0f};
     LowPassFilter2pFloat temp_filter;
-    uint32_t sampling_rate_hz;
+    uint32_t sampling_rate_hz{0};
 };
