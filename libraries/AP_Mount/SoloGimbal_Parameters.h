@@ -91,7 +91,7 @@ private:
     uint32_t _last_set_ms;
     gmb_flashing_step_t _flashing_step;
 
-    mavlink_channel_t _chan;
+    mavlink_channel_t _chan;//UNKNOWN 
 };
 
 #endif // HAL_SOLO_GIMBAL_ENABLED

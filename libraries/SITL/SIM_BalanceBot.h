@@ -36,7 +36,7 @@ public:
 
 private:
     // vehicle frame x velocity
-    float velocity_vf_x;
+    float velocity_vf_x{0.0f};
 
     float skid_turn_rate;
 

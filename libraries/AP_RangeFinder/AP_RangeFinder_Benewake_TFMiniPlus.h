@@ -64,7 +64,7 @@ private:
     struct {
         uint32_t sum;
         uint32_t count;
-    } accum;
+    } accum{};
 };
 
 #endif

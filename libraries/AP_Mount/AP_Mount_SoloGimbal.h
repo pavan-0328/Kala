@@ -46,13 +46,13 @@ protected:
 
 private:
     // internal variables
-    bool _initialised;              // true once the driver has been initialised
+    bool _initialised{false};              // true once the driver has been initialised
 
     // Write a gimbal measurament and estimation data packet
     void Log_Write_Gimbal(SoloGimbal &gimbal);
 
-    bool _params_saved;
-    SoloGimbal _gimbal;
+    bool _params_saved{false};
+    SoloGimbal _gimbal; 
 };
 
 #endif // HAL_SOLO_GIMBAL_ENABLED

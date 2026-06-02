@@ -62,7 +62,7 @@ private:
     void parse_response(void);
 
     char linebuf[10];
-    uint8_t linebuf_len;
+    uint8_t linebuf_len{0};
     AP_Int16 mavg;
     AP_Int16 medf;
     AP_Int16 frq;

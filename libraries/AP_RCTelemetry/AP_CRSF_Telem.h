@@ -179,8 +179,8 @@ public:
 
     // Generic pending parameter request, used internally
     struct PendingParameterRequest : public ParameterSettingsReadFrame {
-        ParameterPayload payload;
-    } _param_request;
+        ParameterPayload payload{};
+    } _param_request{};
 
     const static uint8_t PARAMETER_MENU_ID = 1; // id of the parameter menu
 
@@ -215,10 +215,10 @@ public:
     struct ScriptedMenu : public ScriptedEntry {
         friend class AP_CRSF_Telem;
 
-        uint8_t num_params;
+        uint8_t num_params{0};
         const char* name;
         ScriptedParameter* params;
-        ScriptedMenu* next_menu;    // linked list of menus to make addition/removal/modification easy
+        ScriptedMenu* next_menu{nullptr};    // linked list of menus to make addition/removal/modification easy
 
         ScriptedMenu(const char* menu_name, uint8_t size, uint8_t parent_menu);
         ~ScriptedMenu();
@@ -411,20 +411,20 @@ private:
     bool _process_frame(AP_RCProtocol_CRSF::FrameType frame_type, void* data, uint8_t length);
 
     TelemetryPayload _telem;
-    uint8_t _telem_size;
-    uint8_t _telem_type;
+    uint8_t _telem_size{0};
+    uint8_t _telem_type{0};
     AP_RCProtocol_CRSF::RFMode _telem_rf_mode;
     // reporting telemetry rate
-    uint32_t _telem_last_report_ms;
-    uint16_t _telem_last_avg_rate;
+    uint32_t _telem_last_report_ms{0};
+    uint16_t _telem_last_avg_rate{0};
     // do we need to report the initial state
-    bool _telem_bootstrap_msg_pending;
+    bool _telem_bootstrap_msg_pending{true};
 
-    bool _telem_is_high_speed;
-    bool _telem_pending;
-    bool _enable_telemetry;
+    bool _telem_is_high_speed{false};
+    bool _telem_pending{false};
+    bool _enable_telemetry{false};
     // used to limit telemetry when in a failsafe condition
-    bool _is_tx_active;
+    bool _is_tx_active{false};
 
     struct {
         uint8_t destination = AP_RCProtocol_CRSF::CRSF_ADDRESS_BROADCAST;
@@ -437,7 +437,7 @@ private:
         uint8_t retry_count;
         bool use_rf_mode;
         AP_RCProtocol_CRSF::ProtocolType protocol;
-        bool pending = true;
+        bool pending;
         uint32_t last_request_info_ms;
     } _crsf_version;
 
@@ -445,24 +445,24 @@ private:
         bool init_done;
         uint32_t params_mode_start_ms;
         bool params_mode_active;
-    } _custom_telem;
+    } _custom_telem{};
 
     struct {
         bool pending;
         bool valid;
         uint8_t port_id;
-    } _baud_rate_request;
+    } _baud_rate_request{};
 
-    bool _bind_request_pending;
+    bool _bind_request_pending{false};
 
     // vtx state
-    bool _vtx_freq_update;  // update using the frequency method or not
-    bool _vtx_dbm_update; // update using the dbm method or not
-    bool _vtx_freq_change_pending; // a vtx command has been issued but not confirmed by a vtx broadcast frame
-    bool _vtx_power_change_pending;
-    bool _vtx_options_change_pending;
+    bool _vtx_freq_update{false};  // update using the frequency method or not
+    bool _vtx_dbm_update{false}; // update using the dbm method or not
+    bool _vtx_freq_change_pending{false}; // a vtx command has been issued but not confirmed by a vtx broadcast frame
+    bool _vtx_power_change_pending{false};
+    bool _vtx_options_change_pending{false};
 
-    bool _noted_lq_as_rssi_active;
+    bool _noted_lq_as_rssi_active{false};
 
     static AP_CRSF_Telem *singleton;
 };

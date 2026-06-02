@@ -161,7 +161,7 @@ protected:
     AP_Int16            _yaw_headroom;          // yaw control is given at least this pwm range
     AP_Float            _slew_up_time;          // throttle increase slew limitting
     AP_Float            _slew_dn_time;          // throttle decrease slew limitting
-    AP_Float            _safe_time;             // Time for the esc when transitioning between zero pwm to minimum
+    AP_Float            _safe_time;             // Time for tCollectivehe esc when transitioning between zero pwm to minimum
     AP_Float            _spin_arm;              // throttle out ratio which produces the armed spin rate.  (i.e. 0 ~ 1 ) of the full throttle range
     AP_Float            _batt_current_max;      // current over which maximum throttle is limited
     AP_Float            _batt_current_time_constant;    // Time constant used to limit the maximum current
@@ -185,12 +185,12 @@ protected:
     bool                motor_enabled[AP_MOTORS_MAX_NUM_MOTORS];    // true if motor is enabled
 
     // spool variables
-    float               _spin_up_ratio;      // throttle percentage (0 ~ 1) between zero and throttle_min
+    float               _spin_up_ratio{0.0f};      // throttle percentage (0 ~ 1) between zero and throttle_min
 
     // battery voltage, current and air pressure compensation variables
-    float               _throttle_limit;        // ratio of throttle limit between hover and maximum
-    float               _throttle_thrust_max;   // the maximum allowed throttle thrust 0.0 to 1.0 in the range throttle_min to throttle_max
-    float               _disarm_safe_timer;     // Timer for the esc when transitioning between zero pwm to minimum
+    float               _throttle_limit{0.0f};        // ratio of throttle limit between hover and maximum
+    float               _throttle_thrust_max{0.0f};   // the maximum allowed throttle thrust 0.0 to 1.0 in the range throttle_min to throttle_max
+    float               _disarm_safe_timer{0.0f};     // Timer for the esc when transitioning between zero pwm to minimum
 
     // vehicle supplied callback for thrust compensation. Used for tiltrotors and tiltwings
     thrust_compensation_fn_t _thrust_compensation_callback;

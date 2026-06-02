@@ -41,10 +41,10 @@ public:
     void update();
 
 private:
-    AP_HAL::UARTDriver *port;
-    uint32_t baudrate;
-    uint32_t us_per_byte;
-    uint32_t us_gap;
+    AP_HAL::UARTDriver *port{nullptr};
+    uint32_t baudrate{0};
+    uint32_t us_per_byte{0};
+    uint32_t us_gap{0};
 
     void init(void);
     void detect_servos();
@@ -57,20 +57,20 @@ private:
     void configure_servos(void);
 
     // auto-detected mask of available servos, from a broadcast ping
-    uint32_t servo_mask;
-    uint8_t detection_count;
-    uint8_t configured_servos;
-    bool initialised;
+    uint32_t servo_mask{0};
+    uint8_t detection_count{0};
+    uint8_t configured_servos{0};
+    bool initialised{false};
 
     uint8_t pktbuf[64];
-    uint8_t pktbuf_ofs;
+    uint8_t pktbuf_ofs{0};
 
     // servo position limits
     AP_Int32 pos_min;
     AP_Int32 pos_max;
 
-    uint32_t last_send_us;
-    uint32_t delay_time_us;
+    uint32_t last_send_us{0};
+    uint32_t delay_time_us{0};
 };
 
 #endif  // AP_ROBOTISSERVO_ENABLED

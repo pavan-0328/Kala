@@ -32,7 +32,7 @@ public:
 private:
     const float &slew_rate_max;
     const float &slew_rate_tau;
-    LowPassFilterFloat slew_filter;
+    LowPassFilterFloat slew_filter{};
     float _output_slew_rate{0.0f};
     float _modifier_slew_rate{1.0f};
     float last_sample{0.0f};

@@ -72,14 +72,14 @@ public:
     }
 
 private:
-    AP_MSP_Telem_Backend *_backends[MSP_MAX_INSTANCES];
+    AP_MSP_Telem_Backend *_backends[MSP_MAX_INSTANCES]{};
 
     AP_Int8 _options;
     AP_Int8 _cellcount;
 
     // these are the osd items we support for MSP OSD
-    AP_OSD_Setting* _osd_item_settings[MSP::OSD_ITEM_COUNT];
-    MSP::osd_config_t _osd_config;
+    AP_OSD_Setting* _osd_item_settings[MSP::OSD_ITEM_COUNT]{};
+    MSP::osd_config_t _osd_config{};
 
     struct {
         bool flashing_on;                                       // OSD item flashing support @1.4Hz

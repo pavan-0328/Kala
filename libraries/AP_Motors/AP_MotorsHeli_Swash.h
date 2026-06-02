@@ -68,12 +68,12 @@ private:
         COLLECTIVE_DIRECTION_REVERSED
     };
 
-    static const uint8_t _max_num_servos {4};
+    static const uint8_t _max_num_servos{4};
 
     // Currently configured setup
-    SwashPlateType       _swash_type;                 // Swashplate type
-    CollectiveDirection  _collective_direction;       // Collective control direction, normal or reversed
-    bool                 _make_servo_linear;          // Sets servo output to be linearized
+    SwashPlateType       _swash_type{0};                 // Swashplate type
+    CollectiveDirection  _collective_direction{};       // Collective control direction, normal or reversed
+    bool                 _make_servo_linear{false};          // Sets servo output to be linearized
 
     // Internal variables
     bool                 _enabled[_max_num_servos];                 // True if this output servo is enabled
@@ -85,9 +85,9 @@ private:
     const uint8_t        _instance;                                 // Swashplate instance. Used for logging.
 
     // Variables stored for logging
-    float _roll_input;
-    float _pitch_input;
-    float _collective_input_scaled;
+    float _roll_input{0.0f};
+    float _pitch_input{0.0f};
+    float _collective_input_scaled{0.0f};
 
     // parameters
     AP_Int8  _swashplate_type;                   // Swash Type Setting

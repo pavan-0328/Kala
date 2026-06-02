@@ -52,18 +52,18 @@ protected:
     }
 
     // number of bytes in a page
-    uint32_t df_PageSize;
+    uint32_t df_PageSize{0};
     // number of pages in a (generally 64k) block
-    uint16_t df_PagePerBlock;
+    uint16_t df_PagePerBlock{0};
     // number of pages in a (generally 4k) sector
-    uint16_t df_PagePerSector;
+    uint16_t df_PagePerSector{0};
     // number of pages on the chip
-    uint32_t df_NumPages;
-    volatile bool log_write_started;
+    uint32_t df_NumPages{0};
+    volatile bool log_write_started{false};
 
-    uint8_t *buffer;
-    uint32_t last_messagewrite_message_sent;
-    uint32_t df_Read_PageAdr;
+    uint8_t *buffer{nullptr};
+    uint32_t last_messagewrite_message_sent{0};
+    uint32_t df_Read_PageAdr{0};
 
 private:
     /*
@@ -96,38 +96,38 @@ private:
     ByteBuffer writebuf;
 
     // state variables
-    uint16_t df_Read_BufferIdx;
-    uint32_t df_PageAdr;    // current page address for writes
+    uint16_t df_Read_BufferIdx{0};
+    uint32_t df_PageAdr{0};    // current page address for writes
     // file numbers
-    uint16_t df_FileNumber;
-    uint16_t df_Write_FileNumber;
-    uint32_t df_FileTime;
+    uint16_t df_FileNumber{0};
+    uint16_t df_Write_FileNumber{0};
+    uint32_t df_FileTime{0};
     // relative page index of the current read/write file starting at 1
-    uint32_t df_FilePage;
-    uint32_t df_Write_FilePage;
+    uint32_t df_FilePage{0};
+    uint32_t df_Write_FilePage{0};
     // page to wipe from in the case of corruption
-    uint32_t df_EraseFrom;
+    uint32_t df_EraseFrom{0};
 
     // offset from adding FMT messages to log data
-    bool adding_fmt_headers;
+    bool adding_fmt_headers{false};
 
     // are we waiting on an erase to finish?
-    volatile bool erase_started;
+    volatile bool erase_started{false};
     // were we logging before the erase started?
-    volatile bool new_log_pending;
+    volatile bool new_log_pending{false};
     // have we been asked to stop logging safely?
-    volatile bool stop_log_pending;
+    volatile bool stop_log_pending{false};
     // latch to make sure we only write out the full message once
-    volatile bool chip_full;
+    volatile bool chip_full{false};
     // io thread health
-    volatile uint32_t io_timer_heartbeat;
-    uint8_t warning_decimation_counter;
+    volatile uint32_t io_timer_heartbeat{0};
+    uint8_t warning_decimation_counter{0};
 
     volatile enum class StatusMessage {
         NONE,
         ERASE_COMPLETE,
         RECOVERY_COMPLETE,
-    } status_msg;
+    } status_msg{StatusMessage::NONE};
 
     // read size bytes of data to a page. The caller must ensure that
     // the data fits within the page, otherwise it will wrap to the

@@ -40,7 +40,7 @@ private:
     uint8_t _addr;
 
     void _timer(void);
-    bool _need_update;
+    bool _need_update{false};
     uint8_t bgr[3];
     uint8_t last_sent_bgr[3];
 };

@@ -124,13 +124,13 @@ private:
         } gnss_dop; // 10e3
         uint8_t ins_sol_status;
         uint16_t crc;
-    } pkt;
+    } pkt{};
 
-    uint32_t last_pkt_us;
+    uint32_t last_pkt_us{0};
     const uint16_t pkt_rate_hz = 200;
     const uint16_t gnss_rate_hz = 10;
     const uint16_t gnss_frequency = pkt_rate_hz / gnss_rate_hz;
-    uint32_t packets_sent;
+    uint32_t packets_sent{0};
 };
 
 }

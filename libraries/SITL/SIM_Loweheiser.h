@@ -117,13 +117,13 @@ private:
     const float max_current = 50.0f;
     const float base_supply_voltage = 50.0;
 
-    uint32_t last_sent_ms;
+    uint32_t last_sent_ms{0};
 
     void update_receive();
     void update_send();
 
     void maybe_send_heartbeat();
-    uint32_t last_heartbeat_ms;
+    uint32_t last_heartbeat_ms{0};
 
     void handle_message(const mavlink_message_t &msg);
 
@@ -139,7 +139,7 @@ private:
     };
     GovernorState autopilot_desired_governor_state = GovernorState::OFF;
 
-    float manual_throttle_pct;
+    float manual_throttle_pct{0.0f};
 
     enum class StartupState : uint8_t {
         OFF = 0,
@@ -147,12 +147,12 @@ private:
     };
     StartupState autopilot_desired_startup_state = StartupState::OFF;
 
-    mavlink_message_t rxmsg;
-    mavlink_status_t rxstatus;
+    mavlink_message_t rxmsg{};
+    mavlink_status_t rxstatus{};
 
     SIM_GeneratorEngine generatorengine;
 
-    float _current_current;
+    float _current_current{0.0f};
 
     // fuel
     const float initial_fuel_level = 10;  // litres, must match battery setup
@@ -161,9 +161,9 @@ private:
     float fuel_flow_lps = 0; // litres/second
     void update_fuel_level();
 
-    uint32_t last_fuel_update_ms;
+    uint32_t last_fuel_update_ms{0};
 
-    mavlink_status_t mav_status;
+    mavlink_status_t mav_status{};
 
     // parameters
     // AP_Int8 _enabled;

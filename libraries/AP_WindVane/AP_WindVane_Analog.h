@@ -34,10 +34,10 @@ private:
     // pin for reading analog voltage
     class AP_HAL::AnalogSource *_dir_analog_source;
 
-    float _current_analog_voltage;
+    float _current_analog_voltage{0.0f};
     uint32_t  _cal_start_ms = 0;
-    float _cal_volt_min;
-    float _cal_volt_max;
+    float _cal_volt_min{0.0f};
+    float _cal_volt_max{0.0f};
 };
 
 #endif  // AP_WINDVANE_ANALOG_ENABLED
