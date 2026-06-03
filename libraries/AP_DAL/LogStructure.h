@@ -221,9 +221,9 @@ struct log_REY3 {
 // @Field: Primary: primary barometer instance number
 // @Field: NumInst: number of barometer sensors
 struct log_RBRH {
-    uint8_t primary;
-    uint8_t num_instances;
-    uint8_t _end;
+    uint8_t primary{0};
+    uint8_t num_instances{0};
+    uint8_t _end{0};
 };
 
 // @LoggerMessage: RBRI

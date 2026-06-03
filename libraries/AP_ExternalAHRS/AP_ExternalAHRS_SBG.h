@@ -155,19 +155,19 @@ private:
     static void safe_copy_msg_to_object(uint8_t* dest, const uint16_t dest_len, const uint8_t* src, const uint16_t src_len);
     static AP_GPS_FixType SbgGpsPosStatus_to_GpsFixType(const uint32_t gpsPosStatus);
 
-    uint32_t send_MagData_ms;
-    uint32_t send_AirData_ms;
-    uint32_t send_mag_error_last_ms;
-    uint32_t send_air_error_last_ms;
+    uint32_t send_MagData_ms{0};
+    uint32_t send_AirData_ms{0};
+    uint32_t send_mag_error_last_ms{0};
+    uint32_t send_air_error_last_ms{0};
     static bool send_MagData(AP_HAL::UARTDriver *_uart);
     static bool send_AirData(AP_HAL::UARTDriver *_uart);
 
     AP_HAL::UARTDriver *uart;
-    int8_t port_num;
-    uint32_t baudrate;
-    bool setup_complete;
-    uint32_t version_check_ms;
-    uint32_t last_received_ms;
+    int8_t port_num{0};
+    uint32_t baudrate{0};
+    bool setup_complete{false};
+    uint32_t version_check_ms{0};
+    uint32_t last_received_ms{0};
 };
 
 #endif  // AP_EXTERNAL_AHRS_SBG_ENABLED

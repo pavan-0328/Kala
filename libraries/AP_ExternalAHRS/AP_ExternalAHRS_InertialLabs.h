@@ -134,66 +134,66 @@ public:
     };
     
     union PACKED ILabsData {
-        uint32_t gnss_time_ms; // ms since start of GNSS week
-        uint16_t gnss_week;
+        uint32_t gnss_time_ms{0}; // ms since start of GNSS week
+        uint16_t gnss_week{0};
         vec3_32_t accel_data_hr; // g * 1e6
         vec3_32_t gyro_data_hr; // deg/s * 1e5
         struct PACKED {
             uint16_t pressure_pa2; // Pascals/2
             int32_t baro_alt; // meters*100
-        } baro_data;
+        } baro_data{};
         vec3_16_t mag_data; // nT/10
         struct PACKED {
             uint16_t yaw; // deg*100
             int16_t pitch; // deg*100
             int16_t roll; // deg*100
-        } orientation_angles; // 321 euler order?
+        } orientation_angles{}; // 321 euler order?
         vec3_32_t velocity; // m/s * 100
         struct PACKED {
             int32_t lat; // deg*1e7
             int32_t lon; // deg*1e7
             int32_t alt; // m*100, AMSL
-        } position;
+        } position{};
         vec3_u8_t kf_vel_covariance; // mm/s
         vec3_u16_t kf_pos_covariance; // mm
-        uint16_t unit_status; // set ILABS_UNIT_STATUS_*
+        uint16_t unit_status{}; // set ILABS_UNIT_STATUS_*
         gnss_extended_info_t gnss_extended_info;
-        uint8_t num_sats;
+        uint8_t num_sats{};
         struct PACKED {
             int32_t lat; // deg*1e7
             int32_t lon; // deg*1e7
             int32_t alt; // m*100
-        } gnss_position;
+        } gnss_position{};
         struct PACKED {
             int32_t hor_speed; // m/s*100
             uint16_t track_over_ground; // deg*100
             int32_t ver_speed; // m/s*100
-        } gnss_vel_track;
-        uint32_t gnss_pos_timestamp; // ms
+        } gnss_vel_track{};
+        uint32_t gnss_pos_timestamp{0}; // ms
         gnss_info_short_t gnss_info_short;
-        uint8_t gnss_new_data;
-        uint8_t gnss_jam_status;
-        int32_t differential_pressure; // mbar*1e4
-        int16_t true_airspeed; // m/s*100
+        uint8_t gnss_new_data{0};
+        uint8_t gnss_jam_status{0};
+        int32_t differential_pressure{0}; // mbar*1e4
+        int16_t true_airspeed{0}; // m/s*100
         vec3_16_t wind_speed; // m/s*100
-        uint16_t air_data_status;
-        uint16_t supply_voltage; // V*100
-        int16_t temperature; // degC*10
-        uint16_t unit_status2;
+        uint16_t air_data_status{0};
+        uint16_t supply_voltage{0}; // V*100
+        int16_t temperature{0}; // degC*10
+        uint16_t unit_status2{0};
         struct PACKED {
             uint16_t heading; // deg*100
             int16_t pitch; // deg*100
-        } gnss_angles;
-        uint8_t gnss_angle_pos_type;
-        uint32_t gnss_heading_timestamp; // ms
+        } gnss_angles{};
+        uint8_t gnss_angle_pos_type{0};
+        uint32_t gnss_heading_timestamp{0}; // ms
         struct PACKED {
             uint16_t gdop;
             uint16_t pdop;
             uint16_t hdop;
             uint16_t vdop;
             uint16_t tdop;
-        } gnss_dop; // 10e3
-        uint8_t ins_sol_status;
+        } gnss_dop{}; // 10e3
+        uint8_t ins_sol_status{0};
     };
 
     AP_ExternalAHRS::gps_data_message_t gps_data;
@@ -202,7 +202,7 @@ public:
     AP_ExternalAHRS::ins_data_message_t ins_data;
     AP_ExternalAHRS::airspeed_data_message_t airspeed_data;
 
-    uint16_t buffer_ofs;
+    uint16_t buffer_ofs{0};
     uint8_t buffer[256]; // max for normal message set is 167+8
 
 protected:
@@ -213,9 +213,9 @@ protected:
 
 private:
     AP_HAL::UARTDriver *uart;
-    int8_t port_num;
-    uint32_t baudrate;
-    bool setup_complete;
+    int8_t port_num{0};
+    uint32_t baudrate{0};
+    bool setup_complete{false};
 
     void update_thread();
     bool check_uart();
@@ -241,7 +241,7 @@ private:
         uint16_t air_data_status;
         float supply_voltage;
         uint8_t ins_sol_status;
-    } state2;
+    } state2{};
 
     struct {
         float lat;
@@ -262,20 +262,20 @@ private:
         float gdop;
         float pdop;
         float tdop;
-    } gnss_data;
+    } gnss_data{};
 
-    uint16_t last_unit_status;
-    uint16_t last_unit_status2;
-    uint16_t last_air_data_status;
-    uint8_t last_spoof_status;
-    uint8_t last_jam_status;
+    uint16_t last_unit_status{0};
+    uint16_t last_unit_status2{0};
+    uint16_t last_air_data_status{0};
+    uint8_t last_spoof_status{0};
+    uint8_t last_jam_status{0};
 
-    uint32_t last_critical_msg_ms;
+    uint32_t last_critical_msg_ms{0};
 
-    uint32_t last_att_ms;
-    uint32_t last_vel_ms;
-    uint32_t last_pos_ms;
-    uint32_t last_gps_ms;
+    uint32_t last_att_ms{0};
+    uint32_t last_vel_ms{0};
+    uint32_t last_pos_ms{0};
+    uint32_t last_gps_ms{0};
 };
 
 #endif  // AP_EXTERNAL_AHRS_INERTIALLABS_ENABLED

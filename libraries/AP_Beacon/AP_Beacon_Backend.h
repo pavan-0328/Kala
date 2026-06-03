@@ -56,7 +56,7 @@ protected:
     AP_Beacon &_frontend;
 
     // yaw correction
-    int16_t orient_yaw_deg; // cached version of orient_yaw parameter
+    int16_t orient_yaw_deg{0}; // cached version of orient_yaw parameter
     float orient_cos_yaw = 0.0f;
     float orient_sin_yaw = 1.0f;
 

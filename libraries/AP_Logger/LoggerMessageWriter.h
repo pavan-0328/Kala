@@ -54,8 +54,8 @@ private:
         DONE
     };
 
-    uint16_t _mission_number_to_send;
-    Stage stage;
+    uint16_t _mission_number_to_send{0};
+    Stage stage{};
 };
 
 class LoggerMessageWriter_WriteAllRallyPoints : public LoggerMessageWriter {
@@ -89,8 +89,8 @@ private:
         DONE
     };
 
-    uint16_t _fence_number_to_send;
-    Stage stage;
+    uint16_t _fence_number_to_send{0};
+    Stage stage{};
 };
 #endif // HAL_LOGGER_FENCE_ENABLED
 

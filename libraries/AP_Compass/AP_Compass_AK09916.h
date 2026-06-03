@@ -203,8 +203,8 @@ public:
     
 private:
     AuxiliaryBus *_bus;
-    AuxiliaryBusSlave *_slave;
-    bool _started;
+    AuxiliaryBusSlave *_slave{nullptr};
+    bool _started{false};
 };
 
 #endif  // AP_COMPASS_AK09916_ENABLED
