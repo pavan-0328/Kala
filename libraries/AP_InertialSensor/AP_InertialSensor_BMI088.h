@@ -81,7 +81,7 @@ private:
 
     enum Rotation rotation;
     uint8_t temperature_counter{0};
-    enum DevTypes _accel_devtype{0};
+    enum DevTypes _accel_devtype;
     float accel_range{0.0f};
 
     bool done_accel_config{false};

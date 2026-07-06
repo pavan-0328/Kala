@@ -46,7 +46,7 @@ private:
         AP_Baro_DroneCAN* driver{nullptr};
     } _detected_modules[BARO_MAX_DRIVERS];
 
-    static HAL_Semaphore _sem_registry{};
+    static HAL_Semaphore _sem_registry;
 };
 
 #endif  // AP_BARO_DRONECAN_ENABLED

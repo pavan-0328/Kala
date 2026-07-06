@@ -67,7 +67,7 @@ private:
 
     enum Rotation _rotation;
     
-    bool _initialised:1 = false;
+    bool _initialised:1;
     bool _force_external:1;
 };
 

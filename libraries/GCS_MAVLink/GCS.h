@@ -1288,9 +1288,9 @@ protected:
     uint32_t control_sensors_health=0;
     virtual void update_vehicle_sensor_status_flags() {}
 
-    static const struct AP_Param::GroupInfo *_chan_var_info[MAVLINK_COMM_NUM_BUFFERS]={};
+    static const struct AP_Param::GroupInfo *_chan_var_info[MAVLINK_COMM_NUM_BUFFERS];
     uint8_t _num_gcs=0;
-    GCS_MAVLINK *_chan[MAVLINK_COMM_NUM_BUFFERS]={};
+    GCS_MAVLINK *_chan[MAVLINK_COMM_NUM_BUFFERS];
 
     // parameters
     AP_Int16                 sysid;

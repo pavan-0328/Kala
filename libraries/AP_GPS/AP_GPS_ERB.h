@@ -144,9 +144,9 @@ private:
     uint32_t _last_vel_time{0};
 
     // do we have new position information?
-    bool _new_position:1 = 0;
+    bool _new_position:1;
     // do we have new speed information?
-    bool _new_speed:1 = 0;
+    bool _new_speed:1 ;
 
     // Buffer parse & GPS state update
     bool _parse_gps();

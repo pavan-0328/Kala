@@ -224,7 +224,7 @@ void AIS::update_simulated_vessel(ais_vessel &vessel, const float dt, const Loca
 void AIS::init_vessel(ais_vessel &vessel, const Location &vehicle_loc, const float radius)
 {
     // Clear any existing data
-    memset(&vessel, 0, sizeof(vessel));
+    vessel = {};
 
     // Set flags for valid data
     vessel.info.flags |= AIS_FLAGS_VALID_VELOCITY | AIS_FLAGS_VALID_TURN_RATE;

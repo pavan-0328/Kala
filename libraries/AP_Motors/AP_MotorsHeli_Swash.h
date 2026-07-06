@@ -71,7 +71,7 @@ private:
     static const uint8_t _max_num_servos{4};
 
     // Currently configured setup
-    SwashPlateType       _swash_type{0};                 // Swashplate type
+    SwashPlateType       _swash_type{SwashPlateType::SWASHPLATE_TYPE_H3};                 // Swashplate type
     CollectiveDirection  _collective_direction{};       // Collective control direction, normal or reversed
     bool                 _make_servo_linear{false};          // Sets servo output to be linearized
 

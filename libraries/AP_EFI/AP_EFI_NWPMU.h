@@ -30,7 +30,7 @@
 class AP_EFI_NWPMU : public CANSensor, public AP_EFI_Backend {
 public:
     AP_EFI_NWPMU(AP_EFI &_frontend);
-    {0.0f, 0.0f, 0.0f}
+    //{0.0f, 0.0f, 0.0f}
     void update() override;
 
 private:

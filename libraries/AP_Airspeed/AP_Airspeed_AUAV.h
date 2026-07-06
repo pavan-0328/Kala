@@ -126,7 +126,7 @@ private:
     AUAV_Pressure_sensor sensor { _dev, AUAV_Pressure_sensor::Type::Differential };
 
     float pressure{0.0f};
-    float temp_C{0.0f}
+    float temp_C{0.0f};
     const float range_inH2O;
 };
 

@@ -700,6 +700,8 @@ MISSION_STATE GCS_MAVLINK::mission_state(const AP_Mission &mission) const
         return MISSION_STATE_NO_MISSION;
     }
     switch (mission.state()) {
+    case AP_Mission::mission_state::MISSION_STATE_NONE:
+        return MISSION_STATE_NO_MISSION;
     case AP_Mission::mission_state::MISSION_STOPPED:
         return MISSION_STATE_NOT_STARTED;
     case AP_Mission::mission_state::MISSION_RUNNING:

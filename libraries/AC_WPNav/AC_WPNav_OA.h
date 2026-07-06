@@ -56,7 +56,7 @@ public:
 protected:
 
     // oa path planning variables
-    AP_OAPathPlanner::OA_RetState _oa_state{AP_OAPathPlanner::OA_WAITING};    // state of object avoidance, if OA_SUCCESS we use _oa_destination to avoid obstacles
+    AP_OAPathPlanner::OA_RetState _oa_state;    // state of object avoidance, if OA_SUCCESS we use _oa_destination to avoid obstacles
     Vector3f    _origin_oabak_neu_m;            // backup of _origin_neu_m so it can be restored when oa completes
     Vector3f    _destination_oabak_neu_m;       // backup of _destination_neu_m so it can be restored when oa completes
     Vector3f    _next_destination_oabak_neu_m;  // backup of _next_destination_neu_m so it can be restored when oa completes

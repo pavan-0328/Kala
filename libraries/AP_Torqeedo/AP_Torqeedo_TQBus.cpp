@@ -353,6 +353,10 @@ bool AP_Torqeedo_TQBus::parse_byte(uint8_t b)
     bool complete_msg_received = false;
 
     switch (_parse_state) {
+    
+    case ParseState::UNINIT:
+        _parse_state = ParseState::WAITING_FOR_HEADER;
+        break;
     case ParseState::WAITING_FOR_HEADER:
         if (b == TORQEEDO_PACKET_HEADER) {
             _parse_state = ParseState::WAITING_FOR_FOOTER;

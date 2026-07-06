@@ -104,7 +104,7 @@ private:
     uint8_t _compass_instance{0};
     bool _initialized{false};
     enum Rotation _rotation;
-    enum AP_Compass_Backend::DevTypes _devtype{0};
+    enum AP_Compass_Backend::DevTypes _devtype;
     uint8_t no_data{0};
 };
 

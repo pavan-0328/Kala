@@ -370,7 +370,7 @@ protected:
     // motor options
     AP_Int16            _options;
 
-    MAV_TYPE _mav_type{0}; // MAV_TYPE_GENERIC = 0;
+    MAV_TYPE _mav_type; // MAV_TYPE_GENERIC = 0;
 
     // return string corresponding to frame_class
     virtual const char* _get_frame_string() const = 0;

@@ -229,8 +229,8 @@ private:
     uint8_t _board_version{0};
     float _current_firmware_version{0.0f};
     uint8_t _firmware_beta_version{0};
-    bool _gimbal_3axis : 1=false;
-    bool _gimbal_bat_monitoring : 1=false;
+    bool _gimbal_3axis : 1;
+    bool _gimbal_bat_monitoring : 1;
 
     // keep the last _current_angle values
     Vector3f _current_angle;
@@ -246,6 +246,6 @@ private:
     uint8_t _payload_counter{0};
 
     // confirmed that last command was ok
-    bool _last_command_confirmed : 1 =false;
+    bool _last_command_confirmed : 1 ;
 };
 #endif // HAL_MOUNT_ALEXMOS_ENABLED

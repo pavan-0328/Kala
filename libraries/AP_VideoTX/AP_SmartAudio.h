@@ -172,7 +172,7 @@ private:
     // expected packet size
     uint8_t _packet_size{0};
 
-    ProtocolVersion _protocol_version{0};
+    ProtocolVersion _protocol_version;
     // statistics
     uint16_t _packets_sent{0};
     uint16_t _packets_rcvd{0};

@@ -1202,11 +1202,15 @@ void AP_Mount_Siyi::check_firmware_version() const
     FirmwareVersion minimum_ver {};
     switch (_hardware_model) {
         case HardwareModel::A8:
-        	minimum_ver.camera = {.major = 0, .minor = 2, .patch = 1};
+        	minimum_ver.camera.major = 0;
+            minimum_ver.camera.minor = 2;
+            minimum_ver.camera.patch = 1;
             break;
 
         case HardwareModel::ZT6:
-            minimum_ver.camera = {.major = 0, .minor = 1, .patch = 9};
+            minimum_ver.camera.major = 0;
+            minimum_ver.camera.minor = 1;
+            minimum_ver.camera.patch = 9;
             break;
 
         case HardwareModel::A2:

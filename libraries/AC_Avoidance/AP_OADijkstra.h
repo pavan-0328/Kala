@@ -61,7 +61,7 @@ private:
         DIJKSTRA_ERROR_TOO_MANY_FENCE_POINTS,
         DIJKSTRA_ERROR_NO_POSITION_ESTIMATE,
         DIJKSTRA_ERROR_COULD_NOT_FIND_PATH
-    } _error_id{DIJKSTRA_ERROR_NONE};
+    } _error_id;
 
     // return error message for a given error id
     const char* get_error_msg(AP_OADijkstra_Error error_id) const;
@@ -206,7 +206,7 @@ private:
     // returns true if successful and pos is updated
     bool convert_node_to_point(const AP_OAVisGraph::OAItemID& id, Vector2f& pos) const;
 
-    AP_OADijkstra_Error _error_last_id{DIJKSTRA_ERROR_NONE};                 // last error id sent to GCS
+    AP_OADijkstra_Error _error_last_id{AP_OADijkstra_Error::DIJKSTRA_ERROR_NONE};                 // last error id sent to GCS
     uint32_t _error_last_report_ms{0};                     // last time an error message was sent to GCS
 
 #if HAL_LOGGING_ENABLED

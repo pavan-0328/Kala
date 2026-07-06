@@ -134,66 +134,66 @@ public:
     };
     
     union PACKED ILabsData {
-        uint32_t gnss_time_ms{0}; // ms since start of GNSS week
-        uint16_t gnss_week{0};
+        uint32_t gnss_time_ms; // ms since start of GNSS week
+        uint16_t gnss_week;
         vec3_32_t accel_data_hr; // g * 1e6
         vec3_32_t gyro_data_hr; // deg/s * 1e5
         struct PACKED {
             uint16_t pressure_pa2; // Pascals/2
             int32_t baro_alt; // meters*100
-        } baro_data{};
+        } baro_data;
         vec3_16_t mag_data; // nT/10
         struct PACKED {
             uint16_t yaw; // deg*100
             int16_t pitch; // deg*100
             int16_t roll; // deg*100
-        } orientation_angles{}; // 321 euler order?
+        } orientation_angles; // 321 euler order?
         vec3_32_t velocity; // m/s * 100
         struct PACKED {
             int32_t lat; // deg*1e7
             int32_t lon; // deg*1e7
             int32_t alt; // m*100, AMSL
-        } position{};
+        } position;
         vec3_u8_t kf_vel_covariance; // mm/s
         vec3_u16_t kf_pos_covariance; // mm
-        uint16_t unit_status{}; // set ILABS_UNIT_STATUS_*
+        uint16_t unit_status; // set ILABS_UNIT_STATUS_*
         gnss_extended_info_t gnss_extended_info;
-        uint8_t num_sats{};
+        uint8_t num_sats;
         struct PACKED {
             int32_t lat; // deg*1e7
             int32_t lon; // deg*1e7
             int32_t alt; // m*100
-        } gnss_position{};
+        } gnss_position;
         struct PACKED {
             int32_t hor_speed; // m/s*100
             uint16_t track_over_ground; // deg*100
             int32_t ver_speed; // m/s*100
-        } gnss_vel_track{};
-        uint32_t gnss_pos_timestamp{0}; // ms
+        } gnss_vel_track;
+        uint32_t gnss_pos_timestamp; // ms
         gnss_info_short_t gnss_info_short;
-        uint8_t gnss_new_data{0};
-        uint8_t gnss_jam_status{0};
-        int32_t differential_pressure{0}; // mbar*1e4
-        int16_t true_airspeed{0}; // m/s*100
+        uint8_t gnss_new_data;
+        uint8_t gnss_jam_status;
+        int32_t differential_pressure; // mbar*1e4
+        int16_t true_airspeed; // m/s*100
         vec3_16_t wind_speed; // m/s*100
-        uint16_t air_data_status{0};
-        uint16_t supply_voltage{0}; // V*100
-        int16_t temperature{0}; // degC*10
-        uint16_t unit_status2{0};
+        uint16_t air_data_status;
+        uint16_t supply_voltage; // V*100
+        int16_t temperature; // degC*10
+        uint16_t unit_status2;
         struct PACKED {
             uint16_t heading; // deg*100
             int16_t pitch; // deg*100
         } gnss_angles{};
-        uint8_t gnss_angle_pos_type{0};
-        uint32_t gnss_heading_timestamp{0}; // ms
+        uint8_t gnss_angle_pos_type;
+        uint32_t gnss_heading_timestamp; // ms
         struct PACKED {
             uint16_t gdop;
             uint16_t pdop;
             uint16_t hdop;
             uint16_t vdop;
             uint16_t tdop;
-        } gnss_dop{}; // 10e3
-        uint8_t ins_sol_status{0};
+        } gnss_dop; // 10e3
+        uint8_t ins_sol_status;
     };
 
     AP_ExternalAHRS::gps_data_message_t gps_data;

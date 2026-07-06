@@ -815,8 +815,8 @@ private:
     void load_watchdog_home();
     bool _checked_watchdog_home{false};
     Location _home;
-    bool _home_is_set :1=false;
-    bool _home_locked :1=false;
+    bool _home_is_set :1;
+    bool _home_locked :1;
 
     // avoid setting current state repeatedly across all cores on all EKFs:
     enum class TriState {
@@ -834,7 +834,7 @@ private:
     uint32_t _last_AOA_update_ms{0};
     void update_AOA_SSA(void);
 
-    EKFType last_active_ekf_type{EKFType::UNKNOWN};
+    EKFType last_active_ekf_type;
 
 #if AP_AHRS_SIM_ENABLED
     void update_SITL(void);

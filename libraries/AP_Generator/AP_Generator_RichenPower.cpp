@@ -458,7 +458,10 @@ void AP_Generator_RichenPower::send_generator_status(const GCS_MAVLINK &channel)
     if (last_reading.rpm == 0) {
         status |= MAV_GENERATOR_STATUS_FLAG_OFF;
     } else {
-        switch (last_reading.mode) {
+        switch (last_reading.mode) {\
+        case Mode::NONE:
+            status |= MAV_GENERATOR_STATUS_FLAG_OFF;
+            break;
         case Mode::OFF:
             status |= MAV_GENERATOR_STATUS_FLAG_OFF;
             break;

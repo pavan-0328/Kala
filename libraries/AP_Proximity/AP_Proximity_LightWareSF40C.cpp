@@ -211,6 +211,10 @@ void AP_Proximity_LightWareSF40C::parse_byte(uint8_t b)
     // process byte depending upon current state
     switch (_msg.state) {
 
+    case ParseState::UNKNOWN:
+        _msg.state = ParseState::HEADER;
+        break;
+
     case ParseState::HEADER:
         if (b == PROXIMITY_SF40C_HEADER) {
             _msg.crc_expected = crc_xmodem_update(0, b);

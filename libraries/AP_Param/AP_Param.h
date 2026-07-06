@@ -265,7 +265,7 @@ public:
         uint32_t idx : 4; // offset into array types
         uint32_t group_element : 18;
         uint32_t last_disabled : 1;
-    } ParamToken{};
+    } ParamToken;
 
 
     // nesting structure for recursive call states
