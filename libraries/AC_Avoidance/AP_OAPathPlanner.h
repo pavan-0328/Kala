@@ -124,13 +124,13 @@ private:
     
     // internal variables used by front end
     HAL_Semaphore _rsem;            // semaphore for multi-thread use of avoidance_request and avoidance_result
-    bool _thread_created;           // true once background thread has been created
-    AP_OABendyRuler *_oabendyruler; // Bendy Ruler algorithm
-    AP_OADijkstra *_oadijkstra;     // Dijkstra's algorithm
+    bool _thread_created{false};           // true once background thread has been created
+    AP_OABendyRuler *_oabendyruler{nullptr}; // Bendy Ruler algorithm
+    AP_OADijkstra *_oadijkstra{nullptr};     // Dijkstra's algorithm
     AP_OADatabase _oadatabase;      // Database of dynamic objects to avoid
-    uint32_t avoidance_latest_ms;   // last time Dijkstra's or BendyRuler algorithms ran (in the avoidance thread)
-    uint32_t _last_update_ms;       // system time that mission_avoidance was called in main thread
-    uint32_t _activated_ms;         // system time that object avoidance was most recently activated (used to avoid timeout error on first run)
+    uint32_t avoidance_latest_ms{0};   // last time Dijkstra's or BendyRuler algorithms ran (in the avoidance thread)
+    uint32_t _last_update_ms{0};       // system time that mission_avoidance was called in main thread
+    uint32_t _activated_ms{0};         // system time that object avoidance was most recently activated (used to avoid timeout error on first run)
 
     bool proximity_only = true;
     static AP_OAPathPlanner *_singleton;

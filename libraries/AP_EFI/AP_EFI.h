@@ -142,7 +142,7 @@ private:
     AP_Enum<Type> type;
 
     // Tracking backends
-    AP_EFI_Backend *backend;
+    AP_EFI_Backend *backend{nullptr};
     static AP_EFI *singleton;
 
     // Semaphore for access to shared frontend data

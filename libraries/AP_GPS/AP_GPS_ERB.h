@@ -128,25 +128,25 @@ private:
     };
 
     // Packet checksum accumulators
-    uint8_t _ck_a;
-    uint8_t _ck_b;
+    uint8_t _ck_a{0};
+    uint8_t _ck_b{0};
 
     // State machine state
-    uint8_t _step;
-    uint8_t _msg_id;
-    uint16_t _payload_length;
-    uint16_t _payload_counter;
+    uint8_t _step{0};
+    uint8_t _msg_id{0};
+    uint16_t _payload_length{0};
+    uint16_t _payload_counter{0};
 
     // 8 bit count of fix messages processed, used for periodic processing
-    uint8_t _fix_count;
+    uint8_t _fix_count{0};
 
-    uint32_t _last_pos_time;
-    uint32_t _last_vel_time;
+    uint32_t _last_pos_time{0};
+    uint32_t _last_vel_time{0};
 
     // do we have new position information?
-    bool _new_position:1;
+    bool _new_position:1 = 0;
     // do we have new speed information?
-    bool _new_speed:1;
+    bool _new_speed:1 = 0;
 
     // Buffer parse & GPS state update
     bool _parse_gps();

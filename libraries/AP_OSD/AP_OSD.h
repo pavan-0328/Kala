@@ -352,7 +352,7 @@ private:
     struct {
         bool load_attempted;
         const char *str;
-    } callsign_data;
+    } callsign_data{};
 };
 #endif // OSD_ENABLED
 
@@ -391,9 +391,9 @@ public:
     AP_Enum<Type> _type;
 
     // parameter number
-    uint8_t _param_number;
-    AP_Param* _param;
-    ap_var_type _param_type;
+    uint8_t _param_number{0};
+    AP_Param* _param{nullptr};
+    ap_var_type _param_type{0};
     AP_Param::ParamToken _current_token;
 
     // structure to contain setting constraints for important settings
@@ -441,12 +441,12 @@ public:
     static const struct AP_Param::GroupInfo var_info[];
 
 private:
-    float default_enabled;
-    float default_ypos;
-    float default_param_group;
-    float default_param_idx;
-    float default_param_key;
-    float default_type;
+    float default_enabled{0.0f};
+    float default_ypos{0.0f};
+    float default_param_group{0.0f};
+    float default_param_idx{0.0f};
+    float default_param_key{0.0f};
+    float default_type{0.0f};
 
 };
 

@@ -46,9 +46,9 @@
 // @Field: TimeUS: Time since system startup
 // @Field: TF: Time flying
 struct log_RFRH {
-    uint64_t time_us;
-    uint32_t time_flying_ms;
-    uint8_t _end;
+    uint64_t time_us=0;
+    uint32_t time_flying_ms=0;
+    uint8_t _end=0;
 };
 
 // @LoggerMessage: RFRF
@@ -57,9 +57,9 @@ struct log_RFRH {
 // @FieldBitmaskEnum: FTypes: AP_DAL::FrameType
 // @Field: Slow: true if we are not keeping up with IMU loop rate
 struct log_RFRF {
-    uint8_t frame_types;
-    uint8_t core_slow;
-    uint8_t _end;
+    uint8_t frame_types=0;
+    uint8_t core_slow=0;
+    uint8_t _end=0;
 };
 
 // @LoggerMessage: RFRN
@@ -78,14 +78,14 @@ struct log_RFRF {
 // @Field: Flags: bitmask of boolean state
 // @FieldBitmaskEnum: Flags: AP_DAL::RFRNFlags
 struct log_RFRN {
-    int32_t lat;
-    int32_t lng;
-    int32_t alt;
-    float EAS2TAS;
-    uint32_t available_memory;
-    Vector3f ahrs_trim;
-    uint8_t vehicle_class;
-    uint8_t ekf_type;
+    int32_t lat=0;
+    int32_t lng=0;
+    int32_t alt=0;
+    float EAS2TAS=0;
+    uint32_t available_memory=0;
+    Vector3f ahrs_trim{};
+    uint8_t vehicle_class=0;
+    uint8_t ekf_type=0;
     uint8_t armed:1;
     uint8_t unused:1;  // was get_compass_is_null
     uint8_t fly_forward:1;
@@ -94,7 +94,18 @@ struct log_RFRN {
     uint8_t wheelencoder_enabled:1;
     uint8_t takeoff_expected:1;
     uint8_t touchdown_expected:1;
-    uint8_t _end;
+    uint8_t _end=0;
+
+    log_RFRN() :
+        armed(0),
+        unused(0),
+        fly_forward(0),
+        ahrs_airspeed_sensor_enabled(0),
+        opticalflow_enabled(0),
+        wheelencoder_enabled(0),
+        takeoff_expected(0),
+        touchdown_expected(0)
+    {} //for unint_ctor
 };
 
 // @LoggerMessage: RISH
@@ -210,9 +221,9 @@ struct log_REY3 {
 // @Field: Primary: primary barometer instance number
 // @Field: NumInst: number of barometer sensors
 struct log_RBRH {
-    uint8_t primary;
-    uint8_t num_instances;
-    uint8_t _end;
+    uint8_t primary{0};
+    uint8_t num_instances{0};
+    uint8_t _end{0};
 };
 
 // @LoggerMessage: RBRI

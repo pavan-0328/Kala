@@ -371,36 +371,36 @@ private:
     struct log_RTER _RTER;
 
     // cached variables for speed:
-    uint32_t _micros;
-    uint32_t _millis;
+    uint32_t _micros=0;
+    uint32_t _millis=0;
 
     Matrix3f _rotation_vehicle_body_to_autopilot_body;
     Location _home;
-    uint32_t _last_imu_time_us;
+    uint32_t _last_imu_time_us=0;
 
     AP_DAL_InertialSensor _ins;
     AP_DAL_Baro _baro;
     AP_DAL_GPS _gps;
 #if AP_RANGEFINDER_ENABLED
-    AP_DAL_RangeFinder *_rangefinder;
+    AP_DAL_RangeFinder *_rangefinder=nullptr;
 #endif
     AP_DAL_Compass _compass;
-    AP_DAL_Airspeed *_airspeed;
+    AP_DAL_Airspeed *_airspeed=nullptr;
 #if AP_BEACON_ENABLED
-    AP_DAL_Beacon *_beacon;
+    AP_DAL_Beacon *_beacon=nullptr;
 #endif
 #if HAL_VISUALODOM_ENABLED
-    AP_DAL_VisualOdom *_visualodom;
+    AP_DAL_VisualOdom *_visualodom=nullptr;
 #endif
 
     static bool logging_started;
     static bool force_write;
 
-    bool ekf2_init_done;
-    bool ekf3_init_done;
+    bool ekf2_init_done=false;
+    bool ekf3_init_done=false;
 
     void init_sensors(void);
-    bool init_done;
+    bool init_done=false;
 };
 
 #if HAL_LOGGING_ENABLED

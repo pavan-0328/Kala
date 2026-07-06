@@ -47,13 +47,13 @@ protected:
     const AP_FixedWing &aparm;
     AP_AutoTune::ATGains gains;
     AP_AutoTune *autotune;
-    bool failed_autotune_alloc;
-    float _last_out;
+    bool failed_autotune_alloc{false};
+    float _last_out{0.0f};
     AC_PID rate_pid;
-    float angle_err_deg;
-    float ff_scale = 1.0;
+    float angle_err_deg{0.0f};
+    float ff_scale{1.0f};
 
-    AP_PIDInfo _pid_info;
+    AP_PIDInfo _pid_info{};
 
     float _get_rate_out(float desired_rate, float scaler, bool disable_integrator, float aspeed, bool ground_mode);
 

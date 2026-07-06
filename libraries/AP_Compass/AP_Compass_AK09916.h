@@ -100,12 +100,12 @@ private:
 
     AP_AK09916_BusDriver *_bus;
 
-    bool _force_external;
-    uint8_t _compass_instance;
-    bool _initialized;
+    bool _force_external{false};
+    uint8_t _compass_instance{0};
+    bool _initialized{false};
     enum Rotation _rotation;
-    enum AP_Compass_Backend::DevTypes _devtype;
-    uint8_t no_data;
+    enum AP_Compass_Backend::DevTypes _devtype{0};
+    uint8_t no_data{0};
 };
 
 
@@ -203,8 +203,8 @@ public:
     
 private:
     AuxiliaryBus *_bus;
-    AuxiliaryBusSlave *_slave;
-    bool _started;
+    AuxiliaryBusSlave *_slave{nullptr};
+    bool _started{false};
 };
 
 #endif  // AP_COMPASS_AK09916_ENABLED

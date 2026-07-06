@@ -208,13 +208,13 @@ protected:
     virtual void push_log_blocks();
 
     LoggerMessageWriter_DFLogStart *_startup_messagewriter;
-    bool _writing_startup_messages;
+    bool _writing_startup_messages{false};
 
-    uint16_t _cached_oldest_log;
+    uint16_t _cached_oldest_log{0};
 
-    uint32_t _dropped;
+    uint32_t _dropped{0};
     // should we rotate when we next stop logging
-    bool _rotate_pending;
+    bool _rotate_pending{false};
 
     // must be called when a new log is being started:
     virtual void start_new_log_reset_variables();
@@ -244,13 +244,13 @@ protected:
 
     virtual bool _WritePrioritisedBlock(const void *pBuffer, uint16_t size, bool is_critical) = 0;
 
-    bool _initialised;
+    bool _initialised{false};
 
     void df_stats_gather(uint16_t bytes_written, uint32_t space_remaining);
     void df_stats_log();
     void df_stats_clear();
 
-    AP_Logger_RateLimiter *rate_limiter;
+    AP_Logger_RateLimiter *rate_limiter{nullptr};
 
 private:
     // statistics support
@@ -261,11 +261,11 @@ private:
         uint32_t buf_space_max;
         uint32_t buf_space_sigma;
     };
-    struct df_stats stats;
+    struct df_stats stats{};
 
-    uint32_t _last_periodic_1Hz;
-    uint32_t _last_periodic_10Hz;
-    bool have_logged_armed;
+    uint32_t _last_periodic_1Hz{0};
+    uint32_t _last_periodic_10Hz{0};
+    bool have_logged_armed{false};
 
     void Write_AP_Logger_Stats_File(const struct df_stats &_stats);
     void validate_WritePrioritisedBlock(const void *pBuffer, uint16_t size);

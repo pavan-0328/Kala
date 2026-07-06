@@ -396,12 +396,12 @@ private:
     BankSelectCb _bank_select;
     RegisterRWCb _register_rw_callback;
     struct {
-        uint8_t n_allocated;
-        uint8_t n_set;
-        uint8_t next;
-        uint8_t frequency;
-        uint8_t counter;
-        struct checkreg last_reg_fail;
-        struct checkreg *regs;
-    } _checked;
+        uint8_t n_allocated=0;
+        uint8_t n_set=0;
+        uint8_t next=0;
+        uint8_t frequency=0;
+        uint8_t counter=0;
+        struct checkreg last_reg_fail{};
+        struct checkreg *regs=nullptr;
+    } _checked{};
 };

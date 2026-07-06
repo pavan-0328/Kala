@@ -65,7 +65,7 @@ private:
 
     State state = State::COLD;
 
-    uint32_t command_start_us;
+    uint32_t command_start_us{0};
 
     uint8_t convert_out[3];
 

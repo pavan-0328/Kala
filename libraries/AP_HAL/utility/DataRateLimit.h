@@ -19,6 +19,7 @@
 // Returns the max number of bytes that can be sent since the last call given byte/s rate limit
 class DataRateLimit {
 public:
+    DataRateLimit() : last_us(0), remainder(0.0f) {}
     uint32_t max_bytes(const float bytes_per_sec);
 private:
     uint32_t last_us;

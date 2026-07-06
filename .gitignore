@@ -1,5 +1,15 @@
-/.lock-waf*
-/.waf*
+reports/
+reports1/
+kala.tgz
+cov-int/
+cppcheck_report/
+build/*
+build-periph/*
+.lock-waf*
+.waf*
+Tools/autotest/test.ArduCopter/logs/
+*.tlog
+*.tlog.raw
 /Tools/autotest/aircraft/Rascal/reset.xml
 /Tools/autotest/ch7_mission.txt
 /Tools/autotest/param_metadata/Parameters.html

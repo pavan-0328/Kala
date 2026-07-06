@@ -21,17 +21,17 @@ private:
     struct {
         mavlink_message_t rxmsg;
         mavlink_status_t status;
-    } mavlink;
+    } mavlink{};
 
     uint8_t mavlink_parse_char_helper(uint8_t c, mavlink_message_t* r_message, mavlink_status_t* r_mavlink_status);
 
     ByteBuffer mavlinkInputBuffer;
     ByteBuffer mavlinkOutputBuffer;
 
-    DataRateLimit input_limit;
-    DataRateLimit output_limit;
+    DataRateLimit input_limit{};
+    DataRateLimit output_limit{};
 
-    uint32_t lastSentFlowCtrl;
+    uint32_t lastSentFlowCtrl{0};
 
     const uint8_t this_system_id;
     const uint8_t this_component_id;

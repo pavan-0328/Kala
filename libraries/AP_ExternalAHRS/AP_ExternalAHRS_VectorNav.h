@@ -54,9 +54,9 @@ protected:
     }
 private:
     AP_HAL::UARTDriver *uart;
-    int8_t port_num;
-    bool setup_complete;
-    uint32_t baudrate;
+    int8_t port_num{0};
+    bool setup_complete{false};
+    uint32_t baudrate{0};
 
     void update_thread();
     bool check_uart();
@@ -73,17 +73,17 @@ private:
     void process_ins_gnss_packet(const uint8_t *b);
 
 
-    uint8_t *pktbuf;
-    uint16_t pktoffset;
-    uint16_t bufsize;
+    uint8_t *pktbuf{nullptr};
+    uint16_t pktoffset{0};
+    uint16_t bufsize{0};
 
-    struct VN_imu_packet *latest_imu_packet;
-    struct VN_INS_ekf_packet *latest_ins_ekf_packet;
-    struct VN_INS_gnss_packet *latest_ins_gnss_packet;
+    struct VN_imu_packet *latest_imu_packet{nullptr};
+    struct VN_INS_ekf_packet *latest_ins_ekf_packet{nullptr};
+    struct VN_INS_gnss_packet *latest_ins_gnss_packet{nullptr};
 
-    uint32_t last_pkt1_ms;
-    uint32_t last_pkt2_ms;
-    uint32_t last_pkt3_ms;
+    uint32_t last_pkt1_ms{0};
+    uint32_t last_pkt2_ms{0};
+    uint32_t last_pkt3_ms{0};
 
     enum class TYPE {
         VN_INS,  // Full INS mode, requiring GNSS. Used by VN-2X0 and VN-3X0
@@ -107,7 +107,7 @@ private:
         bool sentence_valid;      // is current sentence valid so far
         bool sentence_done;       // true if this sentence has already been decoded
         bool error_response;      // true if received a VNERR response
-    } nmea;
+    } nmea{};
 };
 
 #endif  // AP_EXTERNAL_AHRS_VECTORNAV_ENABLED

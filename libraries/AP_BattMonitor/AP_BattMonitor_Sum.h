@@ -32,9 +32,9 @@ public:
 private:
 
     AP_Int16  _sum_mask;
-    uint8_t _instance;
-    bool _has_current;
-    bool _has_temperature;
+    uint8_t _instance{0};
+    bool _has_current{false};
+    bool _has_temperature{false};
 };
 
 #endif  // AP_BATTERY_SUM_ENABLED

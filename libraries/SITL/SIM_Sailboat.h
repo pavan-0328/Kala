@@ -73,8 +73,8 @@ private:
 
     Vector3f velocity_ef_water; // m/s
     Vector3f wave_gyro;         // rad/s
-    float wave_heave;           // m/s/s
-    float wave_phase;           // rads
+    float wave_heave{0.0f};           // m/s/s
+    float wave_phase{0.0f};           // rads
 };
 
 } // namespace SITL

@@ -248,17 +248,17 @@ private:
         struct {
             uint8_t     id;
             uint8_t     type;
-        } msg;
-    } last;
+        } msg {};
+    } last{};
 
     struct {
-        bool init;
-        bool init_failed;
-        sg_operating_t op;
-        sg_install_t inst;
-        sg_targetreq_t treq;
-        sg_flightid_t fid;
-        sg_ack_t ack;
+        bool init{false};
+        bool init_failed{false};
+        sg_operating_t op{};
+        sg_install_t inst{};
+        sg_targetreq_t treq{};
+        sg_flightid_t fid{};
+        sg_ack_t ack{};
     } mxs_state;
 
     // helper functions for populating the operating message:
@@ -269,7 +269,7 @@ private:
     // last course-over-ground calculated from groundspeed vector.
     // This is cached so we don't flip to a COG of 90-degrees when
     // we stop moving.
-    float cog;
+    float cog{0.0f};
 };
 #endif // HAL_ADSB_SAGETECH_MXS_ENABLED
 

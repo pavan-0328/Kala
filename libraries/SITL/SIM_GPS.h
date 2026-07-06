@@ -146,10 +146,10 @@ private:
     uint8_t instance;
 
     // The last time GPS data was written [mS]
-    uint32_t last_write_update_ms;
+    uint32_t last_write_update_ms{};
 
     // last 20 samples, allowing for up to 20 samples of delay
-    GPS_Data _gps_history[20];
+    GPS_Data _gps_history[20]{};
 
     // state of jamming simulation
     struct {
@@ -162,7 +162,7 @@ private:
         uint32_t last_acc_change_ms;
         double latitude;
         double longitude;
-    } jamming[2];
+    } jamming[2]{};
 
     bool _gps_has_basestation_position;
     GPS_Data _gps_basestation_data;
@@ -172,8 +172,8 @@ private:
     // get delayed data
     GPS_Data interpolate_data(const GPS_Data &d, uint32_t delay_ms);
 
-    uint8_t allocated_type;
-    GPS_Backend *backend;
+    uint8_t allocated_type{0};
+    GPS_Backend *backend{nullptr};
     void check_backend_allocation();
 };
 

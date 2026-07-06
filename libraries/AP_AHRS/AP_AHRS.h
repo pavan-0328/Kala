@@ -789,22 +789,22 @@ private:
     float _cos_roll{1.0f};
     float _cos_pitch{1.0f};
     float _cos_yaw{1.0f};
-    float _sin_roll;
-    float _sin_pitch;
-    float _sin_yaw;
+    float _sin_roll{0.0f};
+    float _sin_pitch{0.0f};
+    float _sin_yaw{0.0f};
 
 #if HAL_NAVEKF2_AVAILABLE
     void update_EKF2(void);
-    bool _ekf2_started;
+    bool _ekf2_started{false};
 #endif
 #if HAL_NAVEKF3_AVAILABLE
-    bool _ekf3_started;
+    bool _ekf3_started{false};
     void update_EKF3(void);
 #endif
 
     const uint16_t startup_delay_ms = 1000;
-    uint32_t start_time_ms;
-    uint8_t _ekf_flags; // bitmask from Flags enumeration
+    uint32_t start_time_ms{0};
+    uint8_t _ekf_flags{0}; // bitmask from Flags enumeration
 
     EKFType ekf_type(void) const;
     void update_DCM();
@@ -813,10 +813,10 @@ private:
      * home-related state
      */
     void load_watchdog_home();
-    bool _checked_watchdog_home;
+    bool _checked_watchdog_home{false};
     Location _home;
-    bool _home_is_set :1;
-    bool _home_locked :1;
+    bool _home_is_set :1=false;
+    bool _home_locked :1=false;
 
     // avoid setting current state repeatedly across all cores on all EKFs:
     enum class TriState {
@@ -830,11 +830,11 @@ private:
     /*
      * private AOA and SSA-related state and methods
      */
-    float _AOA, _SSA;
-    uint32_t _last_AOA_update_ms;
+    float _AOA{0.0f}, _SSA{0.0f};
+    uint32_t _last_AOA_update_ms{0};
     void update_AOA_SSA(void);
 
-    EKFType last_active_ekf_type;
+    EKFType last_active_ekf_type{EKFType::UNKNOWN};
 
 #if AP_AHRS_SIM_ENABLED
     void update_SITL(void);
@@ -858,7 +858,7 @@ private:
     Matrix3f _rotation_vehicle_body_to_autopilot_body;
 
     // last time orientation was updated from AHRS_ORIENTATION:
-    uint32_t last_orientation_update_ms;
+    uint32_t last_orientation_update_ms{0};
 
     // updates matrices responsible for rotating vectors from vehicle body
     // frame to autopilot body frame from _trim variables
@@ -870,15 +870,15 @@ private:
      */
     // update takeoff/touchdown flags
     void update_flags();
-    bool takeoff_expected;    // true if the vehicle is in a state that takeoff might be expected.  Ground effect may be in play.
-    uint32_t takeoff_expected_start_ms;
-    bool touchdown_expected;    // true if the vehicle is in a state that touchdown might be expected.  Ground effect may be in play.
-    uint32_t touchdown_expected_start_ms;
+    bool takeoff_expected{false};    // true if the vehicle is in a state that takeoff might be expected.  Ground effect may be in play.
+    uint32_t takeoff_expected_start_ms{0};
+    bool touchdown_expected{false};    // true if the vehicle is in a state that touchdown might be expected.  Ground effect may be in play.
+    uint32_t touchdown_expected_start_ms{0};
 
     /*
      * wind estimation support
      */
-    bool wind_estimation_enabled;
+    bool wind_estimation_enabled{false};
 
     /*
      * fly_forward is set by the vehicles to indicate the vehicle
@@ -886,7 +886,7 @@ private:
      * It is an additional piece of information that the backends can
      * use to provide additional and/or improved estimates.
      */
-    bool fly_forward; // true if we can assume the vehicle will be flying forward on its X axis
+    bool fly_forward{false}; // true if we can assume the vehicle will be flying forward on its X axis
 
     // poke AP_Notify based on values from status
     void update_notify_from_filter_status(const nav_filter_status &status);
@@ -1024,7 +1024,7 @@ private:
         bool origin_ok;
         Vector3f velocity_NED;
         bool velocity_NED_ok;
-    } state;
+    } state{};
 
     /*
      *  backends (and their results)
@@ -1059,7 +1059,7 @@ private:
     }
 
     // true when we have completed the common origin setup
-    bool done_common_origin;
+    bool done_common_origin{false};
 };
 
 namespace AP {

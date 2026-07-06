@@ -56,11 +56,11 @@ private:
     void start_conversion();
 
     AP_HAL::OwnPtr<AP_HAL::Device> _dev;
-    AP_HAL::Device::PeriodicHandle _periodic_handle;
+    AP_HAL::Device::PeriodicHandle _periodic_handle{};
 
     enum Rotation _rotation;
-    uint8_t _instance;
-    bool _ignore_next_sample;
+    uint8_t _instance{0};
+    bool _ignore_next_sample{false};
     bool _force_external;
 };
 

@@ -52,16 +52,16 @@ public:
 private:
     // a simple linear routing table. We don't expect to have a lot of
     // routes, so a scalable structure isn't worthwhile yet.
-    uint8_t num_routes;
+    uint8_t num_routes{0};
     struct route {
-        uint8_t sysid;
-        uint8_t compid;
+        uint8_t sysid{0};
+        uint8_t compid{0};
         mavlink_channel_t channel;
-        uint8_t mavtype;
+        uint8_t mavtype{0};
     } routes[MAVLINK_MAX_ROUTES];
     
     // a channel mask to block routing as required
-    uint8_t no_route_mask;
+    uint8_t no_route_mask{0};
     
     // learn new routes
     void learn_route(GCS_MAVLINK &link, const mavlink_message_t &msg);
@@ -75,5 +75,5 @@ private:
     void send_to_components(const char *pkt, const mavlink_msg_entry_t *entry, uint8_t pkt_len);
 
     // check for Gopro in Solo gimbal status
-    bool gopro_status_check; // default is none
+    bool gopro_status_check{false}; // default is none
 };

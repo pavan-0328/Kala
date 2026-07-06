@@ -64,7 +64,7 @@ private:
     struct {
         uint32_t detected_bitmask;
         uint32_t detected_bitmask_ms;
-    } _init;
+    } _init{};
 
     struct {
         HAL_Semaphore sem;
@@ -80,7 +80,7 @@ private:
     struct {
         uint8_t num_poles;
         uint32_t timer_ms;
-    } _telemetry;
+    } _telemetry{};
 #endif
 
     union frame_id_t {

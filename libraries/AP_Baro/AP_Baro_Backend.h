@@ -66,14 +66,14 @@ protected:
     void _copy_to_frontend(uint8_t instance, float pressure, float temperature);
 
     // semaphore for access to shared frontend data
-    HAL_Semaphore _sem;
+    HAL_Semaphore _sem{};
 
     virtual void update_healthy_flag(uint8_t instance);
 
     // mean pressure for range filter
-    float _mean_pressure; 
+    float _mean_pressure{0.0f}; 
     // number of dropped samples. Not used for now, but can be usable to choose more reliable sensor
-    uint32_t _error_count;
+    uint32_t _error_count{0};
 
     // set bus ID of this instance, for BARO_DEVID parameters
     void set_bus_id(uint8_t instance, uint32_t id) {

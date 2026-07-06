@@ -58,8 +58,8 @@ protected:
     };
 
     // Intersampling period in seconds
-    float _dt;
-    bool _custom_controller_active;
+    float _dt{0.0f};
+    bool _custom_controller_active{false};
 
     // References to external libraries
     AP_AHRS_View*& _ahrs;
@@ -70,7 +70,7 @@ protected:
     AP_Int8 _custom_controller_mask;
 
 private:
-    AC_CustomControl_Backend *_backend;
+    AC_CustomControl_Backend *_backend{nullptr};
 };
 
 #endif  // AP_CUSTOMCONTROL_ENABLED

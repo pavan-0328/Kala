@@ -337,7 +337,7 @@ protected:
 
     // IMU variables
     // Integration time; time last loop took to run
-    float G_Dt;
+    float G_Dt = 0.0f;
 
     // sensor drivers
 #if AP_GPS_ENABLED
@@ -480,9 +480,9 @@ protected:
 #if AP_FENCE_ENABLED
     AC_Fence fence;
     struct {
-        bool have_updates;      // true if new breache statuses have been captured but not actioned
-        uint8_t new_breaches;   // the new breaches that are available
-        uint32_t last_check_ms; // last time the fence check was run
+        bool have_updates = false;      // true if new breache statuses have been captured but not actioned
+        uint8_t new_breaches = 0;   // the new breaches that are available
+        uint32_t last_check_ms = 0; // last time the fence check was run
     } fence_breaches;
 
     void fence_init();
@@ -560,11 +560,11 @@ private:
 #endif // AP_INERTIALSENSOR_HARMONICNOTCH_ENABLED
 
     // decimation for 1Hz update
-    uint8_t one_Hz_counter;
+    uint8_t one_Hz_counter = 0;
     void one_Hz_update();
 
-    bool likely_flying;         // true if vehicle is probably flying
-    uint32_t _last_flying_ms;   // time when likely_flying last went true
+    bool likely_flying = false;         // true if vehicle is probably flying
+    uint32_t _last_flying_ms = 0;   // time when likely_flying last went true
 #if AP_INERTIALSENSOR_HARMONICNOTCH_ENABLED
     uint32_t _last_notch_update_ms[HAL_INS_NUM_HARMONIC_NOTCH_FILTERS]; // last time update_dynamic_notch() was run
 #endif
@@ -573,13 +573,13 @@ private:
 
 #if HAL_GYROFFT_ENABLED && HAL_WITH_ESC_TELEM
     LowPassFilterFloat esc_noise[ESC_TELEM_MAX_ESCS];
-    uint32_t last_motor_noise_ms;
+    uint32_t last_motor_noise_ms = 0;
 #endif
 
-    bool done_safety_init;
+    bool done_safety_init = false;
 
 
-    uint32_t _last_internal_errors;  // backup of AP_InternalError::internal_errors bitmask
+    uint32_t _last_internal_errors = 0;  // backup of AP_InternalError::internal_errors bitmask
 
 #if AP_CUSTOMROTATIONS_ENABLED
     AP_CustomRotations custom_rotations;

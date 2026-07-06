@@ -515,15 +515,15 @@ protected:
     };
 
     // the input channel this corresponds to
-    uint8_t ch_in;
+    uint8_t ch_in{0};
 
 private:
 
     // pwm is stored here
-    int16_t     radio_in;
+    int16_t     radio_in{0};
 
     // value generated from PWM normalised to configured scale
-    int16_t    control_in;
+    int16_t    control_in{0};
 
     AP_Int16    radio_min;
     AP_Int16    radio_trim;
@@ -533,11 +533,11 @@ private:
     AP_Int16    dead_zone;
 
     ControlType type_in;
-    int16_t     high_in;
+    int16_t     high_in{0};
 
     // overrides
-    uint16_t override_value;
-    uint32_t last_override_time;
+    uint16_t override_value{0};
+    uint32_t last_override_time{0};
 
     float pwm_to_angle() const;
     float pwm_to_angle_dz(uint16_t dead_zone) const;

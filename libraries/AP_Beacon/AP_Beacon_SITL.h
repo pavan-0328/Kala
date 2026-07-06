@@ -21,8 +21,8 @@ public:
 
 private:
     SITL::SIM *sitl;
-    uint8_t next_beacon;
-    uint32_t last_update_ms;
+    uint8_t next_beacon{0};
+    uint32_t last_update_ms{0};
 };
 
 #endif // AP_BEACON_SITL_ENABLED

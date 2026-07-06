@@ -39,7 +39,7 @@ public:
     /* Implementations of Stream virtual methods */
     uint32_t txspace() override;
 
-    bool _unbuffered_writes;
+    bool _unbuffered_writes = false;
 
     enum flow_control get_flow_control(void) override { return FLOW_CONTROL_ENABLE; }
 
@@ -75,16 +75,16 @@ public:
 
 private:
 
-    int _fd;
+    int _fd{-1};
 
     // file descriptor for reading multicast packets
-    int _mc_fd;
+    int _mc_fd{-1};
 
-    uint8_t _portNumber;
+    uint8_t _portNumber{0};
     bool _connected = false; // true if a client has connected
     bool _use_send_recv = false;
-    int _listen_fd;  // socket we are listening on
-    int _serial_port;
+    int _listen_fd{-1};  // socket we are listening on
+    int _serial_port{0};
     static bool _console;
     ByteBuffer _readbuffer{16384};
     ByteBuffer _writebuffer{16384};
@@ -94,7 +94,7 @@ private:
     const uint16_t mcast_port_default = 14550;
 
     const char *_uart_path;
-    uint32_t _uart_baudrate;
+    uint32_t _uart_baudrate{57600};//DEFAULT BAUD
 
     void _tcp_start_connection(uint16_t port, bool wait_for_connection);
     void _uart_start_connection(void);
@@ -108,16 +108,16 @@ private:
     bool set_speed(int speed) const;
 
     SITL_State *_sitlState;
-    uint64_t _receive_timestamp;
-    bool _is_udp;
-    bool _packetise;
-    uint16_t _mc_myport;
+    uint64_t _receive_timestamp{0};
+    bool _is_udp{false};
+    bool _packetise{false};
+    uint16_t _mc_myport{0};
 
     // for baud-rate limiting:
     struct {
         DataRateLimit write;
         DataRateLimit read;
-    } baud_limits;
+    } baud_limits{};
 
     HAL_Semaphore write_mtx;
 
@@ -159,8 +159,8 @@ private:
     void handle_reading_from_device_to_readbuffer();
 
     // statistics
-    uint32_t _tx_stats_bytes;
-    uint32_t _rx_stats_bytes;
+    uint32_t _tx_stats_bytes{0};
+    uint32_t _rx_stats_bytes{0};
 
 };
 

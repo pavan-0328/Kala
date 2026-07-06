@@ -82,7 +82,7 @@ private:
         uint8_t linenumber;
         uint8_t char_index; // index of which character to get in the message
         uint8_t repeats;
-    } _msg_chunk;
+    } _msg_chunk{};
 
     float _max_speed = 0.0f;
     float _max_alt = 0.0f;
@@ -128,7 +128,7 @@ private:
 
     // all Spektrum telemtry packets are big-endian!
     PACKED UN_TELEMETRY _telem;
-    bool _telem_pending;
+    bool _telem_pending{false};
 
     static AP_Spektrum_Telem *singleton;
 };

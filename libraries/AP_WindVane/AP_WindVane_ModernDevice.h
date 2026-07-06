@@ -31,7 +31,7 @@ public:
     void calibrate() override;
 
 private:
-    float _current_analog_voltage;
+    float _current_analog_voltage{0.0f};
 
     // pin for reading analog voltage
     AP_HAL::AnalogSource *_speed_analog_source;

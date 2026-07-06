@@ -38,7 +38,7 @@ private:
         RC_PROTOCOL,
         RC_OUTPUT,
     };
-    Stage stage;
+    Stage stage{};
 };
 
 class LoggerMessageWriter_WriteEntireMission : public LoggerMessageWriter {
@@ -54,8 +54,8 @@ private:
         DONE
     };
 
-    uint16_t _mission_number_to_send;
-    Stage stage;
+    uint16_t _mission_number_to_send{0};
+    Stage stage{};
 };
 
 class LoggerMessageWriter_WriteAllRallyPoints : public LoggerMessageWriter {
@@ -71,7 +71,7 @@ private:
         DONE
     };
 
-    uint16_t _rally_number_to_send;
+    uint16_t _rally_number_to_send{0};
     Stage stage = Stage::WRITE_NEW_RALLY_MESSAGE;
 };
 
@@ -89,8 +89,8 @@ private:
         DONE
     };
 
-    uint16_t _fence_number_to_send;
-    Stage stage;
+    uint16_t _fence_number_to_send{0};
+    Stage stage{};
 };
 #endif // HAL_LOGGER_FENCE_ENABLED
 

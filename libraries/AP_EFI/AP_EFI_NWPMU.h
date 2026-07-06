@@ -30,13 +30,13 @@
 class AP_EFI_NWPMU : public CANSensor, public AP_EFI_Backend {
 public:
     AP_EFI_NWPMU(AP_EFI &_frontend);
-    
+    {0.0f, 0.0f, 0.0f}
     void update() override;
 
 private:
     void handle_frame(AP_HAL::CANFrame &frame) override;
 
-    bool _emitted_version;
+    bool _emitted_version{false};
 
     enum class NWPMU_ID {
         GCU    = 0x0006C000, // output voltage and current consumption

@@ -124,10 +124,10 @@ private:
         uint16_t interval;
     };
 
-    from_file_default_interval *_intervals;
+    from_file_default_interval *_intervals{nullptr};
 
-    uint16_t _num_intervals;
-    uint16_t _max_intervals;
+    uint16_t _num_intervals{0};
+    uint16_t _max_intervals{0};
 };
 #endif
 
@@ -819,7 +819,7 @@ private:
     // time we last saw traffic from our GCS.  Note that there is an
     // identically named field in GCS:: which is the most recent of
     // each of the GCS_MAVLINK backends
-    uint32_t _sysid_gcs_last_seen_time_ms;
+    uint32_t _sysid_gcs_last_seen_time_ms=0;
 
     void service_statustext(void);
 
@@ -1219,7 +1219,7 @@ public:
 
 #if AP_FRSKY_TELEM_ENABLED
     // frsky backend
-    class AP_Frsky_Telem *frsky;
+    class AP_Frsky_Telem *frsky = nullptr;
 #endif
 
 #if AP_LTM_TELEM_ENABLED
@@ -1260,7 +1260,7 @@ public:
     uint8_t get_channel_from_port_number(uint8_t port_num);
 
 #if HAL_HIGH_LATENCY2_ENABLED
-    bool high_latency_link_enabled;
+    bool high_latency_link_enabled =false;
     void enable_high_latency_connections(bool enabled);
     bool get_high_latency_status();
 #endif // HAL_HIGH_LATENCY2_ENABLED
@@ -1283,14 +1283,14 @@ protected:
     virtual GCS_MAVLINK *new_gcs_mavlink_backend(AP_HAL::UARTDriver &uart) = 0;
 
     HAL_Semaphore control_sensors_sem; // protects the three bitmasks
-    uint32_t control_sensors_present;
-    uint32_t control_sensors_enabled;
-    uint32_t control_sensors_health;
+    uint32_t control_sensors_present=0;
+    uint32_t control_sensors_enabled=0;
+    uint32_t control_sensors_health=0;
     virtual void update_vehicle_sensor_status_flags() {}
 
-    static const struct AP_Param::GroupInfo *_chan_var_info[MAVLINK_COMM_NUM_BUFFERS];
-    uint8_t _num_gcs;
-    GCS_MAVLINK *_chan[MAVLINK_COMM_NUM_BUFFERS];
+    static const struct AP_Param::GroupInfo *_chan_var_info[MAVLINK_COMM_NUM_BUFFERS]={};
+    uint8_t _num_gcs=0;
+    GCS_MAVLINK *_chan[MAVLINK_COMM_NUM_BUFFERS]={};
 
     // parameters
     AP_Int16                 sysid;
@@ -1338,10 +1338,10 @@ private:
     StatusTextQueue _statustext_queue{_status_capacity};
 
     // true if we have already allocated protocol objects:
-    bool initialised_missionitemprotocol_objects;
+    bool initialised_missionitemprotocol_objects=false;
 
     // true if update_send has ever been called:
-    bool update_send_has_been_called;
+    bool update_send_has_been_called=false;
 
     // handle passthru between two UARTs
     struct {
@@ -1367,11 +1367,11 @@ private:
     // first call update_send on.  It is incremented each time
     // GCS::update_send is called so we don't starve later links of
     // time in which they are permitted to send messages.
-    uint8_t first_backend_to_send;
+    uint8_t first_backend_to_send=0;
 
     // Sequence number should be incremented when available modes changes
     // Sent in AVAILABLE_MODES_MONITOR msg
-    uint8_t available_modes_sequence;
+    uint8_t available_modes_sequence=0;
 };
 
 GCS &gcs();

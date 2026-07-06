@@ -54,7 +54,7 @@ private:
 
     AP_HAL::OwnPtr<AP_HAL::Device> _dev;
 
-    uint8_t _compass_instance;
+    uint8_t _compass_instance{0};
 
     struct {
         int8_t x1;
@@ -68,9 +68,9 @@ private:
         uint8_t xy1;
         int8_t xy2;
         uint16_t xyz1;
-    } _dig;
+    } _dig{};
 
-    uint32_t _last_read_ms;
+    uint32_t _last_read_ms{0};
     enum Rotation _rotation;
     bool _force_external;
 };

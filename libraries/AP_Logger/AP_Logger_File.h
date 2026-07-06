@@ -74,24 +74,24 @@ protected:
 
 private:
     int _write_fd = -1;
-    char *_write_filename;
-    bool last_log_is_marked_discard;
-    uint32_t _last_write_ms;
+    char *_write_filename{nullptr};
+    bool last_log_is_marked_discard{false};
+    uint32_t _last_write_ms{0};
 #if AP_RTC_ENABLED && CONFIG_HAL_BOARD == HAL_BOARD_CHIBIOS
-    bool _need_rtc_update;
+    bool _need_rtc_update{false};
 #endif
     
     int _read_fd = -1;
-    uint16_t _read_fd_log_num;
-    uint32_t _read_offset;
-    uint32_t _write_offset;
-    volatile uint32_t _open_error_ms;
+    uint16_t _read_fd_log_num{0};
+    uint32_t _read_offset{0};
+    uint32_t _write_offset{0};
+    volatile uint32_t _open_error_ms{0};
     const char *_log_directory;
-    bool _last_write_failed;
+    bool _last_write_failed{false};
 
-    uint32_t _io_timer_heartbeat;
+    uint32_t _io_timer_heartbeat{0};
     bool io_thread_alive() const;
-    uint8_t io_thread_warning_decimation_counter;
+    uint8_t io_thread_warning_decimation_counter{0};
 
     // do we have a recent open error?
     bool recent_open_error(void) const;
@@ -112,7 +112,7 @@ private:
     // write buffer
     ByteBuffer _writebuf{0};
     const uint16_t _writebuf_chunk = HAL_LOGGER_WRITE_CHUNK_SIZE;
-    uint32_t _last_write_time;
+    uint32_t _last_write_time{0};
 
     /* construct a file name given a log number. Caller must free. */
     char *_log_file_name(const uint16_t log_num) const;
@@ -122,12 +122,12 @@ private:
 
     void stop_logging(void) override;
 
-    uint32_t last_messagewrite_message_sent;
+    uint32_t last_messagewrite_message_sent{0};
 
     // free-space checks; filling up SD cards under NuttX leads to
     // corrupt filesystems which cause loss of data, failure to gather
     // data and failures-to-boot.
-    uint32_t _free_space_last_check_time; // milliseconds
+    uint32_t _free_space_last_check_time{0}; // milliseconds
     const uint32_t _free_space_check_interval = 1000UL; // milliseconds
 #if AP_FILESYSTEM_LITTLEFS_ENABLED
 #if AP_FILESYSTEM_LITTLEFS_FLASH_TYPE == AP_FILESYSTEM_FLASH_W25NXX
@@ -150,12 +150,12 @@ private:
     struct {
         bool was_logging;
         uint16_t log_num;
-    } erase;
+    } erase{};
     void erase_next(void);
 
     const char *last_io_operation = "";
 
-    bool start_new_log_pending;
+    bool start_new_log_pending{false};
 };
 
 #endif // HAL_LOGGING_FILESYSTEM_ENABLED

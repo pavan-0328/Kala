@@ -61,7 +61,7 @@ protected:
     Vector3f cog; //centre of gravity location relative to center of blimp
 
     //Airfish-specific variables
-    Fins fin[4];
+    Fins fin[4]{};
     float k_tan; //Tangential and normal force multipliers
     float k_nor;
     float drag_constant;

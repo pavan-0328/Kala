@@ -33,19 +33,19 @@ private:
 
     AP_HAL::OwnPtr<AP_HAL::Device> dev;
 
-    uint8_t instance;
+    uint8_t instance{0};
 
-    uint32_t count;
-    float pressure_sum;
-    float temperature_sum;
-    uint8_t step;
+    uint32_t count{0};
+    float pressure_sum{0.0f};
+    float temperature_sum{0.0f};
+    uint8_t step{0};
 
-    int32_t value_T;
+    int32_t value_T{0};
 
     // Internal calibration registers
     struct fbm320_calibration {
-        uint16_t C0, C1, C2, C3, C6, C8, C9, C10, C11, C12;
-        uint32_t C4, C5, C7;
+        uint16_t C0{0}, C1{0}, C2{0}, C3{0}, C6{0}, C8{0}, C9{0}, C10{0}, C11{0}, C12{0};
+        uint32_t C4{0}, C5{0}, C7{0};
     } calibration;
 };
 
